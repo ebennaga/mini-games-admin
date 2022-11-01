@@ -62,8 +62,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         alert(data.search);
     };
 
-    console.log('response', router.asPath);
-
     const path = router.asPath;
 
     return (
