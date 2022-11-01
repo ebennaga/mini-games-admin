@@ -58,7 +58,7 @@ const SignUp = () => {
                     <HeaderAuth title='Sign Up into Admin Prizeplay' subTitle='Additional description if required' />
                     <Grid container mt='27px'>
                         <Grid item container xs={12} mb='37px'>
-                            <Grid item xs={12} xl={6}>
+                            <Grid item xs={12} xl={7}>
                                 <InputWithLabel
                                     name='email'
                                     form={form}
@@ -69,7 +69,7 @@ const SignUp = () => {
                             </Grid>
                         </Grid>
                         <Grid item container xs={12} mb='37px'>
-                            <Grid item xs={12} xl={6}>
+                            <Grid item xs={12} xl={7}>
                                 <InputWithLabel
                                     name='password'
                                     form={form}
@@ -80,7 +80,7 @@ const SignUp = () => {
                             </Grid>
                         </Grid>
                         <Grid item container xs={12} mb='37px'>
-                            <Grid item xs={12} xl={6}>
+                            <Grid item xs={12} xl={7}>
                                 <InputWithLabel
                                     name='confirmPassword'
                                     form={form}

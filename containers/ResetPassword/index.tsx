@@ -56,7 +56,7 @@ const SignIn = () => {
                         </Typography>
                         <Grid container mt='27px'>
                             <Grid item container xs={12} mb='37px'>
-                                <Grid item xs={12} xl={6}>
+                                <Grid item xs={12} xl={7}>
                                     <Input
                                         name='email'
                                         form={form}
@@ -67,7 +67,7 @@ const SignIn = () => {
                                 </Grid>
                             </Grid>
                             <Grid item container xs={12} mb='37px'>
-                                <Grid item xs={12} xl={6}>
+                                <Grid item xs={12} xl={7}>
                                     <ButtonBase
                                         disabled={isDisable}
                                         type='submit'
