@@ -1,8 +1,7 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, List } from '@mui/material';
 import Search from 'components/Search';
 import { useForm } from 'react-hook-form';
-import MENUBAR from 'utils/config';
 import { useRouter } from 'next/router';
 import NavbarCard from './NavbarCard';
 import DropdownCard from './DropdownCard';
@@ -12,6 +11,44 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+    const MENUBAR = [
+        { icon: 'icons/navbar/dashboard.png', title: 'Dashboard', href: '/' },
+        { icon: 'icons/navbar/account.png', title: 'Account', href: '/account' },
+        { icon: 'icons/navbar/client-account.png', title: 'Client Account', href: '/client-account' },
+        { icon: 'icons/navbar/reconcile.png', title: 'Reconcile', href: '/reconcile' },
+        { icon: 'icons/navbar/game.png', title: 'Games', href: '/game' },
+        {
+            icon: 'icons/navbar/tournament.png',
+            title: 'Tournament',
+            href: '/tournament',
+            dropdownList: [
+                { title: 'Tournaments', href: '/tournament' },
+                { title: 'Participant Tournament', href: '/tournament' },
+                { title: 'Client Tournament', href: '/tournament' }
+            ]
+        },
+        {
+            icon: 'icons/navbar/content.png',
+            title: 'Content',
+            href: '/content',
+            dropdownList: [
+                { title: 'Banner', href: '/banner' },
+                { title: 'Blogs', href: '/banner' }
+            ]
+        },
+        {
+            icon: 'icons/navbar/setting.png',
+            title: 'Settings',
+            href: '/setting',
+            dropdownList: [
+                { title: 'Exchange Rates', href: '/setting' },
+                { title: 'Location', href: '/setting' },
+                { title: 'Product Prizes', href: '/setting' },
+                { title: 'Roles', href: '/setting' }
+            ]
+        }
+    ];
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -36,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     borderRight: '1.5px solid rgba(0, 0, 0, 0.06)',
-                    height: '100vh',
+                    height: 'auto',
                     pt: '22.2px',
                     px: '8px'
                 }}
@@ -45,11 +82,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Box mb='17px'>
                     <Search name='search' form={form} placeholder='Search...' onSubmit={handleSearch} />
                 </Box>
-                {MENUBAR.map((item: any) => {
-                    const isActive = router.asPath === item.href;
-                    return <NavbarCard key={item.title} icon={item.icon} title={item.title} isActive={isActive} onClick={undefined} />;
-                })}
-                <DropdownCard />
+                <List sx={{ maxWidth: '240px' }}>
+                    {MENUBAR.map((item: any) => {
+                        const isActive = router.asPath === item.href;
+                        return item.dropdownList ? (
+                            <DropdownCard title={item.title} listDropdown={item.dropdownList} icon={item.icon} isActive={isActive} />
+                        ) : (
+                            <NavbarCard key={item.title} icon={item.icon} title={item.title} isActive={isActive} onClick={undefined} />
+                        );
+                    })}
+                </List>
             </Box>
             <Box width='100%'>{children}</Box>
         </Box>

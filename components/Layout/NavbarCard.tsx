@@ -1,4 +1,4 @@
-import { ButtonBase, Typography } from '@mui/material';
+import { ListItemButton, Typography } from '@mui/material';
 import React from 'react';
 
 interface NavbarCardProps {
@@ -13,7 +13,7 @@ const NavbarCard: React.FC<NavbarCardProps> = ({ icon, title, onClick, isActive 
     const iconActive = `${arrIcon[0]}-active.${arrIcon[1]}`;
 
     return (
-        <ButtonBase
+        <ListItemButton
             sx={{
                 display: 'flex',
                 justifyContent: 'flex-start',
@@ -30,7 +30,7 @@ const NavbarCard: React.FC<NavbarCardProps> = ({ icon, title, onClick, isActive 
             <Typography component='span' fontSize='16px' fontWeight={400} ml='35px'>
                 {title}
             </Typography>
-        </ButtonBase>
+        </ListItemButton>
     );
 };
 

@@ -1,31 +1,53 @@
-import { Box, ButtonBase, Typography } from '@mui/material';
+import { Collapse, Box, List, ListItem, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
 import React, { useState } from 'react';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
-const DropdownCard = () => {
+interface DropdownCardProps {
+    title: string;
+    listDropdown: any;
+    icon: string;
+    isActive: boolean;
+}
+
+const DropdownCard: React.FC<DropdownCardProps> = ({ title, listDropdown, icon, isActive }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const arrIcon = icon.split('.');
+    const iconActive = `${arrIcon[0]}-active.${arrIcon[1]}`;
 
     return (
-        <>
-            <ButtonBase onClick={() => setIsOpen(!isOpen)} sx={{ width: '100%', padding: '15px 19px' }}>
-                <Box width='100%' display='flex' justifyContent='space-between'>
-                    <Box>
-                        <img src='icons/navbar/tournament.png' alt='dashboard' width='18px' height='auto' />
-                        <Typography component='span' fontSize='16px' fontWeight={400} ml='35px' sx={{ color: 'black' }}>
-                            title
-                        </Typography>
-                    </Box>
-                    <ExpandMoreIcon sx={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+        <ListItem
+            sx={{
+                padding: '15px 10px 15px 19px',
+                display: 'flex',
+                flexDirection: 'column',
+                width: '240px'
+            }}
+        >
+            <ListItemButton
+                onClick={() => setIsOpen(!isOpen)}
+                sx={{ padding: 0, width: '100%', pb: '10px', display: 'flex', justifyContent: 'space-between' }}
+            >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <ListItemIcon sx={{ margin: 'auto', minWidth: '0' }}>
+                        <img src={isActive ? iconActive : icon} alt='dashboard' width='18px' height='18px' />
+                    </ListItemIcon>
+                    <ListItemText primary={title} sx={{ color: 'black', ml: '35px' }} />
                 </Box>
-            </ButtonBase>
-            {isOpen && (
-                <ButtonBase sx={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
-                    <Typography component='span' fontSize='14px' fontWeight={400} sx={{ color: 'black', ml: '70px', textAlign: 'start' }}>
-                        title
-                    </Typography>
-                </ButtonBase>
-            )}
-        </>
+                {isOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={isOpen} timeout='auto' unmountOnExit sx={{ width: '100%' }}>
+                <List component='div' disablePadding>
+                    {listDropdown.map((item: any, index: number) => {
+                        return (
+                            <ListItemButton key={index} sx={{ p: '10px 0 10px 53px', color: 'black' }}>
+                                <ListItemText primary={item.title} sx={{ '& span': { fontSize: '14px' } }} />
+                            </ListItemButton>
+                        );
+                    })}
+                </List>
+            </Collapse>
+        </ListItem>
     );
 };
 
