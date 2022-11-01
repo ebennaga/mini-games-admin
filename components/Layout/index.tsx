@@ -62,6 +62,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         alert(data.search);
     };
 
+    console.log('response', router.asPath);
+
+    const path = router.asPath;
+
     return (
         <Box sx={{ bgcolor: '#fff', minHeight: '100vh', display: 'flex' }}>
             <Box
@@ -79,25 +83,35 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 }}
             >
                 <img src='/images/logo.png' alt='Prize Play' width='99.89px' height='46.56px' style={{ marginBottom: '32.22px' }} />
-                <Box mb='17px'>
-                    <Search name='search' form={form} placeholder='Search...' onSubmit={handleSearch} />
-                </Box>
-                <List sx={{ maxWidth: '240px' }}>
-                    {MENUBAR.map((item: any) => {
-                        const isActive = router.asPath === item.href;
-                        return item.dropdownList ? (
-                            <DropdownCard
-                                key={item.title}
-                                title={item.title}
-                                listDropdown={item.dropdownList}
-                                icon={item.icon}
-                                isActive={isActive}
-                            />
-                        ) : (
-                            <NavbarCard key={item.title} icon={item.icon} title={item.title} isActive={isActive} onClick={undefined} />
-                        );
-                    })}
-                </List>
+                {path === '/sign-in' || path === '/sign-up' ? null : (
+                    <>
+                        <Box mb='17px'>
+                            <Search name='search' form={form} placeholder='Search...' onSubmit={handleSearch} />
+                        </Box>
+                        <List sx={{ maxWidth: '240px' }}>
+                            {MENUBAR.map((item: any) => {
+                                const isActive = router.asPath === item.href;
+                                return item.dropdownList ? (
+                                    <DropdownCard
+                                        key={item.title}
+                                        title={item.title}
+                                        listDropdown={item.dropdownList}
+                                        icon={item.icon}
+                                        isActive={isActive}
+                                    />
+                                ) : (
+                                    <NavbarCard
+                                        key={item.title}
+                                        icon={item.icon}
+                                        title={item.title}
+                                        isActive={isActive}
+                                        onClick={undefined}
+                                    />
+                                );
+                            })}
+                        </List>
+                    </>
+                )}
             </Box>
             <Box width='100%'>{children}</Box>
         </Box>

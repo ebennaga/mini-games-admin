@@ -10,6 +10,7 @@ interface CustomButtonProps {
     title?: string;
     borderRadius?: string;
     onClick?: any;
+    type?: 'submit' | 'button';
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -20,10 +21,11 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     width = '195px',
     title = 'submit',
     borderRadius = '4px',
-    onClick
+    onClick,
+    type = 'button'
 }) => {
     return (
-        <ButtonBase onClick={onClick} sx={{ border, backgroundColor, color, width, height, borderRadius }}>
+        <ButtonBase type={type} onClick={onClick} sx={{ border, backgroundColor, color, width, height, borderRadius }}>
             <Typography sx={{ textTransform: 'uppercase' }}>{title}</Typography>
         </ButtonBase>
     );

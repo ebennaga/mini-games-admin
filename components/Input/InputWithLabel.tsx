@@ -32,7 +32,10 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({ component, label = 'Ema
         helperText = type === 'password' ? `Password minimum 6 characters` : `${label} exceed minimum length`;
     } else if (error?.message) {
         helperText = `${label} - ${error.message}`;
+    } else {
+        helperText = error;
     }
+
     return (
         <Controller
             control={form.control}
