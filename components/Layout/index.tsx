@@ -1,16 +1,18 @@
 import React from 'react';
-import { Box, List } from '@mui/material';
+import { Box, List, Typography, Avatar } from '@mui/material';
 import Search from 'components/Search';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import EmailIcon from '@mui/icons-material/Email';
 import NavbarCard from './NavbarCard';
 import DropdownCard from './DropdownCard';
 
 interface LayoutProps {
     children: any;
+    isUserInfo?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
     const MENUBAR = [
         { icon: 'icons/navbar/dashboard.png', title: 'Dashboard', href: '/' },
         { icon: 'icons/navbar/account.png', title: 'Account', href: '/account' },
@@ -114,7 +116,38 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </>
                 )}
             </Box>
-            <Box width='100%'>{children}</Box>
+            <Box width='100%' padding='33.5px 33px'>
+                {isUserInfo && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end', mb: '27px' }}>
+                        <Box sx={{ position: 'relative', width: 'fit-content' }}>
+                            <EmailIcon sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: '30px' }} />
+                            <Box
+                                sx={{
+                                    background: '#1976D2',
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '100px',
+                                    color: '#fff',
+                                    fontSize: '12px',
+                                    textAlign: 'center',
+                                    position: 'absolute',
+                                    top: '-9px',
+                                    right: '-6px'
+                                }}
+                            >
+                                <Typography component='span' fontSize='12px' mt='-3px'>
+                                    1
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Typography component='span' fontSize='16px' sx={{ color: 'rgba(0, 0, 0, 0.87)' }}>
+                            BangLorem
+                        </Typography>
+                        <Avatar alt='user' src='' sx={{ width: '29px', height: '29px', background: 'rgba(0,0,0,0.54)' }} />
+                    </Box>
+                )}
+                {children}
+            </Box>
         </Box>
     );
 };

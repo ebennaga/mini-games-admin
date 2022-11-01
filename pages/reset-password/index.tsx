@@ -13,7 +13,7 @@ const Page = () => {
                 <meta name='description' content='Sign Up to be admin' />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
-            <Layout>
+            <Layout isUserInfo={false}>
                 <ResetPasswordContainer />
             </Layout>
         </>
