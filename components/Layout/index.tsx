@@ -86,7 +86,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {MENUBAR.map((item: any) => {
                         const isActive = router.asPath === item.href;
                         return item.dropdownList ? (
-                            <DropdownCard title={item.title} listDropdown={item.dropdownList} icon={item.icon} isActive={isActive} />
+                            <DropdownCard
+                                key={item.title}
+                                title={item.title}
+                                listDropdown={item.dropdownList}
+                                icon={item.icon}
+                                isActive={isActive}
+                            />
                         ) : (
                             <NavbarCard key={item.title} icon={item.icon} title={item.title} isActive={isActive} onClick={undefined} />
                         );
