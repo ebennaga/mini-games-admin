@@ -81,7 +81,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 }}
             >
                 <img src='/images/logo.png' alt='Prize Play' width='99.89px' height='46.56px' style={{ marginBottom: '32.22px' }} />
-                {path === '/sign-in' || path === '/sign-up' ? null : (
+                {path === '/sign-in' ||
+                path === '/sign-up' ||
+                path === '/reset-password' ||
+                path === '/reset-password/confirmation' ? null : (
                     <>
                         <Box mb='17px'>
                             <Search name='search' form={form} placeholder='Search...' onSubmit={handleSearch} />

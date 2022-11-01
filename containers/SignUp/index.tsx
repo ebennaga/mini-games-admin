@@ -14,28 +14,37 @@ const SignUp = () => {
         mode: 'all',
         defaultValues: {
             email: '',
-            password: ''
+            password: '',
+            confirmPassword: ''
         }
     });
-
-    const rulePassword = (key: any) => {
-        const regEx = /^[0-9]*$/;
-        if (key.length > 7 && !regEx.test(key)) {
-            setIsDisable(false);
-            return true;
-        }
-        return 'At least 8 characters. Cannot be all numbers';
-    };
 
     const ruleEmail = (key: any) => {
         const pattern =
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if (pattern.test(key)) {
-            setIsDisable(false);
+            // setIsDisable(false);
             return true;
         }
         return 'Email is not valid!';
+    };
+
+    const rulePassword = (key: any) => {
+        const regEx = /^[0-9]*$/;
+        if (key.length > 7 && !regEx.test(key)) {
+            // setIsDisable(false);
+            return true;
+        }
+        return 'At least 8 characters. Cannot be all numbers';
+    };
+
+    const ruleConfirmPassword = (key: any) => {
+        if (key === form.watch('password') && form.watch('email')) {
+            setIsDisable(false);
+            return true;
+        }
+        return 'The password confirmation does not match!';
     };
 
     const handleSubmit = (data: any) => {
@@ -49,7 +58,7 @@ const SignUp = () => {
                     <HeaderAuth title='Sign Up into Admin Prizeplay' subTitle='Additional description if required' />
                     <Grid container mt='27px'>
                         <Grid item container xs={12} mb='37px'>
-                            <Grid item xs={12} xl={6}>
+                            <Grid item xs={12} xl={7}>
                                 <InputWithLabel
                                     name='email'
                                     form={form}
@@ -60,13 +69,24 @@ const SignUp = () => {
                             </Grid>
                         </Grid>
                         <Grid item container xs={12} mb='37px'>
-                            <Grid item xs={12} xl={6}>
+                            <Grid item xs={12} xl={7}>
                                 <InputWithLabel
                                     name='password'
                                     form={form}
                                     label='Password'
                                     type='password'
                                     rules={{ required: true, validate: rulePassword }}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid item container xs={12} mb='37px'>
+                            <Grid item xs={12} xl={7}>
+                                <InputWithLabel
+                                    name='confirmPassword'
+                                    form={form}
+                                    label='Confirm Password'
+                                    type='password'
+                                    rules={{ required: true, validate: ruleConfirmPassword }}
                                 />
                             </Grid>
                         </Grid>
