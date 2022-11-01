@@ -12,9 +12,20 @@ interface InputWithLabelProps {
     type?: 'text' | 'number' | 'password' | 'email' | 'tel';
     rules?: any;
     component?: any;
+    placeholder?: any;
+    foucused?: boolean;
 }
 
-const InputWithLabel: React.FC<InputWithLabelProps> = ({ component, label = 'Email address', form, name, rules, type }) => {
+const InputWithLabel: React.FC<InputWithLabelProps> = ({
+    foucused,
+    placeholder,
+    component,
+    label = 'Email address',
+    form,
+    name,
+    rules,
+    type
+}) => {
     const {
         formState: { errors }
     } = form;
@@ -46,12 +57,15 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({ component, label = 'Ema
                     </Box>
                     <Box sx={{ width: '70%' }}>
                         <TextField
+                            color='secondary'
+                            focused={foucused}
+                            placeholder={placeholder}
                             error={!!errType}
                             helperText={helperText}
                             id='outlined-basic'
                             label={label}
-                            variant='outlined'
                             fullWidth
+                            variant='outlined'
                             type={type === 'password' ? (showPwd ? 'text' : 'password') : type === 'tel' ? 'number' : type}
                             {...field}
                             InputProps={{
