@@ -61,7 +61,10 @@ const SignIn = () => {
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={6}>
                                 <InputWithLabel name='password' form={form} label='Password' type='password' rules={{ required: true }} />
-                                <ButtonBase sx={{ color: '#A54CE5', fontSize: '14px', fontWeight: 400, float: 'right', mt: 5 }}>
+                                <ButtonBase
+                                    onClick={() => router.push('/reset-password')}
+                                    sx={{ color: '#A54CE5', fontSize: '14px', fontWeight: 400, float: 'right', mt: 5 }}
+                                >
                                     Forgot Password?
                                 </ButtonBase>
                             </Grid>
