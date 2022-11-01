@@ -12,13 +12,13 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     const MENUBAR = [
-        { icon: 'icons/navbar/dashboard.png', title: 'Dashboard', href: '/' },
-        { icon: 'icons/navbar/account.png', title: 'Account', href: '/account' },
-        { icon: 'icons/navbar/client-account.png', title: 'Client Account', href: '/client-account' },
-        { icon: 'icons/navbar/reconcile.png', title: 'Reconcile', href: '/reconcile' },
-        { icon: 'icons/navbar/game.png', title: 'Games', href: '/game' },
+        { icon: '/icons/navbar/dashboard.png', title: 'Dashboard', href: '/' },
+        { icon: '/icons/navbar/account.png', title: 'Account', href: '/account' },
+        { icon: '/icons/navbar/client-account.png', title: 'Client Account', href: '/client-account' },
+        { icon: '/icons/navbar/reconcile.png', title: 'Reconcile', href: '/reconcile' },
+        { icon: '/icons/navbar/game.png', title: 'Games', href: '/game' },
         {
-            icon: 'icons/navbar/tournament.png',
+            icon: '/icons/navbar/tournament.png',
             title: 'Tournament',
             href: '/tournament',
             dropdownList: [
@@ -28,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             ]
         },
         {
-            icon: 'icons/navbar/content.png',
+            icon: '/icons/navbar/content.png',
             title: 'Content',
             href: '/content',
             dropdownList: [
@@ -37,14 +37,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             ]
         },
         {
-            icon: 'icons/navbar/setting.png',
+            icon: '/icons/navbar/setting.png',
             title: 'Settings',
-            href: '/setting',
+            href: '/settings',
             dropdownList: [
-                { title: 'Exchange Rates', href: '/setting' },
-                { title: 'Location', href: '/setting' },
-                { title: 'Product Prizes', href: '/setting' },
-                { title: 'Roles', href: '/setting' }
+                { title: 'Exchange Rates', href: '/settings' },
+                { title: 'Location', href: '/settings' },
+                { title: 'Product Prizes', href: '/settings/product-prizes' },
+                { title: 'Roles', href: '/settings' }
             ]
         }
     ];
