@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { Box, Typography, TextField, IconButton, ButtonBase } from '@mui/material';
+import { Box, Typography, TextField, IconButton, ButtonBase, MenuItem } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -7,14 +7,29 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface InputWithLabelProps {
     label?: string;
+    labelField?: string;
+    placeHolder?: string;
     form?: any;
     name: string;
     type?: 'text' | 'number' | 'password' | 'email' | 'tel';
+    isSelectType?: boolean;
     rules?: any;
     component?: any;
+    listSelect?: any;
 }
 
-const InputWithLabel: React.FC<InputWithLabelProps> = ({ component, label = 'Email address', form, name, rules, type }) => {
+const InputWithLabel: React.FC<InputWithLabelProps> = ({
+    component,
+    label = 'Email address',
+    labelField,
+    placeHolder,
+    form,
+    name,
+    rules,
+    type,
+    isSelectType,
+    listSelect
+}) => {
     const {
         formState: { errors }
     } = form;
@@ -49,7 +64,9 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({ component, label = 'Ema
                             error={!!errType}
                             helperText={helperText}
                             id='outlined-basic'
-                            label={label}
+                            label={labelField}
+                            select={isSelectType}
+                            placeholder={placeHolder}
                             variant='outlined'
                             fullWidth
                             type={type === 'password' ? (showPwd ? 'text' : 'password') : type === 'tel' ? 'number' : type}
@@ -81,7 +98,17 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({ component, label = 'Ema
                                     )
                             }}
                             {...field}
-                        />
+                        >
+                            {isSelectType ? (
+                                listSelect?.map((item: any) => (
+                                    <MenuItem key={item.value} value={item.value}>
+                                        {item.label}
+                                    </MenuItem>
+                                ))
+                            ) : (
+                                <Box />
+                            )}
+                        </TextField>
                     </Box>
                 </Box>
             )}
