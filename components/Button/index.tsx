@@ -26,7 +26,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 }) => {
     return (
         <ButtonBase onClick={onClick} sx={{ padding, border, backgroundColor, color, width, height, borderRadius }}>
-            <Typography sx={{ textTransform: 'uppercase' }}>{title}</Typography>
+            <Typography sx={{ textTransform: 'uppercase', fontWeight: 600 }}>{title}</Typography>
         </ButtonBase>
     );
 };

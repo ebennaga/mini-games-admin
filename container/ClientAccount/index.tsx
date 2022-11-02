@@ -24,22 +24,22 @@ import { useForm } from 'react-hook-form';
 import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import CheckboxController from 'components/Checkbox';
-import CreateAccount from './CreateAccount';
-import DeleteAccDialog from './DeleteAccDialog';
+import CreateAccount from '../Account/CreateAccount';
+import DeleteAccDialog from '../Account/DeleteAccDialog';
 
 const AccountContainer = () => {
     const dummy = [
-        { id: 1, name: 'Rinto', email: 'test@abc.com', isActive: true },
-        { id: 2, name: 'Arya', email: 'test@abc.com', isActive: false },
-        { id: 3, name: 'Eben', email: 'test@abc.com', isActive: true },
-        { id: 4, name: 'Amang', email: 'test@abc.com', isActive: false },
-        { id: 5, name: 'Suwardi', email: 'test@abc.com', isActive: false },
-        { id: 6, name: 'Saitama', email: 'test@abc.com', isActive: true },
-        { id: 7, name: 'Sasukekyun', email: 'test@abc.com', isActive: true },
-        { id: 8, name: 'Narto', email: 'test@abc.com', isActive: false },
-        { id: 9, name: 'Ed Sheeran', email: 'test@abc.com', isActive: true },
-        { id: 10, name: 'Tulus', email: 'test@abc.com', isActive: false },
-        { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', isActive: false }
+        { id: 1, name: 'Rinto', email: 'test@abc.com', isActive: true }
+        // { id: 2, name: 'Arya', email: 'test@abc.com', isActive: false },
+        // { id: 3, name: 'Eben', email: 'test@abc.com', isActive: true },
+        // { id: 4, name: 'Amang', email: 'test@abc.com', isActive: false },
+        // { id: 5, name: 'Suwardi', email: 'test@abc.com', isActive: false },
+        // { id: 6, name: 'Saitama', email: 'test@abc.com', isActive: true },
+        // { id: 7, name: 'Sasukekyun', email: 'test@abc.com', isActive: true },
+        // { id: 8, name: 'Narto', email: 'test@abc.com', isActive: false },
+        // { id: 9, name: 'Ed Sheeran', email: 'test@abc.com', isActive: true },
+        // { id: 10, name: 'Tulus', email: 'test@abc.com', isActive: false },
+        // { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', isActive: false }
     ];
     const form = useForm({
         mode: 'all',
@@ -251,7 +251,7 @@ const AccountContainer = () => {
                                         backgroundColor='white'
                                         color='#A54CE5'
                                         border='1px solid #A54CE5
-                                '
+                              '
                                     />
                                 </Box>
                             </Paper>
