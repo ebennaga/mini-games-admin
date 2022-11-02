@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Layout from 'components/Layout';
 
-const SignUpContainer = dynamic(() => import('containers/SignUp'));
+const ResetPasswordConfirmationContainer = dynamic(() => import('containers/ResetPasswordConfirmation'));
 
 const Page = () => {
     return (
@@ -14,7 +14,7 @@ const Page = () => {
                 <link rel='icon' href='/favicon.ico' />
             </Head>
             <Layout isUserInfo={false}>
-                <SignUpContainer />
+                <ResetPasswordConfirmationContainer />
             </Layout>
         </>
     );

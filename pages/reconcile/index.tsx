@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Layout from 'components/Layout';
 
-const SignUpContainer = dynamic(() => import('containers/SignUp'));
+const ReconCileContainer = dynamic(() => import('containers/Reconcile'));
 
 const Page = () => {
     return (
@@ -13,8 +13,8 @@ const Page = () => {
                 <meta name='description' content='Sign Up to be admin' />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
-            <Layout isUserInfo={false}>
-                <SignUpContainer />
+            <Layout>
+                <ReconCileContainer />
             </Layout>
         </>
     );
