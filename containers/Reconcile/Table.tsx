@@ -11,7 +11,7 @@ const Table: React.FC<ITable> = ({ dataTable }) => {
             <Grid item container xs={12} sx={{ fontSize: '14px', fontWeight: 600, background: '#F0F0F0' }}>
                 <Grid item container xs={4}>
                     <Grid item container xs={12}>
-                        <Grid item xs={2} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                        <Grid item xs={2} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)' display='flex' justifyContent='center'>
                             No.
                         </Grid>
                         <Grid item container xs={10}>
@@ -66,9 +66,9 @@ const Table: React.FC<ITable> = ({ dataTable }) => {
                                     xs={2}
                                     padding='12px'
                                     border='1px solid rgba(0,0,0,0.2)'
-                                    sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
+                                    sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                 >
-                                    {index + 1}
+                                    {index + 1}.
                                 </Grid>
                                 <Grid item container xs={10}>
                                     <Grid
