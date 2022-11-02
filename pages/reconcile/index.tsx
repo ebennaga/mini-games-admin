@@ -9,7 +9,7 @@ const Page = () => {
     return (
         <>
             <Head>
-                <title>Sign Up | Prize Play Admin</title>
+                <title>Reconcile | Prize Play Admin</title>
                 <meta name='description' content='Sign Up to be admin' />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
