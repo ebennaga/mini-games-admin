@@ -3,8 +3,10 @@ import { Container, Box, Typography, ButtonBase, Paper } from '@mui/material';
 import Search from 'components/Search';
 import { useForm } from 'react-hook-form';
 import TableExchange from 'components/Table/TableExchange';
+import { useRouter } from 'next/router';
 
 const ExchangeRates = () => {
+    const router = useRouter();
     const handleSearch = async () => {
         console.log('done');
     };
@@ -25,6 +27,7 @@ const ExchangeRates = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, alignItems: 'center', ml: 2, direction: 'row' }}>
                         <Search name='search' form={form} placeholder='search by coins' onSubmit={handleSearch} />
                         <ButtonBase
+                            onClick={() => router.push('/exchange-rates-add')}
                             sx={{
                                 width: '121px',
                                 height: '36px',

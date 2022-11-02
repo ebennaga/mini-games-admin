@@ -40,7 +40,7 @@ const TableExchange = () => {
             <Table sx={{ minWidth: 650 }} aria-label='customized table'>
                 <TableHead sx={{ backgroundColor: '#E0E0E0' }}>
                     <TableRow>
-                        <TableCell>Dessert (100g serving)</TableCell>
+                        <TableCell>No</TableCell>
                         <TableCell align='right'>Coins</TableCell>
                         <TableCell align='right'>IDR&nbsp;(g)</TableCell>
                         <TableCell align='right'>Effective Date&nbsp;(g)</TableCell>
@@ -48,10 +48,10 @@ const TableExchange = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
+                    {rows.map((row, index: any) => (
                         <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                             <TableCell component='th' scope='row'>
-                                {row.name}
+                                {index + 1}
                             </TableCell>
                             <TableCell align='right'>{row.calories}</TableCell>
                             <TableCell align='right'>{row.fat}</TableCell>
