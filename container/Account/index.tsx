@@ -29,7 +29,6 @@ import { useForm } from 'react-hook-form';
 import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete, CheckBox } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import CheckboxController from 'components/Checkbox';
-import { FORMERR } from 'dns';
 import CreateAccount from './CreateAccount';
 import DeleteAccDialog from './DeleteAccDialog';
 
@@ -47,6 +46,7 @@ const AccountContainer = () => {
         { id: 10, name: 'Tulus', email: 'test@abc.com', isActive: false },
         { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', isActive: false }
     ];
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -59,6 +59,7 @@ const AccountContainer = () => {
             checkAll: false
         }
     });
+
     const [openDialog, setOpenDialog] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
@@ -72,8 +73,6 @@ const AccountContainer = () => {
     const [deleted, setDeleted] = useState<number[]>([]);
     const [remove, setRemove] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
-    const [checkEntire, setCheckEntire] = useState(false);
-    const [checkAll, setCheckAll] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
 
@@ -133,18 +132,21 @@ const AccountContainer = () => {
 
     const handleChangeCheckboxAll = (e: any) => {
         form.setValue('checkAll', e.target.checked);
+        const arr: any = [];
         if (e.target.checked) {
             setCheckedObj(checkBoxKeys);
             const checkBox: any = { ...form.watch() };
             [...Array(dummy.length)].forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, e.target.checked);
+                arr.push(idx + 1);
                 if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
                     form.setValue(datas, true);
                 } else {
                     form.setValue(datas, false);
                 }
             });
+            setDeleted(arr);
         } else if (!e.target.checked) {
             setCheckedObj([]);
             const checkBox: any = { ...form.watch() };
@@ -152,6 +154,7 @@ const AccountContainer = () => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, false);
             });
+            setDeleted([]);
         }
     };
 
@@ -390,6 +393,7 @@ const AccountContainer = () => {
                                                         form={form}
                                                         onChange={handleChangeCheckboxAll}
                                                         checked={form.watch('checkAll')}
+                                                        disabled={remove.length === 0}
                                                     />
                                                 }
                                                 label='Action'
@@ -508,6 +512,7 @@ const AccountContainer = () => {
             )}
 
             <DeleteAccDialog
+                form={form}
                 setIsChecked={setIsChecked}
                 setOnDelete={setOnDelete}
                 onDelete={onDelete}

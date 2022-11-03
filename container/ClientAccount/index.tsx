@@ -53,9 +53,11 @@ const AccountContainer = () => {
             name: '',
             email: '',
             role: '0',
-            activeRole: true
+            activeRole: true,
+            checkAll: false
         }
     });
+
     const [openDialog, setOpenDialog] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
@@ -68,7 +70,7 @@ const AccountContainer = () => {
     const [checkedObj, setCheckedObj] = useState<string[]>([]);
     const [deleted, setDeleted] = useState<number[]>([]);
     const [remove, setRemove] = useState<any>([]);
-    const [onDelete, setOnDelete] = React.useState(false);
+    const [onDelete, setOnDelete] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
 
@@ -126,6 +128,34 @@ const AccountContainer = () => {
         }
     };
 
+    const handleChangeCheckboxAll = (e: any) => {
+        form.setValue('checkAll', e.target.checked);
+        const arr: any = [];
+        if (e.target.checked) {
+            setCheckedObj(checkBoxKeys);
+            const checkBox: any = { ...form.watch() };
+            [...Array(dummy.length)].forEach((item: any, idx: number) => {
+                const datas: any = `checkbox${idx + 1}`;
+                form.setValue(datas, e.target.checked);
+                arr.push(idx + 1);
+                if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
+                    form.setValue(datas, true);
+                } else {
+                    form.setValue(datas, false);
+                }
+            });
+            setDeleted(arr);
+        } else if (!e.target.checked) {
+            setCheckedObj([]);
+            const checkBox: any = { ...form.watch() };
+            [...Array(dummy.length)].forEach((item: any, idx: number) => {
+                const datas: any = `checkbox${idx + 1}`;
+                form.setValue(datas, false);
+            });
+            setDeleted([]);
+        }
+    };
+
     const goToNextPage = () => {
         if (currentPage !== pages) {
             setCurrentPage((page) => page + 1);
@@ -156,18 +186,15 @@ const AccountContainer = () => {
     }, [pages, row]);
 
     useEffect(() => {
-        const key = Object.keys(form.watch());
-        key.forEach((item: any) => {
-            if (item.includes('checkbox')) {
-                checkBoxKeys.push(item);
-            }
+        [...Array(dummy.length)].forEach((item: any, idx: number) => {
+            checkBoxKeys.push(`checkbox${idx + 1}`);
         });
-        if (checkedObj.length > 0) {
+        if (checkedObj.length > 0 || form.watch('checkAll')) {
             setIsChecked(true);
         } else {
             setIsChecked(false);
         }
-    }, [form.watch(), checkBoxKeys]);
+    }, [checkBoxKeys, form.watch('checkAll')]);
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -357,7 +384,18 @@ const AccountContainer = () => {
                                             Is Active
                                         </TableCell>
                                         <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                            Action
+                                            <FormControlLabel
+                                                control={
+                                                    <CheckboxController
+                                                        name='action'
+                                                        form={form}
+                                                        onChange={handleChangeCheckboxAll}
+                                                        checked={form.watch('checkAll')}
+                                                        disabled={remove.length === 0}
+                                                    />
+                                                }
+                                                label='Action'
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -412,7 +450,7 @@ const AccountContainer = () => {
                                                         <CheckboxController
                                                             form={form}
                                                             name={`checkbox${item.id}`}
-                                                            checked={form.watch(check)}
+                                                            checked={!!form.watch(check)}
                                                             onChange={(e: any) => handleChangeChekcbox(e, `checkbox${item.id}`, item.id)}
                                                         />
                                                     </TableCell>
@@ -470,7 +508,9 @@ const AccountContainer = () => {
                     </Box>
                 </Box>
             )}
+
             <DeleteAccDialog
+                form={form}
                 setIsChecked={setIsChecked}
                 setOnDelete={setOnDelete}
                 onDelete={onDelete}

@@ -7,10 +7,17 @@ interface CheckboxControllerProps {
     form: any;
     onChange: any;
     checked: boolean;
+    disabled?: boolean;
 }
 
-const CheckboxController: React.FC<CheckboxControllerProps> = ({ name, form, onChange, checked }) => {
-    return <Controller name={name} control={form.control} render={() => <Checkbox onChange={onChange} checked={checked} />} />;
+const CheckboxController: React.FC<CheckboxControllerProps> = ({ name, form, onChange, checked, disabled }) => {
+    return (
+        <Controller
+            name={name}
+            control={form.control}
+            render={() => <Checkbox disabled={disabled} onChange={onChange} checked={checked} />}
+        />
+    );
 };
 
 export default CheckboxController;

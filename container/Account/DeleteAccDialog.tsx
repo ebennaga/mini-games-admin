@@ -11,9 +11,19 @@ interface DeleteAccDialogProps {
     onDelete: boolean;
     setOnDelete: any;
     setIsChecked: any;
+    form: any;
 }
 
-const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({ setIsChecked, setOnDelete, onDelete, handleDelete, open, setOpen, qty }) => {
+const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({
+    setIsChecked,
+    setOnDelete,
+    onDelete,
+    handleDelete,
+    open,
+    setOpen,
+    qty,
+    form
+}) => {
     // const [onDelete, setOnDelete] = React.useState(false);
     return (
         <Dialog open={open} onClose={setOpen}>
@@ -55,6 +65,7 @@ const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({ setIsChecked, setOnDe
                             onClick={() => {
                                 setOpen(!open);
                                 setIsChecked(false);
+                                form.setValue('checkAll', false);
                                 setTimeout(() => {
                                     setOnDelete(!onDelete);
                                 }, 2000);
