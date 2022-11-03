@@ -1,16 +1,20 @@
 import React from 'react';
 import { Box, Typography, IconButton, ButtonBase } from '@mui/material';
-import CustomButton from 'components/Button';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DownloadIcon from '@mui/icons-material/Download';
 import DateResult from './DateResult';
+import DialogFilter from './DialogFilter';
 
 interface HeaderReconcileProps {
     form: any;
     handleGetData: any;
+    dataDate: any;
+    handleDownload: any;
 }
 
-const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData }) => {
+const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, dataDate, handleDownload }) => {
+    const [isOpenFilter, setIsOpenFilter] = React.useState<boolean>(false);
+
     return (
         <Box
             sx={{
@@ -26,19 +30,28 @@ const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData }
                 Additional description if required
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: '30px' }}>
-                <Box display='flex' alignItems='center' gap='25px'>
+                <Box display='flex' alignItems='center' gap='25px' position='relative'>
                     <DateResult minDate={form.watch('minDate')} maxDate={form.watch('maxDate')} />
-                    <CustomButton title='GET DATA' onClick={handleGetData} />
-                    <IconButton>
+                    <ButtonBase
+                        onClick={handleGetData}
+                        sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px' }}
+                    >
+                        GET DATA
+                    </ButtonBase>
+                    <IconButton onClick={() => setIsOpenFilter(!isOpenFilter)}>
                         <FilterListIcon sx={{ fontSize: '34px' }} />
                     </IconButton>
+                    <Box sx={{ position: 'absolute', zIndex: 3, top: '75px', right: '-160px' }}>
+                        <DialogFilter form={form} dataDate={dataDate} open={isOpenFilter} setOpen={setIsOpenFilter} />
+                    </Box>
                 </Box>
                 <ButtonBase
+                    onClick={handleDownload}
                     sx={{
                         borderRadius: '4px',
                         background: '#A54CE5',
                         color: '#fff',
-                        padding: '9px 16px',
+                        padding: '6px 16px',
                         display: 'flex',
                         justifyContent: 'space-between'
                     }}

@@ -108,7 +108,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                                         icon={item.icon}
                                         title={item.title}
                                         isActive={isActive}
-                                        onClick={undefined}
+                                        onClick={() => router.push(item.href)}
                                     />
                                 );
                             })}
@@ -140,7 +140,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                                 </Typography>
                             </Box>
                         </Box>
-                        <Typography component='span' fontSize='16px' sx={{ color: 'rgba(0, 0, 0, 0.87)' }}>
+                        <Typography component='span' fontSize='16px' sx={{ color: 'rgba(0, 0, 0, 0.87)', px: 3 }}>
                             BangLorem
                         </Typography>
                         <Avatar alt='user' src='' sx={{ width: '29px', height: '29px', background: 'rgba(0,0,0,0.54)' }} />
