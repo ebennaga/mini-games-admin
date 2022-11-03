@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, Typography, IconButton, ButtonBase } from '@mui/material';
+import { Box, IconButton, ButtonBase } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DownloadIcon from '@mui/icons-material/Download';
+import HeaderChildren from 'components/HeaderChildren';
 import DateResult from './DateResult';
 import DialogFilter from './DialogFilter';
 
@@ -16,19 +17,7 @@ const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, 
     const [isOpenFilter, setIsOpenFilter] = React.useState<boolean>(false);
 
     return (
-        <Box
-            sx={{
-                boxShadow: '0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.12)',
-                padding: '16px',
-                borderRadius: '4px'
-            }}
-        >
-            <Typography component='h1' fontSize='24px' fontWeight={400}>
-                Reconcile
-            </Typography>
-            <Typography component='p' fontSize='14px' fontWeight={400} sx={{ color: 'rgba(0, 0, 0, 0.6)' }}>
-                Additional description if required
-            </Typography>
+        <HeaderChildren title='Reconcile' subTitle='Additional description if required'>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: '30px' }}>
                 <Box display='flex' alignItems='center' gap='25px' position='relative'>
                     <DateResult minDate={form.watch('minDate')} maxDate={form.watch('maxDate')} />
@@ -60,7 +49,7 @@ const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, 
                     <span>DOWNLOAD EXCEL</span>
                 </ButtonBase>
             </Box>
-        </Box>
+        </HeaderChildren>
     );
 };
 
