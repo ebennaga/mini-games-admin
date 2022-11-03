@@ -6,7 +6,7 @@ interface CheckboxControllerProps {
     name: string;
     form: any;
     onChange: any;
-    checked: any;
+    checked: boolean;
 }
 
 const CheckboxController: React.FC<CheckboxControllerProps> = ({ name, form, onChange, checked }) => {
