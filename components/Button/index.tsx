@@ -10,7 +10,9 @@ interface CustomButtonProps {
     title?: string;
     borderRadius?: string;
     onClick?: any;
-    padding?: string;
+    type?: 'submit' | 'button';
+    isDisable?: boolean;
+    padding?: any;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -22,11 +24,18 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     title = 'submit',
     borderRadius = '4px',
     onClick,
+    type = 'button',
+    isDisable,
     padding = '10px'
 }) => {
     return (
-        <ButtonBase onClick={onClick} sx={{ padding, border, backgroundColor, color, width, height, borderRadius }}>
-            <Typography sx={{ textTransform: 'uppercase', fontWeight: 600 }}>{title}</Typography>
+        <ButtonBase
+            disabled={isDisable}
+            type={type}
+            onClick={onClick}
+            sx={{ border, backgroundColor, color, width, height, borderRadius, padding }}
+        >
+            <Typography sx={{ textTransform: 'uppercase' }}>{title}</Typography>
         </ButtonBase>
     );
 };

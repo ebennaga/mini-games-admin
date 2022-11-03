@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { Box, Typography, TextField, IconButton, ButtonBase } from '@mui/material';
+import { Box, Typography, TextField, IconButton, ButtonBase, MenuItem } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -7,24 +7,31 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface InputWithLabelProps {
     label?: string;
+    labelField?: string;
+    placeHolder?: string;
     form?: any;
     name: string;
     type?: 'text' | 'number' | 'password' | 'email' | 'tel';
+    isSelectType?: boolean;
     rules?: any;
     component?: any;
+    listSelect?: any;
     placeholder?: any;
     foucused?: boolean;
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
-    foucused,
-    placeholder,
     component,
     label = 'Email address',
+    labelField,
+    placeHolder,
     form,
     name,
     rules,
-    type
+    type,
+    isSelectType,
+    listSelect,
+    foucused
 }) => {
     const {
         formState: { errors }
@@ -43,7 +50,10 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
         helperText = type === 'password' ? `Password minimum 6 characters` : `${label} exceed minimum length`;
     } else if (error?.message) {
         helperText = `${label} - ${error.message}`;
+    } else {
+        helperText = error;
     }
+
     return (
         <Controller
             control={form.control}
@@ -59,11 +69,12 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                         <TextField
                             color='secondary'
                             focused={foucused}
-                            placeholder={placeholder}
                             error={!!errType}
                             helperText={helperText}
                             id='outlined-basic'
-                            label={label}
+                            label={labelField}
+                            select={isSelectType}
+                            placeholder={placeHolder}
                             fullWidth
                             variant='outlined'
                             type={type === 'password' ? (showPwd ? 'text' : 'password') : type === 'tel' ? 'number' : type}
@@ -95,7 +106,17 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                                     )
                             }}
                             {...field}
-                        />
+                        >
+                            {isSelectType ? (
+                                listSelect?.map((item: any) => (
+                                    <MenuItem key={item.value} value={item.value}>
+                                        {item.label}
+                                    </MenuItem>
+                                ))
+                            ) : (
+                                <Box />
+                            )}
+                        </TextField>
                     </Box>
                 </Box>
             )}
