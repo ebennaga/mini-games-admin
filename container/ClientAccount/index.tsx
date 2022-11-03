@@ -1,3 +1,7 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable consistent-return */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-unreachable-loop */
 /* eslint-disable no-unused-vars */
 import {
     Typography,
@@ -62,15 +66,16 @@ const AccountContainer = () => {
     const [pages, setPages] = useState(0);
     const [checked, setIsChecked] = useState(false);
     const [checkedObj, setCheckedObj] = useState<string[]>([]);
+    const [deleted, setDeleted] = useState<number[]>([]);
+    const [remove, setRemove] = useState<any>([]);
+    const [onDelete, setOnDelete] = React.useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
-    const [deleted, setDeleted] = useState<number[]>([]);
-    const [remove, setRemove] = useState<number[]>([]);
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
-        return dummy.slice(startIndex, endIndex);
+        return remove.slice(startIndex, endIndex);
     };
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -106,6 +111,19 @@ const AccountContainer = () => {
             }
         });
         setCheckedObj(checkTrue);
+        if (e.target.checked) {
+            setDeleted([...deleted, id]);
+        }
+        if (!e.target.checked) {
+            if (deleted.length > 0) {
+                const filter = deleted.filter((item: any) => {
+                    return id !== item;
+                });
+                setDeleted(filter);
+            } else {
+                setDeleted([]);
+            }
+        }
     };
 
     const goToNextPage = () => {
@@ -120,8 +138,21 @@ const AccountContainer = () => {
         }
     };
 
+    const handleDelete = () => {
+        const filter = remove.filter((item: any) => {
+            return !deleted.includes(item.id);
+        });
+        setRemove(filter);
+        setOnDelete(!onDelete);
+        setCheckedObj([]);
+    };
+
     useEffect(() => {
-        setPages(Math.round(dummy.length / Number(row)));
+        setRemove(dummy);
+    }, []);
+
+    useEffect(() => {
+        setPages(Math.round(remove.length / Number(row)));
     }, [pages, row]);
 
     useEffect(() => {
@@ -416,7 +447,7 @@ const AccountContainer = () => {
                                                 value={row}
                                                 onChange={handleChange}
                                             >
-                                                {[...Array(dummy.length)].map((item: any, idx: number) => (
+                                                {[...Array(remove.length)].map((item: any, idx: number) => (
                                                     <MenuItem key={idx} value={idx + 1}>
                                                         {idx + 1}
                                                     </MenuItem>
@@ -427,7 +458,7 @@ const AccountContainer = () => {
                                 </Box>
                                 <Box sx={{ display: 'flex' }}>
                                     <Typography>
-                                        1-{row} of {dummy.length}
+                                        1-{row} of {remove.length}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', width: '15%', justifyContent: 'space-between' }}>
@@ -439,7 +470,15 @@ const AccountContainer = () => {
                     </Box>
                 </Box>
             )}
-            <DeleteAccDialog open={openDialog} setOpen={setOpenDialog} qty={checkedObj.length} />
+            <DeleteAccDialog
+                setIsChecked={setIsChecked}
+                setOnDelete={setOnDelete}
+                onDelete={onDelete}
+                handleDelete={handleDelete}
+                open={openDialog}
+                setOpen={setOpenDialog}
+                qty={checkedObj.length}
+            />
         </Box>
     );
 };
