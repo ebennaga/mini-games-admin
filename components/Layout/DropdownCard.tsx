@@ -2,6 +2,7 @@ import { Collapse, Box, List, ListItem, ListItemButton, ListItemText, ListItemIc
 import React, { useState } from 'react';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import { useRouter } from 'next/router';
 
 interface DropdownCardProps {
     title: string;
@@ -14,6 +15,7 @@ const DropdownCard: React.FC<DropdownCardProps> = ({ title, listDropdown, icon, 
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const arrIcon = icon.split('.');
     const iconActive = `${arrIcon[0]}-active.${arrIcon[1]}`;
+    const router = useRouter();
 
     return (
         <ListItem
@@ -40,7 +42,11 @@ const DropdownCard: React.FC<DropdownCardProps> = ({ title, listDropdown, icon, 
                 <List component='div' disablePadding>
                     {listDropdown.map((item: any, index: number) => {
                         return (
-                            <ListItemButton key={index} sx={{ p: '10px 0 10px 53px', color: 'black' }}>
+                            <ListItemButton
+                                key={index}
+                                sx={{ p: '10px 0 10px 53px', color: 'black' }}
+                                onClick={() => router.push(item.href)}
+                            >
                                 <ListItemText primary={item.title} sx={{ '& span': { fontSize: '14px' } }} />
                             </ListItemButton>
                         );
