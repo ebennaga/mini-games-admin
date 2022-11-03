@@ -3,7 +3,9 @@ import { Box, IconButton, ButtonBase } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useForm } from 'react-hook-form';
+import InputSearch from 'components/Input/InputSearch';
 import TableGames from './TableGames';
+import DialogFilter from './DialogFilter';
 
 const Games = () => {
     const listTable = [
@@ -57,10 +59,13 @@ const Games = () => {
         }
     ];
 
+    const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
-            dataTable: listTable
+            dataTable: listTable,
+            search: ''
         }
     });
 
@@ -71,11 +76,16 @@ const Games = () => {
         <Box>
             <HeaderChildren title='Games' subTitle='Additional description if required'>
                 <Box mt='27px' display='flex' alignItems='center' justifyContent='space-between'>
-                    <Box display='flex' alignItems='center' gap='38px'>
-                        <Box>Search section</Box>
-                        <IconButton>
+                    <Box display='flex' alignItems='center' gap='38px' position='relative'>
+                        <Box>
+                            <InputSearch form={form} name='search' label='Search' placeholder='Search by tittle, genre, etc.' />
+                        </Box>
+                        <IconButton onClick={() => setOpenDialog(!openDialog)}>
                             <FilterListIcon />
                         </IconButton>
+                        <Box position='absolute' top='60px' left='320px'>
+                            <DialogFilter open={openDialog} setOpen={setOpenDialog} form={form} />
+                        </Box>
                     </Box>
                     <ButtonBase sx={{ padding: '6px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}>
                         CREATE NEW
