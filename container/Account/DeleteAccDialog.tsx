@@ -7,11 +7,14 @@ interface DeleteAccDialogProps {
     open: any;
     setOpen: any;
     qty: any;
-    // isDeleted: boolean;
+    handleDelete: any;
+    onDelete: boolean;
+    setOnDelete: any;
+    setIsChecked: any;
 }
 
-const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({ open, setOpen, qty }) => {
-    const [onDelete, setOnDelete] = React.useState(false);
+const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({ setIsChecked, setOnDelete, onDelete, handleDelete, open, setOpen, qty }) => {
+    // const [onDelete, setOnDelete] = React.useState(false);
     return (
         <Dialog open={open} onClose={setOpen}>
             <Box
@@ -51,6 +54,7 @@ const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({ open, setOpen, qty })
                         <CustomButton
                             onClick={() => {
                                 setOpen(!open);
+                                setIsChecked(false);
                                 setTimeout(() => {
                                     setOnDelete(!onDelete);
                                 }, 2000);
@@ -60,7 +64,7 @@ const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({ open, setOpen, qty })
                         />
                     ) : (
                         <>
-                            <CustomButton title='Remove' onClick={() => setOnDelete(true)} />
+                            <CustomButton title='Remove' onClick={handleDelete} />
                             <CustomButton
                                 onClick={() => setOpen(!open)}
                                 title='Cancel'
