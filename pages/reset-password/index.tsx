@@ -10,7 +10,7 @@ const Page = () => {
         <>
             <Head>
                 <title>Sign Up | Prize Play Admin</title>
-                <meta name='description' content='Sign Up to be admin' />
+                <meta name='description' content='Reset your password admin account' />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
             <Layout isUserInfo={false}>
