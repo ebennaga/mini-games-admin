@@ -16,6 +16,8 @@ interface InputWithLabelProps {
     rules?: any;
     component?: any;
     listSelect?: any;
+    placeholder?: any;
+    foucused?: boolean;
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -28,7 +30,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     rules,
     type,
     isSelectType,
-    listSelect
+    listSelect,
+    foucused
 }) => {
     const {
         formState: { errors }
@@ -64,14 +67,16 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                     </Box>
                     <Box sx={{ width: '70%' }}>
                         <TextField
+                            color='secondary'
+                            focused={foucused}
                             error={!!errType}
                             helperText={helperText}
                             id='outlined-basic'
                             label={labelField}
                             select={isSelectType}
                             placeholder={placeHolder}
-                            variant='outlined'
                             fullWidth
+                            variant='outlined'
                             type={type === 'password' ? (showPwd ? 'text' : 'password') : type === 'tel' ? 'number' : type}
                             {...field}
                             InputProps={{
