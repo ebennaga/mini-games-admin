@@ -6,12 +6,12 @@ interface TableGamesProps {
     name: string;
     form: any;
     onEdit: any;
-    onDelete: any;
+    handleOpenDeleteDialog: any;
     nameRow: string;
     namePage: string;
 }
 
-const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, onDelete, onEdit }) => {
+const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, handleOpenDeleteDialog, onEdit }) => {
     const [dataTable, setDataTable] = React.useState<Array<any>>([...form.watch(name)]);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [isAllChecked, setIsAllChecked] = React.useState<boolean>(false);
@@ -74,7 +74,7 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
 
     return (
         <>
-            {totalChecked ? <BadgeSelected total={totalChecked} onEdit={onEdit} onDelete={onDelete} /> : null}
+            {totalChecked ? <BadgeSelected total={totalChecked} onEdit={onEdit} handleOpenDeleteDialog={handleOpenDeleteDialog} /> : null}
             <TableContainer sx={{ mt: totalChecked ? 0 : '24px' }}>
                 <Table aria-label='Table Games'>
                     <TableHead sx={{ borderTop: '1px solid rgba(0,0,0,0.2)' }}>

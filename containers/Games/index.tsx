@@ -5,6 +5,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { useForm } from 'react-hook-form';
 import InputSearch from 'components/Input/InputSearch';
 import PaginationCard from 'components/PaginationCard';
+import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import TableGames from './TableGames';
 import DialogFilter from './DialogFilter';
 
@@ -116,6 +117,7 @@ const Games = () => {
     ];
 
     const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+    const [openDeleteDialog, setOpendDeleteDialog] = React.useState<boolean>(false);
 
     const form = useForm({
         mode: 'all',
@@ -129,7 +131,14 @@ const Games = () => {
     });
 
     const handleEdit = () => {};
-    const handleDelete = () => {};
+
+    const handleOpenDeleteDialog = () => {
+        setOpendDeleteDialog(true);
+    };
+
+    const handleRemoveGame = () => {
+        setOpendDeleteDialog(false);
+    };
 
     const handleNext = () => {
         const input = form.watch();
@@ -173,7 +182,14 @@ const Games = () => {
                 </Box>
             </HeaderChildren>
             <Box>
-                <TableGames namePage='page' nameRow='row' name='dataTable' form={form} onEdit={handleEdit} onDelete={handleDelete} />
+                <TableGames
+                    namePage='page'
+                    nameRow='row'
+                    name='dataTable'
+                    form={form}
+                    onEdit={handleEdit}
+                    handleOpenDeleteDialog={handleOpenDeleteDialog}
+                />
                 <PaginationCard
                     totalItem={listTable.length}
                     handlePrev={handlePrev}
@@ -183,6 +199,15 @@ const Games = () => {
                     namePage='page'
                 />
             </Box>
+            <DialogConfirmation
+                title='Are you sure remove this games?'
+                subTitle={`${form.watch('dataTable').filter((item: any) => item.isAction).length} Selected`}
+                handleConfirm={handleRemoveGame}
+                open={openDeleteDialog}
+                setOpen={setOpendDeleteDialog}
+                textConfirmButton='REMOVE'
+                textCancelButton='CANCEL'
+            />
         </Box>
     );
 };
