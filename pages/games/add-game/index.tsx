@@ -3,18 +3,18 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Layout from 'components/Layout';
 
-const ResetPasswordContainer = dynamic(() => import('containers/ResetPassword'));
+const AddGamesContainer = dynamic(() => import('containers/AddGame'));
 
 const Page = () => {
     return (
         <>
             <Head>
-                <title>Sign Up | Prize Play Admin</title>
-                <meta name='description' content='Reset your password admin account' />
+                <title>Add Game | Prize Play Admin</title>
+                <meta name='description' content='Add game prize play' />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
-            <Layout isUserInfo={false}>
-                <ResetPasswordContainer />
+            <Layout>
+                <AddGamesContainer />
             </Layout>
         </>
     );

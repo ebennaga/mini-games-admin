@@ -9,8 +9,9 @@ interface InputProps {
     rules: any;
     type?: 'text' | 'number' | 'password' | 'email' | 'tel';
     placeholder: string;
+    isTextArea?: boolean;
 }
-const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder }) => {
+const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder, isTextArea }) => {
     const {
         formState: { errors }
     } = form;
@@ -40,6 +41,8 @@ const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placehold
             render={({ field }) => (
                 <TextField
                     fullWidth
+                    multiline={isTextArea}
+                    rows={isTextArea ? 3 : 1}
                     helperText={helperText}
                     error={!!errType}
                     id={`input-${name}`}

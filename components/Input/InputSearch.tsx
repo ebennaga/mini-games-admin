@@ -7,8 +7,9 @@ interface InputSearchProps {
     form?: any;
     name: any;
     label: string;
+    placeholder?: string;
 }
-const InputSearch: React.FC<InputSearchProps> = ({ name, label = 'Search', form }) => {
+const InputSearch: React.FC<InputSearchProps> = ({ name, label = 'Search', form, placeholder }) => {
     return (
         <Controller
             name={name}
@@ -22,7 +23,7 @@ const InputSearch: React.FC<InputSearchProps> = ({ name, label = 'Search', form 
                     label={label}
                     variant='outlined'
                     color='secondary'
-                    placeholder='Search bt title'
+                    placeholder={placeholder}
                     focused
                     {...field}
                     InputProps={{

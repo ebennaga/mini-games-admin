@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
         { icon: '/icons/navbar/account.png', title: 'Account', href: '/account' },
         { icon: '/icons/navbar/client-account.png', title: 'Client Account', href: '/client-account' },
         { icon: '/icons/navbar/reconcile.png', title: 'Reconcile', href: '/reconcile' },
-        { icon: '/icons/navbar/game.png', title: 'Games', href: '/game' },
+        { icon: '/icons/navbar/game.png', title: 'Games', href: '/games' },
         {
             icon: '/icons/navbar/tournament.png',
             title: 'Tournament',
