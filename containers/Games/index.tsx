@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import InputSearch from 'components/Input/InputSearch';
 import PaginationCard from 'components/PaginationCard';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
+import DialogSuccess from 'components/Dialog/DialogSuccess';
 import TableGames from './TableGames';
 import DialogFilter from './DialogFilter';
 
@@ -118,6 +119,7 @@ const Games = () => {
 
     const [openDialog, setOpenDialog] = React.useState<boolean>(false);
     const [openDeleteDialog, setOpendDeleteDialog] = React.useState<boolean>(false);
+    const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(true);
 
     const form = useForm({
         mode: 'all',
@@ -138,6 +140,7 @@ const Games = () => {
 
     const handleRemoveGame = () => {
         setOpendDeleteDialog(false);
+        setOpenDialogSuccess(true);
     };
 
     const handleNext = () => {
@@ -208,6 +211,7 @@ const Games = () => {
                 textConfirmButton='REMOVE'
                 textCancelButton='CANCEL'
             />
+            <DialogSuccess title='Sucess Remove Account' open={openDialogSuccess} setOpen={setOpenDialogSuccess} />
         </Box>
     );
 };
