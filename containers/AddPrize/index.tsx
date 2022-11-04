@@ -39,7 +39,7 @@ const AddPrize = () => {
             name: '',
             category: '',
             unit: '',
-            qty: 0
+            qty: ''
         }
     });
     const [checked, setChecked] = React.useState([true, false]);
