@@ -7,6 +7,7 @@ import InputSearch from 'components/Input/InputSearch';
 import PaginationCard from 'components/PaginationCard';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import DialogSuccess from 'components/Dialog/DialogSuccess';
+import { useRouter } from 'next/router';
 import TableGames from './TableGames';
 import DialogFilter from './DialogFilter';
 
@@ -119,7 +120,9 @@ const Games = () => {
 
     const [openDialog, setOpenDialog] = React.useState<boolean>(false);
     const [openDeleteDialog, setOpendDeleteDialog] = React.useState<boolean>(false);
-    const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(true);
+    const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(false);
+
+    const router = useRouter();
 
     const form = useForm({
         mode: 'all',
@@ -179,7 +182,10 @@ const Games = () => {
                             />
                         </Box>
                     </Box>
-                    <ButtonBase sx={{ padding: '6px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}>
+                    <ButtonBase
+                        onClick={() => router.push('/games/add-game')}
+                        sx={{ padding: '6px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}
+                    >
                         CREATE NEW
                     </ButtonBase>
                 </Box>
