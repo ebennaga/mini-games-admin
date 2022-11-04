@@ -80,7 +80,6 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSe
                         Genre
                     </Typography>
                     <Select
-                        // multiple
                         fullWidth
                         displayEmpty
                         value={form.watch(nameSelect)}

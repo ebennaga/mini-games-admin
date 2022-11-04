@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import BadgeSelected from 'components/BadgeSelected';
@@ -66,7 +65,6 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
     };
 
     React.useEffect(() => {
-        const value = form.watch(nameRow);
         const page = form.watch(namePage);
         const row = form.watch(nameRow);
         const first = page * row - row;

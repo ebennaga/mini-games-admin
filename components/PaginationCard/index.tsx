@@ -4,7 +4,6 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 interface PaginationCardProps {
-    // handleSelectRow: any;
     totalItem: number;
     handlePrev: any;
     handleNext: any;

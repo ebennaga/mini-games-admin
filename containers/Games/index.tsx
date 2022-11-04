@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, IconButton, ButtonBase } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
