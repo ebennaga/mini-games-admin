@@ -20,7 +20,7 @@ const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLab
         const file: any = e.target.files[0].size;
         const sizeInKB = Math.ceil(file / 1024);
 
-        if (sizeInKB > 1072) {
+        if (sizeInKB > 3072) {
             setErrMessage('File image is to large! Image must be under 3072Kb!');
         } else {
             form.setValue(name, e.target.files[0]);
