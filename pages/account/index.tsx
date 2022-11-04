@@ -3,7 +3,7 @@ import React from 'react';
 import Head from 'next/head';
 import Layout from 'components/Layout';
 
-const AccountContainer = dynamic(() => import('container/Account'), { ssr: false });
+const AccountContainer = dynamic(() => import('containers/Account'), { ssr: false });
 
 const Page = () => {
     return (

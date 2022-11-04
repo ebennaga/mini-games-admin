@@ -19,34 +19,32 @@ import {
     InputLabel,
     FormControlLabel,
     Switch,
-    ButtonBase,
-    Checkbox
+    ButtonBase
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputSearch from 'components/Input/InputSearch';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete, CheckBox } from '@mui/icons-material';
+import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import CheckboxController from 'components/Checkbox';
-import CreateAccount from './CreateAccount';
-import DeleteAccDialog from './DeleteAccDialog';
+import CreateAccount from '../Account/CreateAccount';
+import DeleteAccDialog from '../Account/DeleteAccDialog';
 
 const AccountContainer = () => {
     const dummy = [
-        { id: 1, name: 'Rinto', email: 'test@abc.com', isActive: true },
-        { id: 2, name: 'Arya', email: 'test@abc.com', isActive: false },
-        { id: 3, name: 'Eben', email: 'test@abc.com', isActive: true },
-        { id: 4, name: 'Amang', email: 'test@abc.com', isActive: false },
-        { id: 5, name: 'Suwardi', email: 'test@abc.com', isActive: false },
-        { id: 6, name: 'Saitama', email: 'test@abc.com', isActive: true },
-        { id: 7, name: 'Sasukekyun', email: 'test@abc.com', isActive: true },
-        { id: 8, name: 'Narto', email: 'test@abc.com', isActive: false },
-        { id: 9, name: 'Ed Sheeran', email: 'test@abc.com', isActive: true },
-        { id: 10, name: 'Tulus', email: 'test@abc.com', isActive: false },
-        { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', isActive: false }
+        { id: 1, name: 'Owi-kun', email: 'test@abc.com', isActive: true }
+        // { id: 2, name: 'Arya', email: 'test@abc.com', isActive: false },
+        // { id: 3, name: 'Eben', email: 'test@abc.com', isActive: true },
+        // { id: 4, name: 'Amang', email: 'test@abc.com', isActive: false },
+        // { id: 5, name: 'Suwardi', email: 'test@abc.com', isActive: false },
+        // { id: 6, name: 'Saitama', email: 'test@abc.com', isActive: true },
+        // { id: 7, name: 'Sasukekyun', email: 'test@abc.com', isActive: true },
+        // { id: 8, name: 'Narto', email: 'test@abc.com', isActive: false },
+        // { id: 9, name: 'Ed Sheeran', email: 'test@abc.com', isActive: true },
+        // { id: 10, name: 'Tulus', email: 'test@abc.com', isActive: false },
+        // { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', isActive: false }
     ];
-
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -67,7 +65,7 @@ const AccountContainer = () => {
     const [isActive, setIsActive] = useState('active');
     const [createAcc, setCreateAcc] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pages, setPages] = useState(0);
+    const [pages, setPages] = useState(1);
     const [checked, setIsChecked] = useState(false);
     const [checkedObj, setCheckedObj] = useState<string[]>([]);
     const [deleted, setDeleted] = useState<number[]>([]);
@@ -184,7 +182,7 @@ const AccountContainer = () => {
     }, []);
 
     useEffect(() => {
-        setPages(Math.round(remove.length / Number(row)));
+        setPages(Math.ceil(remove.length / Number(row)));
     }, [pages, row]);
 
     useEffect(() => {
@@ -311,7 +309,7 @@ const AccountContainer = () => {
                                         backgroundColor='white'
                                         color='#A54CE5'
                                         border='1px solid #A54CE5
-                                '
+                              '
                                     />
                                 </Box>
                             </Paper>
@@ -331,7 +329,7 @@ const AccountContainer = () => {
                             }}
                         >
                             <Typography sx={{ fontWeight: 'bold' }}>{checkedObj.length} item selected</Typography>
-                            <Box sx={{ width: '13%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box sx={{ width: '15%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <ButtonBase
                                     sx={{ color: '#A54CE5', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                                 >
