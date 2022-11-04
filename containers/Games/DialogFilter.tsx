@@ -1,14 +1,29 @@
 import React from 'react';
-import { Box, Typography, IconButton, FormControl, RadioGroup, FormControlLabel, Radio, ButtonBase, Grid } from '@mui/material';
+import {
+    Box,
+    Typography,
+    IconButton,
+    FormControl,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+    ButtonBase,
+    Grid,
+    Select,
+    OutlinedInput,
+    MenuItem
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface DialogFilterProps {
     open: boolean;
     setOpen: any;
     form: any;
+    nameSelect: string;
+    dataSelect: any;
 }
 
-const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form }) => {
+const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSelect, dataSelect }) => {
     const radioList = [
         { value: 'all', label: 'All' },
         { value: 'latest', label: 'Latest' },
@@ -18,6 +33,10 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form }) => {
     const handleSubmit = (data: any) => {
         setOpen(false);
         console.log('response', data);
+    };
+
+    const handleChange = (e: any) => {
+        form.setValue(nameSelect, e.target.value);
     };
 
     if (!open) {
@@ -46,12 +65,52 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form }) => {
                     aria-labelledby='radio-filter-time'
                     name='radio-filter'
                     defaultValue='all'
-                    sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5, '& .Mui-checked': { color: '#A54CE5' } }}
+                    sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5, '& .Mui-checked': { color: '#A54CE5 !important' } }}
                 >
                     {radioList.map((item: any) => {
                         return <FormControlLabel key={item.value} value={item.value} control={<Radio />} label={item.label} />;
                     })}
                 </RadioGroup>
+                <Box position='relative'>
+                    <Typography
+                        component='span'
+                        fontSize='12px'
+                        sx={{ background: '#fff', position: 'absolute', top: '-9px', zIndex: 1, left: 14, px: 1 }}
+                    >
+                        Genre
+                    </Typography>
+                    <Select
+                        // multiple
+                        fullWidth
+                        displayEmpty
+                        value={form.watch(nameSelect)}
+                        onChange={handleChange}
+                        input={<OutlinedInput />}
+                        inputProps={{ 'aria-label': 'Without label' }}
+                        sx={{
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#A54CE5'
+                            },
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#A54CE5'
+                            },
+                            '& .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input': {
+                                color: form.watch(nameSelect) ? 'rgba(0, 0, 0,1)' : 'rgba(0, 0, 0, 0.38)'
+                            }
+                        }}
+                    >
+                        <MenuItem sx={{ fontSize: '16px' }} disabled value=''>
+                            Select Genre
+                        </MenuItem>
+                        {dataSelect.map((item: any) => {
+                            return (
+                                <MenuItem key={item.id} sx={{ fontSize: '16px' }} value={item.id}>
+                                    {item.title}
+                                </MenuItem>
+                            );
+                        })}
+                    </Select>
+                </Box>
                 <Grid container spacing={2} mt={0.3}>
                     <Grid item xs={6}>
                         <ButtonBase
