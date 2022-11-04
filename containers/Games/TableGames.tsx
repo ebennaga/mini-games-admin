@@ -1,19 +1,21 @@
 import React from 'react';
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import BadgeSelected from 'components/BadgeSelected';
-import PaginationCard from 'components/PaginationCard';
 
 interface TableGamesProps {
     name: string;
     form: any;
     onEdit: any;
-    onDelete: any;
+    handleOpenDeleteDialog: any;
+    nameRow: string;
+    namePage: string;
 }
 
-const TableGames: React.FC<TableGamesProps> = ({ name, form, onDelete, onEdit }) => {
+const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, handleOpenDeleteDialog, onEdit }) => {
     const [dataTable, setDataTable] = React.useState<Array<any>>([...form.watch(name)]);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [isAllChecked, setIsAllChecked] = React.useState<boolean>(false);
+    const [showTable, setShowTable] = React.useState<any>({ startIndex: null, endIndex: null });
 
     const handleCheck = async (e: React.ChangeEvent<HTMLInputElement>, data: any) => {
         const isChecked = e.target.checked;
@@ -62,9 +64,17 @@ const TableGames: React.FC<TableGamesProps> = ({ name, form, onDelete, onEdit })
         form.setValue(name, [...resArr]);
     };
 
+    React.useEffect(() => {
+        const page = form.watch(namePage);
+        const row = form.watch(nameRow);
+        const first = page * row - row;
+        const last = first + row - 1;
+        setShowTable({ startIndex: first, endIndex: last });
+    }, [form.watch(nameRow), form.watch(namePage)]);
+
     return (
         <>
-            {totalChecked ? <BadgeSelected total={totalChecked} onEdit={onEdit} onDelete={onDelete} /> : null}
+            {totalChecked ? <BadgeSelected total={totalChecked} onEdit={onEdit} handleOpenDeleteDialog={handleOpenDeleteDialog} /> : null}
             <TableContainer sx={{ mt: totalChecked ? 0 : '24px' }}>
                 <Table aria-label='Table Games'>
                     <TableHead sx={{ borderTop: '1px solid rgba(0,0,0,0.2)' }}>
@@ -111,51 +121,55 @@ const TableGames: React.FC<TableGamesProps> = ({ name, form, onDelete, onEdit })
                     <TableBody>
                         {dataTable.map((item: any, index: number) => {
                             return (
-                                <TableRow key={index}>
-                                    <TableCell
-                                        align='center'
-                                        sx={{
-                                            fontWeight: 400,
-                                            fontSize: '16px',
-                                            borderRight: '1px solid rgba(0,0,0,0.2)',
-                                            borderLeft: '1px solid rgba(0,0,0,0.2)'
-                                        }}
-                                    >
-                                        {index + 1}.
-                                    </TableCell>
-                                    <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                        {item.title}
-                                    </TableCell>
-                                    <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                        {item.game_url}
-                                    </TableCell>
-                                    <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                        {item.description}
-                                    </TableCell>
-                                    <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                        {item.game_banner}
-                                    </TableCell>
-                                    <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                        {item.genre}
-                                    </TableCell>
-                                    <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                        <FormControl
-                                            sx={{ '& .css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root.Mui-checked': { color: '#A54CE5' } }}
+                                index >= showTable.startIndex &&
+                                index <= showTable.endIndex && (
+                                    <TableRow key={index}>
+                                        <TableCell
+                                            align='center'
+                                            sx={{
+                                                fontWeight: 400,
+                                                fontSize: '16px',
+                                                borderRight: '1px solid rgba(0,0,0,0.2)',
+                                                borderLeft: '1px solid rgba(0,0,0,0.2)'
+                                            }}
                                         >
-                                            <Checkbox
-                                                checked={!!item.isAction}
-                                                // defaultChecked={item.isAction}
-                                                onChange={(e) => handleCheck(e, item)}
-                                            />
-                                        </FormControl>
-                                    </TableCell>
-                                </TableRow>
+                                            {index + 1}.
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.title}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.game_url}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.description}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.game_banner}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.genre}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            <FormControl
+                                                sx={{
+                                                    '& .css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root.Mui-checked': { color: '#A54CE5' }
+                                                }}
+                                            >
+                                                <Checkbox
+                                                    checked={!!item.isAction}
+                                                    // defaultChecked={item.isAction}
+                                                    onChange={(e) => handleCheck(e, item)}
+                                                />
+                                            </FormControl>
+                                        </TableCell>
+                                    </TableRow>
+                                )
                             );
                         })}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <PaginationCard handleSelectRow={undefined} totalItem={dataTable.length} handlePrev={undefined} handleNext={undefined} />
         </>
     );
 };

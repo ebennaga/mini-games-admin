@@ -4,18 +4,21 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 interface PaginationCardProps {
-    handleSelectRow: any;
     totalItem: number;
     handlePrev: any;
     handleNext: any;
+    form: any;
+    nameRow: string;
+    namePage: string;
 }
 
-const PaginationCard: React.FC<PaginationCardProps> = ({ handleSelectRow, totalItem, handlePrev, handleNext }) => {
-    const [row, setRow] = React.useState<any>(5);
+const PaginationCard: React.FC<PaginationCardProps> = ({ totalItem, handlePrev, handleNext, form, nameRow, namePage }) => {
+    const [row, setRow] = React.useState<any>(form.watch(nameRow) || 5);
 
     const handleRow = (e: SelectChangeEvent) => {
         setRow(e.target.value);
-        handleSelectRow();
+        form.setValue(nameRow, e.target.value);
+        form.setValue(namePage, 1);
     };
 
     const totalPage = Math.ceil(totalItem / row);
@@ -51,7 +54,7 @@ const PaginationCard: React.FC<PaginationCardProps> = ({ handleSelectRow, totalI
                 </Select>
             </FormControl>
             <Typography component='span' fontSize='12px' fontWeight={400} px='33px'>
-                1-{totalPage} of {totalItem}
+                {form.watch(namePage)}-{totalPage} of {totalItem || 1}
             </Typography>
             <IconButton onClick={handlePrev}>
                 <ArrowBackIosIcon sx={{ fontSize: '12px' }} />
