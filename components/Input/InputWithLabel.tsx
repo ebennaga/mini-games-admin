@@ -16,6 +16,7 @@ interface InputWithLabelProps {
     rules?: any;
     component?: any;
     listSelect?: any;
+    isMultiline: boolean;
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -28,7 +29,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     rules,
     type,
     isSelectType,
-    listSelect
+    listSelect,
+    isMultiline
 }) => {
     const {
         formState: { errors }
@@ -37,6 +39,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     const error = errors[name] ? errors[name] : null;
 
     const errType: string = error?.type;
+
+    console.log(`lala ${errType}`);
 
     let helperText: string = '';
     if (errType === 'maxLength') {
@@ -72,6 +76,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                             placeholder={placeHolder}
                             variant='outlined'
                             fullWidth
+                            multiline={isMultiline}
+                            rows={isMultiline ? 3 : 1}
                             type={type === 'password' ? (showPwd ? 'text' : 'password') : type === 'tel' ? 'number' : type}
                             {...field}
                             InputProps={{
