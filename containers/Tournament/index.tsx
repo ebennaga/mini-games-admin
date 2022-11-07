@@ -141,10 +141,15 @@ const TournamentContainer = () => {
             role: '0',
             start: new Date().toISOString().slice(0, 10) || '',
             end: new Date().toISOString().slice(0, 10) || '',
+            startDate: new Date().toISOString().slice(0, 10) || '',
+            endDate: new Date().toISOString().slice(0, 10) || '',
             maxDate: getCurrentDate(),
             title: '',
             startTime: getCurrentTime(),
-            endTime: getCurrentTime()
+            endTime: getCurrentTime(),
+            image: '',
+            fee: 0,
+            pool: 0
         }
     });
 

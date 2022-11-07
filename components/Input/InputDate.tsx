@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, TextField } from '@mui/material';
 import DateRangeIcon from '@mui/icons-material/DateRange';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { KeyboardArrowDown, ArrowDropDown } from '@mui/icons-material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { Controller } from 'react-hook-form';
 
@@ -11,9 +11,10 @@ interface InputDateProps {
     form: any;
     name: string;
     rules?: any;
+    isCreate?: any;
 }
 
-const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules }) => {
+const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, isCreate = false }) => {
     return (
         <Box display='flex' alignItems='center' width='100%' my='15px'>
             {type === 'date' ? <DateRangeIcon sx={{ mr: '-30px' }} /> : <AccessTimeIcon sx={{ mr: '-30px' }} />}
@@ -30,7 +31,17 @@ const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules })
                             label={label}
                             type={type}
                             defaultValue={form.watch(name)}
-                            sx={{ '& input': { pl: '40px' } }}
+                            sx={{
+                                '& input': { pl: '40px' },
+                                '& input[type="date"]::-webkit-inner-spin-button, input[type="date"]::-webkit-calendar-picker-indicator': {
+                                    backgroundColor: 'red',
+                                    opacity: 0
+                                },
+                                '& input[type="time"]::-webkit-inner-spin-button, input[type="time"]::-webkit-calendar-picker-indicator': {
+                                    backgroundColor: 'red',
+                                    opacity: 0
+                                }
+                            }}
                             InputLabelProps={{
                                 shrink: true
                             }}
@@ -39,7 +50,7 @@ const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules })
                     );
                 }}
             />
-            <KeyboardArrowDownIcon sx={{ ml: '-30px' }} />
+            {isCreate ? <ArrowDropDown sx={{ ml: '-32px' }} /> : <KeyboardArrowDown sx={{ ml: '-32px' }} />}
         </Box>
     );
 };
