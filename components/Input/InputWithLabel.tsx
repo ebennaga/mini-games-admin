@@ -19,7 +19,6 @@ interface InputWithLabelProps {
     isMultiline: boolean;
     placeholder?: any;
     foucused?: boolean;
-
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -33,7 +32,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     type,
     isSelectType,
     listSelect,
-    isMultiline
+    isMultiline,
     foucused
 }) => {
     const {
