@@ -1,6 +1,7 @@
 import { TextField } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
+import Image from 'next/image';
 
 interface InputProps {
     form: any;
@@ -9,10 +10,12 @@ interface InputProps {
     rules?: any;
     type?: 'text' | 'number' | 'password' | 'email' | 'tel';
     placeholder: string;
+    isColor?: boolean;
     isTextArea?: boolean;
     borderColor?: string;
+    isCoin?: any;
 }
-const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder, isTextArea, borderColor }) => {
+const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder, isTextArea, isColor, borderColor, isCoin = false }) => {
     const {
         formState: { errors }
     } = form;
@@ -41,6 +44,25 @@ const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placehold
             rules={rules}
             render={({ field }) => (
                 <TextField
+                    sx={{
+                        '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: !error || isColor ? 'rgba(0, 0, 0, 0.28) !important' : ''
+                        },
+                        '& .css-19285mc-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
+                            color: isColor ? 'rgba(0, 0, 0, 0.58) !important' : '#9c27b0',
+                            fontWeight: 700
+                        },
+                        '& .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
+                            color: !error ? 'rgba(0, 0, 0, 0.38) !important' : 'red'
+                        },
+                        '& label': { color: borderColor ? 'rgba(0, 0, 0, 0.9) !important' : '#9c27b0' },
+                        '& fieldset': { borderColor: `${borderColor} !important`, borderWidth: '1px !important' }
+                    }}
+                    InputProps={{
+                        startAdornment: isCoin && (
+                            <Image style={{ marginRight: '10px' }} src='/images/coin.png' alt='picture' width={20} height={20} />
+                        )
+                    }}
                     fullWidth
                     multiline={isTextArea}
                     rows={isTextArea ? 3 : 1}
@@ -53,10 +75,6 @@ const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placehold
                     placeholder={placeholder}
                     focused
                     {...field}
-                    sx={{
-                        '& label': { color: borderColor ? 'rgba(0, 0, 0, 0.9) !important' : '#9c27b0' },
-                        '& fieldset': { borderColor: `${borderColor} !important`, borderWidth: '1px !important' }
-                    }}
                 />
             )}
         />

@@ -58,6 +58,7 @@ const ResetPasswordConfirmation = () => {
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={7}>
                                 <InputWithLabel
+                                    isMultiline={false}
                                     name='password'
                                     form={form}
                                     label='New Password'
@@ -69,6 +70,7 @@ const ResetPasswordConfirmation = () => {
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={7}>
                                 <InputWithLabel
+                                    isMultiline={false}
                                     name='confirmPassword'
                                     form={form}
                                     label='Confirmation New Password'

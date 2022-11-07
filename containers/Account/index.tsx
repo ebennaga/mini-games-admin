@@ -34,8 +34,8 @@ import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
     const dummy = [
-        { id: 1, name: 'Rinto', email: 'test@abc.com', isActive: true },
-        { id: 2, name: 'Arya', email: 'test@abc.com', isActive: false },
+        { id: 1, name: 'Owi-kun', email: 'test@abc.com', isActive: true },
+        { id: 2, name: 'Rinto', email: 'test@abc.com', isActive: false },
         { id: 3, name: 'Eben', email: 'test@abc.com', isActive: true },
         { id: 4, name: 'Amang', email: 'test@abc.com', isActive: false },
         { id: 5, name: 'Suwardi', email: 'test@abc.com', isActive: false },
@@ -67,7 +67,7 @@ const AccountContainer = () => {
     const [isActive, setIsActive] = useState('active');
     const [createAcc, setCreateAcc] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pages, setPages] = useState(0);
+    const [pages, setPages] = useState(1);
     const [checked, setIsChecked] = useState(false);
     const [checkedObj, setCheckedObj] = useState<string[]>([]);
     const [deleted, setDeleted] = useState<number[]>([]);
@@ -184,7 +184,7 @@ const AccountContainer = () => {
     }, []);
 
     useEffect(() => {
-        setPages(Math.round(remove.length / Number(row)));
+        setPages(Math.ceil(remove.length / Number(row)));
     }, [pages, row]);
 
     useEffect(() => {
@@ -331,7 +331,7 @@ const AccountContainer = () => {
                             }}
                         >
                             <Typography sx={{ fontWeight: 'bold' }}>{checkedObj.length} item selected</Typography>
-                            <Box sx={{ width: '15%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box sx={{ width: '13%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <ButtonBase
                                     sx={{ color: '#A54CE5', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                                 >
@@ -496,6 +496,7 @@ const AccountContainer = () => {
                                         </FormControl>
                                     </Box>
                                 </Box>
+                                <Typography>{currentPage}</Typography>
                                 <Box sx={{ display: 'flex' }}>
                                     <Typography>
                                         1-{row} of {remove.length}
