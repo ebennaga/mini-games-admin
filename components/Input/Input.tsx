@@ -3,15 +3,16 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 
 interface InputProps {
-    form?: any;
+    form: any;
     name: any;
     label: string;
-    rules: any;
+    rules?: any;
     type?: 'text' | 'number' | 'password' | 'email' | 'tel';
     placeholder: string;
     isTextArea?: boolean;
+    borderColor?: string;
 }
-const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder, isTextArea }) => {
+const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder, isTextArea, borderColor }) => {
     const {
         formState: { errors }
     } = form;
@@ -52,6 +53,10 @@ const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placehold
                     placeholder={placeholder}
                     focused
                     {...field}
+                    sx={{
+                        '& label': { color: borderColor ? 'rgba(0, 0, 0, 0.9) !important' : '#9c27b0' },
+                        '& fieldset': { borderColor: `${borderColor} !important`, borderWidth: '1px !important' }
+                    }}
                 />
             )}
         />

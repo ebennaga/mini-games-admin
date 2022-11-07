@@ -25,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             href: '/tournament',
             dropdownList: [
                 { title: 'Tournaments', href: '/tournament' },
-                { title: 'Participant Tournament', href: '/tournament' },
+                { title: 'Participant Tournament', href: '/tournament/participant-tournament' },
                 { title: 'Client Tournament', href: '/tournament' }
             ]
         },
