@@ -16,7 +16,7 @@ interface InputDateProps {
 
 const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, isCreate = false }) => {
     return (
-        <Box display='flex' alignItems='center' width='100%' my='15px'>
+        <Box display='flex' alignItems='center' justifyContent='center' width='100%' my='15px'>
             {type === 'date' ? <DateRangeIcon sx={{ mr: '-30px' }} /> : <AccessTimeIcon sx={{ mr: '-30px' }} />}
 
             <Controller

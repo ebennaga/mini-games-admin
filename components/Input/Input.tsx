@@ -4,7 +4,7 @@ import { Controller } from 'react-hook-form';
 import Image from 'next/image';
 
 interface InputProps {
-    form?: any;
+    form: any;
     name: any;
     label: string;
     rules?: any;
@@ -12,9 +12,10 @@ interface InputProps {
     placeholder: string;
     isColor?: boolean;
     isTextArea?: boolean;
+    borderColor?: string;
     isCoin?: any;
 }
-const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder, isTextArea, isColor, isCoin = false }) => {
+const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder, isTextArea, isColor, borderColor, isCoin = false }) => {
     const {
         formState: { errors }
     } = form;
@@ -53,7 +54,9 @@ const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placehold
                         },
                         '& .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
                             color: !error ? 'rgba(0, 0, 0, 0.38) !important' : 'red'
-                        }
+                        },
+                        '& label': { color: borderColor ? 'rgba(0, 0, 0, 0.9) !important' : '#9c27b0' },
+                        '& fieldset': { borderColor: `${borderColor} !important`, borderWidth: '1px !important' }
                     }}
                     InputProps={{
                         startAdornment: isCoin && (

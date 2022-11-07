@@ -5,7 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 interface BadgeSelectedProps {
     total: number;
-    onEdit: any;
+    onEdit?: any;
     handleOpenDeleteDialog: any;
 }
 
@@ -26,9 +26,11 @@ const BadgeSelected: React.FC<BadgeSelectedProps> = ({ total, onEdit, handleOpen
                 {total} items selected
             </Typography>
             <Box>
-                <IconButton onClick={onEdit} sx={{ fontSize: '13px', color: '#A54CE5' }}>
-                    <EditIcon sx={{ mr: '10.24px' }} /> EDIT
-                </IconButton>
+                {onEdit && (
+                    <IconButton onClick={onEdit} sx={{ fontSize: '13px', color: '#A54CE5' }}>
+                        <EditIcon sx={{ mr: '10.24px' }} /> EDIT
+                    </IconButton>
+                )}
                 <IconButton onClick={handleOpenDeleteDialog} sx={{ fontSize: '13px', color: '#A54CE5' }}>
                     <DeleteIcon sx={{ mr: '10.24px' }} /> REMOVE
                 </IconButton>
