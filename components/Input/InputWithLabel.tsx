@@ -16,8 +16,10 @@ interface InputWithLabelProps {
     rules?: any;
     component?: any;
     listSelect?: any;
+    isMultiline: boolean;
     placeholder?: any;
     foucused?: boolean;
+
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -31,6 +33,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     type,
     isSelectType,
     listSelect,
+    isMultiline
     foucused
 }) => {
     const {
@@ -40,6 +43,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     const error = errors[name] ? errors[name] : null;
 
     const errType: string = error?.type;
+
+    console.log(`lala ${errType}`);
 
     let helperText: string = '';
     if (errType === 'maxLength') {
@@ -84,6 +89,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                             select={isSelectType}
                             placeholder={placeHolder}
                             fullWidth
+                            multiline={isMultiline}
+                            rows={isMultiline ? 3 : 1}
                             variant='outlined'
                             type={type === 'password' ? (showPwd ? 'text' : 'password') : type === 'tel' ? 'number' : type}
                             {...field}

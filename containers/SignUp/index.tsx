@@ -60,6 +60,7 @@ const SignUp = () => {
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={7}>
                                 <InputWithLabel
+                                    isMultiline={false}
                                     name='email'
                                     form={form}
                                     label='Email Address'
@@ -71,6 +72,7 @@ const SignUp = () => {
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={7}>
                                 <InputWithLabel
+                                    isMultiline={false}
                                     name='password'
                                     form={form}
                                     label='Password'
@@ -82,6 +84,7 @@ const SignUp = () => {
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={7}>
                                 <InputWithLabel
+                                    isMultiline={false}
                                     name='confirmPassword'
                                     form={form}
                                     label='Confirm Password'
