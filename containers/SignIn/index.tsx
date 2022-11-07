@@ -50,6 +50,7 @@ const SignIn = () => {
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={7}>
                                 <InputWithLabel
+                                    isMultiline={false}
                                     name='email'
                                     form={form}
                                     label='Email Address'
@@ -60,7 +61,14 @@ const SignIn = () => {
                         </Grid>
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={7}>
-                                <InputWithLabel name='password' form={form} label='Password' type='password' rules={{ required: true }} />
+                                <InputWithLabel
+                                    isMultiline={false}
+                                    name='password'
+                                    form={form}
+                                    label='Password'
+                                    type='password'
+                                    rules={{ required: true }}
+                                />
                                 <ButtonBase
                                     onClick={() => router.push('/reset-password')}
                                     sx={{ color: '#A54CE5', fontSize: '14px', fontWeight: 400, float: 'right', mt: 5 }}

@@ -9,49 +9,30 @@ import {
     DialogContentText,
     DialogActions,
     IconButton,
-    RadioGroup,
     FormControl,
-    FormControlLabel,
+    Switch,
+    RadioGroup,
     Radio,
-    InputLabel,
-    InputAdornment,
+    FormControlLabel,
     MenuItem,
-    TextField,
-    OutlinedInput
+    TextField
 } from '@mui/material';
-import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import TitleCard from 'components/Layout/TitleCard';
+import CustomButton from 'components/Button';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CustomButton from 'components/Button';
+import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
+import { alpha, styled } from '@mui/material/styles';
 
 const rows: GridRowsProp = [
     {
         id: '1',
         no: '1',
-        code: 'PC0001',
-        name: 'Mousepad Logitech',
-        category: 'Accessories',
-        uom: 'Pcs',
-        qty: '5',
-        img1: 'https://drivegoogle/image acc_001-2022.Jpeg',
-        img2: 'https://drivegoogle/image acc_002-2022.Jpeg',
-        img3: 'https://drivegoogle/image acc_003-2022.Jpeg',
-        isActive: 'yes',
-        action: 'v'
-    },
-    {
-        id: '2',
-        no: '2',
-        code: 'PC0002',
-        name: 'Mousepad Logitech',
-        category: 'Accessories',
-        uom: 'Pcs',
-        qty: '5',
-        img1: 'https://drivegoogle/image acc_001-2022.Jpeg',
-        img2: 'https://drivegoogle/image acc_002-2022.Jpeg',
-        img3: 'https://drivegoogle/image acc_003-2022.Jpeg',
+        title: 'Info Pre Launch Bonus',
+        img: 'banner_info.jpg',
+        desc: 'Info Mengenai Top up Bonus Prize Play Sebelum Launch',
+        showTo: 'Home',
         isActive: 'yes',
         action: 'v'
     }
@@ -59,44 +40,52 @@ const rows: GridRowsProp = [
 
 const columns: GridColDef[] = [
     { field: 'no', headerName: 'No.', width: 50 },
-    { field: 'code', headerName: 'Product Code', width: 150 },
-    { field: 'name', headerName: 'Product Name', width: 150 },
-    { field: 'category', headerName: 'Product Category', width: 150 },
-    { field: 'uom', headerName: 'UOM', width: 150 },
-    { field: 'qty', headerName: 'Qty', width: 150 },
-    { field: 'img1', headerName: 'Image 1', width: 150 },
-    { field: 'img2', headerName: 'Image 2', width: 150 },
-    { field: 'img3', headerName: 'Image 3', width: 150 },
+    { field: 'title', headerName: 'Title', width: 150 },
+    { field: 'img', headerName: 'Images', width: 150 },
+    { field: 'desc', headerName: 'Description', width: 300 },
+    { field: 'showTo', headerName: 'Show to', width: 150 },
     { field: 'isActive', headerName: 'Is Active', width: 150 },
     { field: 'action', headerName: 'Action', width: 150 }
 ];
-const categoryList = [
+const menuList = [
     {
         value: '1',
-        label: 'Category 1'
+        label: 'Menu 1'
     },
     {
         value: '2',
-        label: 'Category 2'
+        label: 'Menu 2'
     },
     {
         value: '3',
-        label: 'Category 3'
+        label: 'Menu 3'
     },
     {
         value: '4',
-        label: 'Category 4'
+        label: 'Menu 4'
     }
 ];
-const ProductPrizes = () => {
+
+const PurpleSwitch = styled(Switch)(({ theme }) => ({
+    '& .MuiSwitch-switchBase.Mui-checked': {
+        color: '#9C27B0',
+        '&:hover': {
+            backgroundColor: alpha('#9C27B0', theme.palette.action.hoverOpacity)
+        }
+    },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+        backgroundColor: '#9C27B0'
+    }
+}));
+const Banner = () => {
     const [hidden, setHidden] = React.useState(false);
     const [numberSelected, setNumberSelected] = React.useState(0);
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
-    const [category, setCategory] = React.useState('1');
+    const [menu, setMenu] = React.useState('1');
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCategory(event.target.value);
+        setMenu(event.target.value);
     };
     const handleDialog = (value: boolean) => {
         setOpenFilter(value);
@@ -110,7 +99,7 @@ const ProductPrizes = () => {
                 aria-describedby='alert-dialog-description'
             >
                 <DialogTitle sx={{ m: 1, display: 'flex', justifyContent: 'center' }} id='alert-dialog-title'>
-                    Are you sure remove this prizes ?
+                    Are you sure remove this banner ?
                 </DialogTitle>
                 <DialogContent sx={{ m: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <DialogContentText id='alert-dialog-description'>{numberSelected} items selected</DialogContentText>
@@ -127,6 +116,67 @@ const ProductPrizes = () => {
                     />
                 </DialogActions>
             </Dialog>
+            <TitleCard
+                onConfirm={(value: boolean) => handleDialog(value)}
+                title='Banner'
+                subtitle='Addtional description if required'
+                isSearchExist
+                placeholderSeacrhText='Search by tittle, images, etc.'
+                href='/banner/add-banner'
+            />
+            {hidden && (
+                <Box sx={{ mx: 1, my: 3, padding: 2, background: '#F4F1FF' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Typography sx={{ color: 'black', fontWeight: 500, fontSize: '14px' }}>{numberSelected} items selected</Typography>
+                        <Box sx={{ display: 'flex' }}>
+                            <ButtonBase sx={{ color: '#A54CE5', m: 1 }}>
+                                <ModeEditIcon />
+                                <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>EDIT</Typography>
+                            </ButtonBase>
+                            <ButtonBase sx={{ color: '#A54CE5', m: 1 }} onClick={() => setOpenRemove(true)}>
+                                <DeleteIcon />
+                                <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>REMOVE</Typography>
+                            </ButtonBase>
+                        </Box>
+                    </Box>
+                </Box>
+            )}
+            <Box sx={{ width: '100%' }}>
+                <Box sx={{ display: 'flex', height: '100%' }}>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <DataGrid
+                            autoHeight
+                            checkboxSelection
+                            onSelectionModelChange={(e) => {
+                                setNumberSelected(e.length);
+                                if (e.length > 0) {
+                                    setHidden(true);
+                                } else {
+                                    setHidden(false);
+                                }
+                            }}
+                            sx={{
+                                ml: 1,
+                                mr: 1,
+                                border: '2px solid #E0E0E0',
+                                '& .MuiDataGrid-columnHeaders': {
+                                    backgroundColor: '#F0F0F0',
+                                    // color: 'rgba(255,0,0,0.7)',
+                                    fontSize: '14px',
+                                    fontWeight: 500
+                                },
+                                '& .MuiDataGrid-virtualScrollerRenderZone': {
+                                    '& .MuiDataGrid-row': {
+                                        backgroundColor: '#ffff'
+                                    }
+                                }
+                            }}
+                            rows={rows}
+                            columns={columns}
+                        />
+                    </Box>
+                </Box>
+            </Box>
             <Dialog
                 open={openFilter}
                 onClose={() => setOpenFilter(false)}
@@ -199,6 +249,7 @@ const ProductPrizes = () => {
                             />
                         </RadioGroup>
                     </FormControl>
+
                     <FormControl
                         fullWidth
                         sx={{
@@ -206,23 +257,18 @@ const ProductPrizes = () => {
                             marginBottom: '24px'
                         }}
                     >
-                        <InputLabel htmlFor='outlined-adornment-search'>Range Qty</InputLabel>
-                        <OutlinedInput
-                            id='outlined-adornment-search'
-                            startAdornment={<InputAdornment position='start' />}
-                            label='Range Qty'
-                            placeholder='Fill Amount'
-                        />
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <TextField id='outlined-select-currency' select label='Product Category' value={category} onChange={handleChange}>
-                            {categoryList.map((option: any) => (
+                        <TextField id='outlined-select-currency' select label='Show to' value={menu} onChange={handleChange}>
+                            {menuList.map((option: any) => (
                                 <MenuItem key={option.value} value={option.value}>
                                     {option.label}
                                 </MenuItem>
                             ))}
                         </TextField>
                     </FormControl>
+                    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
+                        <Typography sx={{ color: 'rgba(0, 0, 0, 0.6);', fontWeight: 500, fontSize: '16px' }}>Is Active</Typography>
+                        <PurpleSwitch defaultChecked />
+                    </Box>
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 2, mb: 3, mt: 2 }}>
                         <ButtonBase
                             sx={{
@@ -252,69 +298,8 @@ const ProductPrizes = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
-            <TitleCard
-                onConfirm={(value: boolean) => handleDialog(value)}
-                title='Product Prizes'
-                subtitle='Addtional description if required'
-                isSearchExist
-                placeholderSeacrhText='Search by name, category, etc'
-                href='/settings/product-prizes/add-prize'
-            />
-            {hidden && (
-                <Box sx={{ mx: 1, my: 3, padding: 2, background: '#F4F1FF' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Typography sx={{ color: 'black', fontWeight: 500, fontSize: '14px' }}>{numberSelected} items selected</Typography>
-                        <Box sx={{ display: 'flex' }}>
-                            <ButtonBase sx={{ color: '#A54CE5', m: 1 }}>
-                                <ModeEditIcon />
-                                <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>EDIT</Typography>
-                            </ButtonBase>
-                            <ButtonBase sx={{ color: '#A54CE5', m: 1 }} onClick={() => setOpenRemove(true)}>
-                                <DeleteIcon />
-                                <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>REMOVE</Typography>
-                            </ButtonBase>
-                        </Box>
-                    </Box>
-                </Box>
-            )}
-            <Box sx={{ width: '100%' }}>
-                <Box sx={{ display: 'flex', height: '100%' }}>
-                    <Box sx={{ flexGrow: 1 }}>
-                        <DataGrid
-                            autoHeight
-                            checkboxSelection
-                            onSelectionModelChange={(e) => {
-                                setNumberSelected(e.length);
-                                if (e.length > 0) {
-                                    setHidden(true);
-                                } else {
-                                    setHidden(false);
-                                }
-                            }}
-                            sx={{
-                                ml: 1,
-                                mr: 1,
-                                border: '2px solid #E0E0E0',
-                                '& .MuiDataGrid-columnHeaders': {
-                                    backgroundColor: '#F0F0F0',
-                                    // color: 'rgba(255,0,0,0.7)',
-                                    fontSize: '14px',
-                                    fontWeight: 500
-                                },
-                                '& .MuiDataGrid-virtualScrollerRenderZone': {
-                                    '& .MuiDataGrid-row': {
-                                        backgroundColor: '#ffff'
-                                    }
-                                }
-                            }}
-                            rows={rows}
-                            columns={columns}
-                        />
-                    </Box>
-                </Box>
-            </Box>
         </Box>
     );
 };
 
-export default ProductPrizes;
+export default Banner;
