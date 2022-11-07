@@ -37,7 +37,8 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                     <Box sx={{ mt: '30px', width: '30%' }}>
                         <InputWithLabel
                             foucused
-                            placeholder='Max 100 Character'
+                            labelField='Name'
+                            placeHolder='Max 100 Character'
                             name='name'
                             form={form}
                             label='Name'
@@ -47,8 +48,9 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                     </Box>
                     <Box sx={{ mt: '30px', width: '30%' }}>
                         <InputWithLabel
+                            labelField='Email'
                             foucused
-                            placeholder='Max 100 Character'
+                            placeHolder='Max 100 Character'
                             name='email'
                             form={form}
                             label='Email'
