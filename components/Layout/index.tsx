@@ -25,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             href: '/tournament',
             dropdownList: [
                 { title: 'Tournaments', href: '/tournament' },
-                { title: 'Participant Tournament', href: '/tournament' },
+                { title: 'Participant Tournament', href: '/tournament/participant-tournament' },
                 { title: 'Client Tournament', href: '/tournament' }
             ]
         },
@@ -47,7 +47,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                 { title: 'Location', href: '/setting' },
 
                 { title: 'Product Prizes', href: '/settings/product-prizes' },
-                { title: 'Roles', href: '/settings' }
+                { title: 'Roles', href: '/settings/roles' }
             ]
         }
     ];
