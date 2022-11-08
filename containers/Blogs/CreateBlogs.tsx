@@ -20,11 +20,11 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
         console.log('response', data);
     };
     const [isUpload, setIsUpload] = React.useState(false);
+
     React.useEffect(() => {
         if (isEditing) {
             form.setValue('title', datas.blogsTitle);
             form.setValue('date', datas.postedDate);
-            form.setValue('image', datas.image);
             form.setValue('description', datas.description);
         }
         if (!isEditing) {
@@ -34,6 +34,9 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
             form.setValue('description', '');
         }
     }, [form.watch('title'), form.watch('date'), form.watch('image'), form.watch('description')]);
+
+    console.log('images', form.watch('image'));
+    console.log('isEditing', isEditing);
 
     return (
         <Box sx={{}}>
@@ -118,7 +121,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                             <UploadFile sx={{ color: '#A54CE5' }} />
                                         </Box>
                                         <Box>
-                                            <Typography>{form.watch('image')}</Typography>
+                                            <Typography>{datas.image}</Typography>
                                             <Box
                                                 sx={{ display: 'flex', fontWeight: 'bold', gap: '10px', alignItems: 'center', mt: '10px' }}
                                             >
@@ -140,18 +143,12 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                 )}
                             </Grid>
                         </Grid>
-                        {!isUpload && (
+                        {!isUpload && isEditing && (
                             <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                                 <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                                 <Grid item xs={4}>
                                     <Typography sx={{ fontWeight: 'bold', mb: '10px' }}>Preview</Typography>
-                                    <Image
-                                        src='/images/drivegoogleimage_001-2022.png.png'
-                                        width={461}
-                                        height={252}
-                                        alt='previewimage'
-                                        loading='lazy'
-                                    />
+                                    <Image src={`${datas.image}.png`} width={461} height={252} alt='previewimage' loading='lazy' />
                                 </Grid>
                             </Grid>
                         )}
