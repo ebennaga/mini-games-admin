@@ -35,7 +35,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             href: '/content',
             dropdownList: [
                 { title: 'Banner', href: '/banner' },
-                { title: 'Blogs', href: '/banner' }
+                { title: 'Blogs', href: '/blogs' }
             ]
         },
         {

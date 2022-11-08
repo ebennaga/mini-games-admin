@@ -16,7 +16,7 @@ interface InputWithLabelProps {
     rules?: any;
     component?: any;
     listSelect?: any;
-    isMultiline: boolean;
+    isMultiline?: boolean;
     placeholder?: any;
     foucused?: boolean;
 }

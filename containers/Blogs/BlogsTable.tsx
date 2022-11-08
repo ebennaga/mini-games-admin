@@ -2,7 +2,6 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, FormControlLabel } from '@mui/material';
 import CheckboxController from 'components/Checkbox';
 import dateFormat from 'helpers/dateFormat';
-import numberFormat from 'helpers/numberFormat';
 
 interface TournamentTableProps {
     data: any;
@@ -25,37 +24,31 @@ const TornamentTable: React.FC<TournamentTableProps> = ({ data, form, handleChan
                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                             align='left'
                         >
-                            Title
+                            Blogs Title
                         </TableCell>
                         <TableCell
                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                             align='left'
                         >
-                            Start
+                            Posted by
                         </TableCell>
                         <TableCell
                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                             align='left'
                         >
-                            End
+                            Posted date
                         </TableCell>
                         <TableCell
                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                             align='left'
                         >
-                            Games
+                            Image
                         </TableCell>
                         <TableCell
                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                             align='left'
                         >
-                            Registration Fee
-                        </TableCell>
-                        <TableCell
-                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                            align='left'
-                        >
-                            Total Prizes
+                            Description
                         </TableCell>
                         <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
                             <FormControlLabel
@@ -77,35 +70,40 @@ const TornamentTable: React.FC<TournamentTableProps> = ({ data, form, handleChan
                     {data.length > 0 &&
                         data.map((item: any) => {
                             const check: any = `checkbox${item.id}`;
+                            const datas: any = {
+                                id: item.id,
+                                blogsTitle: item.blogsTitle,
+                                postedBy: item.postedBy,
+                                postedDate: dateFormat(item.postedDate),
+                                image: item.image,
+                                description: item.description
+                            };
                             return (
                                 <TableRow key={item.id}>
                                     <TableCell align='center' sx={{ width: '5%' }}>
                                         {item.id}.
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.title}
+                                        {item.blogsTitle}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {dateFormat(item.start)}
+                                        {item.postedBy}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {dateFormat(item.end)}
+                                        {dateFormat(item.postedDate)}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.games}
+                                        {item.image}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.registration} Coins
-                                    </TableCell>
-                                    <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {numberFormat(item.totalPrizes)}
+                                        {item.description}
                                     </TableCell>
                                     <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
                                         <CheckboxController
                                             form={form}
                                             name={`checkbox${item.id}`}
                                             checked={!!form.watch(check)}
-                                            onChange={(e: any) => handleChangeChekcbox(e, `checkbox${item.id}`, item.id)}
+                                            onChange={(e: any) => handleChangeChekcbox(e, `checkbox${item.id}`, item.id, datas)}
                                         />
                                     </TableCell>
                                 </TableRow>
