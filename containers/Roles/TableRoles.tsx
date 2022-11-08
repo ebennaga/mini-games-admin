@@ -20,9 +20,11 @@ interface TableRolesProps {
     form: any;
     name: string;
     nameIdxAppears: string;
+    nameMenuAccess: string;
+    setOpenMenuAccess: any;
 }
 
-const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears }) => {
+const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears, nameMenuAccess, setOpenMenuAccess }) => {
     const [dataTable, setDataTable] = React.useState<Array<any>>(form.watch(name));
     const [isAllChecked, setIsAllChecked] = React.useState<boolean>(false);
     const [showMore, setShowMore] = React.useState<any>({ isOpen: false, id: null });
@@ -70,8 +72,13 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears }) =
         });
     };
 
-    const handleMore = (id: any) => {
-        setShowMore({ isOpen: !showMore.isOpen, id });
+    const handleMore = (data: any) => {
+        setShowMore({ isOpen: !showMore.isOpen, id: data.id });
+        form.setValue(nameMenuAccess, data);
+    };
+
+    const handleMenuAccess = () => {
+        setOpenMenuAccess(true);
     };
 
     return (
@@ -193,7 +200,7 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears }) =
                                             width: '8%'
                                         }}
                                     >
-                                        <IconButton onClick={() => handleMore(item.id)}>
+                                        <IconButton onClick={() => handleMore(item)}>
                                             <MoreVertIcon />
                                         </IconButton>
                                         {showMore.isOpen && showMore.id === item.id && (
@@ -208,6 +215,7 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears }) =
                                                 boxShadow='0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px rgba(0, 0, 0, 0.14), 0px 1px 18px rgba(0, 0, 0, 0.12)'
                                             >
                                                 <ButtonBase
+                                                    onClick={handleMenuAccess}
                                                     sx={{ padding: '6px 14px', borderRadius: '4px', bgcolor: '#A54CE5', color: '#fff' }}
                                                 >
                                                     MENU ACCESS

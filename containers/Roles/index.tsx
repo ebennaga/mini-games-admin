@@ -6,8 +6,11 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import PaginationCard from 'components/PaginationCard';
+import BadgeSelected from 'components/BadgeSelected';
+import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import TableRoles from './TableRoles';
 import FilterRoles from './FilterRoles';
+import DialogMenuAccess from './DialogMenuAccess';
 
 const Roles = () => {
     const dataTable = [
@@ -27,7 +30,27 @@ const Roles = () => {
         { id: 4, title: 'Super Admin' }
     ];
 
+    const dataAccesss = [
+        { isChecked: true, name: 'Dashboard', id: 1 },
+        { isChecked: true, name: 'Blogs', id: 2 },
+        { isChecked: false, name: 'Account', id: 3 },
+        { isChecked: false, name: 'Ecxchanges Rates', id: 4 },
+        { isChecked: false, name: 'Tournament', id: 5 },
+        { isChecked: false, name: 'Location', id: 6 },
+        { isChecked: false, name: 'Participant Tournaments', id: 7 },
+        { isChecked: false, name: 'Product Prizes', id: 8 },
+        { isChecked: false, name: 'Banner', id: 9 },
+        { isChecked: false, name: 'Roles', id: 10 },
+        { isChecked: false, name: 'Reconcile', id: 11 },
+        { isChecked: false, name: 'Games', id: 12 },
+        { isChecked: false, name: 'Client Tournaments', id: 13 },
+        { isChecked: false, name: 'Client Account', id: 14 }
+    ];
+
     const [isDialogFilter, setIsDialogFilter] = React.useState<boolean>(false);
+    const [totalChecked, setTotalChecked] = React.useState<number>(0);
+    const [openDialogConfirm, setOpenDialogConfirm] = React.useState<boolean>(false);
+    const [openMenuAccess, setOpenMenuAccess] = React.useState<boolean>(false);
 
     const router = useRouter();
 
@@ -40,9 +63,13 @@ const Roles = () => {
             filterActive: true,
             row: 5,
             page: 1,
-            idxAppears: { startIndex: 0, endIndex: 5 }
+            idxAppears: { startIndex: 0, endIndex: 5 },
+            menuAccess: {},
+            accessUpdated: ''
         }
     });
+
+    const roleMenuAccess: any = form.watch('menuAccess');
 
     // Event Next page
     const handleNext = () => {
@@ -61,6 +88,23 @@ const Roles = () => {
         }
     };
 
+    // Event Remove Item
+    const handleRemove = () => {
+        setOpenDialogConfirm(false);
+        setTotalChecked(0);
+    };
+
+    // Event edit item
+    const handleEdit = () => {
+        console.log('edit item');
+    };
+
+    // Event update access
+    const handleUpdateAccess = () => {
+        const currentAccess = form.watch('accessUpdated');
+        console.log(currentAccess);
+    };
+
     // Update useForm idxAppears value, while doing pagination events
     React.useEffect(() => {
         const page = form.watch('page');
@@ -72,6 +116,13 @@ const Roles = () => {
         const result = { startIndex, endIndex };
         form.setValue('idxAppears', result);
     }, [form.watch('row'), form.watch('page')]);
+
+    // Read total of checked items
+    React.useEffect(() => {
+        const data = form.watch('dataTable');
+        const countItems = data.filter((item: any) => item.isAction).length;
+        setTotalChecked(countItems);
+    }, [form.watch('dataTable')]);
 
     return (
         <Box>
@@ -94,15 +145,26 @@ const Roles = () => {
                         </Box>
                     </Box>
                     <ButtonBase
-                        onClick={() => router.push('/settings/roles/add-roles')}
+                        onClick={() => router.push('/settings/roles/add-role')}
                         sx={{ padding: '10px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}
                     >
                         CREATE NEW
                     </ButtonBase>
                 </Box>
             </HeaderChildren>
+            {totalChecked ? (
+                <Box mt={5}>
+                    <BadgeSelected total={totalChecked} onEdit={handleEdit} handleOpenDeleteDialog={() => setOpenDialogConfirm(true)} />
+                </Box>
+            ) : null}
             <Box mt='30px'>
-                <TableRoles form={form} name='dataTable' nameIdxAppears='idxAppears' />
+                <TableRoles
+                    form={form}
+                    name='dataTable'
+                    nameIdxAppears='idxAppears'
+                    nameMenuAccess='menuAccess'
+                    setOpenMenuAccess={setOpenMenuAccess}
+                />
                 <PaginationCard
                     totalItem={dataTable.length}
                     handlePrev={handlePrev}
@@ -112,6 +174,24 @@ const Roles = () => {
                     namePage='page'
                 />
             </Box>
+            <DialogConfirmation
+                title='Are you sure romove this role?'
+                subTitle={`${totalChecked} Selected`}
+                handleConfirm={handleRemove}
+                open={openDialogConfirm}
+                setOpen={setOpenDialogConfirm}
+                textConfirmButton='REMOVE'
+                textCancelButton='CANCEL'
+            />
+            <DialogMenuAccess
+                onUpdate={handleUpdateAccess}
+                open={openMenuAccess}
+                setOpen={setOpenMenuAccess}
+                currentRoles={roleMenuAccess.roleName}
+                listAccess={dataAccesss}
+                form={form}
+                name='accessUpdated'
+            />
         </Box>
     );
 };
