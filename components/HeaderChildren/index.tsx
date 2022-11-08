@@ -16,7 +16,7 @@ const HeaderChildren: React.FC<HeaderChildrenProps> = ({ title, subTitle, childr
                 borderRadius: '4px'
             }}
         >
-            <Typography component='h1' fontSize='24px' fontWeight={400}>
+            <Typography component='h1' fontSize='24px' fontWeight={600}>
                 {title}
             </Typography>
             <Typography component='p' fontSize='14px' fontWeight={400} sx={{ color: 'rgba(0, 0, 0, 0.6)' }}>

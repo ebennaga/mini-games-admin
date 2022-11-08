@@ -69,7 +69,7 @@ const Input: React.FC<InputProps> = ({
                         '& .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
                             color: !error ? 'rgba(0, 0, 0, 0.38) !important' : 'red'
                         },
-                        '& label': { color: borderColor ? 'rgba(0, 0, 0, 0.9) !important' : '#9c27b0' },
+                        '& label': { color: borderColor ? 'rgba(0, 0, 0, 0.6) !important' : '#9c27b0' },
                         '& fieldset': { borderColor: `${borderColor} !important`, borderWidth: '1px !important' }
                     }}
                     InputProps={{
