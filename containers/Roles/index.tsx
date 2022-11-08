@@ -5,6 +5,7 @@ import React from 'react';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import PaginationCard from 'components/PaginationCard';
 import TableRoles from './TableRoles';
 import FilterRoles from './FilterRoles';
 
@@ -36,11 +37,41 @@ const Roles = () => {
             search: '',
             dataTable,
             filterSelect: '',
-            filterActive: true
+            filterActive: true,
+            row: 5,
+            page: 1,
+            idxAppears: { startIndex: 0, endIndex: 5 }
         }
     });
 
-    console.log('response', form.watch());
+    // Event Next page
+    const handleNext = () => {
+        const input = form.watch();
+        const totalPage = Math.ceil(dataTable.length / input.row);
+        if (input.page < totalPage) {
+            form.setValue('page', input.page + 1);
+        }
+    };
+
+    // Event Prev Page
+    const handlePrev = () => {
+        const input = form.watch();
+        if (input.page > 1) {
+            form.setValue('page', input.page - 1);
+        }
+    };
+
+    // Update useForm idxAppears value, while doing pagination events
+    React.useEffect(() => {
+        const page = form.watch('page');
+        const row = form.watch('row');
+
+        const startIndex = page * row - row;
+        const endIndex = startIndex + row - 1;
+
+        const result = { startIndex, endIndex };
+        form.setValue('idxAppears', result);
+    }, [form.watch('row'), form.watch('page')]);
 
     return (
         <Box>
@@ -51,7 +82,16 @@ const Roles = () => {
                         <IconButton sx={{ ml: '35px' }} onClick={() => setIsDialogFilter(!isDialogFilter)}>
                             <FilterListIcon />
                         </IconButton>
-                        <FilterRoles form={form} nameSelect='filterSelect' nameActive='filterActive' dataSelect={dataSelect} />
+                        <Box position='absolute' left='315px' top='57px'>
+                            <FilterRoles
+                                form={form}
+                                nameSelect='filterSelect'
+                                nameActive='filterActive'
+                                dataSelect={dataSelect}
+                                open={isDialogFilter}
+                                setOpen={setIsDialogFilter}
+                            />
+                        </Box>
                     </Box>
                     <ButtonBase
                         onClick={() => router.push('/settings/roles/add-roles')}
@@ -62,7 +102,15 @@ const Roles = () => {
                 </Box>
             </HeaderChildren>
             <Box mt='30px'>
-                <TableRoles form={form} name='dataTable' />
+                <TableRoles form={form} name='dataTable' nameIdxAppears='idxAppears' />
+                <PaginationCard
+                    totalItem={dataTable.length}
+                    handlePrev={handlePrev}
+                    handleNext={handleNext}
+                    form={form}
+                    nameRow='row'
+                    namePage='page'
+                />
             </Box>
         </Box>
     );

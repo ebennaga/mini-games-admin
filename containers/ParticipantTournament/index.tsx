@@ -42,7 +42,7 @@ const ParticipantTournament = () => {
             endDateFilter: getCurrentDate(true),
             dataTable,
             idxAppears: { startIndex: 0, endIndex: 5 },
-            rowColumn: 5,
+            row: 5,
             page: 1
         }
     });
@@ -56,7 +56,7 @@ const ParticipantTournament = () => {
     // Event Next page
     const handleNext = () => {
         const input = form.watch();
-        const totalPage = Math.ceil(dataTable.length / input.rowColumn);
+        const totalPage = Math.ceil(dataTable.length / input.row);
         if (input.page < totalPage) {
             form.setValue('page', input.page + 1);
         }
@@ -73,14 +73,14 @@ const ParticipantTournament = () => {
     // Update useForm idxAppears value, while doing pagination events
     React.useEffect(() => {
         const page = form.watch('page');
-        const row = form.watch('rowColumn');
+        const row = form.watch('row');
 
         const startIndex = page * row - row;
         const endIndex = startIndex + row - 1;
 
         const result = { startIndex, endIndex };
         form.setValue('idxAppears', result);
-    }, [form.watch('rowColumn'), form.watch('page')]);
+    }, [form.watch('row'), form.watch('page')]);
 
     // Read total of checked items
     React.useEffect(() => {
@@ -118,7 +118,14 @@ const ParticipantTournament = () => {
             <Box mt={5}>
                 <TableParticipant name='dataTable' form={form} nameIdxAppears='idxAppears' />
             </Box>
-            <PaginationCard totalItem={9} handlePrev={handlePrev} handleNext={handleNext} form={form} nameRow='rowColumn' namePage='page' />
+            <PaginationCard
+                totalItem={dataTable.length}
+                handlePrev={handlePrev}
+                handleNext={handleNext}
+                form={form}
+                nameRow='row'
+                namePage='page'
+            />
             <DialogConfirmation
                 title='Are you sure remove this participant ?'
                 subTitle={`${totalChecked} Selected`}
