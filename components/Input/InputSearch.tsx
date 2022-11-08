@@ -17,7 +17,8 @@ const InputSearch: React.FC<InputSearchProps> = ({ name, label = 'Search', form,
             render={({ field }) => (
                 <TextField
                     sx={{
-                        width: '300px'
+                        width: '300px',
+                        borderStyle: 'solid'
                     }}
                     id='outlined-basic'
                     label={label}

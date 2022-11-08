@@ -1,20 +1,32 @@
 import React from 'react';
-import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid } from '@mui/material';
+import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase } from '@mui/material';
 import InputDate from 'components/Input/InputDate';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputImage from 'components/Input/InputImage';
 import Input from 'components/Input/Input';
+import { Remove, Add } from '@mui/icons-material';
+import CustomButton from 'components/Button';
+import TableAddTournament from './Table';
+import dataTable from './dataSelect';
 
 interface CreateTournamentProps {
     form: any;
+    setCreateTour: any;
+    createTour: any;
 }
 
-const CreateTournament: React.FC<CreateTournamentProps> = ({ form }) => {
+const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, createTour, form }) => {
     const [game, setGame] = React.useState('0');
+    const [table, setTable] = React.useState('0');
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
+
     const handleFiter = (event: SelectChangeEvent) => {
         setGame(event.target.value as string);
+    };
+
+    const handleTable = (event: SelectChangeEvent) => {
+        setTable(event.target.value as string);
     };
 
     const handleSubmit = (data: any) => {
@@ -31,10 +43,10 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ form }) => {
     };
 
     return (
-        <Box sx={{ position: 'relative' }}>
-            <Box sx={{ padding: '40px 25px', height: '100vh' }}>
+        <Box sx={{}}>
+            <Box sx={{ padding: '40px 25px' }}>
                 <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
-                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Add Account</Typography>
+                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Create Tournament</Typography>
                     <Typography sx={{ fontSize: '14px', fontWeight: 400, color: 'rgba(0, 0, 0, 0.6)' }}>
                         Additional description if required
                     </Typography>
@@ -51,7 +63,14 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ form }) => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Input name='title' label='Title' rules={{ required: true }} placeholder='Max 100 Character' form={form} />
+                                <Input
+                                    isColor
+                                    name='title'
+                                    label='Title'
+                                    rules={{ required: true }}
+                                    placeholder='Max 100 Character'
+                                    form={form}
+                                />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
@@ -143,6 +162,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ form }) => {
                             </Grid>
                             <Grid item xs={4}>
                                 <Input
+                                    isColor
                                     rules={{ required: true }}
                                     isCoin
                                     name='fee'
@@ -168,22 +188,71 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ form }) => {
                                         Copy Table
                                     </InputLabel>
                                     <Select
-                                        sx={{ color: game === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                        sx={{ color: table === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
                                         placeholder='Games'
                                         labelId='demo-simple-select-label'
                                         id='demo-simple-select'
-                                        value={game}
+                                        value={table}
                                         label='Copy Table'
-                                        onChange={handleFiter}
+                                        onChange={handleTable}
                                     >
                                         <MenuItem value='0' disabled>
                                             Select Table
                                         </MenuItem>
-                                        <MenuItem value='1'>Hop Up</MenuItem>
-                                        <MenuItem value='2'>Tower Stack</MenuItem>
-                                        <MenuItem value='3'>Rose Dart</MenuItem>
+                                        {dataTable.length > 0 &&
+                                            dataTable.map((item: any) => <MenuItem value={item.id}>{item.label}</MenuItem>)}
                                     </Select>
                                 </FormControl>
+                            </Grid>
+                        </Grid>
+                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
+                            <Grid item xs={8}>
+                                {table !== '0' && (
+                                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                        <TableAddTournament value={table} data={dataTable} />
+                                        <Box
+                                            sx={{
+                                                mt: '20px',
+                                                display: 'flex',
+                                                width: '20%',
+                                                gap: '15px',
+                                                alignSelf: 'flex-end',
+                                                fontWeight: 700
+                                            }}
+                                        >
+                                            <ButtonBase
+                                                sx={{
+                                                    backgroundColor: 'white',
+                                                    padding: '20px',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    color: '#A54CE5',
+                                                    borderRadius: '5px',
+                                                    border: '1px solid #A54CE5',
+                                                    gap: '10px'
+                                                }}
+                                            >
+                                                <Remove />
+                                                <Typography sx={{ fontWeight: 600 }}>DELETE</Typography>
+                                            </ButtonBase>
+                                            <ButtonBase
+                                                sx={{
+                                                    backgroundColor: '#A54CE5',
+                                                    padding: '20px',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    color: 'white',
+                                                    borderRadius: '5px',
+                                                    gap: '10px'
+                                                }}
+                                            >
+                                                <Add />
+                                                <Typography sx={{ fontWeight: 600 }}>ADD</Typography>
+                                            </ButtonBase>
+                                        </Box>
+                                    </Box>
+                                )}
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
@@ -196,81 +265,36 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ form }) => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Input name='pool' label='Prize Pool' rules={{ required: true }} placeholder='30.000' form={form} />
+                                <Input isColor name='pool' label='Prize Pool' rules={{ required: true }} placeholder='30.000' form={form} />
                             </Grid>
                         </Grid>
                     </Grid>
                 </form>
-                {/* <form>
-                    <Box sx={{ mt: '30px', width: '35%' }}>
-                        <InputWithLabel
-                            foucused
-                            labelField='Title'
-                            placeHolder='Max 100 Character'
-                            name='title'
-                            form={form}
-                            label='Tournament Title'
-                            type='text'
-                            rules={{ required: true, maxLength: 100 }}
-                        />
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex', width: '35%', mt: '20px', px: '5px' }}>
-                            <Box sx={{ width: '30%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: '20px' }}>
-                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Duration</Typography>
-                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
-                            </Box>
-                            <Box sx={{ width: '70%', ml: '12px' }}>
-                                <InputDate form={form} name='startDate' label='Start Date' type='date' />
-                            </Box>
-                        </Box>
-                        <Box sx={{ width: '25%', ml: '12px', mt: '20px' }}>
-                            <InputDate form={form} name='endDate' label='End Date' type='date' />
-                        </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex', width: '35%', mt: '20px', px: '5px' }}>
-                            <Box
-                                sx={{ width: '30%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: '20px' }}
-                            />
-                            <Box sx={{ width: '70%', ml: '12px' }}>
-                                <InputDate form={form} name='startTime' label='Start Time' type='time' />
-                            </Box>
-                        </Box>
-                        <Box sx={{ width: '25%', ml: '12px', mt: '20px' }}>
-                            <InputDate form={form} name='endTime' label='End Time' type='time' />
-                        </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', width: '35%', mt: '20px', px: '10px' }}>
-                        <Box sx={{ width: '30%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: '20px' }}>
-                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Games</Typography>
-                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
-                        </Box>
-                        <Box sx={{ width: '70%' }}>
-                            <FormControl fullWidth>
-                                <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
-                                    Games
-                                </InputLabel>
-                                <Select
-                                    sx={{ color: game === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                    placeholder='Games'
-                                    labelId='demo-simple-select-label'
-                                    id='demo-simple-select'
-                                    value={game}
-                                    label='Games'
-                                    onChange={handleFiter}
-                                >
-                                    <MenuItem value='0' disabled>
-                                        Select Game
-                                    </MenuItem>
-                                    <MenuItem value='1'>Hop Up</MenuItem>
-                                    <MenuItem value='2'>Tower Stack</MenuItem>
-                                    <MenuItem value='3'>Rose Dart</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </Box>
-                </form> */}
+            </Box>
+            <Box
+                sx={{
+                    borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+                    display: 'flex',
+                    gap: '20px',
+                    alignItems: 'center',
+                    mt: '100px',
+                    padding: '40px',
+                    width: '100%'
+                }}
+            >
+                <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
+                <CustomButton
+                    onClick={() => {
+                        setCreateTour(!createTour);
+                    }}
+                    padding='10px'
+                    width='193px'
+                    height='59px'
+                    title='cancel'
+                    backgroundColor='white'
+                    color='#A54CE5'
+                    border='1px solid #A54CE5'
+                />
             </Box>
         </Box>
     );
