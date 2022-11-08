@@ -143,7 +143,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                 )}
                             </Grid>
                         </Grid>
-                        {!isUpload && (
+                        {!isUpload && isEditing && (
                             <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                                 <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                                 <Grid item xs={4}>
