@@ -1,174 +1,54 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable consistent-return */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-unreachable-loop */
 /* eslint-disable no-unused-vars */
-import { Typography, Box, Paper, MenuItem, FormControl, Select, ButtonBase } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
+import React from 'react';
+import { Box, Typography, Paper, ButtonBase, FormControl, MenuItem } from '@mui/material';
 import InputSearch from 'components/Input/InputSearch';
-import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FilterList, ArrowBackIos, ArrowForwardIos, Delete } from '@mui/icons-material';
+import { FilterList, Delete, ArrowBackIos, ArrowForwardIos, Edit } from '@mui/icons-material';
 import CustomButton from 'components/Button';
-import { getCurrentDate, getCurrentTime } from 'utils/date';
-import TornamentTable from './TournamentTable';
-import DeleteAccDialog from '../Account/DeleteAccDialog';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { getCurrentDate } from 'utils/date';
+import DeleteAccDialog from 'containers/Account/DeleteAccDialog';
+import CreateBlogs from './CreateBlogs';
+import BlogsTable from './BlogsTable';
 import FilterDrop from './FilterDrop';
-import CreateTournament from './CreateTournament';
+import { dummy } from './dummy';
 
-const TournamentContainer = () => {
-    const dummy = [
-        {
-            id: 1,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 2,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 3,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 4,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 5,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 6,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 7,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 8,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 9,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 10,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 11,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        }
-    ];
-
+const BlogsContainer = () => {
     const form = useForm({
         mode: 'all',
         defaultValues: {
             search: '',
             isActive: false,
+            name: '',
+            email: '',
+            role: '0',
+            acc: 'OWIKUN',
             activeRole: true,
             checkAll: false,
-            titleSearch: '',
-            role: '0',
-            start: new Date().toISOString().slice(0, 10) || '',
-            end: new Date().toISOString().slice(0, 10) || '',
             startDate: new Date().toISOString().slice(0, 10) || '',
             endDate: new Date().toISOString().slice(0, 10) || '',
             maxDate: getCurrentDate(),
-            title: '',
-            startTime: getCurrentTime(),
-            endTime: getCurrentTime(),
-            image: '',
-            fee: 0,
-            pool: 0
+            image: ''
         }
     });
 
-    // const [createTour, setCreateTour] = React.useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [openFilter, setOpenFilter] = useState(false);
-    const [row, setRow] = useState('7');
-    const [role, setRole] = useState('0');
-    const [createTournament, setCreateTournament] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pages, setPages] = useState(1);
-    const [checked, setIsChecked] = useState(false);
-    const [checkedObj, setCheckedObj] = useState<string[]>([]);
-    const [deleted, setDeleted] = useState<number[]>([]);
-    const [remove, setRemove] = useState<any>([]);
-    const [onDelete, setOnDelete] = useState(false);
+    const [openFilter, setOpenFilter] = React.useState(false);
+    const [createBlogs, setCreateBlogs] = React.useState(false);
+    const [role, setRole] = React.useState('0');
     const [selectedValue, setSelectedValue] = React.useState('all');
-    const checkTrue: string[] = [];
+    const [checked, setIsChecked] = React.useState(false);
+    const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
+    const [openDialog, setOpenDialog] = React.useState(false);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [remove, setRemove] = React.useState<any>([]);
+    const [row, setRow] = React.useState(dummy.length);
+    const [deleted, setDeleted] = React.useState<number[]>([]);
+    const [pages, setPages] = React.useState(1);
+    const [onDelete, setOnDelete] = React.useState(false);
+    const [isEditing, setIsEditing] = React.useState(false);
+    const [editData, setEditData] = React.useState(null);
     const checkBoxKeys: string[] = [];
+    const checkTrue: string[] = [];
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -180,28 +60,33 @@ const TournamentContainer = () => {
         setRow(event.target.value as string);
     };
 
-    const handleChangeChekcbox = (e: any, name: any, id: number) => {
-        form.setValue(name, e.target.checked);
-        const checkBox: any = { ...form.watch() };
-        checkBoxKeys.forEach((item: any) => {
-            if (checkBox[item] === true) {
-                checkTrue.push(item);
-            }
+    const handleFiter = (event: SelectChangeEvent) => {
+        setRole(event.target.value as string);
+    };
+
+    const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedValue(event.target.value);
+    };
+
+    const goToNextPage = () => {
+        if (currentPage !== pages) {
+            setCurrentPage((page) => page + 1);
+        }
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage((page) => page - 1);
+        }
+    };
+
+    const handleDelete = () => {
+        const filter = remove.filter((item: any) => {
+            return !deleted.includes(item.id);
         });
-        setCheckedObj(checkTrue);
-        if (e.target.checked) {
-            setDeleted([...deleted, id]);
-        }
-        if (!e.target.checked) {
-            if (deleted.length > 0) {
-                const filter = deleted.filter((item: any) => {
-                    return id !== item;
-                });
-                setDeleted(filter);
-            } else {
-                setDeleted([]);
-            }
-        }
+        setRemove(filter);
+        setOnDelete(!onDelete);
+        setCheckedObj([]);
     };
 
     const handleChangeCheckboxAll = (e: any) => {
@@ -232,40 +117,40 @@ const TournamentContainer = () => {
         }
     };
 
-    const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(event.target.value);
-    };
-
-    const goToNextPage = () => {
-        if (currentPage !== pages) {
-            setCurrentPage((page) => page + 1);
-        }
-    };
-
-    const goToPreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage((page) => page - 1);
-        }
-    };
-
-    const handleDelete = () => {
-        const filter = remove.filter((item: any) => {
-            return !deleted.includes(item.id);
+    const handleChangeCheckbox = (e: any, name: any, id: number, data: any) => {
+        form.setValue(name, e.target.checked);
+        const checkBox: any = { ...form.watch() };
+        checkBoxKeys.forEach((item: any) => {
+            if (checkBox[item] === true) {
+                checkTrue.push(item);
+            }
         });
-        setRemove(filter);
-        setOnDelete(!onDelete);
-        setCheckedObj([]);
+        setCheckedObj(checkTrue);
+        if (e.target.checked) {
+            setDeleted([...deleted, id]);
+        }
+        if (!e.target.checked) {
+            if (deleted.length > 0) {
+                const filter = deleted.filter((item: any) => {
+                    return id !== item;
+                });
+                setDeleted(filter);
+            } else {
+                setDeleted([]);
+            }
+        }
+        setEditData(data);
     };
 
-    useEffect(() => {
+    React.useEffect(() => {
         setRemove(dummy);
     }, []);
 
-    useEffect(() => {
+    React.useEffect(() => {
         setPages(Math.ceil(remove.length / Number(row)));
     }, [pages, row]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         [...Array(dummy.length)].forEach((item: any, idx: number) => {
             checkBoxKeys.push(`checkbox${idx + 1}`);
         });
@@ -278,22 +163,31 @@ const TournamentContainer = () => {
 
     React.useEffect(() => {
         const input = form.watch();
-        if (input.start) {
-            form.setValue('maxDate', input.start);
+        if (input.startDate) {
+            form.setValue('maxDate', input.startDate);
         }
-        if (input.end) {
-            form.setValue('maxDate', input.end);
+        if (input.endDate) {
+            form.setValue('maxDate', input.endDate);
         }
-    }, [form.watch('start'), form.watch('end'), form.watch('startTime'), form.watch('endTime')]);
+    }, [form.watch('startDate'), form.watch('endDate')]);
+
+    console.log(isEditing);
 
     return (
         <Box sx={{ width: '100%' }}>
-            {createTournament ? (
-                <CreateTournament form={form} createTour={createTournament} setCreateTour={setCreateTournament} />
+            {createBlogs ? (
+                <CreateBlogs
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                    setCreateBlog={setCreateBlogs}
+                    createBlog={createBlogs}
+                    form={form}
+                    datas={editData}
+                />
             ) : (
-                <Box sx={{ padding: '0px 25px' }}>
+                <Box sx={{ padding: '35px 25px' }}>
                     <Paper sx={{ width: '100%', height: '170px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
-                        <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Tournament</Typography>
+                        <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Blogs</Typography>
                         <Typography sx={{ fontSize: '14px', color: 'rgba(0, 0, 0, 0.6)', fontWeight: 400 }}>
                             Additional description if required
                         </Typography>
@@ -313,7 +207,7 @@ const TournamentContainer = () => {
                                     gap: '10px'
                                 }}
                             >
-                                <InputSearch placeholder='Search by title' name='search' label='Search' form={form} />
+                                <InputSearch placeholder='Search by posted,date, etc.' name='search' label='Search' form={form} />
                                 <FilterList
                                     onClick={() => {
                                         setOpenFilter(!openFilter);
@@ -323,12 +217,12 @@ const TournamentContainer = () => {
                             </Box>
                             <CustomButton
                                 onClick={() => {
-                                    setCreateTournament(!createTournament);
+                                    setCreateBlogs(!createBlogs);
                                 }}
                                 padding='10px'
                                 width='150px'
                                 height='45px'
-                                title='CREATE NEW'
+                                title='CREATE VIEW'
                                 backgroundColor='#A54CE5
 '
                             />
@@ -336,12 +230,12 @@ const TournamentContainer = () => {
                         {openFilter && (
                             <FilterDrop
                                 selectedValue={selectedValue}
-                                role={role}
                                 form={form}
-                                openFilter={openFilter}
                                 setOpenFilter={setOpenFilter}
+                                openFilter={openFilter}
                                 handleChangeRadio={handleChangeRadio}
-                                handleFiter
+                                role={role}
+                                handleFiter={handleFiter}
                             />
                         )}
                     </Paper>
@@ -359,7 +253,25 @@ const TournamentContainer = () => {
                             }}
                         >
                             <Typography sx={{ fontWeight: 'bold' }}>{checkedObj.length} item selected</Typography>
-                            <Box sx={{ width: '13%', display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+                            <Box sx={{ width: '13%', display: 'flex', justifyContent: 'end', alignItems: 'center', gap: '20px' }}>
+                                {checkedObj.length === 1 && !form.watch('checkAll') && (
+                                    <ButtonBase
+                                        onClick={() => {
+                                            setCreateBlogs(!createBlogs);
+                                            setIsEditing(true);
+                                        }}
+                                        sx={{
+                                            color: '#A54CE5',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '10px'
+                                        }}
+                                    >
+                                        <Edit />
+                                        <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}>EDIT</Typography>
+                                    </ButtonBase>
+                                )}
                                 <ButtonBase
                                     onClick={() => {
                                         setOpenDialog(!openDialog);
@@ -373,12 +285,12 @@ const TournamentContainer = () => {
                         </Box>
                     )}
                     <Box sx={{ mt: '20px' }}>
-                        <TornamentTable
+                        <BlogsTable
                             data={getPaginatedData()}
                             form={form}
                             handleChangeCheckboxAll={handleChangeCheckboxAll}
                             remove={remove}
-                            handleChangeChekcbox={handleChangeChekcbox}
+                            handleChangeChekcbox={handleChangeCheckbox}
                         />
                         <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', mt: '10px' }}>
                             <Box />
@@ -438,10 +350,10 @@ const TournamentContainer = () => {
                 open={openDialog}
                 setOpen={setOpenDialog}
                 qty={checkedObj.length}
-                titleDialog='Are you sure remove this tour?'
+                titleDialog='Are you sure remove this blog?'
             />
         </Box>
     );
 };
 
-export default TournamentContainer;
+export default BlogsContainer;

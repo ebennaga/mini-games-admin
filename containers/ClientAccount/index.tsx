@@ -353,7 +353,9 @@ const AccountContainer = () => {
                             <Table sx={{ width: '100%' }} aria-label='simple table'>
                                 <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
                                     <TableRow>
-                                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
+                                        <TableCell align='center' sx={{ width: '5%', fontWeight: 'bold' }}>
+                                            No.
+                                        </TableCell>
                                         <TableCell
                                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                                             align='left'
@@ -405,7 +407,9 @@ const AccountContainer = () => {
                                             const check: any = `checkbox${item.id}`;
                                             return (
                                                 <TableRow key={item.id}>
-                                                    <TableCell sx={{ width: '5%' }}>{item.id}</TableCell>
+                                                    <TableCell align='center' sx={{ width: '5%' }}>
+                                                        {item.id}.
+                                                    </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='left'
@@ -518,6 +522,7 @@ const AccountContainer = () => {
                 open={openDialog}
                 setOpen={setOpenDialog}
                 qty={checkedObj.length}
+                titleDialog='Are you sure remove this account?'
             />
         </Box>
     );

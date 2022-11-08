@@ -14,8 +14,21 @@ interface InputProps {
     isTextArea?: boolean;
     borderColor?: string;
     isCoin?: any;
+    isDisabled?: any;
 }
-const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placeholder, isTextArea, isColor, borderColor, isCoin = false }) => {
+const Input: React.FC<InputProps> = ({
+    name,
+    label,
+    rules,
+    form,
+    type,
+    placeholder,
+    isTextArea,
+    isColor,
+    borderColor,
+    isDisabled,
+    isCoin = false
+}) => {
     const {
         formState: { errors }
     } = form;
@@ -46,7 +59,8 @@ const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placehold
                 <TextField
                     sx={{
                         '& .MuiOutlinedInput-notchedOutline': {
-                            borderColor: !error || isColor ? 'rgba(0, 0, 0, 0.28) !important' : ''
+                            borderColor: !error || isColor ? 'rgba(0, 0, 0, 0.28) !important' : '',
+                            borderStyle: isDisabled ? 'dashed' : 'solid'
                         },
                         '& .css-19285mc-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
                             color: isColor ? 'rgba(0, 0, 0, 0.58) !important' : '#9c27b0',
@@ -74,6 +88,7 @@ const Input: React.FC<InputProps> = ({ name, label, rules, form, type, placehold
                     color='secondary'
                     placeholder={placeholder}
                     focused
+                    disabled={isDisabled}
                     {...field}
                 />
             )}
