@@ -13,18 +13,44 @@ interface DialogMenuAccessProps {
 
 const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({ onUpdate, open, setOpen, currentRoles, listAccess, form, name }) => {
     const [dataAccesss, setDataAccess] = React.useState<Array<any>>([...listAccess]);
-    const handleChange = (data: any) => {
+    const [dataChanges, setDataChanges] = React.useState<Array<any>>([]);
+
+    const filterArray = async (array: any, obj: any) => {
+        let filterData = array.filter((item: any) => item.id !== obj.id);
+        filterData = [...filterData, obj];
+        filterData.sort((a: any, b: any) => a.id - b.id);
+        return filterData;
+    };
+
+    const handleChange = async (data: any) => {
         let stateData = { ...data };
         if (stateData.isChecked) {
             stateData = { ...stateData, isChecked: false };
         } else {
             stateData = { ...stateData, isChecked: true };
         }
-        let filterData = dataAccesss.filter((item: any) => item.id !== data.id);
-        filterData = [...filterData, stateData];
-        filterData.sort((a: any, b: any) => a.id - b.id);
+
+        const filterData = await filterArray(dataAccesss, stateData);
         setDataAccess(filterData);
-        form.setValue(name, filterData);
+
+        const isSame = listAccess.find(
+            (e: any) => e.name === stateData.name && e.isChecked === stateData.isChecked && e.id === stateData.id
+        );
+
+        if (!isSame) {
+            if (dataChanges.length === 0) {
+                setDataChanges([stateData]);
+                form.setValue(name, [stateData]);
+            } else {
+                const filter = await filterArray(dataChanges, stateData);
+                setDataChanges([...filter]);
+                form.setValue(name, filter);
+            }
+        } else {
+            const filter = dataChanges.filter((item: any) => item.id !== stateData.id);
+            setDataChanges([...filter]);
+            form.setValue(name, filter);
+        }
     };
 
     return (

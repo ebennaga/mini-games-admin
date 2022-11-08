@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import PaginationCard from 'components/PaginationCard';
 import BadgeSelected from 'components/BadgeSelected';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
+import DialogFailed from 'components/Dialog/DialogFailed';
 import TableRoles from './TableRoles';
 import FilterRoles from './FilterRoles';
 import DialogMenuAccess from './DialogMenuAccess';
@@ -51,6 +52,7 @@ const Roles = () => {
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [openDialogConfirm, setOpenDialogConfirm] = React.useState<boolean>(false);
     const [openMenuAccess, setOpenMenuAccess] = React.useState<boolean>(false);
+    const [openDialogFailed, setOpenDialogFailed] = React.useState<boolean>(false);
 
     const router = useRouter();
 
@@ -103,6 +105,8 @@ const Roles = () => {
     const handleUpdateAccess = () => {
         const currentAccess = form.watch('accessUpdated');
         console.log(currentAccess);
+        setOpenMenuAccess(false);
+        setOpenDialogFailed(true);
     };
 
     // Update useForm idxAppears value, while doing pagination events
@@ -191,6 +195,12 @@ const Roles = () => {
                 listAccess={dataAccesss}
                 form={form}
                 name='accessUpdated'
+            />
+            <DialogFailed
+                open={openDialogFailed}
+                setOpen={setOpenDialogFailed}
+                title='Access Denied'
+                subTitle='Cannot delete role! Already used in Account.'
             />
         </Box>
     );
