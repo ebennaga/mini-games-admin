@@ -1,10 +1,10 @@
-const getCurrentDate = () => {
+const getCurrentDate = (isStrip?: boolean) => {
     let today: any = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
     const yyyy = today.getFullYear();
 
-    today = `${dd}/${mm}/${yyyy}`;
+    today = isStrip ? `${yyyy}-${mm}-${dd}` : `${dd}/${mm}/${yyyy}`;
     return String(today);
 };
 

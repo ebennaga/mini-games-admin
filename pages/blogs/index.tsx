@@ -3,7 +3,7 @@ import React from 'react';
 import Head from 'next/head';
 import Layout from 'components/Layout';
 
-const ClientAccountContainer = dynamic(() => import('containers/ClientAccount'), { ssr: false });
+const BlogsContainer = dynamic(() => import('containers/Blogs'), { ssr: false });
 
 const Page = () => {
     return (
@@ -15,7 +15,7 @@ const Page = () => {
             </Head>
 
             <Layout>
-                <ClientAccountContainer />
+                <BlogsContainer />
             </Layout>
         </div>
     );
