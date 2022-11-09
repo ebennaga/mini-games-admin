@@ -11,125 +11,14 @@ import { useForm } from 'react-hook-form';
 import { FilterList, ArrowBackIos, ArrowForwardIos, Delete } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import { getCurrentDate, getCurrentTime } from 'utils/date';
-import TornamentTable from './TournamentTable';
+import Tables from './TournamentTable';
 import DeleteAccDialog from '../Account/DeleteAccDialog';
 import FilterDrop from './FilterDrop';
 import CreateTournament from './CreateTournament';
+import dummy from './dummy';
+import LeaderboardDialog from './LeaderboardTour';
 
 const TournamentContainer = () => {
-    const dummy = [
-        {
-            id: 1,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 2,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 3,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 4,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 5,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 6,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 7,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 8,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 9,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: true,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 10,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        },
-        {
-            id: 11,
-            title: 'Open Tourney Pre Launch Hop up',
-            start: new Date(),
-            end: new Date(),
-            isActive: false,
-            games: 'Hop Up',
-            registration: 20,
-            totalPrizes: 30000
-        }
-    ];
-
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -155,6 +44,7 @@ const TournamentContainer = () => {
 
     // const [createTour, setCreateTour] = React.useState(false);
     const [openDialog, setOpenDialog] = useState(false);
+    const [openDialogTour, setOpenDialogTour] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
     const [role, setRole] = useState('0');
@@ -164,6 +54,7 @@ const TournamentContainer = () => {
     const [checked, setIsChecked] = useState(false);
     const [checkedObj, setCheckedObj] = useState<string[]>([]);
     const [deleted, setDeleted] = useState<number[]>([]);
+    const [leaderboards, setLeaderboards] = useState<any>(null);
     const [remove, setRemove] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
     const [selectedValue, setSelectedValue] = React.useState('all');
@@ -373,7 +264,10 @@ const TournamentContainer = () => {
                         </Box>
                     )}
                     <Box sx={{ mt: '20px' }}>
-                        <TornamentTable
+                        <Tables
+                            setLeaderboards={setLeaderboards}
+                            openDialogTour={openDialogTour}
+                            setOpenDialogTour={setOpenDialogTour}
                             data={getPaginatedData()}
                             form={form}
                             handleChangeCheckboxAll={handleChangeCheckboxAll}
@@ -439,6 +333,13 @@ const TournamentContainer = () => {
                 setOpen={setOpenDialog}
                 qty={checkedObj.length}
                 titleDialog='Are you sure remove this tour?'
+            />
+            <LeaderboardDialog
+                item={leaderboards}
+                open={openDialogTour}
+                setOpenDialog={() => {
+                    setOpenDialogTour(!openDialogTour);
+                }}
             />
         </Box>
     );
