@@ -10,9 +10,10 @@ interface InputImageProps {
     label: string;
     secondaryLabel: string;
     placeholder: string;
+    isLocation?: boolean;
 }
 
-const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLabel, placeholder }) => {
+const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLabel, placeholder, isLocation = false }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
 
     const valueInput = form.watch(name);
@@ -37,7 +38,7 @@ const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLab
                     return (
                         <Box>
                             <input
-                                accept='image/*'
+                                accept='image/*, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
                                 style={{ display: 'none' }}
                                 id='raised-button-file'
                                 multiple
@@ -56,12 +57,29 @@ const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLab
                     );
                 }}
             />
-            <Box sx={{ border: '1px dashed rgba(0, 0, 0, 0.12)', width: '100%', height: '200px', mt: '-200px', padding: '24px 16px' }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: isLocation ? 'center' : '',
+                    alignItems: isLocation ? 'center' : '',
+                    flexDirection: 'column',
+                    border: '1px dashed rgba(0, 0, 0, 0.12)',
+                    width: '100%',
+                    height: '200px',
+                    mt: '-200px',
+                    padding: '24px 16px'
+                }}
+            >
                 <Box
                     width='41px'
                     height='41px'
                     borderRadius='900px'
-                    sx={{ background: 'rgba(165, 76, 229, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    sx={{
+                        background: 'rgba(165, 76, 229, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
                 >
                     <UploadFileIcon sx={{ color: '#A54CE5' }} />
                 </Box>
