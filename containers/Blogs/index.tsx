@@ -222,7 +222,7 @@ const BlogsContainer = () => {
                                 padding='10px'
                                 width='150px'
                                 height='45px'
-                                title='CREATE VIEW'
+                                title='CREATE NEW'
                                 backgroundColor='#A54CE5
 '
                             />
