@@ -203,6 +203,14 @@ const ClientTournament = () => {
     const handleSingleCheckBox = (e: any, name: any, id: number) => {
         if (!e.target.checked) {
             form.setValue('checkedAll', false);
+            if (removeData.length === 1) {
+                setRemoveData([]);
+                setRow('0');
+            } else {
+                setRemoveData([removeData[removeData.findIndex((obj: any) => obj.id !== id)]]);
+            }
+        } else {
+            setRemoveData([...removeData, filteredData[filteredData.findIndex((obj: any) => obj.id === id)]]);
         }
         form.setValue(name, e.target.checked);
         const checkBox: any = { ...form.watch() };
@@ -210,7 +218,6 @@ const ClientTournament = () => {
         checkBoxKeys.forEach((item: any) => {
             if (checkBox[item]) {
                 updateChecked.push(item);
-                setRemoveData([...removeData, filteredData[id - 1]]);
             }
         });
         setCheckedObj(updateChecked);
