@@ -14,6 +14,7 @@ const AddBanner = () => {
         reValidateMode: 'onChange',
         defaultValues: {
             title: '',
+            img: '',
             desc: ''
         }
     });
@@ -46,7 +47,7 @@ const AddBanner = () => {
                         isSelectType={false}
                         isMultiline={false}
                     />
-                    <InputUpload label='Banner Image' />
+                    <InputUpload label='Banner Image' name='img' form={form} rules={rules} />
                     <InputWithLabel
                         label='Description'
                         name='desc'

@@ -258,7 +258,7 @@ const ProductPrizes = () => {
                 subtitle='Addtional description if required'
                 isSearchExist
                 placeholderSeacrhText='Search by name, category, etc'
-                href='/settings/product-prizes/add-prize'
+                href='/add-prize'
             />
             {hidden && (
                 <Box sx={{ mx: 1, my: 3, padding: 2, background: '#F4F1FF' }}>

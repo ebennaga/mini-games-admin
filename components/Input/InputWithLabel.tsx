@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { Box, Typography, TextField, IconButton, ButtonBase, MenuItem } from '@mui/material';
+import { Box, Typography, TextField, IconButton, ButtonBase, MenuItem, InputAdornment } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -16,10 +16,9 @@ interface InputWithLabelProps {
     rules?: any;
     component?: any;
     listSelect?: any;
-    isMultiline: boolean;
+    isMultiline?: boolean;
     placeholder?: any;
     foucused?: boolean;
-
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -33,7 +32,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     type,
     isSelectType,
     listSelect,
-    isMultiline
+    isMultiline = false,
     foucused
 }) => {
     const {
@@ -43,8 +42,6 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     const error = errors[name] ? errors[name] : null;
 
     const errType: string = error?.type;
-
-    console.log(`lala ${errType}`);
 
     let helperText: string = '';
     if (errType === 'maxLength') {
@@ -89,16 +86,22 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                             InputProps={{
                                 id: `input-${name}`,
                                 // disableUnderline: true,
-                                startAdornment: type === 'tel' && (
-                                    <Typography
-                                        variant='subtitle1'
-                                        component='span'
-                                        fontWeight='bold'
-                                        sx={{ paddingRight: 2, borderRight: '1px solid rgba(148, 148, 148, 0.2)' }}
-                                    >
-                                        +62
-                                    </Typography>
-                                ),
+                                startAdornment:
+                                    (type === 'tel' && (
+                                        <Typography
+                                            variant='subtitle1'
+                                            component='span'
+                                            fontWeight='bold'
+                                            sx={{ paddingRight: 2, borderRight: '1px solid rgba(148, 148, 148, 0.2)' }}
+                                        >
+                                            +62
+                                        </Typography>
+                                    )) ||
+                                    (labelField === 'Fee' && (
+                                        <InputAdornment position='start'>
+                                            <img src='/images/coin.png' alt='' />
+                                        </InputAdornment>
+                                    )),
                                 endAdornment:
                                     type === 'password' ? (
                                         <IconButton onClick={() => setShowPwd(!showPwd)}>
