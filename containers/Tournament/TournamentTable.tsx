@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, FormC
 import CheckboxController from 'components/Checkbox';
 import dateFormat from 'helpers/dateFormat';
 import numberFormat from 'helpers/numberFormat';
+import CustomButton from 'components/Button';
 
 interface TournamentTableProps {
     data: any;
@@ -10,9 +11,21 @@ interface TournamentTableProps {
     handleChangeCheckboxAll: any;
     remove: any;
     handleChangeChekcbox: any;
+    setOpenDialogTour: any;
+    openDialogTour: any;
+    setLeaderboards: any;
 }
 
-const TornamentTable: React.FC<TournamentTableProps> = ({ data, form, handleChangeCheckboxAll, remove, handleChangeChekcbox }) => {
+const TornamentTable: React.FC<TournamentTableProps> = ({
+    setOpenDialogTour,
+    data,
+    form,
+    handleChangeCheckboxAll,
+    remove,
+    handleChangeChekcbox,
+    openDialogTour,
+    setLeaderboards
+}) => {
     return (
         <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
             <Table sx={{ width: '100%' }} aria-label='simple table'>
@@ -57,6 +70,12 @@ const TornamentTable: React.FC<TournamentTableProps> = ({ data, form, handleChan
                         >
                             Total Prizes
                         </TableCell>
+                        <TableCell
+                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                            align='center'
+                        >
+                            Leaderboard
+                        </TableCell>
                         <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
                             <FormControlLabel
                                 control={
@@ -99,6 +118,18 @@ const TornamentTable: React.FC<TournamentTableProps> = ({ data, form, handleChan
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {numberFormat(item.totalPrizes)}
+                                    </TableCell>
+                                    <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='center'>
+                                        <CustomButton
+                                            onClick={() => {
+                                                setOpenDialogTour(!openDialogTour);
+                                                setLeaderboards(item);
+                                            }}
+                                            title='view leaderboard'
+                                            width='195px'
+                                            height='45px'
+                                            backgroundColor='#1976D2'
+                                        />
                                     </TableCell>
                                     <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
                                         <CheckboxController
