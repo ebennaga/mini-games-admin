@@ -33,6 +33,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     isSelectType,
     listSelect,
     isMultiline = false,
+    isMultiline,
     foucused
 }) => {
     const {
@@ -69,7 +70,15 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                     </Box>
                     <Box sx={{ width: '70%' }}>
                         <TextField
-                            color='secondary'
+                            sx={{
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: !error ? 'rgba(0, 0, 0, 0.28) !important' : ''
+                                },
+                                '& .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
+                                    color: !error ? 'rgba(0, 0, 0, 0.38) !important' : 'red'
+                                }
+                            }}
+                            // color='secondary'
                             focused={foucused}
                             error={!!errType}
                             helperText={helperText}

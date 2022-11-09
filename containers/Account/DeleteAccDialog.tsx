@@ -12,6 +12,7 @@ interface DeleteAccDialogProps {
     setOnDelete: any;
     setIsChecked: any;
     form: any;
+    titleDialog?: any;
 }
 
 const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({
@@ -22,7 +23,8 @@ const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({
     open,
     setOpen,
     qty,
-    form
+    form,
+    titleDialog
 }) => {
     // const [onDelete, setOnDelete] = React.useState(false);
     return (
@@ -40,9 +42,7 @@ const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({
                 }}
             >
                 <Box>
-                    <Typography sx={{ fontSize: '24px', fontWeight: 600 }}>
-                        {onDelete ? 'Sucess Remove Account' : 'Are you sure remove this account?'}
-                    </Typography>
+                    <Typography sx={{ fontSize: '24px', fontWeight: 600 }}>{onDelete ? 'Sucess Remove Account' : titleDialog}</Typography>
                 </Box>
                 {!onDelete ? (
                     <Box>
