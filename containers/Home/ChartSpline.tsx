@@ -1,6 +1,7 @@
 import React from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { Box } from '@mui/material';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -89,7 +90,11 @@ const ChartSpline: React.FC<ChartSplineProps> = ({ dataChart, labels }) => {
         datasets: dataSets
     };
 
-    return <Line options={options} data={data} />;
+    return (
+        <Box>
+            <Line options={options} data={data} />
+        </Box>
+    );
 };
 
 export default ChartSpline;
