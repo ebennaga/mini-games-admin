@@ -1,6 +1,7 @@
 import { Box, Grid, Tab, Tabs } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import React from 'react';
+import ChartBar from './ChartBar';
 import ChartDoughnut from './ChartDoughnut';
 import ChartSpline from './ChartSpline';
 
@@ -22,8 +23,22 @@ const Home = () => {
         { id: 5, label: 'Accessories', color: '#F1EDFF', value: 12.5 }
     ];
 
+    const dataChartBar = [
+        { id: 1, label: 'Tournament Hop Up 1', value: 450, color: '#A54CE5' },
+        { id: 2, label: 'Tournament Rose Dart 1', value: 185, color: '#A54CE5' },
+        { id: 3, label: 'Tournament Tower Stack 1', value: 600, color: '#A54CE5' }
+    ];
+
+    const dataChartDoughnut2 = [
+        { id: 3, label: 'Hop Up', color: '#664EAB', value: 58 },
+        { id: 1, label: 'Tower Stacks', color: '#8F67FF', value: 22 },
+        { id: 2, label: 'Rose Dart', color: '#BBAAF0', value: 20 }
+    ];
+
     const [tabChartSpline, setTabChartSpline] = React.useState<string>('0');
     const [tabChartDoughnut, setTabChartDoughnut] = React.useState<string>('0');
+    const [tabChartBar, setTabChartBar] = React.useState<string>('0');
+    const [tabChartDoughnut2, setTabChartDoughnut2] = React.useState<string>('0');
 
     const handleChangeTabSpline = (e: React.SyntheticEvent, newValue: string) => {
         setTabChartSpline(newValue);
@@ -31,6 +46,14 @@ const Home = () => {
 
     const handleChangeTabDoughnut = (e: React.SyntheticEvent, newValue: string) => {
         setTabChartDoughnut(newValue);
+    };
+
+    const handleChangeTabBar = (e: React.SyntheticEvent, newValue: string) => {
+        setTabChartBar(newValue);
+    };
+
+    const handleChangeTabDoughnut2 = (e: React.SyntheticEvent, newValue: string) => {
+        setTabChartDoughnut2(newValue);
     };
 
     return (
@@ -43,6 +66,7 @@ const Home = () => {
                     <Box
                         padding='30px 59px'
                         boxShadow='0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.12)'
+                        borderRadius='4px'
                     >
                         <Tabs
                             value={tabChartSpline}
@@ -71,6 +95,7 @@ const Home = () => {
                     height='auto'
                     padding='30px 59px'
                     boxShadow='0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.12)'
+                    borderRadius='4px'
                 >
                     <Box>
                         <Tabs
@@ -92,6 +117,61 @@ const Home = () => {
                         </Tabs>
                         <Box width='70%' margin='auto'>
                             <ChartDoughnut dataChart={dataChartDoughnut} />
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid item xs={7} pr={5} mt={8}>
+                    <Box
+                        padding='30px 59px'
+                        boxShadow='0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.12)'
+                        borderRadius='4px'
+                    >
+                        <Tabs
+                            value={tabChartBar}
+                            onChange={handleChangeTabBar}
+                            sx={{
+                                mb: '30px',
+                                '& .MuiTabs-flexContainer': {
+                                    px: 5,
+                                    justifyContent: 'center'
+                                },
+                                '& .Mui-selected': { color: '#A54CE5 !important' },
+                                '& .css-1aquho2-MuiTabs-indicator': { bgcolor: '#A54CE5' }
+                            }}
+                        >
+                            <Tab label='Tournaments Played' value='0' sx={{ fontSize: '14px', fontWeight: 600 }} />
+                        </Tabs>
+                        <ChartBar dataChart={dataChartBar} />
+                    </Box>
+                </Grid>
+                <Grid
+                    item
+                    xs={5}
+                    mt={8}
+                    height='auto'
+                    padding='30px 59px'
+                    boxShadow='0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.12)'
+                    borderRadius='4px'
+                >
+                    <Box>
+                        <Tabs
+                            value={tabChartDoughnut2}
+                            onChange={handleChangeTabDoughnut2}
+                            sx={{
+                                mb: '30px',
+                                '& .MuiTabs-flexContainer': {
+                                    px: 5,
+                                    justifyContent: 'center'
+                                },
+                                '& .Mui-selected': { color: '#A54CE5 !important' },
+                                '& .css-1aquho2-MuiTabs-indicator': { bgcolor: '#A54CE5' }
+                            }}
+                        >
+                            <Tab label='Casual Players' value='0' sx={{ fontSize: '14px', fontWeight: 600 }} />
+                            <Tab label='Tournament Players' value='1' sx={{ fontSize: '14px', fontWeight: 600 }} />
+                        </Tabs>
+                        <Box width='70%' margin='auto'>
+                            <ChartDoughnut dataChart={dataChartDoughnut2} />
                         </Box>
                     </Box>
                 </Grid>
