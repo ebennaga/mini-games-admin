@@ -1,6 +1,5 @@
 import TitleCard from 'components/Layout/TitleCard';
 import React from 'react';
-import { Dayjs } from 'dayjs';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -31,15 +30,14 @@ import {
     DialogActions,
     DialogContentText
 } from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CheckboxController from 'components/Checkbox';
 import { useForm } from 'react-hook-form';
 import CustomButton from 'components/Button';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/router';
+import InputDate from 'components/Input/InputDate';
+import { getCurrentDate, getCurrentTime } from 'utils/date';
 
 const valueList = [
     {
@@ -106,12 +104,16 @@ const ClientTournament = () => {
             mode: '',
             fee: 0,
             prize: 10000,
-            checkedAll: false
+            checkedAll: false,
+            startDate: new Date().toJSON().slice(0, 10),
+            endDate: new Date().toJSON().slice(0, 10),
+            maxDate: getCurrentDate(),
+            startTime: getCurrentTime(),
+            endTime: getCurrentTime()
         }
     });
     const [openFilter, setOpenFilter] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const [date, setDate] = React.useState<Dayjs | null>(null);
     const [row, setRow] = React.useState(dummyData.length.toString());
     const [filteredData, setFilteredData] = React.useState<any>([]);
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -123,6 +125,7 @@ const ClientTournament = () => {
     const [val, setVal] = React.useState('1');
     const [removeData, setRemoveData] = React.useState<any>([]);
     const router = useRouter();
+
     React.useEffect(() => {
         setFilteredData(dummyData);
     }, []);
@@ -345,44 +348,12 @@ const ClientTournament = () => {
                             ))}
                         </TextField>
                     </FormControl>
-                    <FormControl
-                        fullWidth
-                        sx={{
-                            marginTop: '14px',
-                            marginBottom: '14px'
-                        }}
-                    >
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                InputAdornmentProps={{ position: 'start' }}
-                                label='Start Date'
-                                value={date}
-                                onChange={(newValue) => {
-                                    setDate(newValue);
-                                }}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                        </LocalizationProvider>
-                    </FormControl>
-                    <FormControl
-                        fullWidth
-                        sx={{
-                            marginTop: '14px',
-                            marginBottom: '14px'
-                        }}
-                    >
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                InputAdornmentProps={{ position: 'start' }}
-                                label='End Date'
-                                value={date}
-                                onChange={(newValue) => {
-                                    setDate(newValue);
-                                }}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                        </LocalizationProvider>
-                    </FormControl>
+                    <Box sx={{ marginTop: '14px' }}>
+                        <InputDate label='Start Date' type='date' form={form} name='startDate' />
+                    </Box>
+                    <Box sx={{ marginTop: '24px' }}>
+                        <InputDate label='End Date' type='date' form={form} name='endDate' />
+                    </Box>
                     <FormControl
                         fullWidth
                         sx={{

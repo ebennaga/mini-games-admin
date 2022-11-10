@@ -33,7 +33,6 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     isSelectType,
     listSelect,
     isMultiline = false,
-    isMultiline,
     foucused
 }) => {
     const {

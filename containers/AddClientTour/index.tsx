@@ -1,31 +1,15 @@
-import {
-    Box,
-    FormControl,
-    TextField,
-    Typography,
-    Divider,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    ButtonBase
-} from '@mui/material';
+import { Box, Typography, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ButtonBase } from '@mui/material';
 import React from 'react';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import { useForm } from 'react-hook-form';
 import InputUpload from 'components/Input/InputUpload';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from 'dayjs';
-import { TimePicker } from '@mui/x-date-pickers';
 import { useRouter } from 'next/router';
 import CustomButton from 'components/Button';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
+import InputDate from 'components/Input/InputDate';
+import { getCurrentDate, getCurrentTime } from 'utils/date';
 
 const prizeData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
@@ -44,16 +28,17 @@ const AddClientTour = () => {
             img: '',
             fee: '',
             prizeTable: '',
-            poolPrize: ''
+            poolPrize: '',
+            startDate: new Date().toJSON().slice(0, 10) || '',
+            endDate: new Date().toJSON().slice(0, 10) || '',
+            maxDate: getCurrentDate(),
+            startTime: getCurrentTime(),
+            endTime: getCurrentTime()
         }
     });
     const rules = { required: true };
     const router = useRouter();
-    const [date, setDate] = React.useState<Dayjs | null>(null);
 
-    React.useEffect(() => {
-        setDate(dayjs(Date.now()));
-    });
     return (
         <Box component='section'>
             <TitleCard title='Create Client Tournament' subtitle='Addtional description if required' isSearchExist={false} />
@@ -77,92 +62,14 @@ const AddClientTour = () => {
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
                         <Box sx={{ width: '70%' }}>
-                            <Box sx={{ display: 'flex' }}>
-                                <FormControl
-                                    required
-                                    fullWidth
-                                    sx={{
-                                        marginTop: '14px',
-                                        marginBottom: '14px',
-                                        marginRight: '14px'
-                                    }}
-                                >
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DatePicker
-                                            InputAdornmentProps={{ position: 'start' }}
-                                            label='Start Date'
-                                            value={date}
-                                            onChange={(newValue) => {
-                                                setDate(newValue);
-                                            }}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </LocalizationProvider>
-                                </FormControl>
-                                <FormControl
-                                    required
-                                    fullWidth
-                                    sx={{
-                                        marginTop: '14px',
-                                        marginBottom: '14px'
-                                    }}
-                                >
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DatePicker
-                                            InputAdornmentProps={{ position: 'start' }}
-                                            label='End Date'
-                                            value={date}
-                                            onChange={(newValue) => {
-                                                setDate(newValue);
-                                            }}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </LocalizationProvider>
-                                </FormControl>
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <InputDate rules={{ required: true }} label='Start Date' type='date' form={form} name='startDate' />
+                                <InputDate rules={{ required: true }} label='End Date' type='date' form={form} name='endDate' />
                             </Box>
 
-                            <Box sx={{ display: 'flex' }}>
-                                <FormControl
-                                    required
-                                    fullWidth
-                                    sx={{
-                                        marginTop: '14px',
-                                        marginBottom: '14px',
-                                        marginRight: '14px'
-                                    }}
-                                >
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <TimePicker
-                                            InputAdornmentProps={{ position: 'start' }}
-                                            label='Start Time'
-                                            value={date}
-                                            onChange={(newValue) => {
-                                                setDate(newValue);
-                                            }}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </LocalizationProvider>
-                                </FormControl>
-                                <FormControl
-                                    required
-                                    fullWidth
-                                    sx={{
-                                        marginTop: '14px',
-                                        marginBottom: '14px'
-                                    }}
-                                >
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <TimePicker
-                                            InputAdornmentProps={{ position: 'start' }}
-                                            label='End Time'
-                                            value={date}
-                                            onChange={(newValue) => {
-                                                setDate(newValue);
-                                            }}
-                                            renderInput={(params) => <TextField {...params} />}
-                                        />
-                                    </LocalizationProvider>
-                                </FormControl>
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <InputDate rules={{ required: true }} label='Start Time' type='time' form={form} name='startTime' />
+                                <InputDate rules={{ required: true }} label='End Time' type='time' form={form} name='endTime' />
                             </Box>
                         </Box>
                     </Box>
