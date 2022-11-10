@@ -1,7 +1,9 @@
-import { Typography } from '@mui/material';
 import Layout from 'components/Layout';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
+
+const HomeContainer = dynamic(() => import('containers/Home'));
 
 const Home: NextPage = () => {
     return (
@@ -13,9 +15,7 @@ const Home: NextPage = () => {
             </Head>
 
             <Layout>
-                <Typography component='h1' sx={{ color: 'red' }}>
-                    Testing
-                </Typography>
+                <HomeContainer />
             </Layout>
         </div>
     );
