@@ -44,7 +44,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             href: '/settings',
             dropdownList: [
                 { title: 'Exchange Rates', href: '/exchange-rates' },
-                { title: 'Location', href: '/setting' },
+                { title: 'Location', href: '/settings/location' },
 
                 { title: 'Product Prizes', href: '/settings/product-prizes' },
                 { title: 'Roles', href: '/settings/roles' }
