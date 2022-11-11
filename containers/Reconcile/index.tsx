@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { getCurrentDate, getCurrentTime, getPastDate } from 'utils/date';
+import { getCurrentTime, getEndDdate, getPastDate, getStartDate } from 'utils/date';
 import { useForm } from 'react-hook-form';
 import HeaderReconcile from './HeaderReconcile';
 import Table from './Table';
@@ -47,8 +47,8 @@ const Reconcile = () => {
     const form = useForm({
         mode: 'all',
         defaultValues: {
-            minDate: getPastDate(5),
-            maxDate: getCurrentDate(),
+            minDate: getStartDate(),
+            maxDate: getEndDdate(),
             olderDate: getPastDate(5, true),
             transactionDate: new Date().toISOString().slice(0, 10) || '',
             olderTime: getCurrentTime(),
@@ -58,10 +58,10 @@ const Reconcile = () => {
 
     React.useEffect(() => {
         const input = form.watch();
-        if (input.olderDate) {
+        if (input.olderDate !== getPastDate(5, true)) {
             form.setValue('minDate', input.olderDate);
         }
-        if (input.transactionDate) {
+        if (input.transactionDate !== new Date().toISOString().slice(0, 10)) {
             form.setValue('maxDate', input.transactionDate);
         }
     }, [form.watch('olderDate'), form.watch('transactionDate')]);
