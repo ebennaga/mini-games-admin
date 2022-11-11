@@ -1,6 +1,10 @@
-import { Box, Grid, Tab, Tabs } from '@mui/material';
+import { Box, ButtonBase, Grid, Tab, Tabs } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import React from 'react';
+import DownloadIcon from '@mui/icons-material/Download';
+import InputStartEndDate from 'components/Input/InputStartEndDate';
+import { useForm } from 'react-hook-form';
+import { getEndDdate, getStartDate } from 'utils/date';
 import ChartBar from './ChartBar';
 import ChartDoughnut from './ChartDoughnut';
 import ChartSpline from './ChartSpline';
@@ -40,6 +44,14 @@ const Home = () => {
     const [tabChartBar, setTabChartBar] = React.useState<string>('0');
     const [tabChartDoughnut2, setTabChartDoughnut2] = React.useState<string>('0');
 
+    const form = useForm({
+        mode: 'all',
+        defaultValues: {
+            startDate: getStartDate() || '',
+            endDate: getEndDdate() || ''
+        }
+    });
+
     const handleChangeTabSpline = (e: React.SyntheticEvent, newValue: string) => {
         setTabChartSpline(newValue);
     };
@@ -59,7 +71,31 @@ const Home = () => {
     return (
         <Box>
             <HeaderChildren title='Dashboard' subTitle='Additional description if required'>
-                {' '}
+                <Box display='flex' alignItems='center' justifyContent='space-between' mt={3}>
+                    <Box display='flex' alignItems='center' gap='20px'>
+                        <InputStartEndDate label='Date' nameStartDate='startDate' nameEndDate='endDate' form={form} />
+                        <ButtonBase
+                            // onClick={handleGetData}
+                            sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px', mt: '7px' }}
+                        >
+                            GET DATA
+                        </ButtonBase>
+                    </Box>
+                    <ButtonBase
+                        // onClick={handleDownload}
+                        sx={{
+                            borderRadius: '4px',
+                            background: '#A54CE5',
+                            color: '#fff',
+                            padding: '6px 16px',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}
+                    >
+                        <DownloadIcon sx={{ mr: 1 }} />
+                        <span>DOWNLOAD EXCEL</span>
+                    </ButtonBase>
+                </Box>
             </HeaderChildren>
             <Grid container>
                 <Grid item xs={7} mt='30px' pr={5}>
