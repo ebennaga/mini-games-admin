@@ -19,8 +19,8 @@ const BlogsContainer = () => {
         defaultValues: {
             search: '',
             isActive: false,
-            name: '',
-            email: '',
+            description: '',
+            title: '',
             role: '0',
             acc: 'OWIKUN',
             activeRole: true,
@@ -170,8 +170,6 @@ const BlogsContainer = () => {
             form.setValue('maxDate', input.endDate);
         }
     }, [form.watch('startDate'), form.watch('endDate')]);
-
-    console.log(isEditing);
 
     return (
         <Box sx={{ width: '100%' }}>
