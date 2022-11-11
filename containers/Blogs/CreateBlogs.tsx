@@ -33,10 +33,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
             form.setValue('image', '');
             form.setValue('description', '');
         }
-    }, [form.watch('title'), form.watch('date'), form.watch('image'), form.watch('description')]);
-
-    console.log('images', form.watch('image'));
-    console.log('isEditing', isEditing);
+    }, []);
 
     return (
         <Box sx={{}}>
@@ -66,6 +63,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                     rules={{ required: true }}
                                     placeholder='Max 100 Character'
                                     form={form}
+                                    type='text'
                                 />
                             </Grid>
                         </Grid>
@@ -164,12 +162,13 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                             <Grid item xs={4}>
                                 <Input
                                     isColor
-                                    name='title'
+                                    name='description'
                                     label='Description'
                                     rules={{ required: true }}
                                     placeholder='Max 500 Character'
                                     form={form}
                                     isTextArea
+                                    type='text'
                                 />
                             </Grid>
                         </Grid>
