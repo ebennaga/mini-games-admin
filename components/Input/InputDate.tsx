@@ -30,7 +30,7 @@ const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, i
                             id='date'
                             label={label}
                             type={type}
-                            defaultValue={form.watch(name)}
+                            // defaultValue={form.watch(name)}
                             sx={{
                                 '& input': { pl: '40px' },
                                 '& input[type="date"]::-webkit-inner-spin-button, input[type="date"]::-webkit-calendar-picker-indicator': {

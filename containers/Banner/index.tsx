@@ -15,38 +15,50 @@ import {
     Radio,
     FormControlLabel,
     MenuItem,
-    TextField
+    TextField,
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Select,
+    SelectChangeEvent
 } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import CustomButton from 'components/Button';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 import { alpha, styled } from '@mui/material/styles';
+import { useForm } from 'react-hook-form';
+import CheckboxController from 'components/Checkbox';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-const rows: GridRowsProp = [
+const dummyData = [
     {
         id: '1',
-        no: '1',
         title: 'Info Pre Launch Bonus',
         img: 'banner_info.jpg',
         desc: 'Info Mengenai Top up Bonus Prize Play Sebelum Launch',
         showTo: 'Home',
-        isActive: 'yes',
-        action: 'v'
+        isActive: 'Yes',
+        action: false,
+        checkedAll: false
+    },
+    {
+        id: '2',
+        title: 'Info Pre Launch Bonus',
+        img: 'banner_info.jpg',
+        desc: 'Info Mengenai Top up Bonus Prize Play Sebelum Launch',
+        showTo: 'Home',
+        isActive: 'No',
+        action: false,
+        checkedAll: false
     }
 ];
 
-const columns: GridColDef[] = [
-    { field: 'no', headerName: 'No.', width: 50 },
-    { field: 'title', headerName: 'Title', width: 150 },
-    { field: 'img', headerName: 'Images', width: 150 },
-    { field: 'desc', headerName: 'Description', width: 300 },
-    { field: 'showTo', headerName: 'Show to', width: 150 },
-    { field: 'isActive', headerName: 'Is Active', width: 150 },
-    { field: 'action', headerName: 'Action', width: 150 }
-];
 const menuList = [
     {
         value: '1',
@@ -78,11 +90,30 @@ const PurpleSwitch = styled(Switch)(({ theme }) => ({
     }
 }));
 const Banner = () => {
-    const [hidden, setHidden] = React.useState(false);
-    const [numberSelected, setNumberSelected] = React.useState(0);
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
     const [menu, setMenu] = React.useState('1');
+    const [row, setRow] = React.useState(dummyData.length.toString());
+    const [filteredData, setFilteredData] = React.useState<any>([]);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [pages, setPages] = React.useState(1);
+    const [checked, setIsChecked] = React.useState(false);
+    const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
+    const checkBoxKeys: string[] = [];
+    const [removeData, setRemoveData] = React.useState<any>([]);
+
+    const form = useForm({
+        mode: 'all',
+        defaultValues: {
+            action: false,
+            title: '',
+            images: '',
+            desc: '',
+            showTo: '',
+            isActive: 'Yes',
+            checkedAll: false
+        }
+    });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMenu(event.target.value);
@@ -90,6 +121,106 @@ const Banner = () => {
     const handleDialog = (value: boolean) => {
         setOpenFilter(value);
     };
+    const getPaginatedData = () => {
+        const startIndex = currentPage * Number(row) - Number(row);
+        const endIndex = startIndex + Number(row);
+        return filteredData.slice(startIndex, endIndex);
+    };
+    const goToNextPage = () => {
+        if (currentPage !== pages) {
+            setCurrentPage((page) => page + 1);
+        }
+    };
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage((page) => page - 1);
+        }
+    };
+    const handleViewRow = (event: SelectChangeEvent) => {
+        setRow(event.target.value as string);
+    };
+
+    const handleCheckBoxAll = (e: any) => {
+        const temp: any[] = [];
+        form.setValue('checkedAll', e.target.checked);
+        if (e.target.checked) {
+            dummyData.forEach((item: any, idx: number) => {
+                const datas: any = `checkbox${idx + 1}`;
+                form.setValue(datas, e.target.checked);
+                temp.push(item);
+            });
+            setRemoveData(temp);
+            setCheckedObj(checkBoxKeys);
+        } else if (!e.target.checked) {
+            setCheckedObj([]);
+            setRemoveData([]);
+            dummyData.forEach((item: any, idx: number) => {
+                const datas: any = `checkbox${idx + 1}`;
+                form.setValue(datas, false);
+            });
+        }
+    };
+
+    const handleSingleCheckBox = (e: any, name: any, id: number) => {
+        if (!e.target.checked) {
+            form.setValue('checkedAll', false);
+            if (removeData.length === 1) {
+                setRemoveData([]);
+                setRow('0');
+            } else {
+                setRemoveData([removeData[removeData.findIndex((obj: any) => obj.id !== id)]]);
+            }
+        } else {
+            setRemoveData([...removeData, filteredData[filteredData.findIndex((obj: any) => obj.id === id)]]);
+        }
+        form.setValue(name, e.target.checked);
+        const checkBox: any = { ...form.watch() };
+        const updateChecked: string[] = [];
+        checkBoxKeys.forEach((item: any) => {
+            if (checkBox[item]) {
+                updateChecked.push(item);
+            }
+        });
+        setCheckedObj(updateChecked);
+
+        if (updateChecked.length === dummyData.length) {
+            form.setValue('checkedAll', true);
+        }
+    };
+
+    const handleRemoveData = () => {
+        const res = filteredData.filter((item: any) => !removeData.includes(item));
+        setCheckedObj([]);
+        setFilteredData(res);
+        setRemoveData([]);
+        setOpenRemove(false);
+        setRow(res.length);
+        form.setValue('checkedAll', false);
+        filteredData.forEach((item: any, idx: number) => {
+            const datas: any = `checkbox${idx + 1}`;
+            form.setValue(datas, false);
+        });
+    };
+    React.useEffect(() => {
+        setFilteredData(dummyData);
+    }, []);
+
+    React.useEffect(() => {
+        setPages(Math.round(filteredData.length / Number(row)));
+    }, [pages, row]);
+
+    React.useEffect(() => {
+        [...Array(dummyData.length)].forEach((item: any, idx: number) => {
+            const name: any = `checkbox${idx + 1}`;
+            checkBoxKeys.push(name);
+        });
+        if (checkedObj.length > 0 || form.watch('checkedAll')) {
+            setIsChecked(true);
+        } else {
+            setIsChecked(false);
+        }
+    }, [checkBoxKeys, form.watch('checkedAll')]);
+
     return (
         <Box component='section'>
             <Dialog
@@ -102,10 +233,10 @@ const Banner = () => {
                     Are you sure remove this banner ?
                 </DialogTitle>
                 <DialogContent sx={{ m: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <DialogContentText id='alert-dialog-description'>{numberSelected} items selected</DialogContentText>
+                    <DialogContentText id='alert-dialog-description'>{checkedObj.length} items selected</DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ m: 1 }}>
-                    <CustomButton title='REMOVE' height='47px' />
+                    <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
                     <CustomButton
                         title='CANCEL'
                         backgroundColor='white'
@@ -124,10 +255,12 @@ const Banner = () => {
                 placeholderSeacrhText='Search by tittle, images, etc.'
                 href='/banner/add-banner'
             />
-            {hidden && (
+            {checked && (
                 <Box sx={{ mx: 1, my: 3, padding: 2, background: '#F4F1FF' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Typography sx={{ color: 'black', fontWeight: 500, fontSize: '14px' }}>{numberSelected} items selected</Typography>
+                        <Typography sx={{ color: 'black', fontWeight: 500, fontSize: '14px' }}>
+                            {checkedObj.length} items selected
+                        </Typography>
                         <Box sx={{ display: 'flex' }}>
                             <ButtonBase sx={{ color: '#A54CE5', m: 1 }}>
                                 <ModeEditIcon />
@@ -141,39 +274,173 @@ const Banner = () => {
                     </Box>
                 </Box>
             )}
-            <Box sx={{ width: '100%' }}>
-                <Box sx={{ display: 'flex', height: '100%' }}>
-                    <Box sx={{ flexGrow: 1 }}>
-                        <DataGrid
-                            autoHeight
-                            checkboxSelection
-                            onSelectionModelChange={(e) => {
-                                setNumberSelected(e.length);
-                                if (e.length > 0) {
-                                    setHidden(true);
-                                } else {
-                                    setHidden(false);
-                                }
-                            }}
+            <Box sx={{ mt: '20px' }}>
+                <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
+                    <Table sx={{ width: '100%' }}>
+                        <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
+                            <TableRow>
+                                <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
+                                <TableCell
+                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                    align='center'
+                                >
+                                    Title
+                                </TableCell>
+                                <TableCell
+                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                    align='center'
+                                >
+                                    Images
+                                </TableCell>
+                                <TableCell
+                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                    align='center'
+                                >
+                                    Description
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Show to
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Is Active
+                                </TableCell>
+
+                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                    <FormControlLabel
+                                        control={
+                                            <CheckboxController
+                                                name='action'
+                                                form={form}
+                                                onChange={handleCheckBoxAll}
+                                                checked={form.watch('checkedAll')}
+                                                disabled={filteredData.length === 0}
+                                            />
+                                        }
+                                        label='Action'
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {getPaginatedData().length > 0 &&
+                                getPaginatedData().map((item: any) => {
+                                    const check: any = `checkbox${item.id}`;
+                                    return (
+                                        <TableRow key={item.id}>
+                                            <TableCell align='center' sx={{ width: '5%' }}>
+                                                {item.id}
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                align='center'
+                                            >
+                                                {item.title}
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                align='center'
+                                            >
+                                                {item.img}
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                align='center'
+                                            >
+                                                {item.desc}
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                align='center'
+                                            >
+                                                {item.showTo}
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                align='center'
+                                            >
+                                                <Box sx={{ color: 'white', display: 'flex', justifyContent: 'center' }}>
+                                                    <Box
+                                                        sx={
+                                                            item.isActive === 'Yes'
+                                                                ? {
+                                                                      backgroundColor: '#A54CE5',
+                                                                      borderRadius: '64px',
+                                                                      width: '33px',
+                                                                      height: '20px'
+                                                                  }
+                                                                : {
+                                                                      backgroundColor: '#D32F2F',
+                                                                      borderRadius: '64px',
+                                                                      width: '33px',
+                                                                      height: '20px'
+                                                                  }
+                                                        }
+                                                    >
+                                                        {item.isActive}
+                                                    </Box>
+                                                </Box>
+                                            </TableCell>
+
+                                            <TableCell align='center' sx={{ width: '10%', fontWeight: 'bold' }}>
+                                                <CheckboxController
+                                                    form={form}
+                                                    name={`checkbox${item.id}`}
+                                                    checked={!!form.watch(check)}
+                                                    onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', fontSize: '12px', fontWeight: 400 }}>
+                    <Typography>Rows per page</Typography>
+                    <FormControl>
+                        <Select
                             sx={{
-                                ml: 1,
-                                mr: 1,
-                                border: '2px solid #E0E0E0',
-                                '& .MuiDataGrid-columnHeaders': {
-                                    backgroundColor: '#F0F0F0',
-                                    // color: 'rgba(255,0,0,0.7)',
-                                    fontSize: '14px',
-                                    fontWeight: 500
-                                },
-                                '& .MuiDataGrid-virtualScrollerRenderZone': {
-                                    '& .MuiDataGrid-row': {
-                                        backgroundColor: '#ffff'
-                                    }
-                                }
+                                boxShadow: 'none',
+                                '.MuiOutlinedInput-notchedOutline': { border: 0 },
+                                '& .Mui-focused': { border: 0 }
                             }}
-                            rows={rows}
-                            columns={columns}
-                        />
+                            labelId='demo-simple-select-label'
+                            id='demo-simple-select'
+                            value={row}
+                            defaultValue={dummyData.length.toString()}
+                            onChange={handleViewRow}
+                        >
+                            {[...Array(dummyData.length)].map((item: any, idx: number) => (
+                                <MenuItem key={idx} value={idx + 1}>
+                                    {idx + 1}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <Typography>
+                        1-{row} of {dummyData.length}
+                    </Typography>
+                    <Box sx={{ display: 'flex' }}>
+                        <IconButton onClick={goToPreviousPage}>
+                            <ArrowBackIosIcon sx={{ cursor: 'pointer', mx: 3 }} />
+                        </IconButton>
+                        <IconButton onClick={goToNextPage}>
+                            <ArrowForwardIosIcon sx={{ cursor: 'pointer' }} />
+                        </IconButton>
                     </Box>
                 </Box>
             </Box>
