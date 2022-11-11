@@ -25,4 +25,25 @@ const getCurrentTime = () => {
     return result;
 };
 
-export { getCurrentDate, getPastDate, getCurrentTime };
+const getStartDate = () => {
+    const date: any = new Date();
+
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const yyyy = date.getFullYear();
+
+    return `${yyyy}-${mm}-01`;
+};
+
+const getEndDdate = () => {
+    const date = new Date();
+    const mm = date.getMonth();
+    const yyyy = date.getFullYear();
+
+    const lastDay = new Date(yyyy, mm + 1, 0);
+
+    const dd = lastDay.getDate();
+
+    return `${yyyy}-${mm + 1}-${dd}`;
+};
+
+export { getCurrentDate, getPastDate, getCurrentTime, getStartDate, getEndDdate };
