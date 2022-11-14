@@ -1,4 +1,16 @@
-import { Box, Typography, Divider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ButtonBase } from '@mui/material';
+import {
+    Box,
+    Typography,
+    Divider,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    ButtonBase,
+    TextField
+} from '@mui/material';
 import React from 'react';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
@@ -11,7 +23,7 @@ import AddIcon from '@mui/icons-material/Add';
 import InputDate from 'components/Input/InputDate';
 import { getCurrentDate, getCurrentTime } from 'utils/date';
 
-const prizeData = [
+const dummyData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
     { id: 2, showTo: 3, player: 2, pointPrize: 15000, prizePlayer: 7500 },
     { id: 4, showTo: 10, player: 6, pointPrize: 3000, prizePlayer: 500 },
@@ -38,6 +50,25 @@ const AddClientTour = () => {
     });
     const rules = { required: true };
     const router = useRouter();
+    const [prizeData, setPrizeData] = React.useState<any>(dummyData);
+    const [prizePool, setPrizePool] = React.useState(0);
+
+    React.useEffect(() => {
+        let ttl: number = 0;
+        prizeData.forEach((item: any) => {
+            ttl += item.pointPrize;
+        });
+        setPrizePool(ttl);
+    }, [prizeData.length]);
+    const handleAddRow = () => {
+        setPrizeData([...prizeData, { id: 0, showTo: 1, player: 1, pointPrize: 1, prizePlayer: 1 }]);
+    };
+
+    const handleDeleteRow = () => {
+        const temp = prizeData;
+        temp.pop();
+        setPrizeData(prizeData.filter((item: any) => temp.includes(item)));
+    };
 
     return (
         <Box component='section'>
@@ -176,9 +207,9 @@ const AddClientTour = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {prizeData.map((item: any) => {
+                                        {prizeData.map((item: any, idx: number) => {
                                             return (
-                                                <TableRow key={item.id}>
+                                                <TableRow key={idx + 1}>
                                                     <TableCell sx={{ width: '5%' }} align='center'>
                                                         {item.id}
                                                     </TableCell>
@@ -216,6 +247,7 @@ const AddClientTour = () => {
                         <Box sx={{ width: '70%' }}>
                             <Box sx={{ marginTop: '14px', display: 'flex', justifyContent: 'end', alignItems: 'flex-end', gap: 1 }}>
                                 <ButtonBase
+                                    onClick={handleDeleteRow}
                                     sx={{
                                         border: '1px solid #A54CE5',
                                         color: '#A54CE5',
@@ -230,6 +262,7 @@ const AddClientTour = () => {
                                     DELETE
                                 </ButtonBase>
                                 <ButtonBase
+                                    onClick={handleAddRow}
                                     sx={{
                                         border: '1px solid #A54CE5',
                                         py: '10px',
@@ -248,17 +281,15 @@ const AddClientTour = () => {
                         </Box>
                     </Box>
 
-                    <InputWithLabel
-                        label='Total Pool Prizes'
-                        name='poolPrize'
-                        type='text'
-                        form={form}
-                        labelField='Prize Pool'
-                        placeHolder='30.000'
-                        isSelectType={false}
-                        isMultiline={false}
-                        rules={rules}
-                    />
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Total Pool Prize</Typography>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ width: '70%' }}>
+                            <TextField fullWidth label='Prize Pool' value={prizePool} />
+                        </Box>
+                    </Box>
                 </Box>
                 <Divider />
                 <Box sx={{ display: 'flex', my: 3, mx: 5, gap: 3 }}>
