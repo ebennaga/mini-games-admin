@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, IconButton, ButtonBase } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DownloadIcon from '@mui/icons-material/Download';
 import HeaderChildren from 'components/HeaderChildren';
+import InputStartEndDate from 'components/Input/InputStartEndDate';
 import DateResult from './DateResult';
 import DialogFilter from './DialogFilter';
 
@@ -20,7 +22,8 @@ const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, 
         <HeaderChildren title='Reconcile' subTitle='Additional description if required'>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: '30px' }}>
                 <Box display='flex' alignItems='center' gap='25px' position='relative'>
-                    <DateResult minDate={form.watch('minDate')} maxDate={form.watch('maxDate')} />
+                    {/* <DateResult minDate={form.watch('minDate')} maxDate={form.watch('maxDate')} /> */}
+                    <InputStartEndDate nameStartDate='minDate' nameEndDate='maxDate' form={form} label='Date' />
                     <ButtonBase
                         onClick={handleGetData}
                         sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px' }}

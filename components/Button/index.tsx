@@ -13,6 +13,7 @@ interface CustomButtonProps {
     type?: 'submit' | 'button';
     isDisable?: boolean;
     padding?: any;
+    fontSize?: any;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -26,14 +27,15 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     onClick,
     type = 'button',
     isDisable,
-    padding = '10px'
+    padding = '10px',
+    fontSize = '14px'
 }) => {
     return (
         <ButtonBase
             disabled={isDisable}
             type={type}
             onClick={onClick}
-            sx={{ border, backgroundColor, color, width, height, borderRadius, padding }}
+            sx={{ border, backgroundColor, color, width, height, borderRadius, padding, fontSize }}
         >
             <Typography sx={{ textTransform: 'uppercase' }}>{title}</Typography>
         </ButtonBase>

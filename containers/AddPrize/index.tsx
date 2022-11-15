@@ -37,6 +37,9 @@ const AddPrize = () => {
         defaultValues: {
             code: '',
             name: '',
+            img: '',
+            img2: '',
+            img3: '',
             category: '',
             unit: '',
             qty: ''
@@ -117,9 +120,9 @@ const AddPrize = () => {
                         isSelectType={false}
                         isMultiline={false}
                     />
-                    <InputUpload label='Product Image 1' />
-                    <InputUpload label='Product Image 2 -(Optional)' />
-                    <InputUpload label='Product Image 3 -(Optional)' />
+                    <InputUpload label='Product Image 1' name='img' form={form} rules={rules} />
+                    <InputUpload label='Product Image 2 -(Optional)' name='img2' form={form} />
+                    <InputUpload label='Product Image 3 -(Optional)' name='img3' form={form} />
 
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>

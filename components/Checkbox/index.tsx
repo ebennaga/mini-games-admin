@@ -5,8 +5,8 @@ import { Controller } from 'react-hook-form';
 interface CheckboxControllerProps {
     name: string;
     form: any;
-    onChange: any;
-    checked: boolean;
+    onChange?: any;
+    checked?: boolean;
     disabled?: boolean;
 }
 
