@@ -30,6 +30,11 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             ]
         },
         {
+            icon: '/icons/navbar/redemption.png',
+            title: 'Redemption',
+            href: '/redemption'
+        },
+        {
             icon: '/icons/navbar/content.png',
             title: 'Content',
             href: '/content',
