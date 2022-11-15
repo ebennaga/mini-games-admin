@@ -28,8 +28,8 @@ import { useForm } from 'react-hook-form';
 import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import CheckboxController from 'components/Checkbox';
-import CreateAccount from '../Account/CreateAccount';
-import DeleteAccDialog from '../Account/DeleteAccDialog';
+import CreateAccount from './CreateAccount';
+import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
     const dummy = [
@@ -62,6 +62,7 @@ const AccountContainer = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
     const [role, setRole] = useState('0');
+    const [roles, setRoles] = useState<any>([]);
     const [isActive, setIsActive] = useState('active');
     const [createAcc, setCreateAcc] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -90,6 +91,10 @@ const AccountContainer = () => {
 
     const handleAddRole = (event: any) => {
         form.setValue('role', event.target.value);
+        const isDuplicate: any = roles.includes(event.target.value);
+        if (!isDuplicate) {
+            setRoles([...roles, event.target.value as string]);
+        }
     };
 
     const handleSwicth = (event: any) => {
@@ -200,6 +205,8 @@ const AccountContainer = () => {
         <Box sx={{ width: '100%' }}>
             {createAcc ? (
                 <CreateAccount
+                    setRoles={setRoles}
+                    roles={roles}
                     handleAddSetNotActive={handleAddSetNotActive}
                     handleAddSetActive={handleAddSetActive}
                     activeRole={form.watch('activeRole')}
