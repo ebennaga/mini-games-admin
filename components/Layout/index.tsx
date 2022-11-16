@@ -37,6 +37,11 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
         },
         { active: '/icons/active/redemption-active.png', icon: '/icons/navbar/redemption.png', title: 'Redemption', href: '/redemption' },
         {
+            icon: '/icons/navbar/redemption.png',
+            title: 'Redemption',
+            href: '/redemption'
+        },
+        {
             active: '/icons/active/content.png',
             icon: '/icons/navbar/content.png',
             title: 'Content',
