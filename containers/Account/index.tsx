@@ -341,7 +341,7 @@ const AccountContainer = () => {
                             <Typography sx={{ fontWeight: 'bold' }}>{checkedObj.length} item selected</Typography>
                             <Box
                                 sx={{
-                                    width: '13%',
+                                    width: '10%',
                                     display: 'flex',
                                     justifyContent: checkedObj.length === 1 ? 'space-between' : 'flex-end',
                                     alignItems: 'center'
