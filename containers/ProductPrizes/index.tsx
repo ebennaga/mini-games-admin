@@ -156,30 +156,29 @@ const ProductPrizes = () => {
     const handleViewRow = (event: SelectChangeEvent) => {
         setRow(event.target.value as string);
     };
+
+    const checkTrue: string[] = [];
     const handleSingleCheckBox = (e: any, name: any, id: number) => {
-        if (!e.target.checked) {
-            form.setValue('checkedAll', false);
-            if (removeData.length === 1) {
-                setRemoveData([]);
-                setRow('0');
-            } else {
-                setRemoveData([removeData[removeData.findIndex((obj: any) => obj.id !== id)]]);
-            }
-        } else {
-            setRemoveData([...removeData, filteredData[filteredData.findIndex((obj: any) => obj.id === id)]]);
-        }
         form.setValue(name, e.target.checked);
         const checkBox: any = { ...form.watch() };
-        const updateChecked: string[] = [];
         checkBoxKeys.forEach((item: any) => {
-            if (checkBox[item]) {
-                updateChecked.push(item);
+            if (checkBox[item] === true) {
+                checkTrue.push(item);
             }
         });
-        setCheckedObj(updateChecked);
-
-        if (updateChecked.length === dummyData.length) {
-            form.setValue('checkedAll', true);
+        setCheckedObj(checkTrue);
+        if (e.target.checked) {
+            setRemoveData([...removeData, id]);
+        }
+        if (!e.target.checked) {
+            if (removeData.length > 0) {
+                const filter = removeData.filter((item: any) => {
+                    return id !== item;
+                });
+                setRemoveData(filter);
+            } else {
+                setRemoveData([]);
+            }
         }
     };
 
@@ -379,10 +378,12 @@ const ProductPrizes = () => {
                             {checkedObj.length} items selected
                         </Typography>
                         <Box sx={{ display: 'flex' }}>
-                            <ButtonBase sx={{ color: '#A54CE5', m: 1 }}>
-                                <ModeEditIcon />
-                                <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>EDIT</Typography>
-                            </ButtonBase>
+                            {checkedObj.length === 1 && (
+                                <ButtonBase sx={{ color: '#A54CE5', m: 1 }}>
+                                    <ModeEditIcon />
+                                    <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>EDIT</Typography>
+                                </ButtonBase>
+                            )}
                             <ButtonBase sx={{ color: '#A54CE5', m: 1 }} onClick={handleRemoveData}>
                                 <DeleteIcon />
                                 <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>REMOVE</Typography>

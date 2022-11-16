@@ -74,7 +74,13 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
 
     return (
         <>
-            {totalChecked ? <BadgeSelected total={totalChecked} onEdit={onEdit} handleOpenDeleteDialog={handleOpenDeleteDialog} /> : null}
+            {totalChecked ? (
+                <BadgeSelected
+                    total={totalChecked}
+                    onEdit={totalChecked === 1 ? onEdit : false}
+                    handleOpenDeleteDialog={handleOpenDeleteDialog}
+                />
+            ) : null}
             <TableContainer sx={{ mt: totalChecked ? 0 : '24px' }}>
                 <Table aria-label='Table Games'>
                     <TableHead sx={{ borderTop: '1px solid rgba(0,0,0,0.2)' }}>

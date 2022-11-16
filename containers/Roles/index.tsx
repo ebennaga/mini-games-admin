@@ -158,7 +158,11 @@ const Roles = () => {
             </HeaderChildren>
             {totalChecked ? (
                 <Box mt={5}>
-                    <BadgeSelected total={totalChecked} onEdit={handleEdit} handleOpenDeleteDialog={() => setOpenDialogConfirm(true)} />
+                    <BadgeSelected
+                        total={totalChecked}
+                        onEdit={totalChecked === 1 ? handleEdit : false}
+                        handleOpenDeleteDialog={() => setOpenDialogConfirm(true)}
+                    />
                 </Box>
             ) : null}
             <Box mt='30px'>

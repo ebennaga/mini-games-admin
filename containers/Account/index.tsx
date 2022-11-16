@@ -331,13 +331,28 @@ const AccountContainer = () => {
                             }}
                         >
                             <Typography sx={{ fontWeight: 'bold' }}>{checkedObj.length} item selected</Typography>
-                            <Box sx={{ width: '13%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <ButtonBase
-                                    sx={{ color: '#A54CE5', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
-                                >
-                                    <Edit />
-                                    <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}>EDIT</Typography>
-                                </ButtonBase>
+                            <Box
+                                sx={{
+                                    width: '13%',
+                                    display: 'flex',
+                                    justifyContent: checkedObj.length === 1 ? 'space-between' : 'flex-end',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                {checkedObj.length === 1 && (
+                                    <ButtonBase
+                                        sx={{
+                                            color: '#A54CE5',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '10px'
+                                        }}
+                                    >
+                                        <Edit />
+                                        <Typography sx={{ fontSize: '13px', fontWeight: 'bold' }}>EDIT</Typography>
+                                    </ButtonBase>
+                                )}
                                 <ButtonBase
                                     onClick={() => {
                                         setOpenDialog(!openDialog);
