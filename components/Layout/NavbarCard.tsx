@@ -6,11 +6,12 @@ interface NavbarCardProps {
     title: string;
     onClick: any;
     isActive: boolean;
+    active: string;
 }
 
-const NavbarCard: React.FC<NavbarCardProps> = ({ icon, title, onClick, isActive }) => {
-    const arrIcon = icon.split('.');
-    const iconActive = `${arrIcon[0]}-active.${arrIcon[1]}`;
+const NavbarCard: React.FC<NavbarCardProps> = ({ active, icon, title, onClick, isActive }) => {
+    // const arrIcon = icon.split('.');
+    // const iconActive = `${arrIcon[0]}-active.${arrIcon[1]}`;
 
     return (
         <ListItemButton
@@ -26,7 +27,7 @@ const NavbarCard: React.FC<NavbarCardProps> = ({ icon, title, onClick, isActive 
             }}
             onClick={onClick}
         >
-            <img src={isActive ? iconActive : icon} alt='dashboard' width='18px' height='auto' />
+            <img src={isActive ? active : icon} alt='dashboard' width='18px' height='auto' />
             <Typography component='span' fontSize='16px' fontWeight={400} ml='35px'>
                 {title}
             </Typography>

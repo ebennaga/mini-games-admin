@@ -19,6 +19,7 @@ interface InputWithLabelProps {
     isMultiline?: boolean;
     placeholder?: any;
     foucused?: boolean;
+    isRequired?: boolean;
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -32,8 +33,9 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     type,
     isSelectType,
     listSelect,
-    isMultiline = false,
-    foucused
+    isMultiline,
+    foucused,
+    isRequired = false
 }) => {
     const {
         formState: { errors }
@@ -62,9 +64,24 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
             name={name}
             rules={rules}
             render={({ field }) => (
-                <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
-                        <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>{label}</Typography>
+                        <Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>{label}</Typography>
+                            {isRequired && (
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            )}
+                        </Box>
                         <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                     </Box>
                     <Box sx={{ width: '70%' }}>
@@ -74,7 +91,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                                     borderColor: !error ? 'rgba(0, 0, 0, 0.28) !important' : ''
                                 },
                                 '& .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
-                                    color: !error ? 'rgba(0, 0, 0, 0.38) !important' : 'red'
+                                    color: !error ? 'rgba(0, 0, 0, 0.6) !important' : 'red',
+                                    fontWeight: 'bold'
                                 }
                             }}
                             // color='secondary'

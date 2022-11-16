@@ -62,71 +62,100 @@ const AddPrize = () => {
         <Box component='section'>
             <TitleCard title='Add Prize' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(handleSubmit)}>
-                <Box sx={{ my: 3, mx: 2 }}>
-                    <InputWithLabel
-                        label='Product Code'
-                        name='code'
-                        type='text'
-                        form={form}
-                        labelField='Code'
-                        placeHolder='PC00001'
-                        isSelectType={false}
-                        isMultiline={false}
-                        rules={rules}
-                    />
-                    <InputWithLabel
-                        label='Product Name'
-                        name='name'
-                        type='text'
-                        rules={rules}
-                        form={form}
-                        labelField='Name'
-                        placeHolder='Max 50 Character'
-                        isSelectType={false}
-                        isMultiline={false}
-                    />
-                    <InputWithLabel
-                        label='Product Category'
-                        labelField='Category'
-                        placeHolder='Select Category'
-                        form={form}
-                        name='category'
-                        type='text'
-                        isSelectType
-                        rules={rules}
-                        listSelect={categoryList}
-                        isMultiline={false}
-                    />
-                    <InputWithLabel
-                        label='Uom'
-                        labelField='Unit'
-                        placeHolder='Select Unit'
-                        form={form}
-                        name='unit'
-                        type='text'
-                        isSelectType
-                        listSelect={unitList}
-                        rules={rules}
-                        isMultiline={false}
-                    />
-                    <InputWithLabel
-                        label='Qty'
-                        name='qty'
-                        type='number'
-                        rules={rules}
-                        form={form}
-                        labelField='Quantity'
-                        placeHolder='Fill Amount'
-                        isSelectType={false}
-                        isMultiline={false}
-                    />
-                    <InputUpload label='Product Image 1' name='img' form={form} rules={rules} />
+                <Box sx={{ my: 3, mx: 2, width: '40%' }}>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Product Code'
+                            name='code'
+                            type='text'
+                            form={form}
+                            labelField='Code'
+                            placeHolder='PC00001'
+                            isSelectType={false}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Product Name'
+                            name='name'
+                            type='text'
+                            rules={rules}
+                            form={form}
+                            labelField='Name'
+                            placeHolder='Max 50 Character'
+                            isSelectType={false}
+                            isMultiline={false}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Product Category'
+                            labelField='Category'
+                            placeHolder='Select Category'
+                            form={form}
+                            name='category'
+                            type='text'
+                            isSelectType
+                            rules={rules}
+                            listSelect={categoryList}
+                            isMultiline={false}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Uom'
+                            labelField='Unit'
+                            placeHolder='Select Unit'
+                            form={form}
+                            name='unit'
+                            type='text'
+                            isSelectType
+                            listSelect={unitList}
+                            rules={rules}
+                            isMultiline={false}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Qty'
+                            name='qty'
+                            type='number'
+                            rules={rules}
+                            form={form}
+                            labelField='Quantity'
+                            placeHolder='Fill Amount'
+                            isSelectType={false}
+                            isMultiline={false}
+                            isRequired
+                        />
+                    </Box>
+
+                    <InputUpload isRequired label='Product Image 1' name='img' form={form} rules={rules} />
                     <InputUpload label='Product Image 2 -(Optional)' name='img2' form={form} />
                     <InputUpload label='Product Image 3 -(Optional)' name='img3' form={form} />
 
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
-                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
                         <Box sx={{ width: '70%' }}>

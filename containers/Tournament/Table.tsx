@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 
@@ -8,12 +9,21 @@ interface TableAddTournamentProps {
 
 const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) => {
     const [dataTable, setDataTable] = React.useState<any>(null);
+
     React.useEffect(() => {
-        const filterData = data.filter((item: any) => {
-            return item.id === value;
-        });
-        setDataTable(filterData[0]?.data);
-    }, [value]);
+        if (data) {
+            setDataTable(data[0].data);
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (value === 1 || value === 2 || value === 3) {
+            const filterData = data.filter((item: any) => {
+                return item.id === value;
+            });
+            setDataTable(filterData[0]?.data);
+        }
+    }, [value, dataTable]);
 
     return (
         <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
@@ -28,7 +38,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
                     </TableRow>
                 </TableHead>
                 <TableBody sx={{ backgroundColor: 'white' }}>
-                    {dataTable !== null &&
+                    {dataTable?.length > 0 &&
                         dataTable?.map((item: any) => {
                             return (
                                 <TableRow key={item.id}>

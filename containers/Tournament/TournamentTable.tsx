@@ -1,9 +1,9 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, FormControlLabel } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, FormControlLabel, Typography } from '@mui/material';
 import CheckboxController from 'components/Checkbox';
 import dateFormat from 'helpers/dateFormat';
 import numberFormat from 'helpers/numberFormat';
-import CustomButton from 'components/Button';
+// import CustomButton from 'components/Button';
 
 interface TournamentTableProps {
     data: any;
@@ -44,13 +44,25 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                             align='left'
                         >
-                            Start
+                            Start Date
                         </TableCell>
                         <TableCell
                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                             align='left'
                         >
-                            End
+                            Start Time
+                        </TableCell>
+                        <TableCell
+                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                            align='left'
+                        >
+                            End Date
+                        </TableCell>
+                        <TableCell
+                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                            align='left'
+                        >
+                            End Time
                         </TableCell>
                         <TableCell
                             sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
@@ -96,6 +108,9 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                     {data.length > 0 &&
                         data.map((item: any) => {
                             const check: any = `checkbox${item.id}`;
+                            const options: any = { hour: '2-digit', minute: '2-digit' };
+                            const startTime = new Date(item.start).toLocaleString(undefined, options);
+                            const endTime = new Date(item.end).toLocaleString(undefined, options);
                             return (
                                 <TableRow key={item.id}>
                                     <TableCell align='center' sx={{ width: '5%' }}>
@@ -108,7 +123,13 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                                         {dateFormat(item.start)}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
+                                        {startTime}
+                                    </TableCell>
+                                    <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {dateFormat(item.end)}
+                                    </TableCell>
+                                    <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
+                                        {endTime}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {item.games}
@@ -120,16 +141,15 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                                         {numberFormat(item.totalPrizes)}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='center'>
-                                        <CustomButton
+                                        <Typography
                                             onClick={() => {
                                                 setOpenDialogTour(!openDialogTour);
                                                 setLeaderboards(item);
                                             }}
-                                            title='view leaderboard'
-                                            width='195px'
-                                            height='45px'
-                                            backgroundColor='#1976D2'
-                                        />
+                                            sx={{ color: '#A54CE5', textDecoration: 'underline', fontWeight: 'bold', cursor: 'pointer' }}
+                                        >
+                                            View Leaderboard
+                                        </Typography>
                                     </TableCell>
                                     <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
                                         <CheckboxController

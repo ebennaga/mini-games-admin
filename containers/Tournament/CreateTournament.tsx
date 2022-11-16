@@ -208,51 +208,49 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={8}>
-                                {table !== '0' && (
-                                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                        <TableAddTournament value={table} data={dataTable} />
-                                        <Box
+                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                    <TableAddTournament value={table} data={dataTable} />
+                                    <Box
+                                        sx={{
+                                            mt: '20px',
+                                            display: 'flex',
+                                            width: '20%',
+                                            gap: '15px',
+                                            alignSelf: 'flex-end',
+                                            fontWeight: 700
+                                        }}
+                                    >
+                                        <ButtonBase
                                             sx={{
-                                                mt: '20px',
+                                                backgroundColor: 'white',
+                                                padding: '20px',
                                                 display: 'flex',
-                                                width: '20%',
-                                                gap: '15px',
-                                                alignSelf: 'flex-end',
-                                                fontWeight: 700
+                                                justifyContent: 'space-between',
+                                                color: '#A54CE5',
+                                                borderRadius: '5px',
+                                                border: '1px solid #A54CE5',
+                                                gap: '10px'
                                             }}
                                         >
-                                            <ButtonBase
-                                                sx={{
-                                                    backgroundColor: 'white',
-                                                    padding: '20px',
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    color: '#A54CE5',
-                                                    borderRadius: '5px',
-                                                    border: '1px solid #A54CE5',
-                                                    gap: '10px'
-                                                }}
-                                            >
-                                                <Remove />
-                                                <Typography sx={{ fontWeight: 600 }}>DELETE</Typography>
-                                            </ButtonBase>
-                                            <ButtonBase
-                                                sx={{
-                                                    backgroundColor: '#A54CE5',
-                                                    padding: '20px',
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    color: 'white',
-                                                    borderRadius: '5px',
-                                                    gap: '10px'
-                                                }}
-                                            >
-                                                <Add />
-                                                <Typography sx={{ fontWeight: 600 }}>ADD</Typography>
-                                            </ButtonBase>
-                                        </Box>
+                                            <Remove />
+                                            <Typography sx={{ fontWeight: 600 }}>DELETE</Typography>
+                                        </ButtonBase>
+                                        <ButtonBase
+                                            sx={{
+                                                backgroundColor: '#A54CE5',
+                                                padding: '20px',
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                color: 'white',
+                                                borderRadius: '5px',
+                                                gap: '10px'
+                                            }}
+                                        >
+                                            <Add />
+                                            <Typography sx={{ fontWeight: 600 }}>ADD</Typography>
+                                        </ButtonBase>
                                     </Box>
-                                )}
+                                </Box>
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
