@@ -36,9 +36,20 @@ const AddGame = () => {
                 <Grid container mt='37px' color='rgba(0, 0, 0, 0.6)'>
                     <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                         <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                            <Typography component='h3' fontSize='15px' fontWeight={500}>
-                                Game Title
-                            </Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Game Title</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography component='h3' fontSize='15px' fontWeight={500}>
                                 :
                             </Typography>
@@ -55,9 +66,20 @@ const AddGame = () => {
                     </Grid>
                     <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                         <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                            <Typography component='h3' fontSize='15px' fontWeight={500}>
-                                Game Url
-                            </Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Game Url</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography component='h3' fontSize='15px' fontWeight={500}>
                                 :
                             </Typography>
@@ -88,9 +110,20 @@ const AddGame = () => {
                     </Grid>
                     <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                         <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                            <Typography component='h3' fontSize='15px' fontWeight={500}>
-                                Game Cover
-                            </Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Game Cover</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography component='h3' fontSize='15px' fontWeight={500}>
                                 :
                             </Typography>
@@ -107,9 +140,20 @@ const AddGame = () => {
                     </Grid>
                     <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                         <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                            <Typography component='h3' fontSize='15px' fontWeight={500}>
-                                Game Url
-                            </Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Genre</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography component='h3' fontSize='15px' fontWeight={500}>
                                 :
                             </Typography>

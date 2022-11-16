@@ -56,7 +56,8 @@ const AccountContainer = () => {
             email: '',
             role: '0',
             activeRole: true,
-            checkAll: false
+            checkAll: false,
+            access: '0'
         }
     });
 
@@ -64,6 +65,7 @@ const AccountContainer = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
     const [role, setRole] = useState('0');
+    const [roles, setRoles] = useState<any>([]);
     const [isActive, setIsActive] = useState('active');
     const [createAcc, setCreateAcc] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -75,6 +77,7 @@ const AccountContainer = () => {
     const [onDelete, setOnDelete] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
+    const addRoles: any[] = [];
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -91,7 +94,11 @@ const AccountContainer = () => {
     };
 
     const handleAddRole = (event: any) => {
+        const isDuplicate: any = roles.includes(event.target.value);
         form.setValue('role', event.target.value);
+        if (!isDuplicate) {
+            setRoles([...roles, event.target.value as string]);
+        }
     };
 
     const handleSwicth = (event: any) => {
@@ -197,11 +204,12 @@ const AccountContainer = () => {
             setIsChecked(false);
         }
     }, [checkBoxKeys, form.watch('checkAll')]);
-
     return (
         <Box sx={{ width: '100%' }}>
             {createAcc ? (
                 <CreateAccount
+                    setRoles={setRoles}
+                    roles={roles}
                     handleAddSetNotActive={handleAddSetNotActive}
                     handleAddSetActive={handleAddSetActive}
                     activeRole={form.watch('activeRole')}

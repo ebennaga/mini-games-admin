@@ -334,13 +334,15 @@ const TournamentContainer = () => {
                 qty={checkedObj.length}
                 titleDialog='Are you sure remove this tour?'
             />
-            <LeaderboardDialog
-                item={leaderboards}
-                open={openDialogTour}
-                setOpenDialog={() => {
-                    setOpenDialogTour(!openDialogTour);
-                }}
-            />
+            {openDialogTour && (
+                <LeaderboardDialog
+                    item={leaderboards}
+                    open={openDialogTour}
+                    setOpenDialog={() => {
+                        setOpenDialogTour(!openDialogTour);
+                    }}
+                />
+            )}
         </Box>
     );
 };
