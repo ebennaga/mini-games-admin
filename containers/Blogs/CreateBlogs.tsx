@@ -16,7 +16,7 @@ interface CreateTournamentProps {
 }
 
 const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, createBlog, form, isEditing, setIsEditing, datas }) => {
-    const handleSubmit = (data: any) => {
+    const handleSubmit = (e: any, data: any) => {
         console.log('response', data);
     };
     const [isUpload, setIsUpload] = React.useState(false);

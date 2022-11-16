@@ -46,8 +46,9 @@ const AddBanner = () => {
                         rules={rules}
                         isSelectType={false}
                         isMultiline={false}
+                        isRequired
                     />
-                    <InputUpload label='Banner Image' name='img' form={form} rules={rules} />
+                    <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} />
                     <InputWithLabel
                         label='Description'
                         name='desc'
@@ -61,7 +62,20 @@ const AddBanner = () => {
                     />
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
-                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
                         <Box sx={{ width: '70%' }}>
@@ -74,7 +88,20 @@ const AddBanner = () => {
                     </Box>
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
-                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
                         <Box sx={{ width: '70%' }}>

@@ -74,7 +74,7 @@ const AddClientTour = () => {
         <Box component='section'>
             <TitleCard title='Create Client Tournament' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(() => {})}>
-                <Box sx={{ my: 3, mx: 2 }}>
+                <Box sx={{ my: 3, mx: 2, width: '40%' }}>
                     <InputWithLabel
                         label='Tournament Title'
                         name='title'
@@ -85,11 +85,25 @@ const AddClientTour = () => {
                         isSelectType={false}
                         isMultiline={false}
                         rules={rules}
+                        isRequired
                     />
-                    <InputUpload label='Tournament Image' name='img' form={form} rules={rules} />
+                    <InputUpload isRequired label='Tournament Image' name='img' form={form} rules={rules} />
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
-                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Duration</Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Duration</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
                         <Box sx={{ width: '70%' }}>
@@ -104,53 +118,64 @@ const AddClientTour = () => {
                             </Box>
                         </Box>
                     </Box>
-                    <InputWithLabel
-                        label='Games'
-                        name='games'
-                        type='text'
-                        form={form}
-                        labelField='Games'
-                        placeHolder='Select Games'
-                        isSelectType
-                        listSelect={[{ value: '1', label: 'Games 1' }]}
-                        isMultiline={false}
-                        rules={rules}
-                    />
-                    <InputWithLabel
-                        label='Tournament Mode'
-                        name='mode'
-                        type='text'
-                        form={form}
-                        labelField='Mode'
-                        placeHolder='Select Mode'
-                        isSelectType
-                        listSelect={[{ value: '1', label: 'Mode 1' }]}
-                        isMultiline={false}
-                        rules={rules}
-                    />
-                    <InputWithLabel
-                        label='Tournament Fee'
-                        name='fee'
-                        type='text'
-                        form={form}
-                        placeHolder='Fee Amount'
-                        labelField='Fee'
-                        isSelectType={false}
-                        isMultiline={false}
-                        rules={rules}
-                    />
-
-                    <InputWithLabel
-                        label='Prizing Table'
-                        name='prizeTable'
-                        type='text'
-                        form={form}
-                        labelField='Copy Table'
-                        isSelectType
-                        listSelect={[{ value: '1', label: 'Tourney Hop Up Okt 2022' }]}
-                        isMultiline={false}
-                        rules={rules}
-                    />
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Games'
+                            name='games'
+                            type='text'
+                            form={form}
+                            labelField='Games'
+                            placeHolder='Select Games'
+                            isSelectType
+                            listSelect={[{ value: '1', label: 'Games 1' }]}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Tournament Mode'
+                            name='mode'
+                            type='text'
+                            form={form}
+                            labelField='Mode'
+                            placeHolder='Select Mode'
+                            isSelectType
+                            listSelect={[{ value: '1', label: 'Mode 1' }]}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Tournament Fee'
+                            name='fee'
+                            type='text'
+                            form={form}
+                            placeHolder='Fee Amount'
+                            labelField='Fee'
+                            isSelectType={false}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Prizing Table'
+                            name='prizeTable'
+                            type='text'
+                            form={form}
+                            labelField='Copy Table'
+                            isSelectType
+                            listSelect={[{ value: '1', label: 'Tourney Hop Up Okt 2022' }]}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
+                    </Box>
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', padding: '10px', justifyContent: 'end', alignItems: 'flex-end' }}>
                         <Box sx={{ width: '70%' }}>
@@ -283,7 +308,20 @@ const AddClientTour = () => {
 
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
-                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Total Pool Prize</Typography>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Total Pool Prize</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
                         <Box sx={{ width: '70%' }}>

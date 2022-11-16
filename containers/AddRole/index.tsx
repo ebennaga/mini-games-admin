@@ -33,11 +33,21 @@ const AddRole = () => {
                 <Grid container color='rgba(0, 0, 0, 0.6)' mt={6}>
                     <Grid container item xs={12} spacing={3} mb={5}>
                         <Grid item xs={2} display='flex' justifyContent='space-between' alignItems='center'>
-                            <Box display='flex' alignItems='center'>
-                                <Box sx={{ color: '#D32F2F', fontSize: '20px' }}>*</Box>
-                                <Typography component='h3' variant='h1' fontSize='16px' fontWeight={600}>
-                                    Role Code
-                                </Typography>
+                            <Box alignItems='center'>
+                                <Box>
+                                    <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Roles Code</Typography>
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
+                                    >
+                                        *Field Required
+                                    </Typography>
+                                </Box>
                             </Box>
                             <Typography component='span' variant='h1' fontSize='16px' fontWeight={600}>
                                 :
@@ -56,10 +66,18 @@ const AddRole = () => {
                     </Grid>
                     <Grid container item xs={12} spacing={3} mb={5}>
                         <Grid item xs={2} display='flex' justifyContent='space-between' alignItems='center'>
-                            <Box display='flex' alignItems='center'>
-                                <Box sx={{ color: '#D32F2F', fontSize: '20px' }}>*</Box>
-                                <Typography component='h3' variant='h1' fontSize='16px' fontWeight={600}>
-                                    Role Name
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Roles Name</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
                                 </Typography>
                             </Box>
                             <Typography component='span' variant='h1' fontSize='16px' fontWeight={600}>
@@ -102,9 +120,18 @@ const AddRole = () => {
                     </Grid>
                     <Grid container item xs={12} spacing={3} mb={5}>
                         <Grid item xs={2} display='flex' justifyContent='space-between' alignItems='center'>
-                            <Box display='flex' alignItems='center'>
-                                <Typography component='h3' variant='h1' fontSize='16px' fontWeight={600}>
-                                    Is Active
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
                                 </Typography>
                             </Box>
                             <Typography component='span' variant='h1' fontSize='16px' fontWeight={600}>

@@ -29,7 +29,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
     roles,
     setRoles
 }) => {
-    const [accessArr, setAccessArr] = React.useState<string[]>([]);
+    // const [accessArr, setAccessArr] = React.useState<string[]>([]);
 
     const handleDeletedRoles = (item: any) => {
         if (roles.length > 0) {
@@ -40,22 +40,22 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
         }
     };
 
-    const handleSelectAccess = (event: any) => {
-        const isDuplicate: any = roles.includes(event.target.value);
-        form.setValue('access', event.target.value);
-        if (!isDuplicate) {
-            setAccessArr([...accessArr, event.target.value as string]);
-        }
-    };
+    // const handleSelectAccess = (event: any) => {
+    //     const isDuplicate: any = roles.includes(event.target.value);
+    //     form.setValue('access', event.target.value);
+    //     if (!isDuplicate) {
+    //         setAccessArr([...accessArr, event.target.value as string]);
+    //     }
+    // };
 
-    const handleDeletedAccess = (item: any) => {
-        if (accessArr.length > 0) {
-            const deleted = accessArr.filter((i: any) => {
-                return item !== i;
-            });
-            setAccessArr(deleted);
-        }
-    };
+    // const handleDeletedAccess = (item: any) => {
+    //     if (accessArr.length > 0) {
+    //         const deleted = accessArr.filter((i: any) => {
+    //             return item !== i;
+    //         });
+    //         setAccessArr(deleted);
+    //     }
+    // };
 
     return (
         <Box sx={{ position: 'relative' }}>
@@ -177,7 +177,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                                 })}
                         </Box>
                     </Box>
-                    <Box sx={{ mt: '35px', width: '30%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {/* <Box sx={{ mt: '35px', width: '30%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Data Access</Typography>
@@ -259,7 +259,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                                     );
                                 })}
                         </Box>
-                    </Box>
+                    </Box> */}
                     <Box sx={{ mt: '35px', width: '30%', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
