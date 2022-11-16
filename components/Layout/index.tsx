@@ -14,12 +14,18 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
     const MENUBAR = [
-        { icon: '/icons/navbar/dashboard.png', title: 'Dashboard', href: '/' },
-        { icon: '/icons/navbar/account.png', title: 'Account', href: '/account' },
-        { icon: '/icons/navbar/client-account.png', title: 'Client Account', href: '/client-account' },
-        { icon: '/icons/navbar/reconcile.png', title: 'Reconcile', href: '/reconcile' },
-        { icon: '/icons/navbar/game.png', title: 'Games', href: '/games' },
+        { active: '/icons/active/dashboard-active.png', icon: '/icons/navbar/dashboard.png', title: 'Dashboard', href: '/' },
+        { active: '/icons/active/account-active.png', icon: '/icons/navbar/account.png', title: 'Account', href: '/account' },
         {
+            active: '/icons/active/clientaccount-active.png',
+            icon: '/icons/navbar/client-account.png',
+            title: 'Client Account',
+            href: '/client-account'
+        },
+        { active: '/icons/active/reconcile-active.png', icon: '/icons/navbar/reconcile.png', title: 'Reconcile', href: '/reconcile' },
+        { active: '/icons/active/games-active.png', icon: '/icons/navbar/game.png', title: 'Games', href: '/games' },
+        {
+            active: '/icons/active/tournament.png',
             icon: '/icons/navbar/tournament.png',
             title: 'Tournament',
             href: '/tournament',
@@ -29,7 +35,9 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                 { title: 'Client Tournament', href: '/tournament/client-tournament' }
             ]
         },
+        { active: '/icons/active/redemption-active.png', icon: '/icons/navbar/redemption.png', title: 'Redemption', href: '/redemption' },
         {
+            active: '/icons/active/content.png',
             icon: '/icons/navbar/content.png',
             title: 'Content',
             href: '/content',
@@ -39,6 +47,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             ]
         },
         {
+            active: '/icons/active/setting.png',
             icon: '/icons/navbar/setting.png',
             title: 'Settings',
             href: '/settings',
@@ -105,6 +114,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                                     />
                                 ) : (
                                     <NavbarCard
+                                        active={item.active}
                                         key={item.title}
                                         icon={item.icon}
                                         title={item.title}

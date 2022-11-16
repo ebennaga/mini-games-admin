@@ -27,7 +27,7 @@ const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setO
     const data: any[] = item?.leaderboard;
     const [row, setRow] = useState('7');
     const [currentPage, setCurrentPage] = useState(1);
-    const [pages, setPages] = useState(1);
+    const [pages, setPages] = useState<any>(1);
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -36,7 +36,7 @@ const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setO
     };
 
     const goToNextPage = () => {
-        if (currentPage !== pages) {
+        if (currentPage < pages) {
             setCurrentPage((page) => page + 1);
         }
     };
@@ -54,6 +54,7 @@ const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setO
     useEffect(() => {
         setPages(Math.ceil(data?.length / Number(row)));
     }, [pages, row]);
+
     return (
         <Dialog fullWidth open={open} onClose={setOpenDialog}>
             <Box sx={{ padding: '20px' }}>

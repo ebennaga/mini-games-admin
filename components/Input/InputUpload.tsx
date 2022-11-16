@@ -10,9 +10,10 @@ interface InputUploadProps {
     name: string;
     form: any;
     rules?: any;
+    isRequired?: any;
 }
 
-const InputUpload: React.FC<InputUploadProps> = ({ label, name, form, rules = false }) => {
+const InputUpload: React.FC<InputUploadProps> = ({ label, name, form, rules = false, isRequired = false }) => {
     const [uploadedImage, setUploadedImage] = React.useState('');
     const [uploadedFile, setUploadedFile] = React.useState<File>();
 
@@ -45,6 +46,19 @@ const InputUpload: React.FC<InputUploadProps> = ({ label, name, form, rules = fa
                     <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>
                         {labelSplited === null ? label : labelSplited[1]}
                     </Typography>
+                    {isRequired && (
+                        <Typography
+                            sx={{
+                                fontWeight: '400',
+                                color: 'rgba(0, 0, 0, 0.6)',
+                                fontSize: '12px',
+                                position: 'relative',
+                                bottom: '-10px'
+                            }}
+                        >
+                            *Field Required
+                        </Typography>
+                    )}
                 </Box>
                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
             </Box>
