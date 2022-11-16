@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Paper, FormControl, FormControlLabel, InputLabel, Select, Typography, Radio, MenuItem } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import InputDate from 'components/Input/InputDate';
+import CustomButton from 'components/Button';
 
 interface FilterDropProps {
     form: any;
@@ -23,7 +24,7 @@ const FilterDrop: React.FC<FilterDropProps> = ({
     handleFiter
 }) => {
     return (
-        <Paper elevation={3} sx={{ width: '375px', height: '410px', position: 'absolute', zIndex: 2, padding: '30px', left: '330px' }}>
+        <Paper elevation={3} sx={{ width: '375px', height: '460px', position: 'absolute', zIndex: 2, padding: '30px', left: '330px' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 700, fontSize: '20px' }}>Filters</Typography>
                 <Close
@@ -90,6 +91,17 @@ const FilterDrop: React.FC<FilterDropProps> = ({
             </Box>
             <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
                 <InputDate label='End Date' type='date' form={form} name='endDate' />
+            </Box>
+            <Box sx={{ mt: '30px', justifyContent: 'space-between', display: 'flex', width: '100%' }}>
+                <CustomButton title='FILTER' width='149px' height='36px' />
+                <CustomButton
+                    title='RESET'
+                    width='149px'
+                    height='36px'
+                    backgroundColor='white'
+                    color='#A54CE5'
+                    border='1px solid #A54CE5'
+                />
             </Box>
         </Paper>
     );
