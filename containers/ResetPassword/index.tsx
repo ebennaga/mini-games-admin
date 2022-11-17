@@ -4,12 +4,17 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import Input from 'components/Input/Input';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+// import useAuthReducer from 'hooks/useAuthReducer';
 
 const SignIn = () => {
     const router = useRouter();
     const [isDisable, setIsDisable] = useState<boolean>(true);
     const [isSend, setIsSend] = useState<boolean>(false);
-
+    const { fetchAPI } = useAPICaller();
+    // const { setUser } = useAuthReducer();
+    const notify = useNotify();
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -28,9 +33,23 @@ const SignIn = () => {
         return 'Email is not valid!';
     };
 
-    const handleSubmit = (data: any) => {
-        console.log(data);
-        setIsSend(true);
+    const handleSubmit = async (data: any) => {
+        try {
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: '/auths/reset-password',
+                data: {
+                    email: data.email
+                }
+            });
+            if (response?.status === 200) {
+                // setUser(response?.data.data.api_token);
+                notify('Check your email for get OTP Code', 'success');
+                setIsSend(true);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
     };
 
     return (
