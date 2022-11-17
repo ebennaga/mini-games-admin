@@ -29,7 +29,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: false,
-        games: 'Hop Up',
+        games: 'Tower Stack',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -53,7 +53,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: true,
-        games: 'Hop Up',
+        games: 'Rose Dart',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -77,7 +77,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: false,
-        games: 'Hop Up',
+        games: 'Mobile Legend',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -101,7 +101,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: false,
-        games: 'Hop Up',
+        games: 'Evermore Knight',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -125,7 +125,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: true,
-        games: 'Hop Up',
+        games: 'Slime Haven',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -149,7 +149,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: true,
-        games: 'Hop Up',
+        games: 'Harvestmoon',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -173,7 +173,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: false,
-        games: 'Hop Up',
+        games: 'Barbar Q',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -197,7 +197,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: true,
-        games: 'Hop Up',
+        games: 'Hay Day',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -221,7 +221,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: false,
-        games: 'Hop Up',
+        games: 'Dragonest',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
@@ -245,7 +245,7 @@ const dummy = [
         start: new Date(),
         end: new Date(),
         isActive: false,
-        games: 'Hop Up',
+        games: 'Point Blank',
         registration: 20,
         totalPrizes: 30000,
         leaderboard: [
