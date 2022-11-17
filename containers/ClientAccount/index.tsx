@@ -72,12 +72,18 @@ const AccountContainer = () => {
     const [deleted, setDeleted] = useState<number[]>([]);
     const [remove, setRemove] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
+    const [search, setSearch] = useState<any>([]);
+    const [isSearch, setIsSearch] = useState(false);
+    const [input, setInput] = useState('');
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
+        if (isSearch) {
+            return search.slice(startIndex, endIndex);
+        }
         return remove.slice(startIndex, endIndex);
     };
 
@@ -201,6 +207,22 @@ const AccountContainer = () => {
         }
     }, [checkBoxKeys, form.watch('checkAll')]);
 
+    useEffect(() => {
+        if (isSearch) {
+            const searched = remove.filter((item: any) => {
+                if (input) {
+                    if (item.name.toLowerCase().includes(input) || item.email.toLowerCase().includes(input)) {
+                        return item;
+                    }
+                }
+            });
+            setSearch(searched);
+        }
+        if (form.watch('search') === '') {
+            setIsSearch(false);
+        }
+    }, [remove, input]);
+
     return (
         <Box sx={{ width: '100%' }}>
             {createAcc ? (
@@ -239,7 +261,14 @@ const AccountContainer = () => {
                                     gap: '10px'
                                 }}
                             >
-                                <InputSearch placeholder='Search by name, email, etc.' name='search' label='Search' form={form} />
+                                <form
+                                    onSubmit={form.handleSubmit((data: any, e: any) => {
+                                        setInput(data.search);
+                                        setIsSearch(true);
+                                    })}
+                                >
+                                    <InputSearch placeholder='Search by name, email, etc.' name='search' label='Search' form={form} />
+                                </form>
                                 <FilterList
                                     onClick={() => {
                                         setOpenFilter(!openFilter);
