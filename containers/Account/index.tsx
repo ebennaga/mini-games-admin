@@ -80,7 +80,6 @@ const AccountContainer = () => {
     const [isSearch, setIsSearch] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
-    const addRoles: any[] = [];
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);

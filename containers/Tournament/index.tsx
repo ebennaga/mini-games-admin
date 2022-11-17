@@ -58,12 +58,18 @@ const TournamentContainer = () => {
     const [remove, setRemove] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
     const [selectedValue, setSelectedValue] = React.useState('all');
+    const [search, setSearch] = useState<any>([]);
+    const [input, setInput] = useState('');
+    const [isSearch, setIsSearch] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
+        if (isSearch) {
+            return search.slice(startIndex, endIndex);
+        }
         return remove.slice(startIndex, endIndex);
     };
 
@@ -168,14 +174,30 @@ const TournamentContainer = () => {
     }, [checkBoxKeys, form.watch('checkAll')]);
 
     React.useEffect(() => {
-        const input = form.watch();
-        if (input.start) {
-            form.setValue('maxDate', input.start);
+        const inputs = form.watch();
+        if (inputs.start) {
+            form.setValue('maxDate', inputs.start);
         }
-        if (input.end) {
-            form.setValue('maxDate', input.end);
+        if (inputs.end) {
+            form.setValue('maxDate', inputs.end);
         }
     }, [form.watch('start'), form.watch('end'), form.watch('startTime'), form.watch('endTime')]);
+
+    useEffect(() => {
+        if (isSearch) {
+            const searched = remove.filter((item: any) => {
+                if (input) {
+                    if (item.title.toLowerCase().includes(input) || item.games.toLowerCase().includes(input)) {
+                        return item;
+                    }
+                }
+            });
+            setSearch(searched);
+        }
+        if (form.watch('search') === '') {
+            setIsSearch(false);
+        }
+    }, [remove, input]);
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -204,7 +226,15 @@ const TournamentContainer = () => {
                                     gap: '10px'
                                 }}
                             >
-                                <InputSearch placeholder='Search by title' name='search' label='Search' form={form} />
+                                <form
+                                    onSubmit={form.handleSubmit((data: any, e: any) => {
+                                        setInput(data.search);
+                                        setIsSearch(true);
+                                    })}
+                                >
+                                    <InputSearch placeholder='Search by title, game, etc' name='search' label='Search' form={form} />
+                                </form>
+
                                 <FilterList
                                     onClick={() => {
                                         setOpenFilter(!openFilter);
