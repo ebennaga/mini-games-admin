@@ -20,8 +20,11 @@ import { useRouter } from 'next/router';
 import CustomButton from 'components/Button';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
+import PlaceIcon from '@mui/icons-material/Place';
 import InputDate from 'components/Input/InputDate';
 import { getCurrentDate, getCurrentTime } from 'utils/date';
+import Input from 'components/Input/Input';
+import DialogMap from 'components/Dialog/DialogMap';
 
 const dummyData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
@@ -41,11 +44,15 @@ const AddClientTour = () => {
             fee: '',
             prizeTable: '',
             poolPrize: '',
+            address: '',
+            lat: '',
+            long: '',
             startDate: new Date().toJSON().slice(0, 10) || '',
             endDate: new Date().toJSON().slice(0, 10) || '',
             maxDate: getCurrentDate(),
             startTime: getCurrentTime(),
-            endTime: getCurrentTime()
+            endTime: getCurrentTime(),
+            detailLocation: ''
         }
     });
     const rules = { required: true };
@@ -88,6 +95,60 @@ const AddClientTour = () => {
                         isRequired
                     />
                     <InputUpload isRequired label='Tournament Image' name='img' form={form} rules={rules} />
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Location</Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ width: '70%', my: 2 }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    gap: 2,
+                                    position: 'relative',
+                                    border: '1px solid rgba(0, 0, 0, 0.2)',
+                                    padding: '15px 10px',
+                                    borderRadius: '4px'
+                                }}
+                            >
+                                <Typography
+                                    sx={{
+                                        fontSize: '12px',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        position: 'absolute',
+                                        top: '-9px',
+                                        background: '#fff',
+                                        paddingX: '5px'
+                                    }}
+                                >
+                                    Pin Point Location
+                                </Typography>
+                                <Box display='flex' gap={1}>
+                                    <PlaceIcon sx={{ color: 'rgba(0, 0, 0, 0.54)' }} />
+                                    <Typography sx={{ fontSize: '16px', color: 'rgba(0, 0, 0, 0.9)' }}>serpong utara</Typography>
+                                </Box>
+                                <ButtonBase
+                                    sx={{ color: '#A54CE5', fontSize: '16px', borderBottom: '1px solid #A54CE5', alignSelf: 'flex-end' }}
+                                >
+                                    Change
+                                </ButtonBase>
+                            </Box>
+
+                            <Box sx={{ mt: 4 }}>
+                                <Input
+                                    form={form}
+                                    name='detailLocation'
+                                    label='Detail Location'
+                                    placeholder='Input detail location'
+                                    isColor
+                                    isTextArea
+                                />
+                            </Box>
+                        </Box>
+                    </Box>
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
@@ -341,6 +402,7 @@ const AddClientTour = () => {
                     />
                 </Box>
             </form>
+            <DialogMap form={form} nameAddress='address' nameLat='lat' nameLong='long' />
         </Box>
     );
 };
