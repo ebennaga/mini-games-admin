@@ -44,21 +44,23 @@ const AddClientTour = () => {
             fee: '',
             prizeTable: '',
             poolPrize: '',
-            address: '',
-            lat: '',
-            long: '',
             startDate: new Date().toJSON().slice(0, 10) || '',
             endDate: new Date().toJSON().slice(0, 10) || '',
             maxDate: getCurrentDate(),
             startTime: getCurrentTime(),
             endTime: getCurrentTime(),
-            detailLocation: ''
+            detailLocation: '',
+            address: 'Intermark, Rawa Mekar Jaya, Serpong, Tangerang Selatan, Banten, Indonesia',
+            lat: -6.30943345,
+            long: 106.6893430616688
         }
     });
+
     const rules = { required: true };
     const router = useRouter();
     const [prizeData, setPrizeData] = React.useState<any>(dummyData);
     const [prizePool, setPrizePool] = React.useState(0);
+    const [openDialogMap, setOpenDialogMap] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         let ttl: number = 0;
@@ -128,9 +130,12 @@ const AddClientTour = () => {
                                 </Typography>
                                 <Box display='flex' gap={1}>
                                     <PlaceIcon sx={{ color: 'rgba(0, 0, 0, 0.54)' }} />
-                                    <Typography sx={{ fontSize: '16px', color: 'rgba(0, 0, 0, 0.9)' }}>serpong utara</Typography>
+                                    <Typography sx={{ fontSize: '16px', color: 'rgba(0, 0, 0, 0.9)' }}>
+                                        {form.watch('address')?.slice(0, 15)}...
+                                    </Typography>
                                 </Box>
                                 <ButtonBase
+                                    onClick={() => setOpenDialogMap(true)}
                                     sx={{ color: '#A54CE5', fontSize: '16px', borderBottom: '1px solid #A54CE5', alignSelf: 'flex-end' }}
                                 >
                                     Change
@@ -402,7 +407,7 @@ const AddClientTour = () => {
                     />
                 </Box>
             </form>
-            <DialogMap form={form} nameAddress='address' nameLat='lat' nameLong='long' />
+            <DialogMap open={openDialogMap} setOpen={setOpenDialogMap} form={form} nameAddress='address' nameLat='lat' nameLong='long' />
         </Box>
     );
 };

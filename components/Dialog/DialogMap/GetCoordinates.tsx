@@ -10,6 +10,7 @@ interface GetCoordinatesProps {
 const GetCoordinates: React.FC<GetCoordinatesProps> = ({ setPosition }) => {
     const map = useMap();
 
+    // API reverse geocode
     const GEOCODE_URL = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&langCode=EN&location=';
 
     // change latitude and longitude to address
@@ -18,6 +19,7 @@ const GetCoordinates: React.FC<GetCoordinatesProps> = ({ setPosition }) => {
         return data;
     };
 
+    // update data when map is change
     useEffect(() => {
         if (!map) return;
         const info: any = L.DomUtil.create('div', 'legend');
@@ -35,9 +37,13 @@ const GetCoordinates: React.FC<GetCoordinatesProps> = ({ setPosition }) => {
 
         // event click map
         map.on('click', async (e) => {
-            info.textContent = e.latlng;
-            const data = await reverseCoordinate(e.latlng);
-            setPosition(e.latlng, data.address.LongLabel);
+            try {
+                info.textContent = e.latlng;
+                const data = await reverseCoordinate(e.latlng);
+                return setPosition(e.latlng, data.address.LongLabel);
+            } catch (err: any) {
+                return null;
+            }
         });
 
         map.addControl(new positon());
