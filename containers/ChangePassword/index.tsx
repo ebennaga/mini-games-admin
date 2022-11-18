@@ -11,6 +11,7 @@ import DialogSuccess from './DialogSuccess';
 const ChangePassword = () => {
     const [isDisable, setIsDisable] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const form = useForm({
@@ -38,6 +39,7 @@ const ChangePassword = () => {
     };
 
     const handleSubmit = async (data: any) => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
                 method: 'POST',
@@ -51,9 +53,12 @@ const ChangePassword = () => {
             if (response?.status === 200) {
                 setOpen(true);
             }
+            setIsLoading(false);
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     const handleCancel = () => {
@@ -112,7 +117,7 @@ const ChangePassword = () => {
                     }}
                 >
                     <Box>
-                        <CustomButton title='SUBMIT' type='submit' isDisable={isDisable} />
+                        <CustomButton isDisable={isDisable} isLoading={isLoading} title='SUBMIT' type='submit' isDisable={isDisable} />
                     </Box>
                     <Box ml='40px'>
                         <CustomButton

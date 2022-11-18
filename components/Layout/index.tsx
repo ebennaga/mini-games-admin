@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, List, Typography, Avatar } from '@mui/material';
+import { Box, List, Typography, Avatar, Paper, ButtonBase, CircularProgress } from '@mui/material';
 import Search from 'components/Search';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import useAuthReducer from 'hooks/useAuthReducer';
 import EmailIcon from '@mui/icons-material/Email';
 import NavbarCard from './NavbarCard';
 import DropdownCard from './DropdownCard';
@@ -67,9 +68,10 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             search: ''
         }
     });
-
+    const [isDrop, setIsDrop] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const router = useRouter();
-
+    const { clearUser } = useAuthReducer();
     const handleSearch = (data: any) => {
         alert(data.search);
     };
@@ -129,7 +131,16 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             </Box>
             <Box width='100%' padding='33.5px 33px'>
                 {isUserInfo && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end', mb: '27px' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            justifyContent: 'flex-end',
+                            mb: '27px',
+                            position: 'relative'
+                        }}
+                    >
                         <Box sx={{ position: 'relative', width: 'fit-content' }}>
                             <EmailIcon sx={{ color: 'rgba(0, 0, 0, 0.54)', fontSize: '30px' }} />
                             <Box
@@ -154,7 +165,43 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                         <Typography component='span' fontSize='16px' sx={{ color: 'rgba(0, 0, 0, 0.87)', px: 3 }}>
                             BangLorem
                         </Typography>
-                        <Avatar alt='user' src='' sx={{ width: '29px', height: '29px', background: 'rgba(0,0,0,0.54)' }} />
+                        <Avatar
+                            onClick={() => setIsDrop(!isDrop)}
+                            alt='user'
+                            src=''
+                            sx={{ width: '29px', height: '29px', background: 'rgba(0,0,0,0.54)', cursor: 'pointer' }}
+                        />
+                        {isDrop && (
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    width: '200px',
+                                    position: 'absolute',
+                                    height: '100px',
+                                    padding: '10px',
+                                    top: '40px',
+                                    textAlign: 'center',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    flexDirection: 'column'
+                                }}
+                            >
+                                <Typography sx={{ mb: '10px' }}>owikun@mail.com</Typography>
+                                <ButtonBase
+                                    onClick={() => {
+                                        setTimeout(() => {
+                                            clearUser();
+                                            router.push('/sign-in');
+                                        }, 4000);
+                                        setIsLoading(true);
+                                        setIsLoading(false);
+                                    }}
+                                >
+                                    {isLoading ? <CircularProgress color='secondary' /> : <Typography>Logout</Typography>}
+                                </ButtonBase>
+                            </Paper>
+                        )}
                     </Box>
                 )}
                 {children}

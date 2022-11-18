@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonBase, Typography } from '@mui/material';
+import { Button, Typography, CircularProgress } from '@mui/material';
 
 interface CustomButtonProps {
     height?: string;
@@ -14,6 +14,7 @@ interface CustomButtonProps {
     isDisable?: boolean;
     padding?: any;
     fontSize?: any;
+    isLoading?: boolean;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -26,19 +27,34 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     borderRadius = '4px',
     onClick,
     type = 'button',
-    isDisable,
+    isDisable = false,
     padding = '10px',
-    fontSize = '14px'
+    fontSize = '14px',
+    isLoading
 }) => {
     return (
-        <ButtonBase
-            disabled={isDisable}
+        <Button
+            disabled={isLoading || isDisable}
             type={type}
             onClick={onClick}
-            sx={{ border, backgroundColor, color, width, height, borderRadius, padding, fontSize }}
+            sx={{
+                border,
+                backgroundColor,
+                color,
+                width,
+                height,
+                borderRadius,
+                padding,
+                fontSize,
+                '&:disabled': {
+                    backgroundColor: '#949494',
+                    color: 'white',
+                    border: 'none'
+                }
+            }}
         >
-            <Typography sx={{ textTransform: 'uppercase' }}>{title}</Typography>
-        </ButtonBase>
+            <Typography sx={{ textTransform: 'uppercase' }}>{isLoading ? <CircularProgress color='inherit' /> : title}</Typography>
+        </Button>
     );
 };
 

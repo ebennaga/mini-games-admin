@@ -31,11 +31,11 @@ const rootReducer = (state: any, action: any) => {
     return combinedReducers(state, action);
 };
 
-const now = new Date();
-const time = now.getTime();
-const expireTime = time + 1000 * 360000;
-now.setTime(expireTime);
-const expired = now.toUTCString();
+// const now = new Date();
+// const time = now.getTime();
+// const expireTime = time + 1000 * 360000;
+// now.setTime(expireTime);
+// const expired = now.toUTCString();
 
 const makeStore = wrapMakeStore(() =>
     configureStore({
@@ -46,8 +46,8 @@ const makeStore = wrapMakeStore(() =>
                     subtrees: [
                         {
                             subtree: `webpage.user`,
-                            cookieName: 'prizeplay.persist',
-                            expires: new Date(expired)
+                            cookieName: 'prizeplay.persist'
+                            // expires: new Date(expired)
                         }
                     ]
                 })

@@ -12,6 +12,7 @@ import useAuthReducer from 'hooks/useAuthReducer';
 const SignIn = () => {
     const router = useRouter();
     const [isDisable, setIsDisable] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { fetchAPI } = useAPICaller();
     const { setUser } = useAuthReducer();
     const notify = useNotify();
@@ -35,6 +36,7 @@ const SignIn = () => {
     };
 
     const handleSubmit = async (data: any) => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
                 method: 'POST',
@@ -49,9 +51,12 @@ const SignIn = () => {
                 notify(response?.data.message, 'success');
                 router.push('/');
             }
+            setIsLoading(false);
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -63,7 +68,7 @@ const SignIn = () => {
     }, [form.watch('password')]);
 
     return (
-        <Box component='main'>
+        <Box component='main' sx={{ width: '100%', height: '95vh', position: 'relative' }}>
             <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <Box padding='95px 40px'>
                     <HeaderAuth title='Sign In into Admin Prizeplay' subTitle='Additional description if required' />
@@ -106,14 +111,15 @@ const SignIn = () => {
                         padding: '40px 39px',
                         borderTop: '1px solid rgba(0, 0, 0, 0.12)',
                         position: 'absolute',
-                        width: '100%',
-                        bottom: 0
+
+                        bottom: 0,
+                        width: '100%'
                     }}
                 >
                     <Box>
-                        <CustomButton title='SIGN iN' type='submit' isDisable={isDisable} />
+                        <CustomButton isLoading={isLoading} title='SIGN IN' type='submit' isDisable={isDisable} />
                     </Box>
-                    <Box ml='40px'>
+                    {/* <Box ml='40px'>
                         <CustomButton
                             title='SIGN UP'
                             border='1px solid #A54CE5'
@@ -121,7 +127,7 @@ const SignIn = () => {
                             color='#A54CE5'
                             onClick={() => router.push('/sign-up')}
                         />
-                    </Box>
+                    </Box> */}
                 </Box>
             </form>
         </Box>
