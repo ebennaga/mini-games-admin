@@ -62,7 +62,7 @@ const Games = () => {
             genre: 'Arcade'
         },
         {
-            id: 1,
+            id: 7,
             title: 'Hop Up',
             game_url: 'https://minigames.prozaplay.io/hopup/',
             description: 'Let’s Go Play Hop up ',
@@ -70,7 +70,7 @@ const Games = () => {
             genre: 'Arcade'
         },
         {
-            id: 2,
+            id: 8,
             title: 'Rose Dart',
             game_url: 'https://minigames.prozaplay.io/hopup/',
             description: 'Let’s Go Play Hop up ',
@@ -78,7 +78,7 @@ const Games = () => {
             genre: 'Arcade'
         },
         {
-            id: 3,
+            id: 9,
             title: 'Block Stack',
             game_url: 'https://minigames.prozaplay.io/hopup/',
             description: 'Let’s Go Play Hop up ',
@@ -86,7 +86,7 @@ const Games = () => {
             genre: 'Arcade'
         },
         {
-            id: 4,
+            id: 10,
             title: 'Racing Fighter',
             game_url: 'https://minigames.prozaplay.io/hopup/',
             description: 'Let’s Go Play Hop up ',
@@ -94,7 +94,7 @@ const Games = () => {
             genre: 'Arcade'
         },
         {
-            id: 5,
+            id: 11,
             title: 'Battle City',
             game_url: 'https://minigames.prozaplay.io/hopup/',
             description: 'Let’s Go Play Hop up ',
@@ -102,7 +102,7 @@ const Games = () => {
             genre: 'Arcade'
         },
         {
-            id: 6,
+            id: 12,
             title: 'Contra',
             game_url: 'https://minigames.prozaplay.io/hopup/',
             description: 'Let’s Go Play Hop up ',
@@ -135,7 +135,9 @@ const Games = () => {
         }
     });
 
-    const handleEdit = () => {};
+    const handleEdit = (id: number) => {
+        router.push(`/games/${id}`);
+    };
 
     const handleOpenDeleteDialog = () => {
         setOpendDeleteDialog(true);
@@ -196,7 +198,7 @@ const Games = () => {
                     nameRow='row'
                     name='dataTable'
                     form={form}
-                    onEdit={handleEdit}
+                    onEdit={(id: number) => handleEdit(id)}
                     handleOpenDeleteDialog={handleOpenDeleteDialog}
                 />
                 <PaginationCard

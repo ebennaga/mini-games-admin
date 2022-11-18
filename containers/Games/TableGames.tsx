@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, FormControl, FormControlLabel, Checkbox } from '@mui/material';
 import BadgeSelected from 'components/BadgeSelected';
@@ -5,7 +6,7 @@ import BadgeSelected from 'components/BadgeSelected';
 interface TableGamesProps {
     name: string;
     form: any;
-    onEdit: any;
+    onEdit: (id: number) => void;
     handleOpenDeleteDialog: any;
     nameRow: string;
     namePage: string;
@@ -19,7 +20,6 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
 
     const handleCheck = async (e: React.ChangeEvent<HTMLInputElement>, data: any) => {
         const isChecked = e.target.checked;
-
         let newArr: any = [...dataTable];
         dataTable.forEach((item: any, index: number) => {
             if (item.id === data.id) {
@@ -72,14 +72,16 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
         setShowTable({ startIndex: first, endIndex: last });
     }, [form.watch(nameRow), form.watch(namePage)]);
 
+    const handleEdit = () => {
+        const getDataChecked = dataTable.filter((item: any) => item.isAction);
+        const { id } = getDataChecked[0];
+        onEdit(id);
+    };
+
     return (
         <>
             {totalChecked ? (
-                <BadgeSelected
-                    total={totalChecked}
-                    onEdit={totalChecked === 1 ? onEdit : false}
-                    handleOpenDeleteDialog={handleOpenDeleteDialog}
-                />
+                <BadgeSelected total={totalChecked} onEdit={handleEdit} handleOpenDeleteDialog={handleOpenDeleteDialog} />
             ) : null}
             <TableContainer sx={{ mt: totalChecked ? 0 : '24px' }}>
                 <Table aria-label='Table Games'>
