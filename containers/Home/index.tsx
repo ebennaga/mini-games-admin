@@ -1,15 +1,18 @@
 import { Box, ButtonBase, Grid, Tab, Tabs } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
-import React from 'react';
+import React, { useEffect } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
 import InputStartEndDate from 'components/Input/InputStartEndDate';
 import { useForm } from 'react-hook-form';
 import { getEndDdate, getStartDate } from 'utils/date';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 import ChartBar from './ChartBar';
 import ChartDoughnut from './ChartDoughnut';
 import ChartSpline from './ChartSpline';
 
 const Home = () => {
+    const router = useRouter();
     const dataChart = [
         { id: 1, color: '#F16063', label: 'Console', value: [15, 39, 30, 41, 23, 18, 20, 25, 26, 35] },
         { id: 2, color: '#F9D14B', label: 'Laptop', value: [0, 5, 10, 30, 10, 35, 30, 31, 28, 22] },
@@ -38,6 +41,7 @@ const Home = () => {
         { id: 1, label: 'Tower Stacks', color: '#8F67FF', value: 22 },
         { id: 2, label: 'Rose Dart', color: '#BBAAF0', value: 20 }
     ];
+    const userState = useSelector((state: any) => state.webpage?.user?.user);
 
     const [tabChartSpline, setTabChartSpline] = React.useState<string>('0');
     const [tabChartDoughnut, setTabChartDoughnut] = React.useState<string>('0');
@@ -67,6 +71,12 @@ const Home = () => {
     const handleChangeTabDoughnut2 = (e: React.SyntheticEvent, newValue: string) => {
         setTabChartDoughnut2(newValue);
     };
+
+    useEffect(() => {
+        if (!userState) {
+            router.push('/sign-in');
+        }
+    }, []);
 
     return (
         <Box>

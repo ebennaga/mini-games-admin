@@ -6,12 +6,14 @@ import { useRouter } from 'next/router';
 import Input from 'components/Input/Input';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import CustomButton from 'components/Button';
 // import useAuthReducer from 'hooks/useAuthReducer';
 
 const SignIn = () => {
     const router = useRouter();
     const [isDisable, setIsDisable] = useState<boolean>(true);
     const [isSend, setIsSend] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { fetchAPI } = useAPICaller();
     // const { setUser } = useAuthReducer();
     const notify = useNotify();
@@ -34,6 +36,7 @@ const SignIn = () => {
     };
 
     const handleSubmit = async (data: any) => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
                 method: 'POST',
@@ -47,9 +50,12 @@ const SignIn = () => {
                 notify('Check your email for get OTP Code', 'success');
                 setIsSend(true);
             }
+            setIsLoading(false);
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     return (
@@ -87,21 +93,7 @@ const SignIn = () => {
                             </Grid>
                             <Grid item container xs={12} mb='37px'>
                                 <Grid item xs={12} xl={7}>
-                                    <ButtonBase
-                                        disabled={isDisable}
-                                        type='submit'
-                                        sx={{
-                                            bgcolor: '#A54CE5',
-                                            width: '100%',
-                                            padding: '16.5px',
-                                            borderRadius: '4px',
-                                            color: '#fff',
-                                            fontWeight: 500,
-                                            fontSize: '15px'
-                                        }}
-                                    >
-                                        CONTINUE
-                                    </ButtonBase>
+                                    <CustomButton type='submit' title='continue' width='100%' isLoading={isLoading} isDisable={isDisable} />
                                     <ButtonBase sx={{ float: 'right', mt: 2 }} onClick={() => router.push('/sign-in')}>
                                         Back to{' '}
                                         <Typography component='span' sx={{ color: '#A54CE5', ml: 0.6 }}>
