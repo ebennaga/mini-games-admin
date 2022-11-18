@@ -211,7 +211,8 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                                     flexDirection: 'column'
                                 }}
                             >
-                                <Typography sx={{ mb: '10px' }}>owikun@mail.com</Typography>
+                                <Typography>owikun@mail.com</Typography>
+                                <Box sx={{ width: '80%', height: '1px', backgroundColor: '#A54CE5', my: '5px' }} />
                                 <ButtonBase onClick={handleLogout}>
                                     {isLoading ? <CircularProgress color='secondary' size={25} /> : <Typography>Logout</Typography>}
                                 </ButtonBase>

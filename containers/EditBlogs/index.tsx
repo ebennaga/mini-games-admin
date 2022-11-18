@@ -5,41 +5,59 @@ import Image from 'next/image';
 import InputImage from 'components/Input/InputImage';
 import Input from 'components/Input/Input';
 import CustomButton from 'components/Button';
+// import useAPICaller from 'hooks/useAPICaller';
+import { useRouter } from 'next/router';
+import { useForm } from 'react-hook-form';
 
-interface CreateTournamentProps {
-    form: any;
-    setCreateBlog: any;
-    createBlog: any;
-    isEditing?: any;
-    setIsEditing?: any;
-    datas?: any;
-}
+interface EditBlogsProps {}
 
-const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, createBlog, form, isEditing, setIsEditing, datas }) => {
-    const handleSubmit = (e: any, data: any) => {
-        console.log('response', data);
+const EditBlogs: React.FC<EditBlogsProps> = () => {
+    const data = {
+        id: 1,
+        blogsTitle: 'Open Tourney Pre Launch Hop up',
+        postedBy: 'Owikun',
+        postedDate: '18-11-2022',
+        image: '/images/drivegoogleimage_001-2022.png',
+        description: 'Hi Everyone, we have launch new game to play. lets try '
     };
-    const [isUpload, setIsUpload] = React.useState(false);
 
-    React.useEffect(() => {
-        if (isEditing) {
-            form.setValue('title', datas.blogsTitle);
-            form.setValue('date', datas.postedDate);
-            form.setValue('description', datas.description);
+    const form = useForm({
+        mode: 'all',
+        defaultValues: {
+            title: data.blogsTitle,
+            date: data.postedDate,
+            description: data.description,
+            image: data.image,
+            acc: 'OWIKUN'
         }
-        if (!isEditing) {
-            form.setValue('title', '');
-            form.setValue('date', '');
-            form.setValue('image', '');
-            form.setValue('description', '');
-        }
-    }, []);
+    });
+
+    const router = useRouter();
+    // const { fetchAPI } = useAPICaller();
+    // const [datas, setDatas] = React.useState<any>(null);
+    const [isUpload, setIsUpload] = React.useState(true);
+
+    const handleSubmit = (body: any) => {
+        console.log('response', body);
+    };
+
+    // const fetchItemDetail = async () => {
+    //     const response = await fetchAPI({
+    //         endpoint: `exchange-rates/${router.query.id}`,
+    //         method: 'GET'
+    //     });
+    //     setDatas(response?.data.data);
+    // };
+
+    // React.useEffect(() => {
+    //     fetchItemDetail();
+    // }, []);
 
     return (
         <Box sx={{}}>
             <Box sx={{ padding: '40px 25px' }}>
                 <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
-                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Create Blogs</Typography>
+                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Edit Blogs</Typography>
                     <Typography sx={{ fontSize: '14px', fontWeight: 400, color: 'rgba(0, 0, 0, 0.6)' }}>
                         Additional description if required
                     </Typography>
@@ -80,21 +98,20 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                 <Input name='acc' label='' isDisabled placeholder={form.watch('acc')} form={form} />
                             </Grid>
                         </Grid>
-                        {isEditing && (
-                            <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
-                                <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                        Posted date
-                                    </Typography>
-                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                        :
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <Input name='date' label='' isDisabled placeholder={form.watch('date')} form={form} />
-                                </Grid>
+
+                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                    Posted date
+                                </Typography>
+                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                    :
+                                </Typography>
                             </Grid>
-                        )}
+                            <Grid item xs={4}>
+                                <Input name='date' label='' isDisabled placeholder={form.watch('date')} form={form} />
+                            </Grid>
+                        </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
@@ -105,7 +122,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                {!isEditing || isUpload ? (
+                                {!isUpload ? (
                                     <InputImage
                                         name='image'
                                         form={form}
@@ -119,7 +136,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                             <UploadFile sx={{ color: '#A54CE5' }} />
                                         </Box>
                                         <Box>
-                                            <Typography>{datas.image}</Typography>
+                                            <Typography>{form.watch('image')}</Typography>
                                             <Box
                                                 sx={{ display: 'flex', fontWeight: 'bold', gap: '10px', alignItems: 'center', mt: '10px' }}
                                             >
@@ -131,7 +148,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                         <Close
                                             sx={{ cursor: 'pointer' }}
                                             onClick={() => {
-                                                setIsUpload(true);
+                                                setIsUpload(!isUpload);
                                             }}
                                         />
                                         <Box sx={{ height: '80px' }}>
@@ -141,12 +158,12 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                                 )}
                             </Grid>
                         </Grid>
-                        {!isUpload && isEditing && (
+                        {isUpload && (
                             <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                                 <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                                 <Grid item xs={4}>
                                     <Typography sx={{ fontWeight: 'bold', mb: '10px' }}>Preview</Typography>
-                                    <Image src={`${datas.image}.png`} width={461} height={252} alt='previewimage' loading='lazy' />
+                                    <Image src={`${form.watch('image')}.png`} width={461} height={252} alt='previewimage' loading='lazy' />
                                 </Grid>
                             </Grid>
                         )}
@@ -189,10 +206,8 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
                 <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
                 <CustomButton
                     onClick={() => {
-                        if (isEditing) {
-                            setIsEditing(false);
-                        }
-                        setCreateBlog(!createBlog);
+                        form.reset();
+                        router.push('/blogs');
                     }}
                     padding='10px'
                     width='193px'
@@ -207,4 +222,4 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateBlog, crea
     );
 };
 
-export default CreateTournament;
+export default EditBlogs;
