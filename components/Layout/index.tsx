@@ -4,6 +4,8 @@ import Search from 'components/Search';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import useAuthReducer from 'hooks/useAuthReducer';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import EmailIcon from '@mui/icons-material/Email';
 import NavbarCard from './NavbarCard';
 import DropdownCard from './DropdownCard';
@@ -71,9 +73,31 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
     const [isDrop, setIsDrop] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const router = useRouter();
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
     const { clearUser } = useAuthReducer();
     const handleSearch = (data: any) => {
         alert(data.search);
+    };
+
+    const handleLogout = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: '/auths/logout'
+            });
+            if (response?.status === 200) {
+                clearUser();
+                notify(response?.data.message, 'success');
+                router.push('/sign-in');
+            }
+            setIsLoading(false);
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
     };
 
     const path = router.asPath;
@@ -188,17 +212,8 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                                 }}
                             >
                                 <Typography sx={{ mb: '10px' }}>owikun@mail.com</Typography>
-                                <ButtonBase
-                                    onClick={() => {
-                                        setTimeout(() => {
-                                            clearUser();
-                                            router.push('/sign-in');
-                                        }, 4000);
-                                        setIsLoading(true);
-                                        setIsLoading(false);
-                                    }}
-                                >
-                                    {isLoading ? <CircularProgress color='secondary' /> : <Typography>Logout</Typography>}
+                                <ButtonBase onClick={handleLogout}>
+                                    {isLoading ? <CircularProgress color='secondary' size={25} /> : <Typography>Logout</Typography>}
                                 </ButtonBase>
                             </Paper>
                         )}
