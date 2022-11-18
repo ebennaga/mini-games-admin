@@ -8,7 +8,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import DialogSuccess from './DialogSuccess';
 
-const ResetPasswordConfirmation = () => {
+const ChangePassword = () => {
     const [isDisable, setIsDisable] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
     const { fetchAPI } = useAPICaller();
@@ -41,7 +41,7 @@ const ResetPasswordConfirmation = () => {
         try {
             const response = await fetchAPI({
                 method: 'POST',
-                endpoint: '/auths/activate',
+                endpoint: '/auths/change-password',
                 data: {
                     password: data.password,
                     password_confirmation: data.confirm_password,
@@ -130,4 +130,4 @@ const ResetPasswordConfirmation = () => {
     );
 };
 
-export default ResetPasswordConfirmation;
+export default ChangePassword;

@@ -5,11 +5,16 @@ import InputWithLabel from 'components/Input/InputWithLabel';
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+import useAuthReducer from 'hooks/useAuthReducer';
 
 const SignIn = () => {
     const router = useRouter();
     const [isDisable, setIsDisable] = useState<boolean>(true);
-
+    const { fetchAPI } = useAPICaller();
+    const { setUser } = useAuthReducer();
+    const notify = useNotify();
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -29,8 +34,24 @@ const SignIn = () => {
         return 'Email is not valid!';
     };
 
-    const handleSubmit = (data: any) => {
-        console.log(data);
+    const handleSubmit = async (data: any) => {
+        try {
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: '/auths/login',
+                data: {
+                    email: data.email,
+                    password: data.password
+                }
+            });
+            if (response?.status === 200) {
+                setUser(response?.data.data.api_token);
+                notify(response?.data.message, 'success');
+                router.push('/');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
     };
 
     useEffect(() => {
