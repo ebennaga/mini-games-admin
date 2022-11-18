@@ -8,6 +8,7 @@ import { Remove, Add } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import { useForm } from 'react-hook-form';
 import { getCurrentDate, getCurrentTime } from 'utils/date';
+import { useRouter } from 'next/router';
 import TableAddTournament from './Table';
 import dataTable from './dataSelect';
 
@@ -30,6 +31,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
             pool: 0
         }
     });
+    const router = useRouter();
     const [game, setGame] = React.useState('0');
     const [table, setTable] = React.useState('0');
     const ITEM_HEIGHT = 48;
@@ -228,7 +230,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
                                         sx={{
                                             mt: '20px',
                                             display: 'flex',
-                                            width: '27%',
+                                            width: '35%',
                                             gap: '15px',
                                             alignSelf: 'flex-end',
                                             fontWeight: 700
@@ -296,7 +298,9 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
             >
                 <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
                 <CustomButton
-                    onClick={() => {}}
+                    onClick={() => {
+                        router.push('/tournament');
+                    }}
                     padding='10px'
                     width='193px'
                     height='59px'
