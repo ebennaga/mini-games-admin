@@ -64,6 +64,10 @@ const TableExchange: React.FC<TableExchangeProps> = ({ name, form, nameIdxAppear
         });
     };
 
+    React.useEffect(() => {
+        setDataTable(form.watch(name));
+    }, [form.watch(name)]);
+
     return (
         <TableContainer>
             <Table aria-label='table participant'>

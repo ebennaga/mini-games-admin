@@ -13,14 +13,11 @@ import LoadingExchangeRates from './LoadingExchangeRates';
 const ExchangeRates = () => {
     const [isLoading, setIsloading] = React.useState<boolean>(true);
     const [data, setData] = React.useState<Array<any>>([]);
+    const [dataSearch, setDataSearch] = React.useState<any>(null);
 
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
-
-    const handleSearch = async () => {
-        console.log('done');
-    };
 
     const form = useForm({
         mode: 'all',
@@ -33,10 +30,23 @@ const ExchangeRates = () => {
         }
     });
 
+    const handleSearch = async (input: any) => {
+        const { search } = input;
+        if (search) {
+            const filter = data.filter((item: any) => item.coin === Number(search));
+            setDataSearch(filter);
+            form.setValue('dataTable', filter);
+        } else {
+            setDataSearch(null);
+            form.setValue('dataTable', data);
+        }
+    };
+
     // Event Next page
     const handleNext = () => {
         const input: any = form.watch();
-        const totalPage = Math.ceil(data.length / input.row);
+        const resData = dataSearch || data;
+        const totalPage = Math.ceil(resData.length / input.row);
         if (input.page < totalPage) {
             form.setValue('page', input.page + 1);
         }
@@ -98,7 +108,13 @@ const ExchangeRates = () => {
                         <Typography sx={{ fontSize: '14px' }}>Additional description if required</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, alignItems: 'center', ml: 2, direction: 'row' }}>
-                        <Search name='search' form={form} placeholder='search by coins' onSubmit={handleSearch} />
+                        <Search
+                            type='number'
+                            name='search'
+                            form={form}
+                            placeholder='search by coins'
+                            onSubmit={(i: any) => handleSearch(i)}
+                        />
                         <ButtonBase
                             onClick={() => router.push('/exchange-rates-add')}
                             sx={{
@@ -121,7 +137,7 @@ const ExchangeRates = () => {
                 <TableExchange form={form} name='dataTable' nameIdxAppears='idxAppears' />
             </Box>
             <PaginationCard
-                totalItem={data.length}
+                totalItem={dataSearch ? dataSearch.length : data.length}
                 handleNext={handleNext}
                 handlePrev={handlePrev}
                 form={form}

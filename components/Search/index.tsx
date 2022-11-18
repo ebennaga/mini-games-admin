@@ -9,9 +9,10 @@ interface SearchProps {
     placeholder: string;
     validator?: any;
     onSubmit: any;
+    type?: 'text' | 'number';
 }
 
-const Search: React.FC<SearchProps> = ({ name, form, placeholder, validator, onSubmit }) => {
+const Search: React.FC<SearchProps> = ({ name, form, placeholder, validator, onSubmit, type = 'text' }) => {
     return (
         <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -33,6 +34,7 @@ const Search: React.FC<SearchProps> = ({ name, form, placeholder, validator, onS
                 render={({ field }) => {
                     return (
                         <TextField
+                            type={type}
                             placeholder={placeholder}
                             variant='standard'
                             InputProps={{
