@@ -1,35 +1,43 @@
+/* eslint-disable no-unused-vars */
 import { Close } from '@mui/icons-material';
 import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, FormControlLabel, Checkbox } from '@mui/material';
 import CustomButton from 'components/Button';
 import InputWithLabel from 'components/Input/InputWithLabel';
+import { useRouter } from 'next/router';
 import React from 'react';
+import { useForm } from 'react-hook-form';
 
-interface CreateAccountProps {
-    setCreateAcc: any;
-    createAcc: boolean;
-    form: any;
-    addRole: any;
-    handleAddRole: any;
-    activeRole?: any;
-    handleAddSetActive?: any;
-    handleAddSetNotActive?: any;
-    roles: any;
-    setRoles: any;
-}
+interface CreateAccountProps {}
 
-const CreateAccount: React.FC<CreateAccountProps> = ({
-    setCreateAcc,
-    createAcc,
-    form,
-    addRole,
-    handleAddRole,
-    activeRole,
-    handleAddSetActive,
-    handleAddSetNotActive,
-    roles,
-    setRoles
-}) => {
-    const [accessArr, setAccessArr] = React.useState<string[]>([]);
+const CreateAccount: React.FC<CreateAccountProps> = () => {
+    const data = {
+        id: 1,
+        name: 'Owi-kun',
+        email: 'test@abc.com',
+        access: ['Admin', 'Content Creator'],
+        isActive: true
+    };
+
+    const form = useForm({
+        mode: 'all',
+        defaultValues: {
+            name: data.name,
+            email: data.email,
+            role: '0',
+            roles: data.access,
+            activeRole: data.isActive
+        }
+    });
+    const router = useRouter();
+    const [roles, setRoles] = React.useState<any>([...form.watch('roles')]);
+
+    const handleAddRole = (event: any) => {
+        const isDuplicate: any = roles.includes(event.target.value);
+        form.setValue('role', event.target.value);
+        if (!isDuplicate) {
+            setRoles([...roles, event.target.value as string]);
+        }
+    };
 
     const handleDeletedRoles = (item: any) => {
         if (roles.length > 0) {
@@ -40,21 +48,12 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
         }
     };
 
-    const handleSelectAccess = (event: any) => {
-        const isDuplicate: any = roles.includes(event.target.value);
-        form.setValue('access', event.target.value);
-        if (!isDuplicate) {
-            setAccessArr([...accessArr, event.target.value as string]);
-        }
+    const handleAddSetActive = (event: any) => {
+        form.setValue('activeRole', event.target.checked);
     };
 
-    const handleDeletedAccess = (item: any) => {
-        if (accessArr.length > 0) {
-            const deleted = accessArr.filter((i: any) => {
-                return item !== i;
-            });
-            setAccessArr(deleted);
-        }
+    const handleAddSetNotActive = (event: any) => {
+        form.setValue('activeRole', !form.watch('activeRole'));
     };
 
     return (
@@ -67,7 +66,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                     </Typography>
                 </Paper>
                 <form>
-                    <Box sx={{ mt: '45px', width: '30%' }}>
+                    <Box sx={{ mt: '45px', width: '40%' }}>
                         <InputWithLabel
                             isRequired
                             foucused
@@ -80,7 +79,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                             rules={{ required: true, maxLength: 100 }}
                         />
                     </Box>
-                    <Box sx={{ mt: '45px', width: '30%' }}>
+                    <Box sx={{ mt: '45px', width: '40%' }}>
                         <InputWithLabel
                             isRequired
                             labelField='Email'
@@ -93,7 +92,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                             rules={{ required: true, maxLength: 100 }}
                         />
                     </Box>
-                    <Box sx={{ mt: '45px', width: '30%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ mt: '45px', width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Role</Typography>
@@ -117,11 +116,11 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                                     Role Code
                                 </InputLabel>
                                 <Select
-                                    sx={{ color: addRole === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                    sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
                                     placeholder='Select Roles'
                                     labelId='demo-simple-select-label'
                                     id='demo-simple-select'
-                                    value={addRole}
+                                    value={form.watch('role')}
                                     label='Role Code'
                                     onChange={handleAddRole}
                                     color='secondary'
@@ -138,7 +137,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                     </Box>
                     <Box
                         sx={{
-                            width: '30%',
+                            width: '40%',
                             height: '',
                             padding: '10px',
                             mt: roles.length > 0 ? '20px' : '0px',
@@ -177,91 +176,8 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                                 })}
                         </Box>
                     </Box>
-                    <Box sx={{ mt: '35px', width: '30%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
-                            <Box>
-                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Data Access</Typography>
-                                <Typography
-                                    sx={{
-                                        fontWeight: '400',
-                                        color: 'rgba(0, 0, 0, 0.6)',
-                                        fontSize: '12px',
-                                        position: 'relative',
-                                        bottom: '-10px'
-                                    }}
-                                >
-                                    *Field Required
-                                </Typography>
-                            </Box>
-                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
-                        </Box>
-                        <Box sx={{ width: '70%' }}>
-                            <FormControl fullWidth>
-                                <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
-                                    Access
-                                </InputLabel>
-                                <Select
-                                    sx={{ color: addRole === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                    placeholder='Select Roles'
-                                    labelId='demo-simple-select-label'
-                                    id='demo-simple-select'
-                                    value={form.watch('access')}
-                                    label='Access'
-                                    onChange={handleSelectAccess}
-                                    color='secondary'
-                                >
-                                    <MenuItem value='0' disabled>
-                                        Client Access
-                                    </MenuItem>
-                                    <MenuItem value='Starbucks Lt2'>Starbucks Lt2</MenuItem>
-                                    <MenuItem value='Texas Tourney'>Texas Tourney</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </Box>
-                    <Box
-                        sx={{
-                            width: '30%',
-                            height: '',
-                            padding: '10px',
-                            mt: accessArr.length > 0 ? '20px' : '0px',
-                            display: 'flex',
-                            alignItems: 'center'
-                        }}
-                    >
-                        <Box sx={{ width: '30%' }} />
-                        <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
-                            {accessArr.length > 0 &&
-                                accessArr.map((item: any, idx: number) => {
-                                    return (
-                                        <Box
-                                            key={idx}
-                                            sx={{
-                                                backgroundColor: 'rgba(165, 76, 229, 0.04)',
-                                                padding: '5px 10px',
-                                                // width: '40%',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between',
-                                                borderRadius: '20px',
-                                                gap: '5px'
-                                            }}
-                                        >
-                                            <Typography>{item}</Typography>
-                                            <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
-                                                <Close
-                                                    fontSize='small'
-                                                    sx={{ color: 'white', cursor: 'pointer' }}
-                                                    onClick={() => handleDeletedAccess(item)}
-                                                />
-                                            </Box>
-                                        </Box>
-                                    );
-                                })}
-                        </Box>
-                    </Box>
-                    <Box sx={{ mt: '35px', width: '30%', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
-                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                    <Box sx={{ mt: '35px', width: '35%', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
+                        <Box sx={{ width: '35%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
                                 <Typography
@@ -278,11 +194,11 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '30%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ width: '35%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <Box>
                                 <FormControlLabel
                                     sx={{ color: 'black', fontWeight: 800 }}
-                                    value={activeRole}
+                                    value={form.watch('activeRole')}
                                     control={<Checkbox color='secondary' />}
                                     label='Yes'
                                     labelPlacement='end'
@@ -293,7 +209,7 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                             <Box>
                                 <FormControlLabel
                                     sx={{ color: 'black', fontWeight: 800 }}
-                                    value={!activeRole}
+                                    value={!form.watch('activeRole')}
                                     control={<Checkbox color='secondary' />}
                                     label='No'
                                     labelPlacement='end'
@@ -321,7 +237,8 @@ const CreateAccount: React.FC<CreateAccountProps> = ({
                 <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
                 <CustomButton
                     onClick={() => {
-                        setCreateAcc(!createAcc);
+                        // setCreateAcc(!createAcc);
+                        router.push('/account');
                     }}
                     padding='10px'
                     width='193px'

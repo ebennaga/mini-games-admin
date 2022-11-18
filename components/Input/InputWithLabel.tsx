@@ -88,14 +88,13 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                         <TextField
                             sx={{
                                 '& .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: !error ? 'rgba(0, 0, 0, 0.28) !important' : ''
+                                    border: !error ? '1px solid rgba(0, 0, 0, 0.28) !important' : ''
                                 },
                                 '& .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
                                     color: !error ? 'rgba(0, 0, 0, 0.6) !important' : 'red',
                                     fontWeight: 'bold'
                                 }
                             }}
-                            // color='secondary'
                             focused={foucused}
                             error={!!errType}
                             helperText={helperText}
