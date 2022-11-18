@@ -240,6 +240,12 @@ const ClientTournament = () => {
             form.setValue(datas, false);
         });
     };
+
+    const handleEdit = () => {
+        const { id } = dummyData[removeData];
+        router.push(`/tournament/client-tournament/${id}`);
+    };
+
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
     return (
@@ -437,7 +443,7 @@ const ClientTournament = () => {
                             </Typography>
                             <Box sx={{ display: 'flex' }}>
                                 {checkedObj.length === 1 && (
-                                    <ButtonBase sx={{ color: '#A54CE5', m: 1 }}>
+                                    <ButtonBase onClick={handleEdit} sx={{ color: '#A54CE5', m: 1 }}>
                                         <ModeEditIcon />
                                         <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>EDIT</Typography>
                                     </ButtonBase>
