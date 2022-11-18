@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Layout from 'components/Layout';
 
-const AddClientTourContainer = dynamic(() => import('containers/AddClientTour'));
+const AddClientTourContainer = dynamic(() => import('containers/AddClientTour'), { ssr: false });
 
 const Page = () => {
     return (
