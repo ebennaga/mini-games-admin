@@ -8,6 +8,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import EmailIcon from '@mui/icons-material/Email';
 import { useSelector } from 'react-redux';
+import MENUBAR from 'utils/config';
 import NavbarCard from './NavbarCard';
 import DropdownCard from './DropdownCard';
 import LoadingMenus from './LoadingMenus';
@@ -18,54 +19,6 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
-    const MENUBAR = [
-        { active: '/icons/active/dashboard-active.png', icon: '/icons/navbar/dashboard.png', title: 'Dashboard', href: '/' },
-        { active: '/icons/active/account-active.png', icon: '/icons/navbar/account.png', title: 'Account', href: '/account' },
-        {
-            active: '/icons/active/clientaccount-active.png',
-            icon: '/icons/navbar/client-account.png',
-            title: 'Client Account',
-            href: '/client-account'
-        },
-        { active: '/icons/active/reconcile-active.png', icon: '/icons/navbar/reconcile.png', title: 'Reconcile', href: '/reconcile' },
-        { active: '/icons/active/games-active.png', icon: '/icons/navbar/game.png', title: 'Games', href: '/games' },
-        {
-            active: '/icons/active/tournament.png',
-            icon: '/icons/navbar/tournament.png',
-            title: 'Tournament',
-            href: '/tournament',
-            dropdownList: [
-                { title: 'Tournaments', href: '/tournament' },
-                { title: 'Participant Tournament', href: '/tournament/participant-tournament' },
-                { title: 'Client Tournament', href: '/tournament/client-tournament' }
-            ]
-        },
-        { active: '/icons/active/redemption-active.png', icon: '/icons/navbar/redemption.png', title: 'Redemption', href: '/redemption' },
-        {
-            active: '/icons/active/content.png',
-            icon: '/icons/navbar/content.png',
-            title: 'Content',
-            href: '/content',
-            dropdownList: [
-                { title: 'Banner', href: '/banner' },
-                { title: 'Blogs', href: '/blogs' }
-            ]
-        },
-        {
-            active: '/icons/active/setting.png',
-            icon: '/icons/navbar/setting.png',
-            title: 'Settings',
-            href: '/settings',
-            dropdownList: [
-                { title: 'Exchange Rates', href: '/exchange-rates' },
-                { title: 'Location', href: '/settings/location' },
-
-                { title: 'Product Prizes', href: '/settings/product-prizes' },
-                { title: 'Roles', href: '/settings/roles' }
-            ]
-        }
-    ];
-
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -73,17 +26,17 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
         }
     });
 
+    const userState: any = useSelector((state: any) => state.webpage?.user?.user);
+
     const [isDrop, setIsDrop] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [isLoadingMenus, setIsLoadingMenus] = React.useState<boolean>(true);
-    const [menus, setMenus] = React.useState<Array<any>>([]);
-
-    const userState = useSelector((state: any) => state.webpage?.user);
+    const [isLoadingMenus, setIsLoadingMenus] = React.useState<boolean>(false);
+    const [menus, setMenus] = React.useState<Array<any>>(userState?.menus);
 
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
-    const { clearUser } = useAuthReducer();
+    const { clearUser, setUser } = useAuthReducer();
 
     const path = router.asPath;
 
@@ -136,6 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                 const showMenu = response.data?.data;
                 const resMenus = await setShowMenu(showMenu, MENUBAR);
                 setMenus(resMenus);
+                setUser({ ...userState, menus: resMenus });
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -144,10 +98,10 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
     };
 
     React.useEffect(() => {
-        if (userState) {
+        if (userState?.api_token && !userState?.menus) {
             handleMenus();
         }
-    }, [userState]);
+    }, []);
 
     return (
         <Box sx={{ bgcolor: '#fff', minHeight: '100vh', display: 'flex' }}>
@@ -178,7 +132,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                             <LoadingMenus />
                         ) : (
                             <List sx={{ maxWidth: '240px' }}>
-                                {menus.map((item: any) => {
+                                {menus?.map((item: any) => {
                                     const isActive = router.asPath === item.href;
                                     return item.dropdownList ? (
                                         <DropdownCard
