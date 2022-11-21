@@ -7,8 +7,10 @@ import useAuthReducer from 'hooks/useAuthReducer';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import EmailIcon from '@mui/icons-material/Email';
+import { useSelector } from 'react-redux';
 import NavbarCard from './NavbarCard';
 import DropdownCard from './DropdownCard';
+import LoadingMenus from './LoadingMenus';
 
 interface LayoutProps {
     children: any;
@@ -70,12 +72,21 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
             search: ''
         }
     });
+
     const [isDrop, setIsDrop] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoadingMenus, setIsLoadingMenus] = React.useState<boolean>(true);
+    const [menus, setMenus] = React.useState<Array<any>>([]);
+
+    const userState = useSelector((state: any) => state.webpage?.user);
+
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const { clearUser } = useAuthReducer();
+
+    const path = router.asPath;
+
     const handleSearch = (data: any) => {
         alert(data.search);
     };
@@ -100,7 +111,43 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
         setIsLoading(false);
     };
 
-    const path = router.asPath;
+    const setShowMenu = async (showMenu: any, menuBar: any) => {
+        if (showMenu.length > 0) {
+            let result: any = [];
+            await showMenu.forEach((item: any) => {
+                if (item.have_permission) {
+                    const filterMenu = menuBar.filter((itm: any) => itm.title === item.name);
+                    result = [...result, ...filterMenu];
+                }
+            });
+            return result;
+        }
+        return null;
+    };
+
+    const handleMenus = async () => {
+        setIsLoadingMenus(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'menus'
+            });
+            if (response.status === 200) {
+                const showMenu = response.data?.data;
+                const resMenus = await setShowMenu(showMenu, MENUBAR);
+                setMenus(resMenus);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsLoadingMenus(false);
+    };
+
+    React.useEffect(() => {
+        if (userState) {
+            handleMenus();
+        }
+    }, [userState]);
 
     return (
         <Box sx={{ bgcolor: '#fff', minHeight: '100vh', display: 'flex' }}>
@@ -127,29 +174,33 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                         <Box mb='17px'>
                             <Search name='search' form={form} placeholder='Search...' onSubmit={handleSearch} />
                         </Box>
-                        <List sx={{ maxWidth: '240px' }}>
-                            {MENUBAR.map((item: any) => {
-                                const isActive = router.asPath === item.href;
-                                return item.dropdownList ? (
-                                    <DropdownCard
-                                        key={item.title}
-                                        title={item.title}
-                                        listDropdown={item.dropdownList}
-                                        icon={item.icon}
-                                        isActive={isActive}
-                                    />
-                                ) : (
-                                    <NavbarCard
-                                        active={item.active}
-                                        key={item.title}
-                                        icon={item.icon}
-                                        title={item.title}
-                                        isActive={isActive}
-                                        onClick={() => router.push(item.href)}
-                                    />
-                                );
-                            })}
-                        </List>
+                        {isLoadingMenus ? (
+                            <LoadingMenus />
+                        ) : (
+                            <List sx={{ maxWidth: '240px' }}>
+                                {menus.map((item: any) => {
+                                    const isActive = router.asPath === item.href;
+                                    return item.dropdownList ? (
+                                        <DropdownCard
+                                            key={item.title}
+                                            title={item.title}
+                                            listDropdown={item.dropdownList}
+                                            icon={item.icon}
+                                            isActive={isActive}
+                                        />
+                                    ) : (
+                                        <NavbarCard
+                                            active={item.active}
+                                            key={item.title}
+                                            icon={item.icon}
+                                            title={item.title}
+                                            isActive={isActive}
+                                            onClick={() => router.push(item.href)}
+                                        />
+                                    );
+                                })}
+                            </List>
+                        )}
                     </>
                 )}
             </Box>
