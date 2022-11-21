@@ -3,8 +3,13 @@ import { Box, Grid, Typography, FormGroup, FormControlLabel, Checkbox, ButtonBas
 import HeaderChildren from 'components/HeaderChildren';
 import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 
 const AddRole = () => {
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -20,8 +25,27 @@ const AddRole = () => {
         form.setValue('isActive', !value);
     };
 
-    const handleSubmit = (data: any) => {
-        console.log(data);
+    const handleSubmit = async (data: any) => {
+        try {
+            console.log(data);
+            const { name, code, description, isActive } = data;
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: 'roles',
+                data: {
+                    code,
+                    name,
+                    description,
+                    is_active: isActive
+                }
+            });
+            console.log('responsepostdata', response);
+            if (response?.status === 200) {
+                notify(response.data.message, 'success');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
     };
 
     return (

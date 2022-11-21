@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Box, ButtonBase, IconButton } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import InputSearch from 'components/Input/InputSearch';
@@ -9,6 +10,9 @@ import PaginationCard from 'components/PaginationCard';
 import BadgeSelected from 'components/BadgeSelected';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import DialogFailed from 'components/Dialog/DialogFailed';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+import LoadingExchangeRates from 'containers/ExchangeRates/LoadingExchangeRates';
 import TableRoles from './TableRoles';
 import FilterRoles from './FilterRoles';
 import DialogMenuAccess from './DialogMenuAccess';
@@ -53,14 +57,18 @@ const Roles = () => {
     const [openDialogConfirm, setOpenDialogConfirm] = React.useState<boolean>(false);
     const [openMenuAccess, setOpenMenuAccess] = React.useState<boolean>(false);
     const [openDialogFailed, setOpenDialogFailed] = React.useState<boolean>(false);
-
+    const [dataRoles, setDataRoles] = React.useState<Array<any>>([]);
+    const [isLoading, setIsloading] = React.useState<boolean>(true);
+    const [dataDetailRoles, setDataDetailRoles] = React.useState<any>(null);
+    const { fetchAPI } = useAPICaller();
     const router = useRouter();
+    const notify = useNotify();
 
     const form = useForm({
         mode: 'all',
         defaultValues: {
             search: '',
-            dataTable,
+            dataTable: dataRoles,
             filterSelect: '',
             filterActive: true,
             row: 5,
@@ -91,14 +99,27 @@ const Roles = () => {
     };
 
     // Event Remove Item
-    const handleRemove = () => {
-        setOpenDialogConfirm(false);
-        setTotalChecked(0);
+    const handleRemove = async () => {
+        // setOpenDialogConfirm(false);
+        // setTotalChecked(0);
+        try {
+            const response = await fetchAPI({
+                endpoint: `roles/${router.query.id}`,
+                method: 'DELETE'
+            });
+            if (response.status === 200) {
+                notify(response.data.message, 'success');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
     };
 
     // Event edit item
-    const handleEdit = () => {
-        console.log('edit item');
+    const handleEdit = (id: any) => {
+        const table: any = form.watch('dataTable');
+        const filter = table.filter((item: any) => item.isAction);
+        router.push(`/settings/roles/${filter[0].id}/`);
     };
 
     // Event update access
@@ -128,6 +149,33 @@ const Roles = () => {
         setTotalChecked(countItems);
     }, [form.watch('dataTable')]);
 
+    const getRoles = async () => {
+        setIsloading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'roles?search='
+            });
+
+            if (response.status === 200) {
+                const resData = response.data.data;
+
+                setDataRoles(resData);
+                form.setValue('dataTable', resData);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsloading(false);
+    };
+
+    React.useEffect(() => {
+        getRoles();
+    }, []);
+
+    if (isLoading) {
+        return <LoadingExchangeRates />;
+    }
     return (
         <Box>
             <HeaderChildren title='Master Roles' subTitle='Additional description if required'>
