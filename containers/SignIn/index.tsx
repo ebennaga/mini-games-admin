@@ -47,7 +47,7 @@ const SignIn = () => {
                 }
             });
             if (response?.status === 200) {
-                setUser(response?.data.data.api_token);
+                setUser(response?.data.data);
                 notify(response?.data.message, 'success');
                 router.push('/');
             }
