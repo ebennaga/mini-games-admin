@@ -155,12 +155,12 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears, nam
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '28%' }}
                                     >
-                                        {item.roleCode}
+                                        {item.code}
                                     </TableCell>
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '28%' }}
                                     >
-                                        {item.roleName}
+                                        {item.name}
                                     </TableCell>
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '19%' }}
@@ -171,7 +171,7 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears, nam
                                         align='center'
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '6%' }}
                                     >
-                                        {item.isActive ? (
+                                        {item.is_active ? (
                                             <BadgeCard bgcolor='#A54CE5' text='Yes' />
                                         ) : (
                                             <BadgeCard bgcolor='#D32F2F' text='No' />
