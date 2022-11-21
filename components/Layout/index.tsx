@@ -213,7 +213,8 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    flexDirection: 'column'
+                                    flexDirection: 'column',
+                                    zIndex: 99
                                 }}
                             >
                                 <Typography>owikun@mail.com</Typography>
