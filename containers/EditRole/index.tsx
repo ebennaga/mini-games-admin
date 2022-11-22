@@ -54,7 +54,7 @@ const EditRole = () => {
             const { name, code, description, isActive } = data;
             const response = await fetchAPI({
                 method: 'PUT',
-                endpoint: `rules/${router.query.id}`,
+                endpoint: `roles/${router.query.id}`,
                 data: {
                     code,
                     name,
