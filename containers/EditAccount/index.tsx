@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import { Close } from '@mui/icons-material';
 import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, FormControlLabel, Checkbox } from '@mui/material';
@@ -6,6 +7,8 @@ import InputWithLabel from 'components/Input/InputWithLabel';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 
 interface CreateAccountProps {}
 
@@ -21,15 +24,40 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     const form = useForm({
         mode: 'all',
         defaultValues: {
-            name: data.name,
-            email: data.email,
+            name: '',
+            email: '',
             role: '0',
-            roles: data.access,
-            activeRole: data.isActive
+            roles: '',
+            activeRole: true
         }
     });
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
     const router = useRouter();
-    const [roles, setRoles] = React.useState<any>([...form.watch('roles')]);
+    const [roles, setRoles] = React.useState<any>([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+
+    const fetchDetailAccount = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: `accounts/${router.query.id}`
+            });
+
+            if (result.status === 200) {
+                form.setValue('name', result.data.data.name);
+                form.setValue('email', result.data.data.email);
+                setRoles(result?.data.data.role_ids.split(','));
+                form.setValue('activeRole', result.data.data.is_active);
+            }
+            setIsLoading(false);
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
@@ -56,16 +84,47 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
         form.setValue('activeRole', !form.watch('activeRole'));
     };
 
+    React.useEffect(() => {
+        fetchDetailAccount();
+    }, []);
+
+    const handleSubmitData = async (d: any) => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                endpoint: `accounts/${router.query.id}`,
+                method: 'PUT',
+                data: {
+                    name: d.name,
+                    email: d.email,
+                    role_ids: roles.join(', ')
+                }
+            });
+            if (result.status === 200) {
+                notify('Update account successfully', 'success');
+                setIsLoading(false);
+                form.reset();
+                setRoles([]);
+                // setAccessArr([]);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
+
     return (
-        <Box sx={{ position: 'relative' }}>
-            <Box sx={{ padding: '40px 25px', height: '100vh' }}>
-                <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
-                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Add Account</Typography>
-                    <Typography sx={{ fontSize: '14px', fontWeight: 400, color: 'rgba(0, 0, 0, 0.6)' }}>
-                        Additional description if required
-                    </Typography>
-                </Paper>
-                <form>
+        <form onSubmit={form.handleSubmit(handleSubmitData)}>
+            <Box sx={{ position: 'relative' }}>
+                <Box sx={{ padding: '40px 25px', height: '100vh' }}>
+                    <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
+                        <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Edit Account</Typography>
+                        <Typography sx={{ fontSize: '14px', fontWeight: 400, color: 'rgba(0, 0, 0, 0.6)' }}>
+                            Additional description if required
+                        </Typography>
+                    </Paper>
+
                     <Box sx={{ mt: '45px', width: '40%' }}>
                         <InputWithLabel
                             isRequired
@@ -147,8 +206,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     >
                         <Box sx={{ width: '30%' }} />
                         <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
-                            {roles.length > 0 &&
-                                roles.map((item: any, idx: number) => {
+                            {roles?.length > 0 &&
+                                roles?.map((item: any, idx: number) => {
                                     return (
                                         <Box
                                             key={idx}
@@ -163,7 +222,9 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                                 gap: '5px'
                                             }}
                                         >
-                                            <Typography>{item}</Typography>
+                                            <Typography>
+                                                {item === '1' ? 'Admin' : item === '2' ? 'Marketing' : 'Content Writer'}
+                                            </Typography>
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close
                                                     fontSize='small'
@@ -219,37 +280,45 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                             </Box>
                         </Box>
                     </Box>
-                </form>
-            </Box>
-            <Box
-                sx={{
-                    borderTop: '1px solid rgba(0, 0, 0, 0.12)',
-                    display: 'flex',
-                    gap: '20px',
-                    alignItems: 'center',
-                    mt: '20px',
-                    position: 'absolute',
-                    bottom: '0px',
-                    padding: '40px',
-                    width: '100%'
-                }}
-            >
-                <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
-                <CustomButton
-                    onClick={() => {
-                        // setCreateAcc(!createAcc);
-                        router.push('/account');
+                </Box>
+                <Box
+                    sx={{
+                        borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+                        display: 'flex',
+                        gap: '20px',
+                        alignItems: 'center',
+                        mt: '20px',
+                        position: 'absolute',
+                        bottom: '0px',
+                        padding: '40px',
+                        width: '100%'
                     }}
-                    padding='10px'
-                    width='193px'
-                    height='59px'
-                    title='cancel'
-                    backgroundColor='white'
-                    color='#A54CE5'
-                    border='1px solid #A54CE5'
-                />
+                >
+                    <CustomButton
+                        isLoading={isLoading}
+                        type='submit'
+                        padding='10px'
+                        width='193px'
+                        height='59px'
+                        title='Submit'
+                        backgroundColor='#A54CE5'
+                    />
+                    <CustomButton
+                        onClick={() => {
+                            // setCreateAcc(!createAcc);
+                            router.push('/account');
+                        }}
+                        padding='10px'
+                        width='193px'
+                        height='59px'
+                        title='cancel'
+                        backgroundColor='white'
+                        color='#A54CE5'
+                        border='1px solid #A54CE5'
+                    />
+                </Box>
             </Box>
-        </Box>
+        </form>
     );
 };
 

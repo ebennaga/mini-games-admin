@@ -16,11 +16,14 @@ import {
     InputLabel,
     FormControlLabel,
     Switch,
-    ButtonBase
+    ButtonBase,
+    CircularProgress
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputSearch from 'components/Input/InputSearch';
 import React, { useEffect, useState } from 'react';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import { useForm } from 'react-hook-form';
 import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '@mui/icons-material';
 import CustomButton from 'components/Button';
@@ -29,20 +32,21 @@ import { useRouter } from 'next/router';
 import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
-    const dummy = [
-        { id: 1, name: 'Owi-kun', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-        { id: 2, name: 'Rinto', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-        { id: 3, name: 'Eben', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-        { id: 4, name: 'Amang', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-        { id: 5, name: 'Suwardi', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-        { id: 6, name: 'Saitama', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-        { id: 7, name: 'Sasukekyun', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-        { id: 8, name: 'Narto', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-        { id: 9, name: 'Ed Sheeran', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-        { id: 10, name: 'Tulus', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-        { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false }
-    ];
-
+    // const dummy = [
+    //     { id: 1, name: 'Owi-kun', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
+    //     { id: 2, name: 'Rinto', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
+    //     { id: 3, name: 'Eben', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
+    //     { id: 4, name: 'Amang', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
+    //     { id: 5, name: 'Suwardi', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
+    //     { id: 6, name: 'Saitama', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
+    //     { id: 7, name: 'Sasukekyun', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
+    //     { id: 8, name: 'Narto', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
+    //     { id: 9, name: 'Ed Sheeran', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
+    //     { id: 10, name: 'Tulus', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
+    //     { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false }
+    // ];
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -71,8 +75,28 @@ const AccountContainer = () => {
     const [input, setInput] = useState('');
     const [routeId, setRouteId] = useState<any>(null);
     const [isSearch, setIsSearch] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
+
+    const fetchAccountData = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                endpoint: `accounts?search=${form.watch('search')}`,
+                method: 'GET'
+            });
+            console.log(result?.data.data);
+            if (result.status === 200) {
+                setRemove(result?.data.data);
+            }
+            // setIsLoading(false);
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -126,7 +150,7 @@ const AccountContainer = () => {
         if (e.target.checked) {
             setCheckedObj(checkBoxKeys);
             const checkBox: any = { ...form.watch() };
-            [...Array(dummy.length)].forEach((item: any, idx: number) => {
+            [...Array(remove.length)].forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, e.target.checked);
                 arr.push(idx + 1);
@@ -139,7 +163,7 @@ const AccountContainer = () => {
             setDeleted(arr);
         } else if (!e.target.checked) {
             setCheckedObj([]);
-            [...Array(dummy.length)].forEach((item: any, idx: number) => {
+            [...Array(remove.length)].forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, false);
             });
@@ -159,7 +183,22 @@ const AccountContainer = () => {
         }
     };
 
+    const fetchDeleteData = async (id: any) => {
+        try {
+            const result = await fetchAPI({
+                endpoint: `accounts/${id}`,
+                method: 'DELETE'
+            });
+            notify(result?.data.message);
+        } catch (err: any) {
+            notify(err.message);
+        }
+    };
+
     const handleDelete = () => {
+        deleted.forEach((item: any) => {
+            fetchDeleteData(item);
+        });
         const filter = remove.filter((item: any) => {
             return !deleted.includes(item.id);
         });
@@ -169,7 +208,7 @@ const AccountContainer = () => {
     };
 
     useEffect(() => {
-        setRemove(dummy);
+        fetchAccountData();
     }, []);
 
     useEffect(() => {
@@ -177,7 +216,7 @@ const AccountContainer = () => {
     }, [pages, row]);
 
     useEffect(() => {
-        [...Array(dummy.length)].forEach((item: any, idx: number) => {
+        [...Array(remove.length)].forEach((item: any, idx: number) => {
             checkBoxKeys.push(`checkbox${idx + 1}`);
         });
         if (checkedObj.length > 0 || form.watch('checkAll')) {
@@ -368,122 +407,148 @@ const AccountContainer = () => {
                         </Box>
                     </Box>
                 )}
-                <Box sx={{ mt: '20px' }}>
-                    <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
-                        <Table sx={{ width: '100%' }} aria-label='simple table'>
-                            <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
-                                <TableRow>
-                                    <TableCell align='center' sx={{ width: '5%', fontWeight: 'bold' }}>
-                                        No.
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='left'
-                                    >
-                                        Name
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='left'
-                                    >
-                                        Email
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='left'
-                                    >
-                                        Role
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            width: '8%',
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Is Active
-                                    </TableCell>
-                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                        <FormControlLabel
-                                            control={
-                                                <CheckboxController
-                                                    name='action'
-                                                    form={form}
-                                                    onChange={handleChangeCheckboxAll}
-                                                    checked={form.watch('checkAll')}
-                                                    disabled={remove.length === 0}
-                                                />
-                                            }
-                                            label='Action'
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {getPaginatedData().length > 0 &&
-                                    getPaginatedData().map((item: any) => {
-                                        const check: any = `checkbox${item.id}`;
-                                        return (
-                                            <TableRow key={item.id}>
-                                                <TableCell align='center' sx={{ width: '5%' }}>
-                                                    {item.id}.
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='left'
-                                                >
-                                                    {item.name}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='left'
-                                                >
-                                                    {item.email}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='left'
-                                                >
-                                                    {item.access.join(' ,')}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{
-                                                        width: '5%',
-                                                        borderLeft: '1px solid #E0E0E0',
-                                                        borderRight: '1px solid #E0E0E0'
-                                                    }}
-                                                    align='center'
-                                                >
-                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                                        <Box
-                                                            sx={{
-                                                                width: '70%',
-                                                                backgroundColor: item.isActive ? '#A54CE5' : 'red',
-                                                                padding: '2px',
-                                                                borderRadius: '10px',
-                                                                color: 'white'
-                                                            }}
-                                                        >
-                                                            <Typography>{item.isActive ? 'Yes' : 'No'}</Typography>
-                                                        </Box>
-                                                    </Box>
-                                                </TableCell>
-                                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                <Box sx={{ mt: isLoading ? '50px' : '20px' }}>
+                    {isLoading ? (
+                        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <CircularProgress size={100} color='secondary' />
+                        </Box>
+                    ) : (
+                        <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
+                            <Table sx={{ width: '100%' }} aria-label='simple table'>
+                                <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
+                                    <TableRow>
+                                        <TableCell align='center' sx={{ width: '5%', fontWeight: 'bold' }}>
+                                            No.
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='left'
+                                        >
+                                            Name
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='left'
+                                        >
+                                            Email
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='left'
+                                        >
+                                            Role
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                width: '8%',
+                                                borderLeft: '1px solid #E0E0E0',
+                                                borderRight: '1px solid #E0E0E0',
+                                                fontWeight: 'bold'
+                                            }}
+                                            align='center'
+                                        >
+                                            Is Active
+                                        </TableCell>
+                                        <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                            <FormControlLabel
+                                                control={
                                                     <CheckboxController
+                                                        name='action'
                                                         form={form}
-                                                        name={`checkbox${item.id}`}
-                                                        checked={!!form.watch(check)}
-                                                        onChange={(e: any) => handleChangeChekcbox(e, `checkbox${item.id}`, item.id)}
+                                                        onChange={handleChangeCheckboxAll}
+                                                        checked={form.watch('checkAll')}
+                                                        disabled={remove.length === 0}
                                                     />
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                                }
+                                                label='Action'
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {getPaginatedData().length > 0 &&
+                                        getPaginatedData().map((item: any, idx: number) => {
+                                            const check: any = `checkbox${
+                                                currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
+                                            }`;
+                                            return (
+                                                <TableRow key={item.id}>
+                                                    <TableCell align='center' sx={{ width: '5%' }}>
+                                                        {currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10}.
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='left'
+                                                    >
+                                                        {item.name}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='left'
+                                                    >
+                                                        {item.email}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='left'
+                                                    >
+                                                        {item.roles}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{
+                                                            width: '5%',
+                                                            borderLeft: '1px solid #E0E0E0',
+                                                            borderRight: '1px solid #E0E0E0'
+                                                        }}
+                                                        align='center'
+                                                    >
+                                                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                            <Box
+                                                                sx={{
+                                                                    width: '70%',
+                                                                    backgroundColor: item.is_active ? '#A54CE5' : 'red',
+                                                                    padding: '2px',
+                                                                    borderRadius: '10px',
+                                                                    color: 'white'
+                                                                }}
+                                                            >
+                                                                <Typography>{item.is_active ? 'Yes' : 'No'}</Typography>
+                                                            </Box>
+                                                        </Box>
+                                                    </TableCell>
+                                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                                        <CheckboxController
+                                                            form={form}
+                                                            name={`checkbox${
+                                                                currentPage === 1
+                                                                    ? idx + 1
+                                                                    : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
+                                                            }`}
+                                                            checked={!!form.watch(check)}
+                                                            onChange={(e: any) =>
+                                                                handleChangeChekcbox(
+                                                                    e,
+                                                                    `checkbox${
+                                                                        currentPage === 1
+                                                                            ? idx + 1
+                                                                            : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
+                                                                    }`,
+                                                                    Number(
+                                                                        currentPage === 1
+                                                                            ? idx + 1
+                                                                            : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
+                                                                    )
+                                                                )
+                                                            }
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
                     <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', mt: '10px' }}>
                         <Box />
                         <Box
