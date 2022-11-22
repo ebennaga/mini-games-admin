@@ -36,57 +36,43 @@ import { useForm } from 'react-hook-form';
 import CheckboxController from 'components/Checkbox';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+import { useRouter } from 'next/router';
 
-const dummyData = [
-    {
-        id: '1',
-        code: 'PC0001',
-        name: 'Mousepad Logitech',
-        category: 'Accessories',
-        uom: 'Pcs',
-        qty: '5',
-        img1: 'https://drivegoogle/image acc_001-2022.Jpeg',
-        img2: 'https://drivegoogle/image acc_002-2022.Jpeg',
-        img3: 'https://drivegoogle/image acc_003-2022.Jpeg',
-        isActive: 'No'
-    },
-    {
-        id: '2',
-        code: 'PC0002',
-        name: 'Mousepad Logitech',
-        category: 'Accessories',
-        uom: 'Pcs',
-        qty: '5',
-        img1: 'https://drivegoogle/image acc_001-2022.Jpeg',
-        img2: 'https://drivegoogle/image acc_002-2022.Jpeg',
-        img3: 'https://drivegoogle/image acc_003-2022.Jpeg',
-        isActive: 'Yes'
-    }
-];
+// const dummyData = [
+//     {
+//         id: '1',
+//         code: 'PC0001',
+//         name: 'Mousepad Logitech',
+//         category: 'Accessories',
+//         uom: 'Pcs',
+//         qty: '5',
+//         img1: 'https://drivegoogle/image acc_001-2022.Jpeg',
+//         img2: 'https://drivegoogle/image acc_002-2022.Jpeg',
+//         img3: 'https://drivegoogle/image acc_003-2022.Jpeg',
+//         isActive: 'No'
+//     },
+//     {
+//         id: '2',
+//         code: 'PC0002',
+//         name: 'Mousepad Logitech',
+//         category: 'Accessories',
+//         uom: 'Pcs',
+//         qty: '5',
+//         img1: 'https://drivegoogle/image acc_001-2022.Jpeg',
+//         img2: 'https://drivegoogle/image acc_002-2022.Jpeg',
+//         img3: 'https://drivegoogle/image acc_003-2022.Jpeg',
+//         is_active: 'Yes'
+//     }
+// ];
 
-const categoryList = [
-    {
-        value: '1',
-        label: 'Category 1'
-    },
-    {
-        value: '2',
-        label: 'Category 2'
-    },
-    {
-        value: '3',
-        label: 'Category 3'
-    },
-    {
-        value: '4',
-        label: 'Category 4'
-    }
-];
 const ProductPrizes = () => {
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
     const [category, setCategory] = React.useState('1');
-    const [row, setRow] = React.useState(dummyData.length.toString());
+    const [query, setQuery] = React.useState('');
+    const [row, setRow] = React.useState('0');
     const [filteredData, setFilteredData] = React.useState<any>([]);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [pages, setPages] = React.useState(1);
@@ -94,6 +80,9 @@ const ProductPrizes = () => {
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
     const checkBoxKeys: string[] = [];
     const [removeData, setRemoveData] = React.useState<any>([]);
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
+    const router = useRouter();
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -103,10 +92,10 @@ const ProductPrizes = () => {
             category: '',
             uom: '',
             qty: '',
-            img1: '',
-            img2: '',
-            img3: '',
-            isActive: false,
+            image_url_1: '',
+            image_url_2: '',
+            image_url_3: '',
+            is_active: false,
             checkedAll: false
         }
     });
@@ -136,7 +125,7 @@ const ProductPrizes = () => {
         const temp: any[] = [];
         form.setValue('checkedAll', e.target.checked);
         if (e.target.checked) {
-            dummyData.forEach((item: any, idx: number) => {
+            filteredData.forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, e.target.checked);
                 temp.push(item);
@@ -146,7 +135,7 @@ const ProductPrizes = () => {
         } else if (!e.target.checked) {
             setCheckedObj([]);
             setRemoveData([]);
-            dummyData.forEach((item: any, idx: number) => {
+            filteredData.forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, false);
             });
@@ -166,10 +155,20 @@ const ProductPrizes = () => {
                 checkTrue.push(item);
             }
         });
-        setCheckedObj(checkTrue);
-        if (e.target.checked) {
-            setRemoveData([...removeData, id]);
+        if (checkTrue.length === filteredData.length) {
+            form.setValue('checkedAll', true);
+        } else {
+            form.setValue('checkedAll', false);
         }
+        setCheckedObj(checkTrue);
+
+        if (e.target.checked) {
+            const found = filteredData.find((element: any) => {
+                return element.id === id;
+            });
+            setRemoveData([...removeData, found]);
+        }
+
         if (!e.target.checked) {
             if (removeData.length > 0) {
                 const filter = removeData.filter((item: any) => {
@@ -182,28 +181,79 @@ const ProductPrizes = () => {
         }
     };
 
-    const handleRemoveData = () => {
-        const res = filteredData.filter((item: any) => !removeData.includes(item));
-        setCheckedObj([]);
-        setFilteredData(res);
-        setRemoveData([]);
+    // const handleRemoveData = () => {
+    //     const res = filteredData.filter((item: any) => !removeData.includes(item));
+    //     setCheckedObj([]);
+    //     setFilteredData(res);
+    //     setRemoveData([]);
+    //     setOpenRemove(false);
+    //     setRow(res.length);
+    //     form.setValue('checkedAll', false);
+    //     filteredData.forEach((item: any, idx: number) => {
+    //         const datas: any = `checkbox${idx + 1}`;
+    //         form.setValue(datas, false);
+    //     });
+    // };
+    const handleEditData = () => {
+        router.push(`/settings/product-prizes/${removeData[0].id}/`);
+    };
+    const handleRemoveData = async () => {
+        // setOpenDialogConfirm(false);
+        // setTotalChecked(0);
+        try {
+            const response = await fetchAPI({
+                endpoint: `/product-prizes/${router.query.id}`,
+                method: 'DELETE'
+            });
+            if (response.status === 200) {
+                notify(response.data.message, 'success');
+                const res = filteredData.filter((item: any) => !removeData.includes(item));
+                setRemoveData([]);
+                setCheckedObj([]);
+                setRow(res.length);
+                form.setValue('checkedAll', false);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+
         setOpenRemove(false);
-        setRow(res.length);
-        filteredData.forEach((item: any, idx: number) => {
-            const datas: any = `checkbox${idx + 1}`;
-            form.setValue(datas, false);
-        });
+    };
+
+    const handleDataSearch = (keyword: any) => {
+        setQuery(keyword);
+    };
+    const handleFetchData = async () => {
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: '/product-prizes'
+            });
+            if (response?.status === 200) {
+                const products = response.data?.data;
+                setFilteredData(products);
+                setRow(products.length.toString());
+                notify(response?.data.message, 'success');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
     };
     React.useEffect(() => {
-        setFilteredData(dummyData);
+        handleFetchData();
+        // setFilteredData(dummyData);
     }, []);
 
+    // React.useEffect(() => {
+    //     console.log(removeData);
+    // }, [removeData]);
     React.useEffect(() => {
         setPages(Math.round(filteredData.length / Number(row)));
     }, [pages, row]);
 
     React.useEffect(() => {
-        [...Array(dummyData.length)].forEach((item: any, idx: number) => {
+        // console.log(filteredData.length);
+        [...Array(filteredData.length)].forEach((item: any, idx: number) => {
             checkBoxKeys.push(`checkbox${idx + 1}`);
         });
         if (checkedObj.length > 0 || form.watch('checkedAll')) {
@@ -227,7 +277,7 @@ const ProductPrizes = () => {
                     <DialogContentText id='alert-dialog-description'>{checkedObj.length} items selected</DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ m: 1 }}>
-                    <CustomButton title='REMOVE' height='47px' />
+                    <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
                     <CustomButton
                         title='CANCEL'
                         backgroundColor='white'
@@ -268,6 +318,7 @@ const ProductPrizes = () => {
                                 value='all'
                                 control={
                                     <Radio
+                                        checked
                                         sx={{
                                             color: 'grey',
                                             '&.Mui-checked': {
@@ -327,9 +378,9 @@ const ProductPrizes = () => {
                     </FormControl>
                     <FormControl fullWidth>
                         <TextField id='outlined-select-currency' select label='Product Category' value={category} onChange={handleChange}>
-                            {categoryList.map((option: any) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
+                            {filteredData.map((option: any, index: number) => (
+                                <MenuItem key={index + 1} value={index + 1}>
+                                    {option.category}
                                 </MenuItem>
                             ))}
                         </TextField>
@@ -364,6 +415,7 @@ const ProductPrizes = () => {
                 </DialogContent>
             </Dialog>
             <TitleCard
+                handleSearch={(keyword: any) => handleDataSearch(keyword)}
                 onConfirm={(value: boolean) => handleDialog(value)}
                 title='Product Prizes'
                 subtitle='Addtional description if required'
@@ -379,12 +431,12 @@ const ProductPrizes = () => {
                         </Typography>
                         <Box sx={{ display: 'flex' }}>
                             {checkedObj.length === 1 && (
-                                <ButtonBase sx={{ color: '#A54CE5', m: 1 }}>
+                                <ButtonBase sx={{ color: '#A54CE5', m: 1 }} onClick={handleEditData}>
                                     <ModeEditIcon />
                                     <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>EDIT</Typography>
                                 </ButtonBase>
                             )}
-                            <ButtonBase sx={{ color: '#A54CE5', m: 1 }} onClick={handleRemoveData}>
+                            <ButtonBase sx={{ color: '#A54CE5', m: 1 }} onClick={() => setOpenRemove(true)}>
                                 <DeleteIcon />
                                 <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>REMOVE</Typography>
                             </ButtonBase>
@@ -474,6 +526,16 @@ const ProductPrizes = () => {
                                     }}
                                     align='center'
                                 >
+                                    Expired Date
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
                                     Is Active
                                 </TableCell>
                                 <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
@@ -494,88 +556,110 @@ const ProductPrizes = () => {
                         </TableHead>
                         <TableBody>
                             {getPaginatedData().length > 0 &&
-                                getPaginatedData().map((item: any) => {
-                                    const check: any = `checkbox${item.id}`;
-                                    return (
-                                        <TableRow key={item.id}>
-                                            <TableCell align='center' sx={{ width: '5%' }}>
-                                                {item.id}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.code}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.name}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.category}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.uom}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.qty}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.img1}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.img2}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.img3}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                <Box sx={{ color: 'white' }}>
-                                                    <Box
-                                                        sx={
-                                                            item.isActive === 'Yes'
-                                                                ? { backgroundColor: '#A54CE5', borderRadius: '64px' }
-                                                                : { backgroundColor: '#D32F2F', borderRadius: '64px' }
-                                                        }
-                                                    >
-                                                        {item.isActive}
+                                getPaginatedData()
+                                    // eslint-disable-next-line consistent-return, array-callback-return
+                                    .filter((post: any) => {
+                                        if (query === '') {
+                                            return post;
+                                        }
+                                        if (
+                                            post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
+                                            post.code.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.name.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.category.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.uom.toLowerCase().includes(query.toLowerCase())
+                                        ) {
+                                            return post;
+                                        }
+                                    })
+                                    .map((item: any, idx: number) => {
+                                        const check: any = `checkbox${idx + 1}`;
+                                        return (
+                                            <TableRow key={item.id}>
+                                                <TableCell align='center' sx={{ width: '5%' }}>
+                                                    {item.id}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.code}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.name}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.category}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.uom}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.qty}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.image_url_1}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.image_url_2}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.image_url_3}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.expired_at}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    <Box sx={{ color: 'white' }}>
+                                                        <Box
+                                                            sx={
+                                                                item.is_active === true
+                                                                    ? { backgroundColor: '#A54CE5', borderRadius: '64px' }
+                                                                    : { backgroundColor: '#D32F2F', borderRadius: '64px' }
+                                                            }
+                                                        >
+                                                            {item.is_active.toString()}
+                                                        </Box>
                                                     </Box>
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                                <CheckboxController
-                                                    form={form}
-                                                    name={`checkbox${item.id}`}
-                                                    checked={!!form.watch(check)}
-                                                    onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
+                                                </TableCell>
+                                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                                    <CheckboxController
+                                                        form={form}
+                                                        name={`checkbox${item.id}`}
+                                                        checked={!!form.watch(check)}
+                                                        onChange={(e: any) => handleSingleCheckBox(e, `checkbox${idx + 1}`, item.id)}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -591,10 +675,10 @@ const ProductPrizes = () => {
                             labelId='demo-simple-select-label'
                             id='demo-simple-select'
                             value={row}
-                            defaultValue={dummyData.length.toString()}
+                            defaultValue={filteredData.length.toString()}
                             onChange={handleViewRow}
                         >
-                            {[...Array(dummyData.length)].map((item: any, idx: number) => (
+                            {[...Array(filteredData.length)].map((item: any, idx: number) => (
                                 <MenuItem key={idx} value={idx + 1}>
                                     {idx + 1}
                                 </MenuItem>
@@ -602,7 +686,7 @@ const ProductPrizes = () => {
                         </Select>
                     </FormControl>
                     <Typography>
-                        1-{row} of {dummyData.length}
+                        1-{row} of {filteredData.length}
                     </Typography>
                     <Box sx={{ display: 'flex' }}>
                         <IconButton onClick={goToPreviousPage}>
