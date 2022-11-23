@@ -146,6 +146,47 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                             </FormControl>
                         </Box>
                     </Box>
+                    <Box
+                        sx={{
+                            width: '40%',
+                            height: '',
+                            padding: '10px',
+                            mt: roles.length > 0 ? '20px' : '0px',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <Box sx={{ width: '30%' }} />
+                        <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
+                            {companies.length > 0 &&
+                                companies.map((item: any, idx: number) => {
+                                    return (
+                                        <Box
+                                            key={idx}
+                                            sx={{
+                                                backgroundColor: 'rgba(165, 76, 229, 0.04)',
+                                                padding: '5px 10px',
+                                                // width: '40%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                borderRadius: '20px',
+                                                gap: '5px'
+                                            }}
+                                        >
+                                            <Typography>{item}</Typography>
+                                            <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
+                                                <Close
+                                                    fontSize='small'
+                                                    sx={{ color: 'white', cursor: 'pointer' }}
+                                                    onClick={() => handleDeletedRoles(item)}
+                                                />
+                                            </Box>
+                                        </Box>
+                                    );
+                                })}
+                        </Box>
+                    </Box>
                     <Box sx={{ mt: '45px', width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
