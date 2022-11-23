@@ -17,11 +17,13 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
             email: '',
             role: '0',
             dataAccess: '',
+            company: '0',
             activeRole: true
         }
     });
     const [accessArr, setAccessArr] = React.useState<string[]>([]);
     const [roles, setRoles] = React.useState<any>([]);
+    const [companies, setCompanies] = React.useState<any>([]);
     const router = useRouter();
 
     const handleAddRole = (event: any) => {
@@ -29,6 +31,14 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         form.setValue('role', event.target.value);
         if (!isDuplicate) {
             setRoles([...roles, event.target.value as string]);
+        }
+    };
+
+    const handleAddCompany = (event: any) => {
+        const isDuplicate: any = roles.includes(event.target.value);
+        form.setValue('company', event.target.value);
+        if (!isDuplicate) {
+            setCompanies([...roles, event.target.value as string]);
         }
     };
 
@@ -101,6 +111,49 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                             type='email'
                             rules={{ required: true, maxLength: 100 }}
                         />
+                    </Box>
+                    <Box sx={{ mt: '45px', width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Company Name</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ width: '70%' }}>
+                            <FormControl fullWidth>
+                                <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='simple-select-company'>
+                                    Company
+                                </InputLabel>
+                                <Select
+                                    sx={{ color: form.watch('company') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                    placeholder='Select Company'
+                                    labelId='simple-select-company'
+                                    id='simple-select'
+                                    value={form.watch('company')}
+                                    label='Company'
+                                    onChange={handleAddCompany}
+                                    color='secondary'
+                                >
+                                    <MenuItem value='0' disabled>
+                                        Select Company
+                                    </MenuItem>
+                                    <MenuItem value='Admin'>Starbuck</MenuItem>
+                                    <MenuItem value='Marketing'>J.CO</MenuItem>
+                                    <MenuItem value='Content Writer'>Mc Donald</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </Box>
                     <Box sx={{ mt: '45px', width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
