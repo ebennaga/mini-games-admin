@@ -15,7 +15,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
         name: 'Owi-kun',
         email: 'test@abc.com',
         access: ['Admin', 'Content Creator'],
-        companies: ['J.OO', 'Starbuck'],
+        companies: ['J.OC', 'Starduck'],
         isActive: true
     };
 
@@ -27,12 +27,13 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
             role: '0',
             roles: data.access,
             activeRole: data.isActive,
-            company: '0'
+            company: '0',
+            companies: data.companies
         }
     });
     const router = useRouter();
     const [roles, setRoles] = React.useState<any>([...form.watch('roles')]);
-    const [companies, setCompanies] = React.useState<any>([]);
+    const [companies, setCompanies] = React.useState<any>([...form.watch('companies')]);
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
@@ -43,10 +44,10 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
     };
 
     const handleAddCompany = (event: any) => {
-        const isDuplicate: any = roles.includes(event.target.value);
+        const isDuplicate: any = companies.includes(event.target.value);
         form.setValue('company', event.target.value);
         if (!isDuplicate) {
-            setCompanies([...roles, event.target.value as string]);
+            setCompanies([...companies, event.target.value as string]);
         }
     };
 
@@ -56,6 +57,15 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                 return item !== i;
             });
             setRoles(deleted);
+        }
+    };
+
+    const handleDeletedCompanies = (item: any) => {
+        if (companies.length > 0) {
+            const deleted = companies.filter((i: any) => {
+                return item !== i;
+            });
+            setCompanies(deleted);
         }
     };
 
@@ -139,9 +149,9 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                     <MenuItem value='0' disabled>
                                         Select Company
                                     </MenuItem>
-                                    <MenuItem value='Admin'>Starbuck</MenuItem>
-                                    <MenuItem value='Marketing'>J.CO</MenuItem>
-                                    <MenuItem value='Content Writer'>Mc Donald</MenuItem>
+                                    <MenuItem value='Starduck'>Starduck</MenuItem>
+                                    <MenuItem value='J.OC'>J.OC</MenuItem>
+                                    <MenuItem value='Mc Dono'>Mc Dono</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
@@ -179,7 +189,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                                 <Close
                                                     fontSize='small'
                                                     sx={{ color: 'white', cursor: 'pointer' }}
-                                                    onClick={() => handleDeletedRoles(item)}
+                                                    onClick={() => handleDeletedCompanies(item)}
                                                 />
                                             </Box>
                                         </Box>
@@ -332,7 +342,6 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                 <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
                 <CustomButton
                     onClick={() => {
-                        // setCreateAcc(!createAcc);
                         router.push('/client-account');
                     }}
                     padding='10px'
