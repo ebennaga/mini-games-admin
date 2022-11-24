@@ -35,10 +35,10 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     };
 
     const handleAddCompany = (event: any) => {
-        const isDuplicate: any = roles.includes(event.target.value);
+        const isDuplicate: any = companies.includes(event.target.value);
         form.setValue('company', event.target.value);
         if (!isDuplicate) {
-            setCompanies([...roles, event.target.value as string]);
+            setCompanies([...companies, event.target.value as string]);
         }
     };
 
@@ -48,6 +48,15 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                 return item !== i;
             });
             setRoles(deleted);
+        }
+    };
+
+    const handleDeletedCompanies = (item: any) => {
+        if (companies.length > 0) {
+            const deleted = companies.filter((i: any) => {
+                return item !== i;
+            });
+            setCompanies(deleted);
         }
     };
 
@@ -148,11 +157,52 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     <MenuItem value='0' disabled>
                                         Select Company
                                     </MenuItem>
-                                    <MenuItem value='Admin'>Starbuck</MenuItem>
-                                    <MenuItem value='Marketing'>J.CO</MenuItem>
-                                    <MenuItem value='Content Writer'>Mc Donald</MenuItem>
+                                    <MenuItem value='Starduck'>Starduck</MenuItem>
+                                    <MenuItem value='J.OC'>J.OC</MenuItem>
+                                    <MenuItem value='Mc Dono'>Mc Dono</MenuItem>
                                 </Select>
                             </FormControl>
+                        </Box>
+                    </Box>
+                    <Box
+                        sx={{
+                            width: '40%',
+                            height: '',
+                            padding: '10px',
+                            mt: roles.length > 0 ? '20px' : '0px',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <Box sx={{ width: '30%' }} />
+                        <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
+                            {companies.length > 0 &&
+                                companies.map((item: any, idx: number) => {
+                                    return (
+                                        <Box
+                                            key={idx}
+                                            sx={{
+                                                backgroundColor: 'rgba(165, 76, 229, 0.04)',
+                                                padding: '5px 10px',
+                                                // width: '40%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                borderRadius: '20px',
+                                                gap: '5px'
+                                            }}
+                                        >
+                                            <Typography>{item}</Typography>
+                                            <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
+                                                <Close
+                                                    fontSize='small'
+                                                    sx={{ color: 'white', cursor: 'pointer' }}
+                                                    onClick={() => handleDeletedCompanies(item)}
+                                                />
+                                            </Box>
+                                        </Box>
+                                    );
+                                })}
                         </Box>
                     </Box>
                     <Box sx={{ mt: '45px', width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
