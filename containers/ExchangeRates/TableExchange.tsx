@@ -139,7 +139,7 @@ const TableExchange: React.FC<TableExchangeProps> = ({ name, form, nameIdxAppear
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '20%' }}
                                     >
-                                        <Typography component='span'>{item?.effective_until_at}</Typography>
+                                        <Typography component='span'>{item?.effective_at}</Typography>
                                     </TableCell>
                                     <TableCell
                                         align='center'
