@@ -46,8 +46,8 @@ const TableExchange: React.FC<TableExchangeProps> = ({ name, form, nameIdxAppear
         const isChecked = e.target.checked;
         let newArr: any = [...dataTable];
         dataTable.forEach((item: any, index: number) => {
-            if (item.id === data.id) {
-                const filter = newArr.filter((itm: any) => itm.id !== data.id);
+            if (item.coin === data.coin) {
+                const filter = newArr.filter((itm: any) => itm.coin !== data.coin);
                 if (isChecked) {
                     newArr = [...filter, { ...data, isAction: true }];
                 } else {
@@ -57,7 +57,7 @@ const TableExchange: React.FC<TableExchangeProps> = ({ name, form, nameIdxAppear
             }
 
             if (index === dataTable.length - 1) {
-                newArr.sort((a: any, b: any) => a.id - b.id);
+                newArr.sort((a: any, b: any) => a.coin - b.coin);
                 setDataTable([...newArr]);
                 form.setValue(name, [...newArr]);
             }

@@ -1,31 +1,32 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, TextField, Stack, ButtonBase, Typography, CircularProgress } from '@mui/material';
-import Image from 'next/image';
+import { Box, Stack, ButtonBase, Typography, CircularProgress } from '@mui/material';
 import FieldRequired from 'components/FieldRequired';
+import { useRouter } from 'next/router';
 import InputDate from './InputDate';
 import Input from './Input';
 
 interface InputExchangeRatesProps {
+    nameName: string;
     effectiveName: string;
     coinsName: string;
     idrName: string;
+    descriptionName: string;
     form: any;
     handleSubmit: any;
     loadingSubmit: boolean;
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
+    nameName,
     effectiveName,
     coinsName,
     idrName,
+    descriptionName,
     form,
     handleSubmit,
     loadingSubmit
 }) => {
-    const values = {
-        someDate: '2017-05-24'
-    };
+    const router = useRouter();
 
     return (
         <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -40,15 +41,25 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     <Box sx={{ width: '30%' }}>
                         <InputDate label='Effective Date' type='date' form={form} name={effectiveName} rules={{ required: true }} />
                     </Box>
-                    {/* <TextField
-                        id='effective'
-                        sx={{ width: '30%' }}
-                        name='someDate'
-                        label='Effective Date'
-                        InputLabelProps={{ shrink: true, required: true }}
-                        type='date'
-                        defaultValue={values.someDate}
-                    /> */}
+                </Stack>
+                <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <Typography component='h3' fontSize='16px' fontWeight={600}>
+                            Name
+                        </Typography>
+                        <FieldRequired />
+                    </Box>
+                    <Box sx={{ width: '30%' }}>
+                        <Input
+                            isColor
+                            type='text'
+                            rules={{ required: true }}
+                            form={form}
+                            name={nameName}
+                            label='Name'
+                            placeholder='Enter Name'
+                        />
+                    </Box>
                 </Stack>
                 <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -59,6 +70,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     </Box>
                     <Box sx={{ width: '30%' }}>
                         <Input
+                            isColor
                             type='number'
                             rules={{ required: true }}
                             form={form}
@@ -70,17 +82,6 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             }
                         />
                     </Box>
-                    {/* <TextField
-                        id='coins'
-                        sx={{ width: '30%' }}
-                        name='Enter Amount'
-                        label='Enter Amount'
-                        InputProps={{
-                            // eslint-disable-next-line jsx-a11y/alt-text
-                            // startAdornment: <img src='/icons/navbar/account.png' />
-                            startAdornment: <Image src='/images/coin.png' alt='picture' width={20} height={20} />
-                        }}
-                    /> */}
                 </Stack>
                 <Stack direction='row' spacing={24} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -91,6 +92,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     </Box>
                     <Box sx={{ width: '30%' }}>
                         <Input
+                            isColor
                             type='number'
                             rules={{ required: true }}
                             form={form}
@@ -104,17 +106,26 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             }
                         />
                     </Box>
-                    {/* <TextField
-                        id='idr'
-                        sx={{ width: '30%' }}
-                        name='Enter Amount'
-                        label='IDR'
-                        InputProps={{
-                            // eslint-disable-next-line jsx-a11y/alt-text
-                            // startAdornment: <img src='/icons/navbar/account.png' />
-                            startAdornment: <Image src='/images/Rp.png' alt='picture' width={20} height={20} />
-                        }}
-                    /> */}
+                </Stack>
+                <Stack direction='row' spacing={24} sx={{ mt: 4 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <Typography component='h3' fontSize='16px' fontWeight={600}>
+                            Indonesia Rupiah
+                        </Typography>
+                        <FieldRequired />
+                    </Box>
+                    <Box sx={{ width: '30%' }}>
+                        <Input
+                            isColor
+                            isTextArea
+                            type='text'
+                            rules={{ required: true }}
+                            form={form}
+                            name={descriptionName}
+                            label='Description'
+                            placeholder='Enter Description'
+                        />
+                    </Box>
                 </Stack>
                 <Stack direction='row' spacing={5} sx={{ mt: 50 }}>
                     {loadingSubmit ? (
@@ -129,6 +140,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                                 <Typography sx={{ color: '#ffffff' }}>Submit</Typography>
                             </ButtonBase>
                             <ButtonBase
+                                onClick={() => router.push('/exchange-rates')}
                                 disabled={loadingSubmit}
                                 sx={{
                                     background: '#ffffff',
