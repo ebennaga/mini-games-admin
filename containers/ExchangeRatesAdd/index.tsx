@@ -18,22 +18,25 @@ const ExchangeRatesAdd = () => {
         defaultValues: {
             effective: new Date().toJSON().slice(0, 10) || '',
             coins: '',
-            idr: ''
+            idr: '',
+            name: '',
+            description: ''
         }
     });
 
     const handleSubmit = async (data: any) => {
         setLoadingSubmit(true);
         try {
-            const { effective, coins, idr } = data;
+            const { effective, coins, idr, description, name } = data;
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: 'exchange-rates',
                 data: {
-                    name: String(coins),
+                    name,
                     coin: coins,
                     price: idr,
-                    description: `coins effective at: ${effective}`
+                    description,
+                    effective_at: effective
                 }
             });
 
@@ -65,6 +68,8 @@ const ExchangeRatesAdd = () => {
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
+                    nameName='name'
+                    descriptionName='description'
                 />
             </Box>
         </Container>

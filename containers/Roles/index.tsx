@@ -231,7 +231,7 @@ const Roles = () => {
                 />
             </Box>
             <DialogConfirmation
-                title='Are you sure romove this role?'
+                title='Are you sure remove this role?'
                 subTitle={`${totalChecked} Selected`}
                 handleConfirm={handleRemove}
                 open={openDialogConfirm}

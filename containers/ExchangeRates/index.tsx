@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import PaginationCard from 'components/PaginationCard';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import BadgeSelected from 'components/BadgeSelected';
+import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import TableExchange from './TableExchange';
 import LoadingExchangeRates from './LoadingExchangeRates';
 
@@ -14,6 +16,8 @@ const ExchangeRates = () => {
     const [isLoading, setIsloading] = React.useState<boolean>(true);
     const [data, setData] = React.useState<Array<any>>([]);
     const [dataSearch, setDataSearch] = React.useState<any>(null);
+    const [totalChecked, setTotalChecked] = React.useState<number>(0);
+    const [openDialogConfirm, setOpenDialogConfirm] = React.useState<boolean>(false);
 
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
@@ -30,6 +34,7 @@ const ExchangeRates = () => {
         }
     });
 
+    // Event search
     const handleSearch = async (input: any) => {
         const { search } = input;
         if (search) {
@@ -60,6 +65,19 @@ const ExchangeRates = () => {
         }
     };
 
+    // Event Remove Rate
+    const handleRemove = () => {
+        notify('Remove Rate Successfull!');
+        setOpenDialogConfirm(false);
+    };
+
+    // Event edit item
+    const handleEdit = () => {
+        const table: any = form.watch('dataTable');
+        const filter = table.filter((item: any) => item.isAction);
+        router.push(`/exchange-rates/${filter[0].id}/`);
+    };
+
     // Update useForm idxAppears value, while doing pagination events
     React.useEffect(() => {
         const page = form.watch('page');
@@ -82,7 +100,7 @@ const ExchangeRates = () => {
             });
 
             if (response.status === 200) {
-                const resData = response.data.data.sort((a: any, b: any) => a.id - b.id);
+                const resData = response.data.data.sort((a: any, b: any) => a.coin - b.coin);
                 setData(resData);
                 form.setValue('dataTable', resData);
             }
@@ -92,9 +110,17 @@ const ExchangeRates = () => {
         setIsloading(false);
     };
 
+    // component did mount get data
     React.useEffect(() => {
         getData();
     }, []);
+
+    // Read total of checked items
+    React.useEffect(() => {
+        const dataInput = form.watch('dataTable');
+        const countItems = dataInput.filter((item: any) => item.isAction).length;
+        setTotalChecked(countItems);
+    }, [form.watch('dataTable')]);
 
     if (isLoading) {
         return <LoadingExchangeRates />;
@@ -132,6 +158,15 @@ const ExchangeRates = () => {
                     </Box>
                 </Box>
             </Box>
+            {totalChecked > 0 && (
+                <Box sx={{ ml: -25, mt: 3 }}>
+                    <BadgeSelected
+                        total={totalChecked}
+                        handleOpenDeleteDialog={() => setOpenDialogConfirm(true)}
+                        onEdit={totalChecked === 1 ? handleEdit : false}
+                    />
+                </Box>
+            )}
             <Box sx={{ ml: -25, mt: 3 }}>
                 {/* <TableExchange /> */}
                 <TableExchange form={form} name='dataTable' nameIdxAppears='idxAppears' />
@@ -143,6 +178,15 @@ const ExchangeRates = () => {
                 form={form}
                 nameRow='row'
                 namePage='page'
+            />
+            <DialogConfirmation
+                title='Are you sure remove this Rate?'
+                subTitle={`${totalChecked} Selected`}
+                handleConfirm={handleRemove}
+                open={openDialogConfirm}
+                setOpen={setOpenDialogConfirm}
+                textConfirmButton='REMOVE'
+                textCancelButton='CANCEL'
             />
         </Container>
     );
