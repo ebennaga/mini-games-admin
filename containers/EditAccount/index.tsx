@@ -103,7 +103,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             if (result.status === 200) {
                 notify('Update account successfully', 'success');
                 setIsLoading(false);
-                form.reset();
+                // form.reset();
                 setRoles([]);
                 // setAccessArr([]);
             }

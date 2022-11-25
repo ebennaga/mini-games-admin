@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import TabPanel from './TabPanel';
-import Pagination from './Pagination';
+import Pagination from '../MasterCompany/Pagination';
 
 interface TabDistrictProps {
     value: any;

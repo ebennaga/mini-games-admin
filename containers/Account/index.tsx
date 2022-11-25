@@ -246,7 +246,7 @@ const AccountContainer = () => {
         <Box sx={{ width: '100%' }}>
             <Box sx={{ padding: '35px 25px' }}>
                 <Paper sx={{ width: '100%', height: '170px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
-                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Account</Typography>
+                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Master Company</Typography>
                     <Typography sx={{ fontSize: '14px', color: 'rgba(0, 0, 0, 0.6)', fontWeight: 400 }}>
                         Additional description if required
                     </Typography>
