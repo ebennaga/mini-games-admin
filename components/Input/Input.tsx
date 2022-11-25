@@ -15,6 +15,7 @@ interface InputProps {
     borderColor?: string;
     isCoin?: any;
     isDisabled?: any;
+    startAdornment?: any;
 }
 const Input: React.FC<InputProps> = ({
     name,
@@ -27,7 +28,8 @@ const Input: React.FC<InputProps> = ({
     isColor,
     borderColor,
     isDisabled,
-    isCoin = false
+    isCoin = false,
+    startAdornment
 }) => {
     const {
         formState: { errors }
@@ -73,9 +75,11 @@ const Input: React.FC<InputProps> = ({
                         '& fieldset': { borderColor: `${borderColor} !important`, borderWidth: '1px !important' }
                     }}
                     InputProps={{
-                        startAdornment: isCoin && (
-                            <Image style={{ marginRight: '10px' }} src='/images/coin.png' alt='picture' width={20} height={20} />
-                        )
+                        startAdornment:
+                            startAdornment ||
+                            (isCoin && (
+                                <Image style={{ marginRight: '10px' }} src='/images/coin.png' alt='picture' width={20} height={20} />
+                            ))
                     }}
                     fullWidth
                     multiline={isTextArea}
@@ -86,6 +90,7 @@ const Input: React.FC<InputProps> = ({
                     label={label}
                     variant='outlined'
                     color='secondary'
+                    type={type}
                     placeholder={placeholder}
                     focused
                     disabled={isDisabled}
