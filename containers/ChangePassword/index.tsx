@@ -117,7 +117,7 @@ const ChangePassword = () => {
                     }}
                 >
                     <Box>
-                        <CustomButton isDisable={isDisable} isLoading={isLoading} title='SUBMIT' type='submit' isDisable={isDisable} />
+                        <CustomButton isDisable={isDisable} isLoading={isLoading} title='SUBMIT' type='submit' />
                     </Box>
                     <Box ml='40px'>
                         <CustomButton

@@ -6,6 +6,8 @@ import CustomButton from 'components/Button';
 import InputUpload from 'components/Input/InputUpload';
 import TitleCard from 'components/Layout/TitleCard';
 import { useRouter } from 'next/router';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 
 const unitList = [
     {
@@ -21,15 +23,20 @@ const unitList = [
 const categoryList = [
     {
         value: 1,
-        label: 'Category 1'
+        label: 'Baterai'
     },
     {
         value: 2,
         label: 'Category 2'
     }
 ];
-const AddPrize = () => {
+interface AddPrizeProps {
+    statusEdit?: boolean;
+}
+const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
     const rules = { required: true };
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
     const router = useRouter();
     const form = useForm({
         mode: 'onSubmit',
@@ -42,7 +49,8 @@ const AddPrize = () => {
             img3: '',
             category: '',
             unit: '',
-            qty: ''
+            qty: '',
+            is_active: false
         }
     });
     const [checked, setChecked] = React.useState([true, false]);
@@ -53,15 +61,88 @@ const AddPrize = () => {
     const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked([false, event.target.checked]);
     };
-
-    const handleSubmit = () => {
-        // console.log(`checking${form.watch('name')}`);
-        // form.watch('name');
+    const getDataPrize = async () => {
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: `product-prizes/${router.query.id}`
+            });
+            if (response.status === 200) {
+                form.setValue('name', response.data.data.name);
+                form.setValue('code', response.data.data.code);
+                form.setValue('unit', response.data.data.uom);
+                form.setValue('category', response.data.data.category);
+                // form.setValue('img', response.data.data.image_url_1);
+                // form.setValue('img2', response.data.data.image_url_2);
+                // form.setValue('img3', response.data.data.image_url_3);
+                form.setValue('is_active', response.data.data.is_active);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
     };
+
+    const handlePUTSubmit = async () => {
+        try {
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `/product-prizes/${router.query.id}`,
+                data: {
+                    code: form.watch('code'),
+                    name: form.watch('name'),
+                    category: categoryList[parseInt(form.watch('category'), 10) - 1].label,
+                    uom: unitList[parseInt(form.watch('unit'), 10) - 1].label,
+                    image_url_1: form.watch('img'),
+                    image_url_2: form.watch('img2'),
+                    image_url_3: form.watch('img3'),
+                    is_active: checked[0] ? checked[0] : checked[1]
+                }
+            });
+
+            if (response?.status === 200) {
+                notify(response.data.message, 'success');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+    };
+    const handlePOSTSubmit = async () => {
+        // console.log(`checking${categoryList[parseInt(form.watch('category'), 10) - 1].label}`);
+        // form.watch('name');
+        try {
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: '/product-prizes',
+                data: {
+                    id: 2,
+                    code: form.watch('code'),
+                    name: form.watch('name'),
+                    category: categoryList[parseInt(form.watch('category'), 10) - 1].label,
+                    uom: unitList[parseInt(form.watch('unit'), 10) - 1].label,
+                    image_url_1: form.watch('img'),
+                    image_url_2: form.watch('img2'),
+                    image_url_3: form.watch('img3'),
+                    expired_at: '',
+                    is_active: checked[0] ? checked[0] : checked[1]
+                }
+            });
+            if (response?.status === 200) {
+                // console.log(response);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+    };
+
+    React.useEffect(() => {
+        if (statusEdit) {
+            getDataPrize();
+        }
+    }, []);
     return (
         <Box component='section'>
             <TitleCard title='Add Prize' subtitle='Addtional description if required' isSearchExist={false} />
-            <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <form onSubmit={form.handleSubmit(statusEdit ? handlePUTSubmit : handlePOSTSubmit)}>
                 <Box sx={{ my: 3, mx: 2, width: '40%' }}>
                     <Box sx={{ my: '30px' }}>
                         <InputWithLabel
