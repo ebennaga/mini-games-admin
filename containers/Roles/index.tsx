@@ -125,7 +125,7 @@ const Roles = () => {
     // Event update access
     const handleUpdateAccess = () => {
         const currentAccess = form.watch('accessUpdated');
-        console.log(currentAccess);
+
         setOpenMenuAccess(false);
         setOpenDialogFailed(true);
     };
