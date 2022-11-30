@@ -12,9 +12,19 @@ interface TitleCardProps {
     href?: string;
     // eslint-disable-next-line no-unused-vars
     onConfirm?: (value: boolean) => void;
+    // eslint-disable-next-line no-unused-vars
+    handleSearch?: (keyword: string) => void;
 }
 
-const TitleCard: React.FC<TitleCardProps> = ({ title, subtitle, isSearchExist, placeholderSeacrhText = '', href = '', onConfirm }) => {
+const TitleCard: React.FC<TitleCardProps> = ({
+    title,
+    subtitle,
+    isSearchExist,
+    placeholderSeacrhText = '',
+    href = '',
+    onConfirm,
+    handleSearch
+}) => {
     const router = useRouter();
     return (
         <Box>
@@ -53,6 +63,7 @@ const TitleCard: React.FC<TitleCardProps> = ({ title, subtitle, isSearchExist, p
                                     Search
                                 </InputLabel>
                                 <OutlinedInput
+                                    onChange={(e: any) => (handleSearch === undefined ? {} : handleSearch(e.target.value))}
                                     sx={{
                                         '& .MuiOutlinedInput-notchedOutline': {
                                             borderColor: '#A54CE5 !important',

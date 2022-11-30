@@ -96,7 +96,7 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                                         form={form}
                                         onChange={handleChangeCheckboxAll}
                                         checked={form.watch('checkAll')}
-                                        disabled={remove.length === 0}
+                                        disabled={remove.length < 0}
                                     />
                                 }
                                 label='Action'
@@ -106,46 +106,46 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                 </TableHead>
                 <TableBody>
                     {data.length > 0 &&
-                        data.map((item: any) => {
-                            const check: any = `checkbox${item.id}`;
+                        data.map((item: any, idx: number) => {
+                            const check: any = `checkbox${idx + 1}`;
                             const options: any = { hour: '2-digit', minute: '2-digit' };
-                            const startTime = new Date(item.start).toLocaleString(undefined, options);
-                            const endTime = new Date(item.end).toLocaleString(undefined, options);
+                            const startTime = new Date(item.start_time).toLocaleString(undefined, options);
+                            const endTime = new Date(item.end_time).toLocaleString(undefined, options);
                             return (
                                 <TableRow key={item.id}>
                                     <TableCell align='center' sx={{ width: '5%' }}>
                                         {item.id}.
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.title}
+                                        {item.name}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {dateFormat(item.start)}
+                                        {dateFormat(new Date(item.start_time))}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {startTime}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {dateFormat(item.end)}
+                                        {dateFormat(new Date(item.end_time))}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {endTime}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.games}
+                                        {item.game.name}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.registration} Coins
+                                        {item.entry_coin} Coins
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {numberFormat(item.totalPrizes)}
+                                        {numberFormat(item.total_points)}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='center'>
                                         <Typography
-                                            onClick={() => {
-                                                setOpenDialogTour(!openDialogTour);
-                                                setLeaderboards(item);
-                                            }}
+                                            // onClick={() => {
+                                            //     setOpenDialogTour(!openDialogTour);
+                                            //     setLeaderboards(item);
+                                            // }}
                                             sx={{ color: '#A54CE5', textDecoration: 'underline', fontWeight: 'bold', cursor: 'pointer' }}
                                         >
                                             View Leaderboard
@@ -156,7 +156,7 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                                             form={form}
                                             name={`checkbox${item.id}`}
                                             checked={!!form.watch(check)}
-                                            onChange={(e: any) => handleChangeChekcbox(e, `checkbox${item.id}`, item.id)}
+                                            onChange={(e: any) => handleChangeChekcbox(e, `checkbox${idx + 1}`, item.id)}
                                         />
                                     </TableCell>
                                 </TableRow>
