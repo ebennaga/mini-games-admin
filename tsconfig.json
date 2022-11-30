@@ -17,6 +17,6 @@
         "jsxImportSource": "@emotion/react",
         "incremental": true
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "containers/Redemption/DialogResiitsx"],
+    "include": ["next-env.d.ts", ".d.ts", "**/*.ts", "**/*.tsx", "containers/Redemption/DialogResiitsx"],
     "exclude": ["node_modules"]
 }
