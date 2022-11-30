@@ -6,8 +6,11 @@ import InputImage from 'components/Input/InputImage';
 import Input from 'components/Input/Input';
 import { Remove, Add } from '@mui/icons-material';
 import CustomButton from 'components/Button';
-import TableAddTournament from './Table';
+import useNotify from 'hooks/useNotify';
+
+import useAPICaller from 'hooks/useAPICaller';
 import dataTable from './dataSelect';
+import TableAddTournament from './Table';
 
 interface CreateTournamentProps {
     form: any;
@@ -20,7 +23,9 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     const [table, setTable] = React.useState('0');
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
+    const notify = useNotify();
 
+    const { fetchAPI } = useAPICaller();
     const handleFiter = (event: SelectChangeEvent) => {
         setGame(event.target.value as string);
     };
@@ -29,8 +34,34 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         setTable(event.target.value as string);
     };
 
-    const handleSubmit = (data: any) => {
-        console.log('response', data);
+    const handlePOSTSubmit = async () => {
+        // console.log(`checking${categoryList[parseInt(form.watch('category'), 10) - 1].label}`);
+        // form.watch('name');
+        // console.log('masuk');
+        // console.log(`${form.watch('startDate')} ${form.watch('startTime')}`);
+        try {
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: '/tournaments',
+                data: {
+                    game_id: 4,
+                    name: form.watch('title'),
+                    start_time: `${form.watch('startDate')} ${form.watch('startTime')}`,
+                    end_time: '',
+                    entry_coin: form.watch('fee'),
+                    total_points: form.watch('pool'),
+                    game: {
+                        id: game,
+                        name: ''
+                    }
+                }
+            });
+            if (response?.status === 200) {
+                // console.log(response);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
     };
 
     const MenuProps = {
@@ -51,7 +82,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                         Additional description if required
                     </Typography>
                 </Paper>
-                <form onSubmit={form.handleSubmit(handleSubmit)}>
+                <form onSubmit={form.handleSubmit(handlePOSTSubmit)}>
                     <Grid container mt='37px' color='rgba(0, 0, 0, 0.6)'>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
@@ -267,32 +298,33 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                     </Grid>
+                    <Box
+                        sx={{
+                            borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+                            display: 'flex',
+                            gap: '20px',
+                            alignItems: 'center',
+                            mt: '100px',
+                            padding: '40px',
+                            width: '100%'
+                        }}
+                    >
+                        <CustomButton type='submit' />
+                        {/* <CustomButton type='submit' padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' /> */}
+                        <CustomButton
+                            onClick={() => {
+                                setCreateTour(!createTour);
+                            }}
+                            padding='10px'
+                            width='193px'
+                            height='59px'
+                            title='cancel'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            border='1px solid #A54CE5'
+                        />
+                    </Box>
                 </form>
-            </Box>
-            <Box
-                sx={{
-                    borderTop: '1px solid rgba(0, 0, 0, 0.12)',
-                    display: 'flex',
-                    gap: '20px',
-                    alignItems: 'center',
-                    mt: '100px',
-                    padding: '40px',
-                    width: '100%'
-                }}
-            >
-                <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
-                <CustomButton
-                    onClick={() => {
-                        setCreateTour(!createTour);
-                    }}
-                    padding='10px'
-                    width='193px'
-                    height='59px'
-                    title='cancel'
-                    backgroundColor='white'
-                    color='#A54CE5'
-                    border='1px solid #A54CE5'
-                />
             </Box>
         </Box>
     );

@@ -11,16 +11,20 @@ import { useForm } from 'react-hook-form';
 import { FilterList, ArrowBackIos, ArrowForwardIos, Delete } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import { getCurrentDate, getCurrentTime } from 'utils/date';
+import useNotify from 'hooks/useNotify';
+import { useRouter } from 'next/router';
+import useAPICaller from 'hooks/useAPICaller';
 import Tables from './TournamentTable';
 import DeleteAccDialog from '../Account/DeleteAccDialog';
 import FilterDrop from './FilterDrop';
 import CreateTournament from './CreateTournament';
-import dummy from './dummy';
+// import dummy from './dummy';
 import LeaderboardDialog from './LeaderboardTour';
 
 const TournamentContainer = () => {
     const form = useForm({
-        mode: 'all',
+        mode: 'onSubmit',
+        reValidateMode: 'onChange',
         defaultValues: {
             search: '',
             isActive: false,
@@ -63,6 +67,43 @@ const TournamentContainer = () => {
     const [isSearch, setIsSearch] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
+    const notify = useNotify();
+    const { fetchAPI } = useAPICaller();
+    const router = useRouter();
+    const handleFetchData = async () => {
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: '/tournaments'
+            });
+            if (response.status === 200) {
+                const tournaments = response.data.data;
+                setRemove(tournaments);
+                setRow(tournaments.length.toString());
+                notify(response?.data.message, 'success');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+    };
+    const handleRemoveData = async () => {
+        try {
+            const response = await fetchAPI({
+                endpoint: `/product-prizes/${router.query.id}`,
+                method: 'DELETE'
+            });
+            if (response.status === 200) {
+                notify(response.data.message, 'success');
+                const res = remove.filter((item: any) => !deleted.includes(item));
+                setDeleted([]);
+                setCheckedObj([]);
+                setRow(res.length);
+                form.setValue('checkAll', false);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+    };
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -85,10 +126,20 @@ const TournamentContainer = () => {
                 checkTrue.push(item);
             }
         });
-        setCheckedObj(checkTrue);
-        if (e.target.checked) {
-            setDeleted([...deleted, id]);
+        if (checkTrue.length === remove.length) {
+            form.setValue('checkAll', true);
+        } else {
+            form.setValue('checkAll', false);
         }
+        setCheckedObj(checkTrue);
+
+        if (e.target.checked) {
+            const found = remove.find((element: any) => {
+                return element.id === id;
+            });
+            setDeleted([...deleted, found]);
+        }
+
         if (!e.target.checked) {
             if (deleted.length > 0) {
                 const filter = deleted.filter((item: any) => {
@@ -102,32 +153,52 @@ const TournamentContainer = () => {
     };
 
     const handleChangeCheckboxAll = (e: any) => {
+        const temp: any[] = [];
         form.setValue('checkAll', e.target.checked);
-        const arr: any = [];
         if (e.target.checked) {
-            setCheckedObj(checkBoxKeys);
-            const checkBox: any = { ...form.watch() };
-            [...Array(dummy.length)].forEach((item: any, idx: number) => {
+            remove.forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, e.target.checked);
-                arr.push(idx + 1);
-                if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
-                    form.setValue(datas, true);
-                } else {
-                    form.setValue(datas, false);
-                }
+                temp.push(item);
             });
-            setDeleted(arr);
+            setDeleted(temp);
+            setCheckedObj(checkBoxKeys);
         } else if (!e.target.checked) {
             setCheckedObj([]);
-            const checkBox: any = { ...form.watch() };
-            [...Array(dummy.length)].forEach((item: any, idx: number) => {
+            setDeleted([]);
+            remove.forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, false);
             });
-            setDeleted([]);
         }
     };
+    // const handleChangeCheckboxAll = (e: any) => {
+    //     form.setValue('checkAll', e.target.checked);
+    //     const arr: any = [];
+    //     if (e.target.checked) {
+    //         setCheckedObj(checkBoxKeys);
+    //         const checkBox: any = { ...form.watch() };
+    //         [...Array(remove.length)].forEach((item: any, idx: number) => {
+    //             const datas: any = `checkbox${idx + 1}`;
+    //             form.setValue(datas, e.target.checked);
+    //             arr.push(idx + 1);
+    //             if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
+    //                 form.setValue(datas, true);
+    //             } else {
+    //                 form.setValue(datas, false);
+    //             }
+    //         });
+    //         setDeleted(arr);
+    //     } else if (!e.target.checked) {
+    //         setCheckedObj([]);
+    //         const checkBox: any = { ...form.watch() };
+    //         [...Array(remove.length)].forEach((item: any, idx: number) => {
+    //             const datas: any = `checkbox${idx + 1}`;
+    //             form.setValue(datas, false);
+    //         });
+    //         setDeleted([]);
+    //     }
+    // };
 
     const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedValue(event.target.value);
@@ -145,17 +216,18 @@ const TournamentContainer = () => {
         }
     };
 
-    const handleDelete = () => {
-        const filter = remove.filter((item: any) => {
-            return !deleted.includes(item.id);
-        });
-        setRemove(filter);
-        setOnDelete(!onDelete);
-        setCheckedObj([]);
-    };
+    // const handleDelete = () => {
+    //     const filter = remove.filter((item: any) => {
+    //         return !deleted.includes(item.id);
+    //     });
+    //     setRemove(filter);
+    //     setOnDelete(!onDelete);
+    //     setCheckedObj([]);
+    // };
 
     useEffect(() => {
-        setRemove(dummy);
+        handleFetchData();
+        // setRemove(dummy);
     }, []);
 
     useEffect(() => {
@@ -163,7 +235,7 @@ const TournamentContainer = () => {
     }, [pages, row]);
 
     useEffect(() => {
-        [...Array(dummy.length)].forEach((item: any, idx: number) => {
+        [...Array(remove.length)].forEach((item: any, idx: number) => {
             checkBoxKeys.push(`checkbox${idx + 1}`);
         });
         if (checkedObj.length > 0 || form.watch('checkAll')) {
@@ -187,7 +259,7 @@ const TournamentContainer = () => {
         if (isSearch) {
             const searched = remove.filter((item: any) => {
                 if (input) {
-                    if (item.title.toLowerCase().includes(input) || item.games.toLowerCase().includes(input)) {
+                    if (item.name.toLowerCase().includes(input) || item.game.name.toLowerCase().includes(input)) {
                         return item;
                     }
                 }
@@ -358,7 +430,7 @@ const TournamentContainer = () => {
                 setIsChecked={setIsChecked}
                 setOnDelete={setOnDelete}
                 onDelete={onDelete}
-                handleDelete={handleDelete}
+                handleDelete={handleRemoveData}
                 open={openDialog}
                 setOpen={setOpenDialog}
                 qty={checkedObj.length}
