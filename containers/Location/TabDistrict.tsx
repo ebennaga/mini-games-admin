@@ -64,29 +64,29 @@ const TabDistrict: React.FC<TabDistrictProps> = ({ data, value, index, row, hand
                     </TableHead>
                     <TableBody>
                         {data.length > 0 &&
-                            data.map((item: any) => {
+                            data.map((item: any, idx: number) => {
                                 return (
-                                    <TableRow key={item.id}>
+                                    <TableRow key={idx}>
                                         <TableCell align='center' sx={{ width: '5%' }}>
-                                            {item.id}.
+                                            {idx + 1}.
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.provinceCode}
+                                            {item?.provinceCode}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.province}
+                                            {/* {item?.province} */}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.cityCode}
+                                            {item?.cityCode}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.city}
+                                            {item?.city}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.districtCode}
+                                            {item?.districtCode}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.district}
+                                            {item?.district}
                                         </TableCell>
                                     </TableRow>
                                 );
