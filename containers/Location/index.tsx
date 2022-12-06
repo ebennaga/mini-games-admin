@@ -1,8 +1,10 @@
-import { Box, Typography, Paper, SelectChangeEvent } from '@mui/material';
+import { Box, Typography, Paper, SelectChangeEvent, Skeleton } from '@mui/material';
 import React, { useState, SyntheticEvent, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import InputImage from 'components/Input/InputImage';
 import InputSearch from 'components/Input/InputSearch';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import Tabs from './Tabs';
 import TabProvince from './TabProvince';
 import TabCity from './TabCity';
@@ -11,6 +13,8 @@ import TabSubDistrict from './TabSubDistrict';
 import dummy from './dummy';
 
 const LocationContainer = () => {
+    const endpointTabs = ['provinces', 'cities', 'districts', 'sub-districts'];
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -24,6 +28,10 @@ const LocationContainer = () => {
     const [remove, setRemove] = useState<any>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [pages, setPages] = useState(1);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
 
     const handleChangeTabs = (event: SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -51,9 +59,39 @@ const LocationContainer = () => {
         }
     };
 
+    // Fetch Data Table
+    const fetchData = async (endpoint: string) => {
+        setIsLoading(true);
+        setRemove([]);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint
+            });
+
+            if (response.status === 200) {
+                setRemove(response.data.data);
+            } else {
+                notify(response?.message, 'error');
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsLoading(false);
+    };
+
+    // Did Update value
     useEffect(() => {
-        setRemove(dummy);
-    }, []);
+        if (value <= 1) {
+            setRemove([]);
+            fetchData(endpointTabs[value]);
+        } else {
+            setRemove([]);
+            setIsLoading(true);
+            setRemove(dummy);
+            setIsLoading(false);
+        }
+    }, [value]);
 
     useEffect(() => {
         setPages(Math.ceil(remove.length / Number(row)));
@@ -96,48 +134,57 @@ const LocationContainer = () => {
                         />
                     </Box>
                 </Paper>
-                <Box>
-                    <TabProvince
-                        goToPreviousPage={goToPreviousPage}
-                        row={row}
-                        handleChange={handleChange}
-                        remove={remove}
-                        goToNextPage={goToNextPage}
-                        value={value}
-                        index={0}
-                        data={getPaginatedData()}
-                    />
-                    <TabCity
-                        goToPreviousPage={goToPreviousPage}
-                        row={row}
-                        handleChange={handleChange}
-                        remove={remove}
-                        goToNextPage={goToNextPage}
-                        value={value}
-                        index={1}
-                        data={getPaginatedData()}
-                    />
-                    <TabDistrict
-                        goToPreviousPage={goToPreviousPage}
-                        row={row}
-                        handleChange={handleChange}
-                        remove={remove}
-                        goToNextPage={goToNextPage}
-                        value={value}
-                        index={2}
-                        data={getPaginatedData()}
-                    />
-                    <TabSubDistrict
-                        goToPreviousPage={goToPreviousPage}
-                        row={row}
-                        handleChange={handleChange}
-                        remove={remove}
-                        goToNextPage={goToNextPage}
-                        value={value}
-                        index={3}
-                        data={getPaginatedData()}
-                    />
-                </Box>
+
+                {isLoading ? (
+                    <Box mt={4}>
+                        {[...Array(5)].map((_item: any, index: number) => {
+                            return <Skeleton key={index} sx={{ height: '90px' }} />;
+                        })}
+                    </Box>
+                ) : (
+                    <Box>
+                        <TabProvince
+                            goToPreviousPage={goToPreviousPage}
+                            row={row}
+                            handleChange={handleChange}
+                            remove={remove}
+                            goToNextPage={goToNextPage}
+                            value={value}
+                            index={0}
+                            data={getPaginatedData()}
+                        />
+                        <TabCity
+                            goToPreviousPage={goToPreviousPage}
+                            row={row}
+                            handleChange={handleChange}
+                            remove={remove}
+                            goToNextPage={goToNextPage}
+                            value={value}
+                            index={1}
+                            data={getPaginatedData()}
+                        />
+                        <TabDistrict
+                            goToPreviousPage={goToPreviousPage}
+                            row={row}
+                            handleChange={handleChange}
+                            remove={remove}
+                            goToNextPage={goToNextPage}
+                            value={value}
+                            index={2}
+                            data={getPaginatedData()}
+                        />
+                        <TabSubDistrict
+                            goToPreviousPage={goToPreviousPage}
+                            row={row}
+                            handleChange={handleChange}
+                            remove={remove}
+                            goToNextPage={goToNextPage}
+                            value={value}
+                            index={3}
+                            data={getPaginatedData()}
+                        />
+                    </Box>
+                )}
             </Box>
         </Box>
     );

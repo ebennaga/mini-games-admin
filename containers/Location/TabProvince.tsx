@@ -40,17 +40,17 @@ const TabProvince: React.FC<TabProvinceProps> = ({ data, value, index, row, hand
                     </TableHead>
                     <TableBody>
                         {data.length > 0 &&
-                            data.map((item: any) => {
+                            data.map((item: any, idx: number) => {
                                 return (
-                                    <TableRow key={item.id}>
+                                    <TableRow key={item?.id}>
                                         <TableCell align='center' sx={{ width: '5%' }}>
-                                            {item.id}.
+                                            {idx + 1}.
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.provinceCode}
+                                            {item?.id}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.province}
+                                            {item.name}
                                         </TableCell>
                                     </TableRow>
                                 );
