@@ -1,7 +1,19 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import { Close } from '@mui/icons-material';
-import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, FormControlLabel, Checkbox, Skeleton } from '@mui/material';
+import {
+    MenuItem,
+    Box,
+    Typography,
+    Paper,
+    FormControl,
+    Select,
+    InputLabel,
+    FormControlLabel,
+    Checkbox,
+    Skeleton,
+    FormHelperText
+} from '@mui/material';
 import CustomButton from 'components/Button';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import { useRouter } from 'next/router';
@@ -37,6 +49,9 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     const [roles, setRoles] = React.useState<any>([]);
     const [selectRoles, setSelectRoles] = React.useState<any>([]);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [isLoading1, setIsLoading1] = React.useState(false);
+    const [isFilled, setIsFilled] = React.useState(false);
+    const [isRequired, setIsRequired] = React.useState(false);
 
     const fetchRoles = async () => {
         try {
@@ -116,28 +131,42 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     }, []);
 
     const handleSubmitData = async (d: any) => {
-        setIsLoading(true);
-        try {
-            const result = await fetchAPI({
-                endpoint: `accounts/${router.query.id}`,
-                method: 'PUT',
-                data: {
-                    name: d.name,
-                    email: d.email,
-                    role_ids: roles.join(',')
+        if (isFilled) {
+            setIsLoading1(true);
+            try {
+                const result = await fetchAPI({
+                    endpoint: `accounts/${router.query.id}`,
+                    method: 'PUT',
+                    data: {
+                        name: d.name,
+                        email: d.email,
+                        role_ids: roles.join(',')
+                    }
+                });
+                if (result.status === 200) {
+                    notify('Update account successfully', 'success');
+                    setIsLoading1(false);
+                    setRoles([]);
+                    setIsFilled(false);
+                    setIsRequired(false);
                 }
-            });
-            if (result.status === 200) {
-                notify('Update account successfully', 'success');
-                setIsLoading(false);
-                setRoles([]);
+            } catch (error: any) {
+                notify(error.message, 'error');
+                setIsLoading1(false);
             }
-        } catch (error: any) {
-            notify(error.message, 'error');
-            setIsLoading(false);
+            setIsLoading1(false);
+        } else {
+            setIsRequired(true);
         }
-        setIsLoading(false);
     };
+
+    React.useEffect(() => {
+        if (roles.length > 0) {
+            setIsFilled(true);
+        } else {
+            setIsFilled(false);
+        }
+    }, [roles, isFilled]);
 
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
@@ -202,10 +231,15 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                     <Skeleton sx={{ height: '90px', mt: '-20px', mb: '-20px' }} />
                                 ) : (
                                     <>
-                                        <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                        <InputLabel
+                                            color='secondary'
+                                            sx={{ fontWeight: 'bold', color: !isFilled && isRequired ? 'red' : '' }}
+                                            id='demo-simple-select-label'
+                                        >
                                             Role Code
                                         </InputLabel>
                                         <Select
+                                            error={!isFilled && isRequired}
                                             sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
                                             placeholder='Select Roles'
                                             labelId='demo-simple-select-label'
@@ -229,6 +263,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                         </Select>
                                     </>
                                 )}
+                                {!isFilled && isRequired && <FormHelperText sx={{ color: 'red' }}>Role is Required</FormHelperText>}
                             </FormControl>
                         </Box>
                     </Box>
@@ -336,7 +371,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     }}
                 >
                     <CustomButton
-                        isLoading={isLoading}
+                        isLoading={isLoading1}
                         type='submit'
                         padding='10px'
                         width='193px'
