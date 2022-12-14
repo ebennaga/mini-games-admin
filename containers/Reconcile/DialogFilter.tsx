@@ -8,18 +8,22 @@ interface DialogFilterProps {
     setOpen: any;
     form: any;
     dataDate: any;
+    handleFilter: any;
 }
 
-const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDate }) => {
+const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDate, handleFilter }) => {
     const radioList = [
         { value: 'all', label: 'All' },
         { value: 'latest', label: 'Latest' },
         { value: 'oldest', label: 'Oldest' }
     ];
 
+    const [tabRadio, setTabRadio] = React.useState<'all' | 'latest' | 'oldest'>('all');
+
     const handleSubmit = (data: any) => {
         setOpen(false);
-        console.log('response', data);
+        handleFilter(data, tabRadio);
+        setTabRadio('all');
     };
 
     if (!open) {
@@ -51,21 +55,29 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDa
                     sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5, '& .Mui-checked': { color: '#A54CE5' } }}
                 >
                     {radioList.map((item: any) => {
-                        return <FormControlLabel key={item.value} value={item.value} control={<Radio />} label={item.label} />;
+                        return (
+                            <FormControlLabel
+                                key={item.value}
+                                value={item.value}
+                                control={<Radio onChange={() => setTabRadio(item.value)} />}
+                                label={item.label}
+                            />
+                        );
                     })}
                 </RadioGroup>
-                {dataDate.map((item: any) => {
-                    return (
-                        <InputDate
-                            key={item.name}
-                            form={form}
-                            type={item.type}
-                            label={item.label}
-                            // defaultValue={item.defaultValue}
-                            name={item.name}
-                        />
-                    );
-                })}
+                {tabRadio === 'all' &&
+                    dataDate.map((item: any) => {
+                        return (
+                            <InputDate
+                                key={item.name}
+                                form={form}
+                                type={item.type}
+                                label={item.label}
+                                // defaultValue={item.defaultValue}
+                                name={item.name}
+                            />
+                        );
+                    })}
                 <Grid container spacing={2} mt={0.3}>
                     <Grid item xs={6}>
                         <ButtonBase
