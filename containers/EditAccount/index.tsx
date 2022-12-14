@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import { Close } from '@mui/icons-material';
-import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, FormControlLabel, Checkbox } from '@mui/material';
+import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, FormControlLabel, Checkbox, Skeleton } from '@mui/material';
 import CustomButton from 'components/Button';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import { useRouter } from 'next/router';
@@ -35,21 +35,48 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     const notify = useNotify();
     const router = useRouter();
     const [roles, setRoles] = React.useState<any>([]);
+    const [selectRoles, setSelectRoles] = React.useState<any>([]);
     const [isLoading, setIsLoading] = React.useState(false);
+
+    const fetchRoles = async () => {
+        try {
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: 'roles'
+            });
+
+            if (result.status === 200) {
+                setSelectRoles(result.data.data);
+            } else {
+                notify(result.message, 'error');
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+    };
 
     const fetchDetailAccount = async () => {
         setIsLoading(true);
         try {
+            await fetchRoles();
             const result = await fetchAPI({
                 method: 'GET',
                 endpoint: `accounts/${router.query.id}`
             });
 
             if (result.status === 200) {
+                const dataFetch = result.data.data;
                 form.setValue('name', result.data.data.name);
                 form.setValue('email', result.data.data.email);
-                setRoles(result?.data.data.role_ids.split(','));
                 form.setValue('activeRole', result.data.data.is_active);
+                if (dataFetch.role_id && dataFetch.role_id.length === 1) {
+                    form.setValue('role', dataFetch.role_id);
+                    setRoles([`${dataFetch.role_id}`]);
+                }
+                if (dataFetch.role_id && dataFetch.role_id.length > 1) {
+                    form.setValue('role', dataFetch.role_id.split(',')[0]);
+                    setRoles(dataFetch.role_id.split(','));
+                }
             }
             setIsLoading(false);
         } catch (error: any) {
@@ -97,15 +124,13 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 data: {
                     name: d.name,
                     email: d.email,
-                    role_ids: roles.join(', ')
+                    role_ids: roles.join(',')
                 }
             });
             if (result.status === 200) {
                 notify('Update account successfully', 'success');
                 setIsLoading(false);
-                // form.reset();
                 setRoles([]);
-                // setAccessArr([]);
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -128,6 +153,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     <Box sx={{ mt: '45px', width: '40%' }}>
                         <InputWithLabel
                             isRequired
+                            isLoading={isLoading}
                             foucused
                             labelField='Name'
                             placeHolder='Max 100 Character'
@@ -141,6 +167,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     <Box sx={{ mt: '45px', width: '40%' }}>
                         <InputWithLabel
                             isRequired
+                            isLoading={isLoading}
                             labelField='Email'
                             foucused
                             placeHolder='Max 100 Character'
@@ -171,26 +198,37 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         </Box>
                         <Box sx={{ width: '70%' }}>
                             <FormControl fullWidth>
-                                <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
-                                    Role Code
-                                </InputLabel>
-                                <Select
-                                    sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                    placeholder='Select Roles'
-                                    labelId='demo-simple-select-label'
-                                    id='demo-simple-select'
-                                    value={form.watch('role')}
-                                    label='Role Code'
-                                    onChange={handleAddRole}
-                                    color='secondary'
-                                >
-                                    <MenuItem value='0' disabled>
-                                        Select Roles
-                                    </MenuItem>
-                                    <MenuItem value='Admin'>Admin</MenuItem>
-                                    <MenuItem value='Marketing'>Marketing</MenuItem>
-                                    <MenuItem value='Content Writer'>Content Writer</MenuItem>
-                                </Select>
+                                {isLoading ? (
+                                    <Skeleton sx={{ height: '90px', mt: '-20px', mb: '-20px' }} />
+                                ) : (
+                                    <>
+                                        <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                            Role Code
+                                        </InputLabel>
+                                        <Select
+                                            sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                            placeholder='Select Roles'
+                                            labelId='demo-simple-select-label'
+                                            id='demo-simple-select'
+                                            value={form.watch('role')}
+                                            label='Role Code'
+                                            onChange={handleAddRole}
+                                            color='secondary'
+                                        >
+                                            <MenuItem value='0' disabled>
+                                                Select Roles
+                                            </MenuItem>
+                                            {selectRoles.length > 0 &&
+                                                selectRoles.map((item: any) => {
+                                                    return (
+                                                        <MenuItem key={item.id} value={item.id}>
+                                                            {item.name}
+                                                        </MenuItem>
+                                                    );
+                                                })}
+                                        </Select>
+                                    </>
+                                )}
                             </FormControl>
                         </Box>
                     </Box>
@@ -208,6 +246,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {roles?.length > 0 &&
                                 roles?.map((item: any, idx: number) => {
+                                    const filter = selectRoles.length > 0 && selectRoles.filter((itm: any) => itm.id === item)[0];
+
                                     return (
                                         <Box
                                             key={idx}
@@ -223,7 +263,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                             }}
                                         >
                                             <Typography>
-                                                {item === '1' ? 'Admin' : item === '2' ? 'Marketing' : 'Content Writer'}
+                                                {/* {item === '1' ? 'Admin' : item === '2' ? 'Marketing' : 'Content Writer'} */}
+                                                {filter.name}
                                             </Typography>
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close

@@ -1,60 +1,92 @@
 import React from 'react';
-import { Box, Typography, Paper, Grid } from '@mui/material';
+import { Box, Typography, Paper, Grid, CircularProgress } from '@mui/material';
 import { CheckCircle, Circle, Close, UploadFile } from '@mui/icons-material';
 import Image from 'next/image';
 import InputImage from 'components/Input/InputImage';
 import Input from 'components/Input/Input';
 import CustomButton from 'components/Button';
-// import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+import useAPICaller from 'hooks/useAPICaller';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
+import dateFormats from 'helpers/dateFormat';
 
 interface EditBlogsProps {}
 
 const EditBlogs: React.FC<EditBlogsProps> = () => {
     const data = {
-        id: 1,
-        blogsTitle: 'Open Tourney Pre Launch Hop up',
-        postedBy: 'Owikun',
-        postedDate: '18-11-2022',
-        image: '/images/drivegoogleimage_001-2022.png',
-        description: 'Hi Everyone, we have launch new game to play. lets try '
+        image: '/images/drivegoogleimage_001-2022.png'
     };
 
     const form = useForm({
         mode: 'all',
         defaultValues: {
-            title: data.blogsTitle,
-            date: data.postedDate,
-            description: data.description,
+            title: '',
+            date: '',
+            description: '',
             image: data.image,
-            acc: 'OWIKUN'
+            acc: ''
         }
     });
 
+    const notify = useNotify();
     const router = useRouter();
-    // const { fetchAPI } = useAPICaller();
-    // const [datas, setDatas] = React.useState<any>(null);
-    const [isUpload, setIsUpload] = React.useState(true);
+    const { fetchAPI } = useAPICaller();
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [isLoadingPut, setIsLoadingPut] = React.useState<boolean>(false);
+    const [isUpload, setIsUpload] = React.useState<boolean>(true);
 
-    const handleSubmit = (body: any) => {
-        console.log('response', body);
+    const fetchBlogsDetail = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                endpoint: `/blogs/${router.query.id}`
+            });
+            if (response?.status === 200) {
+                // console.log(response.data.title);
+                form.setValue('title', response.data.data.title);
+                form.setValue('date', dateFormats(new Date(response.data.data.created_at), true));
+                form.setValue('description', response.data.data.description);
+                // form.setValue('image', response.data.image_url);
+                form.setValue('acc', response.data.data.created_by?.username);
+                setIsLoading(false);
+            }
+        } catch (error: any) {
+            notify(error.message, 'message');
+            setIsLoading(false);
+        }
     };
 
-    // const fetchItemDetail = async () => {
-    //     const response = await fetchAPI({
-    //         endpoint: `exchange-rates/${router.query.id}`,
-    //         method: 'GET'
-    //     });
-    //     setDatas(response?.data.data);
-    // };
+    const handleSubmit = async (body: any) => {
+        // console.log('response', body);
+        setIsLoadingPut(true);
+        try {
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `/blogs/${router.query.id}`,
+                data: {
+                    title: body.title,
+                    image_url: body.image,
+                    description: body.description
+                }
+            });
+            if (response?.status === 200) {
+                console.log(response);
+                notify('Blog Edited Successfully', 'success');
+                setIsLoadingPut(false);
+            }
+        } catch (error: any) {
+            notify(error.message, 'message');
+            setIsLoadingPut(false);
+        }
+    };
 
-    // React.useEffect(() => {
-    //     fetchItemDetail();
-    // }, []);
+    React.useEffect(() => {
+        fetchBlogsDetail();
+    }, []);
 
     return (
-        <Box sx={{}}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
             <Box sx={{ padding: '40px 25px' }}>
                 <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
                     <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Edit Blogs</Typography>
@@ -62,7 +94,19 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                         Additional description if required
                     </Typography>
                 </Paper>
-                <form onSubmit={form.handleSubmit(handleSubmit)}>
+                {isLoading ? (
+                    <Box
+                        sx={{
+                            width: '100%',
+                            mt: '100px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <CircularProgress size={100} color='secondary' />
+                    </Box>
+                ) : (
                     <Grid container mt='37px' color='rgba(0, 0, 0, 0.6)'>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
@@ -138,7 +182,13 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                                         <Box>
                                             <Typography>{form.watch('image')}</Typography>
                                             <Box
-                                                sx={{ display: 'flex', fontWeight: 'bold', gap: '10px', alignItems: 'center', mt: '10px' }}
+                                                sx={{
+                                                    display: 'flex',
+                                                    fontWeight: 'bold',
+                                                    gap: '10px',
+                                                    alignItems: 'center',
+                                                    mt: '10px'
+                                                }}
                                             >
                                                 <Typography>1Mb</Typography>
                                                 <Circle sx={{ fontSize: '7px' }} />
@@ -190,7 +240,7 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                             </Grid>
                         </Grid>
                     </Grid>
-                </form>
+                )}
             </Box>
             <Box
                 sx={{
@@ -203,7 +253,15 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                     width: '100%'
                 }}
             >
-                <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
+                <CustomButton
+                    type='submit'
+                    isLoading={isLoadingPut}
+                    padding='10px'
+                    width='193px'
+                    height='59px'
+                    title='Submit'
+                    backgroundColor='#A54CE5'
+                />
                 <CustomButton
                     onClick={() => {
                         form.reset();
@@ -218,7 +276,7 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                     border='1px solid #A54CE5'
                 />
             </Box>
-        </Box>
+        </form>
     );
 };
 

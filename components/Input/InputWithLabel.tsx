@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { Box, Typography, TextField, IconButton, ButtonBase, MenuItem, InputAdornment } from '@mui/material';
+import { Box, Typography, TextField, IconButton, ButtonBase, MenuItem, InputAdornment, Skeleton } from '@mui/material';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -20,6 +20,7 @@ interface InputWithLabelProps {
     placeholder?: any;
     foucused?: boolean;
     isRequired?: boolean;
+    isLoading?: boolean;
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -35,7 +36,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     listSelect,
     isMultiline,
     foucused,
-    isRequired = false
+    isRequired = false,
+    isLoading
 }) => {
     const {
         formState: { errors }
@@ -85,73 +87,77 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                         <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                     </Box>
                     <Box sx={{ width: '70%' }}>
-                        <TextField
-                            sx={{
-                                '& .MuiOutlinedInput-notchedOutline': {
-                                    border: !error ? '1px solid rgba(0, 0, 0, 0.28) !important' : ''
-                                },
-                                '& .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
-                                    color: !error ? 'rgba(0, 0, 0, 0.6) !important' : 'red',
-                                    fontWeight: 'bold'
-                                }
-                            }}
-                            focused={foucused}
-                            error={!!errType}
-                            helperText={helperText}
-                            id='outlined-basic'
-                            label={labelField}
-                            select={isSelectType}
-                            placeholder={placeHolder}
-                            fullWidth
-                            multiline={isMultiline}
-                            rows={isMultiline ? 3 : 1}
-                            variant='outlined'
-                            type={type === 'password' ? (showPwd ? 'text' : 'password') : type === 'tel' ? 'number' : type}
-                            {...field}
-                            InputProps={{
-                                id: `input-${name}`,
-                                // disableUnderline: true,
-                                startAdornment:
-                                    (type === 'tel' && (
-                                        <Typography
-                                            variant='subtitle1'
-                                            component='span'
-                                            fontWeight='bold'
-                                            sx={{ paddingRight: 2, borderRight: '1px solid rgba(148, 148, 148, 0.2)' }}
-                                        >
-                                            +62
-                                        </Typography>
-                                    )) ||
-                                    (labelField === 'Fee' && (
-                                        <InputAdornment position='start'>
-                                            <img src='/images/coin.png' alt='' />
-                                        </InputAdornment>
-                                    )),
-                                endAdornment:
-                                    type === 'password' ? (
-                                        <IconButton onClick={() => setShowPwd(!showPwd)}>
-                                            {!showPwd ? (
-                                                <VisibilityIcon sx={{ color: '#A54CE5' }} />
-                                            ) : (
-                                                <VisibilityOffIcon sx={{ color: '#A54CE5' }} />
-                                            )}
-                                        </IconButton>
-                                    ) : (
-                                        <ButtonBase>{component}</ButtonBase>
-                                    )
-                            }}
-                            {...field}
-                        >
-                            {isSelectType ? (
-                                listSelect?.map((item: any) => (
-                                    <MenuItem key={item.value} value={item.value}>
-                                        {item.label}
-                                    </MenuItem>
-                                ))
-                            ) : (
-                                <Box />
-                            )}
-                        </TextField>
+                        {isLoading ? (
+                            <Skeleton sx={{ height: '90px', mt: '-20px', mb: '-20px' }} />
+                        ) : (
+                            <TextField
+                                sx={{
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        border: !error ? '1px solid rgba(0, 0, 0, 0.28) !important' : ''
+                                    },
+                                    '& .css-1sumxir-MuiFormLabel-root-MuiInputLabel-root.Mui-focused': {
+                                        color: !error ? 'rgba(0, 0, 0, 0.6) !important' : 'red',
+                                        fontWeight: 'bold'
+                                    }
+                                }}
+                                focused={foucused}
+                                error={!!errType}
+                                helperText={helperText}
+                                id='outlined-basic'
+                                label={labelField}
+                                select={isSelectType}
+                                placeholder={placeHolder}
+                                fullWidth
+                                multiline={isMultiline}
+                                rows={isMultiline ? 3 : 1}
+                                variant='outlined'
+                                type={type === 'password' ? (showPwd ? 'text' : 'password') : type === 'tel' ? 'number' : type}
+                                {...field}
+                                InputProps={{
+                                    id: `input-${name}`,
+                                    // disableUnderline: true,
+                                    startAdornment:
+                                        (type === 'tel' && (
+                                            <Typography
+                                                variant='subtitle1'
+                                                component='span'
+                                                fontWeight='bold'
+                                                sx={{ paddingRight: 2, borderRight: '1px solid rgba(148, 148, 148, 0.2)' }}
+                                            >
+                                                +62
+                                            </Typography>
+                                        )) ||
+                                        (labelField === 'Fee' && (
+                                            <InputAdornment position='start'>
+                                                <img src='/images/coin.png' alt='' />
+                                            </InputAdornment>
+                                        )),
+                                    endAdornment:
+                                        type === 'password' ? (
+                                            <IconButton onClick={() => setShowPwd(!showPwd)}>
+                                                {!showPwd ? (
+                                                    <VisibilityIcon sx={{ color: '#A54CE5' }} />
+                                                ) : (
+                                                    <VisibilityOffIcon sx={{ color: '#A54CE5' }} />
+                                                )}
+                                            </IconButton>
+                                        ) : (
+                                            <ButtonBase>{component}</ButtonBase>
+                                        )
+                                }}
+                                {...field}
+                            >
+                                {isSelectType ? (
+                                    listSelect?.map((item: any) => (
+                                        <MenuItem key={item.value} value={item.value}>
+                                            {item.label}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <Box />
+                                )}
+                            </TextField>
+                        )}
                     </Box>
                 </Box>
             )}
