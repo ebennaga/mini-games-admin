@@ -1,7 +1,18 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import { Close } from '@mui/icons-material';
-import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, FormControlLabel, Checkbox } from '@mui/material';
+import {
+    MenuItem,
+    Box,
+    Typography,
+    Paper,
+    FormControl,
+    Select,
+    InputLabel,
+    FormControlLabel,
+    Checkbox,
+    FormHelperText
+} from '@mui/material';
 import CustomButton from 'components/Button';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import useAPICaller from 'hooks/useAPICaller';
@@ -20,7 +31,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             name: '',
             email: '',
             role: '0',
-            dataAccess: '',
+            dataAccess: '0',
             activeRole: true
         }
     });
@@ -30,6 +41,9 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const [isLoading, setIsLoading] = React.useState(false);
+    const [isFilled, setIsFilled] = React.useState(false);
+    const [isFilled1, setIsFilled1] = React.useState(false);
+    const [isRequired, setIsRequired] = React.useState(false);
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
@@ -74,31 +88,57 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     };
 
     const handleSubmitData = async (data: any) => {
-        setIsLoading(true);
-        try {
-            const result = await fetchAPI({
-                endpoint: 'accounts',
-                method: 'POST',
-                data: {
-                    name: data.name,
-                    email: data.email,
-                    role_ids: roles.join(', ')
+        if (isFilled && isFilled1) {
+            setIsLoading(true);
+            try {
+                const result = await fetchAPI({
+                    endpoint: 'accounts',
+                    method: 'POST',
+                    data: {
+                        name: data.name,
+                        email: data.email,
+                        role_ids: roles.join(', ')
+                    }
+                });
+                if (result.status === 200) {
+                    notify('Create account successfully', 'success');
+                    setIsLoading(false);
+                    form.reset();
+                    setRoles([]);
+                    setAccessArr([]);
+                    setIsFilled(false);
+                    setIsFilled1(false);
+                    setIsRequired(false);
                 }
-            });
-
-            if (result.status === 200) {
-                notify('Create account successfully', 'success');
+            } catch (error: any) {
+                notify(error.message, 'error');
                 setIsLoading(false);
-                form.reset();
-                setRoles([]);
-                setAccessArr([]);
             }
-        } catch (error: any) {
-            notify(error.message, 'error');
             setIsLoading(false);
+        } else {
+            setIsRequired(true);
         }
-        setIsLoading(false);
     };
+
+    React.useEffect(() => {
+        if (roles.length > 0) {
+            setIsFilled(true);
+        } else {
+            setIsFilled(false);
+        }
+    }, [roles, isFilled]);
+
+    React.useEffect(() => {
+        if (accessArr.length > 0) {
+            setIsFilled1(true);
+        } else {
+            setIsFilled1(false);
+        }
+    }, [accessArr, isFilled]);
+
+    console.log({ isFilled });
+    console.log({ isRequired });
+    // console.log(roles);
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
             <Box sx={{ position: 'relative' }}>
@@ -156,10 +196,15 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         </Box>
                         <Box sx={{ width: '70%' }}>
                             <FormControl fullWidth>
-                                <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                <InputLabel
+                                    color='secondary'
+                                    sx={{ fontWeight: 'bold', color: !isFilled && isRequired ? 'red' : '' }}
+                                    id='demo-simple-select-label'
+                                >
                                     Role Code
                                 </InputLabel>
                                 <Select
+                                    error={!isFilled && isRequired}
                                     sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
                                     placeholder='Select Roles'
                                     labelId='demo-simple-select-label'
@@ -176,6 +221,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                     <MenuItem value='2'>Marketing</MenuItem>
                                     <MenuItem value='3'>Content Writer</MenuItem>
                                 </Select>
+                                {!isFilled && isRequired && <FormHelperText sx={{ color: 'red' }}>Role is Required</FormHelperText>}
                             </FormControl>
                         </Box>
                     </Box>
@@ -242,11 +288,15 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         </Box>
                         <Box sx={{ width: '70%' }}>
                             <FormControl fullWidth>
-                                <InputLabel color='secondary' id='demo-simple-select-label'>
+                                <InputLabel
+                                    sx={{ color: !isFilled1 && isRequired ? 'red' : '' }}
+                                    color='secondary'
+                                    id='demo-simple-select-label'
+                                >
                                     Access
                                 </InputLabel>
                                 <Select
-                                    sx={{ color: form.watch('role') !== '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                    sx={{ color: form.watch('dataAccess') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
                                     placeholder='Select Roles'
                                     labelId='demo-simple-select-label'
                                     id='demo-simple-select'
@@ -254,6 +304,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                     label='Access'
                                     onChange={handleSelectAccess}
                                     color='secondary'
+                                    error={!isFilled1 && isRequired}
                                 >
                                     <MenuItem value='0' disabled>
                                         Client Access
@@ -261,6 +312,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                     <MenuItem value='Starbucks Lt2'>Starbucks Lt2</MenuItem>
                                     <MenuItem value='Texas Tourney'>Texas Tourney</MenuItem>
                                 </Select>
+                                {!isFilled1 && isRequired && <FormHelperText sx={{ color: 'red' }}>Data Access is Required</FormHelperText>}
                             </FormControl>
                         </Box>
                     </Box>
