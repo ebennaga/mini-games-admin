@@ -9,9 +9,17 @@ interface TournamentTableProps {
     handleChangeCheckboxAll: any;
     remove: any;
     handleChangeChekcbox: any;
+    currentPage: any;
 }
 
-const TornamentTable: React.FC<TournamentTableProps> = ({ data, form, handleChangeCheckboxAll, remove, handleChangeChekcbox }) => {
+const TornamentTable: React.FC<TournamentTableProps> = ({
+    currentPage,
+    data,
+    form,
+    handleChangeCheckboxAll,
+    remove,
+    handleChangeChekcbox
+}) => {
     return (
         <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
             <Table sx={{ width: '100%' }} aria-label='simple table'>
@@ -68,32 +76,32 @@ const TornamentTable: React.FC<TournamentTableProps> = ({ data, form, handleChan
                 </TableHead>
                 <TableBody>
                     {data.length > 0 &&
-                        data.map((item: any) => {
+                        data.map((item: any, idx: number) => {
                             const check: any = `checkbox${item.id}`;
                             const datas: any = {
                                 id: item.id,
-                                blogsTitle: item.blogsTitle,
-                                postedBy: item.postedBy,
-                                postedDate: dateFormat(item.postedDate),
+                                title: item.title,
+                                postedBy: item.created_by.username,
+                                postedDate: dateFormat(new Date(item.created_at)),
                                 image: item.image,
                                 description: item.description
                             };
                             return (
                                 <TableRow key={item.id}>
                                     <TableCell align='center' sx={{ width: '5%' }}>
-                                        {item.id}.
+                                        {currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10}.
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.blogsTitle}
+                                        {item.title}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.postedBy}
+                                        {item.created_by.username}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {dateFormat(item.postedDate)}
+                                        {dateFormat(new Date(item.created_at))}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.image}
+                                        {item.image_url}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {item.description}
