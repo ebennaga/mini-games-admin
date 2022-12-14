@@ -93,36 +93,36 @@ const TabSubDistrict: React.FC<TabSubDistrictProps> = ({
                         {data.length > 0 &&
                             data.map((item: any) => {
                                 return (
-                                    <TableRow key={item.id}>
+                                    <TableRow key={item?.id}>
                                         <TableCell align='center' sx={{ width: '5%' }}>
-                                            {item.id}.
+                                            {item?.id}.
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.provinceCode}
+                                            {item?.provinceCode}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.province}
+                                            {item?.province}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.cityCode}
+                                            {item?.cityCode}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.city}
+                                            {item?.city}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.districtCode}
+                                            {item?.districtCode}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.district}
+                                            {item?.district}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.subDistrictCode}
+                                            {item?.subDistrictCode}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.subDistrict}
+                                            {item?.subDistrict}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.postalCode}
+                                            {item?.postalCode}
                                         </TableCell>
                                     </TableRow>
                                 );

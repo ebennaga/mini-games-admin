@@ -52,23 +52,23 @@ const TabCity: React.FC<TabCityProps> = ({ data, value, index, row, handleChange
                     </TableHead>
                     <TableBody>
                         {data.length > 0 &&
-                            data.map((item: any) => {
+                            data.map((item: any, idx: number) => {
                                 return (
-                                    <TableRow key={item.id}>
+                                    <TableRow key={item?.id}>
                                         <TableCell align='center' sx={{ width: '5%' }}>
-                                            {item.id}.
+                                            {idx + 1}.
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.provinceCode}
+                                            {item?.province?.id}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.province}
+                                            {item?.province?.name}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.cityCode}
+                                            {item?.id}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item.city}
+                                            {item?.name}
                                         </TableCell>
                                     </TableRow>
                                 );
