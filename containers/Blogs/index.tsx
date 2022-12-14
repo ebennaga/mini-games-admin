@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Typography, Paper, ButtonBase, FormControl, MenuItem } from '@mui/material';
+import { Box, Typography, Paper, ButtonBase, FormControl, MenuItem, CircularProgress } from '@mui/material';
 import InputSearch from 'components/Input/InputSearch';
 import { useForm } from 'react-hook-form';
 import { FilterList, Delete, ArrowBackIos, ArrowForwardIos, Edit } from '@mui/icons-material';
@@ -10,6 +10,8 @@ import { getCurrentDate } from 'utils/date';
 import DeleteAccDialog from 'containers/Account/DeleteAccDialog';
 import { useRouter } from 'next/router';
 // import CreateBlogs from './CreateBlogs';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import BlogsTable from './BlogsTable';
 import FilterDrop from './FilterDrop';
 import { dummy } from './dummy';
@@ -30,6 +32,8 @@ const BlogsContainer = () => {
     });
 
     const router = useRouter();
+    const notify = useNotify();
+    const { fetchAPI } = useAPICaller();
     const [openFilter, setOpenFilter] = React.useState(false);
     const [role, setRole] = React.useState('0');
     const [selectedValue, setSelectedValue] = React.useState('all');
@@ -43,8 +47,25 @@ const BlogsContainer = () => {
     const [pages, setPages] = React.useState(1);
     const [onDelete, setOnDelete] = React.useState(false);
     const [editData, setEditData] = React.useState<any>(null);
+    const [isLoading, setIsLoading] = React.useState<any>(false);
     const checkBoxKeys: string[] = [];
     const checkTrue: string[] = [];
+
+    const fetchBlogsData = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                endpoint: `/blogs?search=${form.watch('search')}`
+            });
+            if (response?.status === 200) {
+                setRemove(response.data.data);
+                setIsLoading(false);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+    };
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -139,11 +160,14 @@ const BlogsContainer = () => {
     };
 
     React.useEffect(() => {
-        setRemove(dummy);
+        fetchBlogsData();
+        // setRemove(dummy);
     }, []);
 
     React.useEffect(() => {
-        setPages(Math.ceil(remove.length / Number(row)));
+        if (pages < 0) {
+            setPages(Math.ceil(remove.length / Number(row)));
+        }
     }, [pages, row]);
 
     React.useEffect(() => {
@@ -268,61 +292,76 @@ const BlogsContainer = () => {
                         </Box>
                     </Box>
                 )}
-                <Box sx={{ mt: '20px' }}>
-                    <BlogsTable
-                        data={getPaginatedData()}
-                        form={form}
-                        handleChangeCheckboxAll={handleChangeCheckboxAll}
-                        remove={remove}
-                        handleChangeChekcbox={handleChangeCheckbox}
-                    />
-                    <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', mt: '10px' }}>
-                        <Box />
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                width: '20%',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }}
-                        >
-                            <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10px', alignItems: 'center' }}>
-                                <Typography>Rows per page</Typography>
-                                <Box>
-                                    <FormControl>
-                                        <Select
-                                            sx={{
-                                                boxShadow: 'none',
-                                                '.MuiOutlinedInput-notchedOutline': { border: 0 },
-                                                '& .Mui-focused': { border: 0 }
-                                            }}
-                                            labelId='demo-simple-select-label'
-                                            id='demo-simple-select'
-                                            value={row}
-                                            onChange={handleChange}
-                                        >
-                                            {[...Array(remove.length)].map((item: any, idx: number) => (
-                                                <MenuItem key={idx} value={idx + 1}>
-                                                    {idx + 1}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
+                {isLoading ? (
+                    <Box
+                        sx={{
+                            width: '100%',
+                            mt: '100px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <CircularProgress size={100} color='secondary' />
+                    </Box>
+                ) : (
+                    <Box sx={{ mt: '20px' }}>
+                        <BlogsTable
+                            currentPage={currentPage}
+                            data={getPaginatedData()}
+                            form={form}
+                            handleChangeCheckboxAll={handleChangeCheckboxAll}
+                            remove={remove}
+                            handleChangeChekcbox={handleChangeCheckbox}
+                        />
+                        <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', mt: '10px' }}>
+                            <Box />
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    width: '20%',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'center', gap: '10px', alignItems: 'center' }}>
+                                    <Typography>Rows per page</Typography>
+                                    <Box>
+                                        <FormControl>
+                                            <Select
+                                                sx={{
+                                                    boxShadow: 'none',
+                                                    '.MuiOutlinedInput-notchedOutline': { border: 0 },
+                                                    '& .Mui-focused': { border: 0 }
+                                                }}
+                                                labelId='demo-simple-select-label'
+                                                id='demo-simple-select'
+                                                value={row}
+                                                onChange={handleChange}
+                                            >
+                                                {[...Array(remove.length)].map((item: any, idx: number) => (
+                                                    <MenuItem key={idx} value={idx + 1}>
+                                                        {idx + 1}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Box>
                                 </Box>
-                            </Box>
 
-                            <Box sx={{ display: 'flex' }}>
-                                <Typography>
-                                    1-{row} of {remove.length}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', width: '15%', justifyContent: 'space-between' }}>
-                                <ArrowBackIos onClick={goToPreviousPage} sx={{ cursor: 'pointer' }} />
-                                <ArrowForwardIos onClick={goToNextPage} sx={{ cursor: 'pointer' }} />
+                                <Box sx={{ display: 'flex' }}>
+                                    <Typography>
+                                        1-{row} of {remove.length}
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', width: '15%', justifyContent: 'space-between' }}>
+                                    <ArrowBackIos onClick={goToPreviousPage} sx={{ cursor: 'pointer' }} />
+                                    <ArrowForwardIos onClick={goToNextPage} sx={{ cursor: 'pointer' }} />
+                                </Box>
                             </Box>
                         </Box>
                     </Box>
-                </Box>
+                )}
             </Box>
 
             <DeleteAccDialog
