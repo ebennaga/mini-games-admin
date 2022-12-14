@@ -6,13 +6,18 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import { useRouter } from 'next/router';
 import DialogSuccess from './DialogSuccess';
 
 const ResetPasswordConfirmation = () => {
     const [isDisable, setIsDisable] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+    const router = useRouter();
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -38,14 +43,15 @@ const ResetPasswordConfirmation = () => {
     };
 
     const handleSubmit = async (data: any) => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
                 method: 'POST',
-                endpoint: '/auths/activate',
+                endpoint: 'auths/change-password',
                 data: {
                     password: data.password,
                     password_confirmation: data.confirm_password,
-                    change_password_token: 'some_token'
+                    forgot_password_token: router.query.token
                 }
             });
             if (response?.status === 200) {
@@ -54,6 +60,7 @@ const ResetPasswordConfirmation = () => {
         } catch (error: any) {
             notify(error.message, 'error');
         }
+        setIsLoading(false);
     };
 
     const handleCancel = () => {
@@ -91,7 +98,7 @@ const ResetPasswordConfirmation = () => {
                             <Grid item xs={12} xl={7}>
                                 <InputWithLabel
                                     isMultiline={false}
-                                    name='confirmPassword'
+                                    name='confirm_password'
                                     form={form}
                                     label='Confirmation New Password'
                                     type='password'
@@ -112,17 +119,19 @@ const ResetPasswordConfirmation = () => {
                     }}
                 >
                     <Box>
-                        <CustomButton title='SUBMIT' type='submit' isDisable={isDisable} />
+                        <CustomButton title='SUBMIT' type='submit' isDisable={isDisable} isLoading={isLoading} />
                     </Box>
-                    <Box ml='40px'>
-                        <CustomButton
-                            title='CANCEL'
-                            border='1px solid #A54CE5'
-                            backgroundColor='#fff'
-                            color='#A54CE5'
-                            onClick={handleCancel}
-                        />
-                    </Box>
+                    {!isLoading && (
+                        <Box ml='40px'>
+                            <CustomButton
+                                title='CANCEL'
+                                border='1px solid #A54CE5'
+                                backgroundColor='#fff'
+                                color='#A54CE5'
+                                onClick={handleCancel}
+                            />
+                        </Box>
+                    )}
                 </Box>
             </form>
             <DialogSuccess open={open} setOpen={setOpen} />
