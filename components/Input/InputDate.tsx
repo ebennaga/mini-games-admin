@@ -12,9 +12,10 @@ interface InputDateProps {
     name: string;
     rules?: any;
     isCreate?: any;
+    disabled?: any;
 }
 
-const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, isCreate = false }) => {
+const InputDate: React.FC<InputDateProps> = ({ disabled = false, label, type, form, name, rules, isCreate = false }) => {
     return (
         <Box display='flex' alignItems='center' justifyContent='center' width='100%' my='15px'>
             {type === 'date' ? <DateRangeIcon sx={{ mr: '-30px' }} /> : <AccessTimeIcon sx={{ mr: '-30px' }} />}
@@ -26,6 +27,7 @@ const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, i
                 render={({ field }) => {
                     return (
                         <TextField
+                            disabled={disabled}
                             fullWidth
                             id='date'
                             label={label}

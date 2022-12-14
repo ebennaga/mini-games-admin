@@ -3,6 +3,7 @@ import { Box, Paper, FormControl, FormControlLabel, InputLabel, Select, Typograp
 import { Close } from '@mui/icons-material';
 import InputDate from 'components/Input/InputDate';
 import Input from 'components/Input/Input';
+import CustomButton from 'components/Button';
 
 interface FilterDropProps {
     form: any;
@@ -10,8 +11,11 @@ interface FilterDropProps {
     setOpenFilter: any;
     handleChangeRadio: any;
     selectedValue: any;
-    role: any;
+    game: any;
     handleFiter: any;
+    handleFilterButton: any;
+    handleReset: any;
+    disabled: any;
 }
 
 const FilterDrop: React.FC<FilterDropProps> = ({
@@ -20,11 +24,14 @@ const FilterDrop: React.FC<FilterDropProps> = ({
     openFilter,
     handleChangeRadio,
     selectedValue,
-    role,
-    handleFiter
+    game,
+    handleFiter,
+    handleFilterButton,
+    handleReset,
+    disabled
 }) => {
     return (
-        <Paper elevation={3} sx={{ width: '375px', height: '535px', position: 'absolute', zIndex: 2, padding: '30px', left: '330px' }}>
+        <Paper elevation={3} sx={{ width: '375px', position: 'absolute', zIndex: 2, padding: '30px', left: '330px' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 700, fontSize: '20px' }}>Filters</Typography>
                 <Close
@@ -71,13 +78,14 @@ const FilterDrop: React.FC<FilterDropProps> = ({
                         Games
                     </InputLabel>
                     <Select
-                        sx={{ color: role === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                        sx={{ color: game === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
                         placeholder='Select Games'
                         labelId='games'
                         id='games'
-                        value={role}
+                        value={game}
                         label='Games'
                         onChange={handleFiter}
+                        disabled={disabled}
                     >
                         <MenuItem value='0' disabled>
                             Select Games
@@ -89,10 +97,40 @@ const FilterDrop: React.FC<FilterDropProps> = ({
                 </FormControl>
             </Box>
             <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
-                <InputDate label='Start Date' type='date' form={form} name='start' />
+                <InputDate
+                    disabled={form.watch('endDate') || form.watch('startDate')}
+                    label='Start Date'
+                    type='date'
+                    form={form}
+                    name='startDate'
+                />
             </Box>
             <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
-                <InputDate label='End Date' type='date' form={form} name='end' />
+                <InputDate
+                    disabled={form.watch('endDate') || form.watch('startDate')}
+                    label='End Date'
+                    type='date'
+                    form={form}
+                    name='endDate'
+                />
+            </Box>
+            <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
+                <InputDate label='Start Time' type='time' form={form} name='startTime' />
+            </Box>
+            <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
+                <InputDate label='End Time' type='time' form={form} name='endTime' />
+            </Box>
+            <Box sx={{ mt: '30px', justifyContent: 'space-between', display: 'flex', width: '100%' }}>
+                <CustomButton onClick={handleFilterButton} title='FILTER' width='150px' height='36px' />
+                <CustomButton
+                    onClick={handleReset}
+                    title='RESET'
+                    width='150px'
+                    height='36px'
+                    backgroundColor='white'
+                    color='#A54CE5'
+                    border='1px solid #A54CE5'
+                />
             </Box>
         </Paper>
     );

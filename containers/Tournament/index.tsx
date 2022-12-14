@@ -34,8 +34,8 @@ const TournamentContainer = () => {
             role: '0',
             start: new Date().toISOString().slice(0, 10) || '',
             end: new Date().toISOString().slice(0, 10) || '',
-            startDate: new Date().toISOString().slice(0, 10) || '',
-            endDate: new Date().toISOString().slice(0, 10) || '',
+            startDate: '',
+            endDate: '',
             maxDate: getCurrentDate(),
             title: '',
             startTime: getCurrentTime(),
@@ -51,7 +51,7 @@ const TournamentContainer = () => {
     const [openDialogTour, setOpenDialogTour] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
-    const [role, setRole] = useState('0');
+    const [game, setGame] = useState('0');
     const [createTournament, setCreateTournament] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [pages, setPages] = useState(1);
@@ -65,11 +65,13 @@ const TournamentContainer = () => {
     const [search, setSearch] = useState<any>([]);
     const [input, setInput] = useState('');
     const [isSearch, setIsSearch] = useState(false);
+    const [isGame, setIsGame] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
     const notify = useNotify();
     const { fetchAPI } = useAPICaller();
     const router = useRouter();
+
     const handleFetchData = async () => {
         try {
             const response = await fetchAPI({
@@ -80,7 +82,7 @@ const TournamentContainer = () => {
                 const tournaments = response.data.data;
                 setRemove(tournaments);
                 setRow(tournaments.length.toString());
-                notify(response?.data.message, 'success');
+                // notify(response?.data.message, 'success');
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -116,6 +118,11 @@ const TournamentContainer = () => {
 
     const handleChange = (event: SelectChangeEvent) => {
         setRow(event.target.value as string);
+    };
+
+    const handleChangeGame = (event: SelectChangeEvent) => {
+        setGame(event.target.value as string);
+        setIsGame(true);
     };
 
     const handleChangeChekcbox = (e: any, name: any, id: number) => {
@@ -216,6 +223,68 @@ const TournamentContainer = () => {
         }
     };
 
+    const handleFilterButton = () => {
+        if (selectedValue === 'oldest') {
+            const oldest = remove.sort((a: any, b: any) => {
+                return Date.parse(a.start_time) - Date.parse(b.start_time);
+            });
+            setRemove(oldest);
+            return setOpenFilter(false);
+        }
+        if (selectedValue === 'latest') {
+            const oldest = remove.sort((a: any, b: any) => {
+                return Date.parse(b.start_time) - Date.parse(a.start_time);
+            });
+            setRemove(oldest);
+            return setOpenFilter(false);
+        }
+        if (form.watch('startDate')) {
+            const filter = remove.filter((item: any) => {
+                return item.start_time.slice(0, 10) === form.watch('startDate');
+            });
+            setRemove(filter);
+            return setOpenFilter(false);
+        }
+        if (form.watch('endDate')) {
+            const filter = remove.filter((item: any) => {
+                return item.end_time.slice(0, 10) === form.watch('endDate');
+            });
+            setRemove(filter);
+            return setOpenFilter(false);
+        }
+        if (form.watch('startTime')) {
+            const filter = remove.filter((item: any) => {
+                const options: any = { hour: '2-digit', minute: '2-digit' };
+                const startTime = new Date(item.start_time).toLocaleString(undefined, options);
+                return startTime === new Date(form.watch('startTime')).toLocaleString(undefined, options);
+            });
+            setRemove(filter);
+            return setOpenFilter(false);
+        }
+        if (isGame) {
+            const filter = remove.filter((item: any) => {
+                return item.game.id === game;
+            });
+            setRemove(filter);
+            return setOpenFilter(false);
+        }
+        if (selectedValue === 'all') {
+            handleFetchData();
+            return setOpenFilter(false);
+        }
+    };
+
+    const handleResetButton = () => {
+        setIsGame(false);
+        setSelectedValue('all');
+        setGame('0');
+        form.reset();
+        handleFetchData();
+        return setOpenFilter(false);
+    };
+
+    // console.log(remove);
+
     // const handleDelete = () => {
     //     const filter = remove.filter((item: any) => {
     //         return !deleted.includes(item.id);
@@ -270,6 +339,9 @@ const TournamentContainer = () => {
             setIsSearch(false);
         }
     }, [remove, input]);
+
+    // console.log(form.watch('startTime'));
+    // console.log(remove);
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -328,13 +400,16 @@ const TournamentContainer = () => {
                         </Box>
                         {openFilter && (
                             <FilterDrop
+                                disabled={isGame}
+                                handleReset={handleResetButton}
                                 selectedValue={selectedValue}
-                                role={role}
+                                game={game}
                                 form={form}
                                 openFilter={openFilter}
                                 setOpenFilter={setOpenFilter}
                                 handleChangeRadio={handleChangeRadio}
-                                handleFiter
+                                handleFiter={handleChangeGame}
+                                handleFilterButton={handleFilterButton}
                             />
                         )}
                     </Paper>
@@ -367,9 +442,10 @@ const TournamentContainer = () => {
                     )}
                     <Box sx={{ mt: '20px' }}>
                         <Tables
-                            setLeaderboards={setLeaderboards}
-                            openDialogTour={openDialogTour}
-                            setOpenDialogTour={setOpenDialogTour}
+                            currentPage={currentPage}
+                            // setLeaderboards={setLeaderboards}
+                            // openDialogTour={openDialogTour}
+                            // setOpenDialogTour={setOpenDialogTour}
                             data={getPaginatedData()}
                             form={form}
                             handleChangeCheckboxAll={handleChangeCheckboxAll}

@@ -11,20 +11,22 @@ interface TournamentTableProps {
     handleChangeCheckboxAll: any;
     remove: any;
     handleChangeChekcbox: any;
-    setOpenDialogTour: any;
-    openDialogTour: any;
-    setLeaderboards: any;
+    // setOpenDialogTour: any;
+    // openDialogTour: any;
+    // setLeaderboards: any;
+    currentPage: any;
 }
 
 const TornamentTable: React.FC<TournamentTableProps> = ({
-    setOpenDialogTour,
+    // setOpenDialogTour,
     data,
     form,
     handleChangeCheckboxAll,
     remove,
     handleChangeChekcbox,
-    openDialogTour,
-    setLeaderboards
+    // openDialogTour,
+    // setLeaderboards,
+    currentPage
 }) => {
     return (
         <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
@@ -114,7 +116,7 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                             return (
                                 <TableRow key={item.id}>
                                     <TableCell align='center' sx={{ width: '5%' }}>
-                                        {item.id}.
+                                        {currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10}.
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {item.name}
