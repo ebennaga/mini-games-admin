@@ -1,9 +1,6 @@
 import React from 'react';
-import { Box, IconButton, ButtonBase } from '@mui/material';
-import HeaderChildren from 'components/HeaderChildren';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import { Box } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import InputSearch from 'components/Input/InputSearch';
 import PaginationCard from 'components/PaginationCard';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import DialogSuccess from 'components/Dialog/DialogSuccess';
@@ -27,7 +24,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'Racing'
     },
     {
         id: 3,
@@ -35,7 +32,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'RPG'
     },
     {
         id: 4,
@@ -43,7 +40,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'Adventure'
     },
     {
         id: 5,
@@ -59,7 +56,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'RPG,Racing'
     },
     {
         id: 7,
@@ -67,7 +64,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'Arcade,Racing,RPG'
     },
     {
         id: 8,
@@ -83,7 +80,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'Racing'
     },
     {
         id: 10,
@@ -91,7 +88,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'Racing'
     },
     {
         id: 11,
@@ -99,7 +96,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'RPG,Arcade'
     },
     {
         id: 12,
@@ -107,7 +104,7 @@ const dummyData = [
         game_url: 'https://minigames.prozaplay.io/hopup/',
         description: 'Let’s Go Play Hop up ',
         game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
+        genre: 'Adventure'
     }
 ];
 const Games = () => {
@@ -151,7 +148,7 @@ const Games = () => {
 
     const handleNext = () => {
         const input = form.watch();
-        const totalPage = Math.ceil(listTable.length / input.row);
+        const totalPage = Math.ceil(form.watch('dataTable').length / input.row);
         if (input.page < totalPage) {
             form.setValue('page', input.page + 1);
         }
@@ -175,10 +172,6 @@ const Games = () => {
     }, []);
 
     React.useEffect(() => {
-        console.log(listTable);
-        console.log(form.watch('dataTable'));
-    });
-    React.useEffect(() => {
         // eslint-disable-next-line consistent-return, array-callback-return
         const temp = dummyData.filter((post: any) => {
             if (query === '') {
@@ -193,36 +186,37 @@ const Games = () => {
         });
         setListTable(temp);
         form.setValue('dataTable', temp);
+        form.setValue('page', 1);
     }, [query]);
+
+    const handleReset = () => {
+        form.setValue('dataTable', listTable);
+        form.setValue('page', 1);
+    };
+
+    const handleFilter = (value: 'all' | 'latest' | 'oldest') => {
+        const selectId = form.watch('select');
+        if (selectId === '') {
+            handleReset();
+        } else {
+            const valueSelect: string = dataSelect.filter((item: any) => item.id === selectId)[0].title;
+            const filterData = listTable.filter((item: any) => item.genre.toLowerCase().includes(valueSelect.toLocaleLowerCase()));
+
+            if (value === 'latest') {
+                const res = filterData.sort((a: any, b: any) => a.id - b.id);
+                form.setValue('dataTable', res);
+            } else if (value === 'oldest') {
+                const res = filterData.sort((a: any, b: any) => b.id - a.id);
+                form.setValue('dataTable', res);
+            } else {
+                form.setValue('dataTable', filterData);
+            }
+            form.setValue('page', 1);
+        }
+    };
+
     return (
         <Box>
-            {/* <HeaderChildren title='Games' subTitle='Additional description if required'>
-                <Box mt='27px' display='flex' alignItems='center' justifyContent='space-between'>
-                    <Box display='flex' alignItems='center' gap='38px' position='relative'>
-                        <Box>
-                            <InputSearch form={form} name='search' label='Search' placeholder='Search by tittle, genre, etc.' />
-                        </Box>
-                        <IconButton onClick={() => setOpenDialog(!openDialog)}>
-                            <FilterListIcon />
-                        </IconButton>
-                        <Box position='absolute' top='60px' left='320px'>
-                            <DialogFilter
-                                dataSelect={dataSelect}
-                                nameSelect='select'
-                                open={openDialog}
-                                setOpen={setOpenDialog}
-                                form={form}
-                            />
-                        </Box>
-                    </Box>
-                    <ButtonBase
-                        onClick={() => router.push('/games/add-game')}
-                        sx={{ padding: '6px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}
-                    >
-                        CREATE NEW
-                    </ButtonBase>
-                </Box>
-            </HeaderChildren> */}
             <TitleCard
                 handleSearch={(keyword: any) => handleDataSearch(keyword)}
                 onConfirm={(value: boolean) => handleDialog(value)}
@@ -232,8 +226,16 @@ const Games = () => {
                 placeholderSeacrhText='Search by tittle, genre, etc.'
                 href='/games/add-game'
             />
-            <Box position='absolute' top='60px' left='320px'>
-                <DialogFilter dataSelect={dataSelect} nameSelect='select' open={openDialog} setOpen={setOpenDialog} form={form} />
+            <Box position='absolute' top='236px' left='601px'>
+                <DialogFilter
+                    handleFilter={(value) => handleFilter(value)}
+                    handleReset={handleReset}
+                    dataSelect={dataSelect}
+                    nameSelect='select'
+                    open={openDialog}
+                    setOpen={setOpenDialog}
+                    form={form}
+                />
             </Box>
             <Box>
                 <TableGames
@@ -245,7 +247,7 @@ const Games = () => {
                     handleOpenDeleteDialog={handleOpenDeleteDialog}
                 />
                 <PaginationCard
-                    totalItem={listTable.length}
+                    totalItem={form.watch('dataTable').length}
                     handlePrev={handlePrev}
                     handleNext={handleNext}
                     form={form}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
     Box,
@@ -21,18 +22,22 @@ interface DialogFilterProps {
     form: any;
     nameSelect: string;
     dataSelect: any;
+    handleFilter: (value: 'all' | 'latest' | 'oldest') => void;
+    handleReset: () => void;
 }
 
-const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSelect, dataSelect }) => {
+const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSelect, dataSelect, handleFilter, handleReset }) => {
     const radioList = [
         { value: 'all', label: 'All' },
         { value: 'latest', label: 'Latest' },
         { value: 'oldest', label: 'Oldest' }
     ];
 
+    const [valueTab, setValueTab] = React.useState<'all' | 'latest' | 'oldest'>('all');
+
     const handleSubmit = (data: any) => {
         setOpen(false);
-        console.log('response', data);
+        handleFilter(valueTab);
     };
 
     const handleChange = (e: any) => {
@@ -64,11 +69,18 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSe
                     row
                     aria-labelledby='radio-filter-time'
                     name='radio-filter'
-                    defaultValue='all'
+                    defaultValue={valueTab}
                     sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5, '& .Mui-checked': { color: '#A54CE5 !important' } }}
                 >
                     {radioList.map((item: any) => {
-                        return <FormControlLabel key={item.value} value={item.value} control={<Radio />} label={item.label} />;
+                        return (
+                            <FormControlLabel
+                                key={item.value}
+                                value={item.value}
+                                control={<Radio onClick={() => setValueTab(item.value)} />}
+                                label={item.label}
+                            />
+                        );
                     })}
                 </RadioGroup>
                 <Box position='relative'>
@@ -121,7 +133,10 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSe
                     </Grid>
                     <Grid item xs={6}>
                         <ButtonBase
-                            onClick={() => setOpen(false)}
+                            onClick={() => {
+                                setOpen(false);
+                                handleReset();
+                            }}
                             sx={{ border: '1px solid #A54CE5', color: '#A54CE5', padding: '10px', width: '100%', borderRadius: '4px' }}
                         >
                             RESET
