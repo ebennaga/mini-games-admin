@@ -190,14 +190,23 @@ const Games = () => {
     }, [query]);
 
     const handleReset = () => {
-        form.setValue('dataTable', listTable);
+        form.setValue('dataTable', dummyData);
         form.setValue('page', 1);
     };
 
     const handleFilter = (value: 'all' | 'latest' | 'oldest') => {
         const selectId = form.watch('select');
         if (selectId === '') {
-            handleReset();
+            if (value === 'latest') {
+                const res = listTable.sort((a: any, b: any) => a.id - b.id);
+                form.setValue('dataTable', res);
+            } else if (value === 'oldest') {
+                const res = listTable.sort((a: any, b: any) => b.id - a.id);
+                form.setValue('dataTable', res);
+            } else {
+                form.setValue('dataTable', dummyData);
+            }
+            form.setValue('page', 1);
         } else {
             const valueSelect: string = dataSelect.filter((item: any) => item.id === selectId)[0].title;
             const filterData = listTable.filter((item: any) => item.genre.toLowerCase().includes(valueSelect.toLocaleLowerCase()));

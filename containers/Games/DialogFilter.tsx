@@ -44,6 +44,13 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSe
         form.setValue(nameSelect, e.target.value);
     };
 
+    const handleResetFilter = () => {
+        setOpen(false);
+        handleReset();
+        form.setValue(nameSelect, '');
+        setValueTab('all');
+    };
+
     if (!open) {
         return null;
     }
@@ -133,10 +140,7 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSe
                     </Grid>
                     <Grid item xs={6}>
                         <ButtonBase
-                            onClick={() => {
-                                setOpen(false);
-                                handleReset();
-                            }}
+                            onClick={handleResetFilter}
                             sx={{ border: '1px solid #A54CE5', color: '#A54CE5', padding: '10px', width: '100%', borderRadius: '4px' }}
                         >
                             RESET
