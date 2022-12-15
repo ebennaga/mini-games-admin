@@ -10,6 +10,7 @@ interface TitleCardProps {
     isSearchExist: boolean;
     placeholderSeacrhText?: string;
     href?: string;
+    isButtonCreateExist?: boolean;
     // eslint-disable-next-line no-unused-vars
     onConfirm?: (value: boolean) => void;
     // eslint-disable-next-line no-unused-vars
@@ -20,6 +21,7 @@ const TitleCard: React.FC<TitleCardProps> = ({
     title,
     subtitle,
     isSearchExist,
+    isButtonCreateExist = true,
     placeholderSeacrhText = '',
     href = '',
     onConfirm,
@@ -86,19 +88,21 @@ const TitleCard: React.FC<TitleCardProps> = ({
                                 <FilterListIcon />
                             </IconButton>
                         </Box>
-                        <ButtonBase
-                            onClick={() => router.push(href)}
-                            sx={{
-                                background: '#A54CE5',
-                                color: 'white',
-                                p: 1.5,
-                                borderRadius: '4px',
-                                boxShadow:
-                                    '0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12);'
-                            }}
-                        >
-                            CREATE NEW
-                        </ButtonBase>
+                        {isButtonCreateExist && (
+                            <ButtonBase
+                                onClick={() => router.push(href)}
+                                sx={{
+                                    background: '#A54CE5',
+                                    color: 'white',
+                                    p: 1.5,
+                                    borderRadius: '4px',
+                                    boxShadow:
+                                        '0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12);'
+                                }}
+                            >
+                                CREATE NEW
+                            </ButtonBase>
+                        )}
                     </Box>
                 )}
             </Box>

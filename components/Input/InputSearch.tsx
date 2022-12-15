@@ -8,13 +8,14 @@ interface InputSearchProps {
     name: any;
     label: string;
     placeholder?: string;
+    onChangeFunc?: any;
 }
-const InputSearch: React.FC<InputSearchProps> = ({ name, label = 'Search', form, placeholder }) => {
+const InputSearch: React.FC<InputSearchProps> = ({ name, label = 'Search', form, placeholder, onChangeFunc }) => {
     return (
         <Controller
             name={name}
             control={form.control}
-            render={({ field }) => (
+            render={({ field: { onChange } }) => (
                 <TextField
                     sx={{
                         width: '300px',
@@ -26,7 +27,8 @@ const InputSearch: React.FC<InputSearchProps> = ({ name, label = 'Search', form,
                     color='secondary'
                     placeholder={placeholder}
                     focused
-                    {...field}
+                    onChange={onChangeFunc != null ? onChangeFunc : onChange}
+                    // {...field}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position='start'>

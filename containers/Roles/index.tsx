@@ -13,20 +13,21 @@ import DialogFailed from 'components/Dialog/DialogFailed';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import LoadingExchangeRates from 'containers/ExchangeRates/LoadingExchangeRates';
+import TitleCard from 'components/Layout/TitleCard';
 import TableRoles from './TableRoles';
 import FilterRoles from './FilterRoles';
 import DialogMenuAccess from './DialogMenuAccess';
 
 const Roles = () => {
-    const dataTable = [
-        { id: 1, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: false },
-        { id: 2, roleCode: 'Mkt', roleName: 'Marketing', description: 'Lorem lorem halo lorem!', isActive: true },
-        { id: 3, roleCode: 'Cw', roleName: 'Content Writer', description: 'Lorem lorem halo lorem!', isActive: false },
-        { id: 4, roleCode: 'SA', roleName: 'Super Admin', description: 'Lorem lorem halo lorem!', isActive: false },
-        { id: 5, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: true },
-        { id: 6, roleCode: 'Mkt', roleName: 'Marketing', description: 'Lorem lorem halo lorem!', isActive: true },
-        { id: 7, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: true }
-    ];
+    // const dataTable = [
+    //     { id: 1, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: false },
+    //     { id: 2, roleCode: 'Mkt', roleName: 'Marketing', description: 'Lorem lorem halo lorem!', isActive: true },
+    //     { id: 3, roleCode: 'Cw', roleName: 'Content Writer', description: 'Lorem lorem halo lorem!', isActive: false },
+    //     { id: 4, roleCode: 'SA', roleName: 'Super Admin', description: 'Lorem lorem halo lorem!', isActive: false },
+    //     { id: 5, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: true },
+    //     { id: 6, roleCode: 'Mkt', roleName: 'Marketing', description: 'Lorem lorem halo lorem!', isActive: true },
+    //     { id: 7, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: true }
+    // ];
 
     const dataSelect = [
         { id: 1, title: 'Content Writer' },
@@ -59,8 +60,9 @@ const Roles = () => {
     const [openDialogFailed, setOpenDialogFailed] = React.useState<boolean>(false);
     const [dataRoles, setDataRoles] = React.useState<Array<any>>([]);
     const [isLoading, setIsloading] = React.useState<boolean>(true);
-    const [dataDetailRoles, setDataDetailRoles] = React.useState<any>(null);
+    // const [dataDetailRoles, setDataDetailRoles] = React.useState<any>(null);
     const { fetchAPI } = useAPICaller();
+    const [query, setQuery] = React.useState('');
     const router = useRouter();
     const notify = useNotify();
 
@@ -84,7 +86,7 @@ const Roles = () => {
     // Event Next page
     const handleNext = () => {
         const input = form.watch();
-        const totalPage = Math.ceil(dataTable.length / input.row);
+        const totalPage = Math.ceil(dataRoles.length / input.row);
         if (input.page < totalPage) {
             form.setValue('page', input.page + 1);
         }
@@ -125,7 +127,7 @@ const Roles = () => {
     // Event update access
     const handleUpdateAccess = () => {
         const currentAccess = form.watch('accessUpdated');
-        console.log(currentAccess);
+        // console.log(currentAccess);
         setOpenMenuAccess(false);
         setOpenDialogFailed(true);
     };
@@ -149,6 +151,15 @@ const Roles = () => {
         setTotalChecked(countItems);
     }, [form.watch('dataTable')]);
 
+    // React.useEffect(() => {
+    //     setFilteredData(dataRoles);
+    // }, []);
+    const handleDataSearch = (keyword: any) => {
+        setQuery(keyword);
+    };
+    const handleDialog = (value: boolean) => {
+        setIsDialogFilter(value);
+    };
     const getRoles = async () => {
         setIsloading(true);
         try {
@@ -171,14 +182,31 @@ const Roles = () => {
 
     React.useEffect(() => {
         getRoles();
+        form.setValue('dataTable', dataRoles);
     }, []);
 
+    React.useEffect(() => {
+        // eslint-disable-next-line consistent-return, array-callback-return
+        const temp = dataRoles.filter((post: any) => {
+            if (query === '') {
+                return post;
+            }
+            if (
+                post?.code?.toString()?.toLowerCase()?.includes(query?.toLowerCase()) ||
+                post?.name?.toLowerCase()?.includes(query?.toLowerCase())
+            ) {
+                return post;
+            }
+        });
+        form.setValue('dataTable', temp);
+        form.setValue('page', 1);
+    }, [query]);
     if (isLoading) {
         return <LoadingExchangeRates />;
     }
     return (
         <Box>
-            <HeaderChildren title='Master Roles' subTitle='Additional description if required'>
+            {/* <HeaderChildren title='Master Roles' subTitle='Additional description if required'>
                 <Box display='flex' alignItems='center' justifyContent='space-between'>
                     <Box mt='27px' display='flex' alignItems='center' position='relative'>
                         <InputSearch name='search' label='Search' placeholder='Search by name, code, etc.' form={form} />
@@ -203,7 +231,27 @@ const Roles = () => {
                         CREATE NEW
                     </ButtonBase>
                 </Box>
-            </HeaderChildren>
+            </HeaderChildren> */}
+            <TitleCard
+                handleSearch={(keyword: any) => handleDataSearch(keyword)}
+                onConfirm={(value: boolean) => handleDialog(value)}
+                title='Master Roles'
+                subtitle='Addtional description if required'
+                isSearchExist
+                isButtonCreateExist={false}
+                placeholderSeacrhText='Search by name, code, etc.'
+                href='/games/add-game'
+            />
+            <Box position='absolute' left='415px' top='57px'>
+                <FilterRoles
+                    form={form}
+                    nameSelect='filterSelect'
+                    nameActive='filterActive'
+                    dataSelect={dataSelect}
+                    open={isDialogFilter}
+                    setOpen={setIsDialogFilter}
+                />
+            </Box>
             {totalChecked ? (
                 <Box mt={5}>
                     <BadgeSelected
@@ -222,7 +270,7 @@ const Roles = () => {
                     setOpenMenuAccess={setOpenMenuAccess}
                 />
                 <PaginationCard
-                    totalItem={dataTable.length}
+                    totalItem={dataRoles.length}
                     handlePrev={handlePrev}
                     handleNext={handleNext}
                     form={form}

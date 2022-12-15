@@ -29,7 +29,8 @@ const LocationContainer = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [pages, setPages] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
+    const [query, setQuery] = React.useState('');
+    const [filteredData, setFilteredData] = React.useState<any>([]);
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
 
@@ -44,9 +45,24 @@ const LocationContainer = () => {
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
-        return remove.slice(startIndex, endIndex);
+        return filteredData.slice(startIndex, endIndex);
     };
 
+    const handleQuerySearch = () => {
+        // eslint-disable-next-line consistent-return, array-callback-return
+        const temp = remove.filter((post: any) => {
+            if (query === '') {
+                return post;
+            }
+            if (
+                post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
+                post.name.toString().toLowerCase().includes(query.toLowerCase())
+            ) {
+                return post;
+            }
+        });
+        setFilteredData(temp);
+    };
     const goToNextPage = () => {
         if (currentPage !== pages) {
             setCurrentPage((page) => page + 1);
@@ -71,6 +87,7 @@ const LocationContainer = () => {
 
             if (response.status === 200) {
                 setRemove(response.data.data);
+                setFilteredData(response.data.data);
             } else {
                 notify(response?.message, 'error');
             }
@@ -84,11 +101,15 @@ const LocationContainer = () => {
     useEffect(() => {
         if (value <= 1) {
             setRemove([]);
+            setFilteredData([]);
             fetchData(endpointTabs[value]);
         } else {
+            setIsLoading(true);
             setRemove([]);
+            setFilteredData([]);
             setIsLoading(true);
             setRemove(dummy);
+            setFilteredData(dummy);
             setIsLoading(false);
         }
     }, [value]);
@@ -96,7 +117,16 @@ const LocationContainer = () => {
     useEffect(() => {
         setPages(Math.ceil(remove.length / Number(row)));
     }, [pages, row]);
+    const handleSearch = (keyword: any) => {
+        setQuery(keyword);
+    };
+    React.useEffect(() => {
+        handleQuerySearch();
+    }, [query]);
 
+    React.useEffect(() => {
+        console.log(filteredData);
+    });
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ padding: '0px 25px' }}>
@@ -120,7 +150,15 @@ const LocationContainer = () => {
                             <Tabs value={value} handleChange={handleChangeTabs} />
                         </Box>
                         <Box sx={{ width: '25%', mt: '30px' }}>
-                            <InputSearch placeholder='Search by name, code, etc.' name='search' label='Search' form={form} />
+                            <InputSearch
+                                onChangeFunc={(e: any) => {
+                                    handleSearch(e.target.value);
+                                }}
+                                placeholder='Search by name, code, etc.'
+                                name='search'
+                                label='Search'
+                                form={form}
+                            />
                         </Box>
                     </Box>
                     <Box>
