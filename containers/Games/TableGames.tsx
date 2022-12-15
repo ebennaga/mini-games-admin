@@ -77,6 +77,9 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
         const { id } = getDataChecked[0];
         onEdit(id);
     };
+    React.useEffect(() => {
+        setDataTable(form.watch(name));
+    }, [form.watch(name)]);
 
     return (
         <>
