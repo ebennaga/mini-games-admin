@@ -230,7 +230,7 @@ const AccountContainer = () => {
         if (isSearch) {
             const searched = remove.filter((item: any) => {
                 if (input) {
-                    if (item.name.toLowerCase().includes(input) || item.email.toLowerCase().includes(input)) {
+                    if (item?.name?.toLowerCase()?.includes(input) || item?.email?.toLowerCase()?.includes(input)) {
                         return item;
                     }
                 }
@@ -241,6 +241,7 @@ const AccountContainer = () => {
             setIsSearch(false);
         }
     }, [remove, input]);
+    console.log('remove', input);
 
     return (
         <Box sx={{ width: '100%' }}>
