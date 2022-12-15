@@ -241,7 +241,6 @@ const AccountContainer = () => {
             setIsSearch(false);
         }
     }, [remove, input]);
-    console.log('remove', input);
 
     return (
         <Box sx={{ width: '100%' }}>
