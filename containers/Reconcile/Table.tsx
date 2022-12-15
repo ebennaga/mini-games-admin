@@ -1,18 +1,45 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, FormControl, Grid, MenuItem, Select, SelectChangeEvent, IconButton, Typography } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 interface ITable {
     dataTable: any;
+    form: any;
+    nameRow: string;
+    namePage: string;
 }
 
-const Table: React.FC<ITable> = ({ dataTable }) => {
-    const [row, setRow] = useState<any>(4);
+const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage }) => {
+    const [showTable, setShowTable] = React.useState<any>({ startIndex: null, endIndex: null });
 
     const handleRow = (e: SelectChangeEvent) => {
-        setRow(e.target.value);
+        form.setValue(nameRow, e.target.value);
+        form.setValue(namePage, 1);
     };
+
+    const handleNext = () => {
+        const input = form.watch();
+        const totalPage = Math.ceil(dataTable.length / input.row);
+        if (input.page < totalPage) {
+            form.setValue(namePage, input.page + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        const input = form.watch();
+        if (input.page > 1) {
+            form.setValue(namePage, input.page - 1);
+        }
+    };
+
+    React.useEffect(() => {
+        const page = form.watch(namePage);
+        const row = form.watch(nameRow);
+        const first = page * row - row;
+        const last = first + row - 1;
+        setShowTable({ startIndex: first, endIndex: last });
+    }, [form.watch(nameRow), form.watch(namePage)]);
 
     return (
         <Grid container mt='38px'>
@@ -66,129 +93,132 @@ const Table: React.FC<ITable> = ({ dataTable }) => {
             </Grid>
             {dataTable.map((item: any, index: number) => {
                 return (
-                    <Grid item container key={index} xs={12} sx={{ fontSize: '14px', fontWeight: 600 }}>
-                        <Grid item container xs={4}>
-                            <Grid item container xs={12}>
+                    index >= showTable.startIndex &&
+                    index <= showTable.endIndex && (
+                        <Grid item container key={index} xs={12} sx={{ fontSize: '14px', fontWeight: 600 }}>
+                            <Grid item container xs={4}>
+                                <Grid item container xs={12}>
+                                    <Grid
+                                        item
+                                        xs={2}
+                                        padding='12px'
+                                        border='1px solid rgba(0,0,0,0.2)'
+                                        sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    >
+                                        {index + 1}.
+                                    </Grid>
+                                    <Grid item container xs={10}>
+                                        <Grid
+                                            item
+                                            xs={4}
+                                            padding='12px'
+                                            border='1px solid rgba(0,0,0,0.2)'
+                                            sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
+                                        >
+                                            {item.userId}
+                                        </Grid>
+                                        <Grid
+                                            item
+                                            xs={4}
+                                            padding='12px'
+                                            border='1px solid rgba(0,0,0,0.2)'
+                                            sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
+                                        >
+                                            {item.email}
+                                        </Grid>
+                                        <Grid
+                                            item
+                                            xs={4}
+                                            padding='12px'
+                                            border='1px solid rgba(0,0,0,0.2)'
+                                            sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
+                                        >
+                                            {item.orderId}
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item container xs={4}>
                                 <Grid
                                     item
-                                    xs={2}
+                                    xs={3}
                                     padding='12px'
                                     border='1px solid rgba(0,0,0,0.2)'
-                                    sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
                                 >
-                                    {index + 1}.
+                                    {item.orderTime}
                                 </Grid>
-                                <Grid item container xs={10}>
-                                    <Grid
-                                        item
-                                        xs={4}
-                                        padding='12px'
-                                        border='1px solid rgba(0,0,0,0.2)'
-                                        sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
-                                    >
-                                        {item.userId}
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={4}
-                                        padding='12px'
-                                        border='1px solid rgba(0,0,0,0.2)'
-                                        sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
-                                    >
-                                        {item.email}
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={4}
-                                        padding='12px'
-                                        border='1px solid rgba(0,0,0,0.2)'
-                                        sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
-                                    >
-                                        {item.orderId}
-                                    </Grid>
+                                <Grid
+                                    item
+                                    xs={3}
+                                    padding='12px'
+                                    border='1px solid rgba(0,0,0,0.2)'
+                                    sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {item.orderAmount}
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={3}
+                                    padding='12px'
+                                    border='1px solid rgba(0,0,0,0.2)'
+                                    sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {item.transactionId}
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={3}
+                                    padding='12px'
+                                    border='1px solid rgba(0,0,0,0.2)'
+                                    sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {item.bank}
                                 </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid item container xs={4}>
-                            <Grid
-                                item
-                                xs={3}
-                                padding='12px'
-                                border='1px solid rgba(0,0,0,0.2)'
-                                sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
-                            >
-                                {item.orderTime}
-                            </Grid>
-                            <Grid
-                                item
-                                xs={3}
-                                padding='12px'
-                                border='1px solid rgba(0,0,0,0.2)'
-                                sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
-                            >
-                                {item.orderAmount}
-                            </Grid>
-                            <Grid
-                                item
-                                xs={3}
-                                padding='12px'
-                                border='1px solid rgba(0,0,0,0.2)'
-                                sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
-                            >
-                                {item.transactionId}
-                            </Grid>
-                            <Grid
-                                item
-                                xs={3}
-                                padding='12px'
-                                border='1px solid rgba(0,0,0,0.2)'
-                                sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
-                            >
-                                {item.bank}
-                            </Grid>
-                        </Grid>
-                        <Grid item container xs={4}>
-                            <Grid
-                                item
-                                xs={3}
-                                padding='12px'
-                                border='1px solid rgba(0,0,0,0.2)'
-                                sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
-                            >
-                                {item.transactionTime}
-                            </Grid>
-                            <Grid
-                                item
-                                xs={3}
-                                padding='12px'
-                                border='1px solid rgba(0,0,0,0.2)'
-                                sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
-                            >
-                                {item.grossAmount}
-                            </Grid>
-                            <Grid
-                                item
-                                xs={3}
-                                padding='12px'
-                                border='1px solid rgba(0,0,0,0.2)'
-                                sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
-                            >
-                                {item.transactionStatus}
-                            </Grid>
-                            <Grid
-                                item
-                                xs={3}
-                                padding='12px'
-                                border='1px solid rgba(0,0,0,0.2)'
-                                sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
-                            >
-                                {item.settlementTime}
+                            <Grid item container xs={4}>
+                                <Grid
+                                    item
+                                    xs={3}
+                                    padding='12px'
+                                    border='1px solid rgba(0,0,0,0.2)'
+                                    sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {item.transactionTime}
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={3}
+                                    padding='12px'
+                                    border='1px solid rgba(0,0,0,0.2)'
+                                    sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {item.grossAmount}
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={3}
+                                    padding='12px'
+                                    border='1px solid rgba(0,0,0,0.2)'
+                                    sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {item.transactionStatus}
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={3}
+                                    padding='12px'
+                                    border='1px solid rgba(0,0,0,0.2)'
+                                    sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
+                                >
+                                    {item.settlementTime}
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
+                    )
                 );
             })}
-            <Grid xs={12} mt='16px'>
+            <Grid item xs={12} mt='16px'>
                 <Box sx={{ float: 'right' }}>
                     <Typography component='span' fontSize='12px' fontWeight={400} sx={{ color: 'rgba(0, 0, 0, 0.6)' }}>
                         Rows per page:
@@ -204,7 +234,7 @@ const Table: React.FC<ITable> = ({ dataTable }) => {
                         <Select
                             variant='standard'
                             labelId='selectPage'
-                            value={row}
+                            value={form.watch(nameRow)}
                             onChange={handleRow}
                             sx={{ '& .MuiSelect-select': { padding: '0 19px 0 0 !important', fontSize: '12px' } }}
                         >
@@ -219,12 +249,12 @@ const Table: React.FC<ITable> = ({ dataTable }) => {
                         </Select>
                     </FormControl>
                     <Typography component='span' fontSize='12px' fontWeight={400} px='33px'>
-                        1-15 of 30
+                        {form.watch(namePage)}-{Math.ceil(dataTable.length / form.watch(nameRow))} of {dataTable.length}
                     </Typography>
-                    <IconButton>
+                    <IconButton onClick={handlePrev}>
                         <ArrowBackIosIcon sx={{ fontSize: '12px' }} />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={handleNext}>
                         <ArrowForwardIosIcon sx={{ fontSize: '12px' }} />
                     </IconButton>
                 </Box>

@@ -13,9 +13,10 @@ interface HeaderReconcileProps {
     handleGetData: any;
     dataDate: any;
     handleDownload: any;
+    handleFilter: any;
 }
 
-const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, dataDate, handleDownload }) => {
+const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, dataDate, handleDownload, handleFilter }) => {
     const [isOpenFilter, setIsOpenFilter] = React.useState<boolean>(false);
 
     return (
@@ -23,18 +24,27 @@ const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, 
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: '30px' }}>
                 <Box display='flex' alignItems='center' gap='25px' position='relative'>
                     {/* <DateResult minDate={form.watch('minDate')} maxDate={form.watch('maxDate')} /> */}
-                    <InputStartEndDate nameStartDate='minDate' nameEndDate='maxDate' form={form} label='Date' />
-                    <ButtonBase
-                        onClick={handleGetData}
-                        sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px' }}
-                    >
-                        GET DATA
-                    </ButtonBase>
+                    <form onSubmit={form.handleSubmit(handleGetData)} style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                        <InputStartEndDate nameStartDate='minDate' nameEndDate='maxDate' form={form} label='Date' />
+                        <ButtonBase
+                            type='submit'
+                            onClick={handleGetData}
+                            sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px' }}
+                        >
+                            GET DATA
+                        </ButtonBase>
+                    </form>
                     <IconButton onClick={() => setIsOpenFilter(!isOpenFilter)}>
                         <FilterListIcon sx={{ fontSize: '34px' }} />
                     </IconButton>
                     <Box sx={{ position: 'absolute', zIndex: 3, top: '75px', right: '-160px' }}>
-                        <DialogFilter form={form} dataDate={dataDate} open={isOpenFilter} setOpen={setIsOpenFilter} />
+                        <DialogFilter
+                            form={form}
+                            dataDate={dataDate}
+                            open={isOpenFilter}
+                            setOpen={setIsOpenFilter}
+                            handleFilter={handleFilter}
+                        />
                     </Box>
                 </Box>
                 <ButtonBase
