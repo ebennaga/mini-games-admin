@@ -1,115 +1,16 @@
 import React from 'react';
-import { Box, IconButton, ButtonBase } from '@mui/material';
-import HeaderChildren from 'components/HeaderChildren';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import { Box } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import InputSearch from 'components/Input/InputSearch';
 import PaginationCard from 'components/PaginationCard';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import DialogSuccess from 'components/Dialog/DialogSuccess';
 import { useRouter } from 'next/router';
 import TitleCard from 'components/Layout/TitleCard';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import TableGames from './TableGames';
 import DialogFilter from './DialogFilter';
 
-const dummyData = [
-    {
-        id: 1,
-        title: 'Hop Up',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 2,
-        title: 'Rose Dart',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 3,
-        title: 'Block Stack',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 4,
-        title: 'Racing Fighter',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 5,
-        title: 'Battle City',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 6,
-        title: 'Contra',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 7,
-        title: 'Hop Up',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 8,
-        title: 'Rose Dart',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 9,
-        title: 'Block Stack',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 10,
-        title: 'Racing Fighter',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 11,
-        title: 'Battle City',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    },
-    {
-        id: 12,
-        title: 'Contra',
-        game_url: 'https://minigames.prozaplay.io/hopup/',
-        description: 'Let’s Go Play Hop up ',
-        game_banner: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-        genre: 'Arcade'
-    }
-];
 const Games = () => {
     const dataSelect = [
         { id: 1, title: 'Arcade' },
@@ -122,9 +23,14 @@ const Games = () => {
     const [openDeleteDialog, setOpendDeleteDialog] = React.useState<boolean>(false);
     const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(false);
     const [listTable, setListTable] = React.useState<any>([]);
+    const [query, setQuery] = React.useState('');
+    const [data, setData] = React.useState<Array<any>>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
     const router = useRouter();
-    const [query, setQuery] = React.useState('');
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -135,6 +41,47 @@ const Games = () => {
             select: ''
         }
     });
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'games'
+            });
+
+            if (response.status === 200) {
+                const res = [
+                    {
+                        id: 1,
+                        name: 'Dart Rose',
+                        game_url: 'https://minigames.prozaplay.io/hopup/',
+                        description: 'Let’s Go Play Hop up ',
+                        banner_url: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
+                        genre: 'Arcade',
+                        created_at: '2022-01-03 00:00:00'
+                    },
+                    {
+                        id: 2,
+                        name: 'Contra',
+                        game_url: 'https://minigames.prozaplay.io/hopup/',
+                        description: 'Let’s Go Play Hop up ',
+                        banner_url: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
+                        genre: 'Arcade',
+                        created_at: '2022-02-03 00:00:00'
+                    },
+                    ...response.data.data
+                ];
+                setData(res);
+                setListTable(response.data.data);
+            } else {
+                notify(response.message, 'error');
+            }
+        } catch (err: any) {
+            notify(err.message);
+        }
+        setIsLoading(false);
+    };
 
     const handleEdit = (id: number) => {
         router.push(`/games/${id}`);
@@ -151,7 +98,7 @@ const Games = () => {
 
     const handleNext = () => {
         const input = form.watch();
-        const totalPage = Math.ceil(listTable.length / input.row);
+        const totalPage = Math.ceil(form.watch('dataTable').length / input.row);
         if (input.page < totalPage) {
             form.setValue('page', input.page + 1);
         }
@@ -170,59 +117,78 @@ const Games = () => {
         setQuery(keyword);
     };
 
+    const handleReset = () => {
+        form.setValue('dataTable', data);
+        form.setValue('page', 1);
+    };
+
+    const sorting = (arr: any[], type: 'asc' | 'desc') => {
+        const res = arr.sort((a: any, b: any) => {
+            const first: any = new Date(a.created_at);
+            const second: any = new Date(b.created_at);
+            if (type === 'asc') {
+                return first - second;
+            }
+            return second - first;
+        });
+        return res;
+    };
+
+    const handleFilter = (value: 'all' | 'latest' | 'oldest') => {
+        const selectId = form.watch('select');
+
+        if (selectId === '') {
+            if (value === 'latest') {
+                const res = sorting(listTable, 'asc');
+                form.setValue('dataTable', res);
+            } else if (value === 'oldest') {
+                const res = sorting(listTable, 'desc');
+                form.setValue('dataTable', res);
+            } else {
+                form.setValue('dataTable', data);
+            }
+            form.setValue('page', 1);
+        } else {
+            const valueSelect: string = dataSelect.filter((item: any) => item.id === selectId)[0].title;
+            const filterData = listTable.filter((item: any) => item?.genre?.toLowerCase()?.includes(valueSelect.toLocaleLowerCase()));
+
+            if (value === 'latest') {
+                const res = sorting(filterData, 'asc');
+                form.setValue('dataTable', res);
+            } else if (value === 'oldest') {
+                const res = sorting(filterData, 'desc');
+                form.setValue('dataTable', res);
+            } else {
+                form.setValue('dataTable', filterData);
+            }
+            form.setValue('page', 1);
+        }
+    };
+
     React.useEffect(() => {
-        setListTable(dummyData);
+        fetchData();
     }, []);
 
     React.useEffect(() => {
-        console.log(listTable);
-        console.log(form.watch('dataTable'));
-    });
-    React.useEffect(() => {
         // eslint-disable-next-line consistent-return, array-callback-return
-        const temp = dummyData.filter((post: any) => {
+        const temp = data.filter((post: any) => {
             if (query === '') {
                 return post;
             }
             if (
-                post.genre.toString().toLowerCase().includes(query.toLowerCase()) ||
-                post.title.toLowerCase().includes(query.toLowerCase())
+                post?.genre?.toString()?.toLowerCase()?.includes(query?.toLowerCase()) ||
+                post?.name?.toLowerCase()?.includes(query?.toLowerCase())
             ) {
                 return post;
             }
         });
         setListTable(temp);
         form.setValue('dataTable', temp);
-    }, [query]);
+        form.setValue('page', 1);
+    }, [query, data]);
+
     return (
         <Box>
-            {/* <HeaderChildren title='Games' subTitle='Additional description if required'>
-                <Box mt='27px' display='flex' alignItems='center' justifyContent='space-between'>
-                    <Box display='flex' alignItems='center' gap='38px' position='relative'>
-                        <Box>
-                            <InputSearch form={form} name='search' label='Search' placeholder='Search by tittle, genre, etc.' />
-                        </Box>
-                        <IconButton onClick={() => setOpenDialog(!openDialog)}>
-                            <FilterListIcon />
-                        </IconButton>
-                        <Box position='absolute' top='60px' left='320px'>
-                            <DialogFilter
-                                dataSelect={dataSelect}
-                                nameSelect='select'
-                                open={openDialog}
-                                setOpen={setOpenDialog}
-                                form={form}
-                            />
-                        </Box>
-                    </Box>
-                    <ButtonBase
-                        onClick={() => router.push('/games/add-game')}
-                        sx={{ padding: '6px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}
-                    >
-                        CREATE NEW
-                    </ButtonBase>
-                </Box>
-            </HeaderChildren> */}
             <TitleCard
                 handleSearch={(keyword: any) => handleDataSearch(keyword)}
                 onConfirm={(value: boolean) => handleDialog(value)}
@@ -232,11 +198,20 @@ const Games = () => {
                 placeholderSeacrhText='Search by tittle, genre, etc.'
                 href='/games/add-game'
             />
-            <Box position='absolute' top='60px' left='320px'>
-                <DialogFilter dataSelect={dataSelect} nameSelect='select' open={openDialog} setOpen={setOpenDialog} form={form} />
+            <Box position='absolute' top='236px' left='601px'>
+                <DialogFilter
+                    handleFilter={(value) => handleFilter(value)}
+                    handleReset={handleReset}
+                    dataSelect={dataSelect}
+                    nameSelect='select'
+                    open={openDialog}
+                    setOpen={setOpenDialog}
+                    form={form}
+                />
             </Box>
             <Box>
                 <TableGames
+                    isLoading={isLoading}
                     namePage='page'
                     nameRow='row'
                     name='dataTable'
@@ -245,7 +220,7 @@ const Games = () => {
                     handleOpenDeleteDialog={handleOpenDeleteDialog}
                 />
                 <PaginationCard
-                    totalItem={listTable.length}
+                    totalItem={form.watch('dataTable').length}
                     handlePrev={handlePrev}
                     handleNext={handleNext}
                     form={form}
