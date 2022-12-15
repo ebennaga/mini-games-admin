@@ -1,11 +1,14 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, CircularProgress, Grid, Typography } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
 import InputImage from 'components/Input/InputImage';
 import InputSelect from 'components/Input/InputSelect';
 import CustomButton from 'components/Button';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 
 const AddGame = () => {
     const dataGenre = [
@@ -13,6 +16,11 @@ const AddGame = () => {
         { id: 2, title: 'RPG' },
         { id: 3, title: 'Racing' }
     ];
+
+    const [isLoading, setisLoading] = React.useState<boolean>(false);
+
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
 
     const form = useForm({
         mode: 'all',
@@ -25,8 +33,32 @@ const AddGame = () => {
         }
     });
 
-    const handleSubmit = (data: any) => {
-        console.log('response', data);
+    const handleSubmit = async (data: any) => {
+        setisLoading(true);
+        try {
+            const { description, genre, image, title, url } = data;
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: 'games',
+                data: {
+                    name: title,
+                    description,
+                    game_url: url,
+                    version: 1,
+                    banner_url: url
+                }
+            });
+
+            if (response.status === 200) {
+                notify('Add Game Successfully!');
+                form.reset();
+            } else {
+                notify(response.message, 'error');
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setisLoading(false);
     };
 
     return (
@@ -58,7 +90,7 @@ const AddGame = () => {
                             <Input
                                 name='title'
                                 label='Title'
-                                rules={{ minLength: 5, maxLength: 100 }}
+                                rules={{ required: true, minLength: 6, maxLength: 100 }}
                                 placeholder='Max 100 Character'
                                 form={form}
                             />
@@ -98,14 +130,7 @@ const AddGame = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={7}>
-                            <Input
-                                name='description'
-                                label='Description'
-                                rules={{ required: true }}
-                                placeholder='Game Description'
-                                form={form}
-                                isTextArea
-                            />
+                            <Input name='description' label='Description' placeholder='Game Description' form={form} isTextArea />
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
@@ -130,6 +155,7 @@ const AddGame = () => {
                         </Grid>
                         <Grid item xs={4}>
                             <InputImage
+                                rules={{ required: true }}
                                 name='image'
                                 form={form}
                                 label='Click to upload'
@@ -159,7 +185,14 @@ const AddGame = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <InputSelect form={form} name='genre' dataSelect={dataGenre} title='Genre' placeholder='Select Genre' />
+                            <InputSelect
+                                form={form}
+                                name='genre'
+                                dataSelect={dataGenre}
+                                title='Genre'
+                                placeholder='Select Genre'
+                                rules={{ required: true }}
+                            />
                         </Grid>
                     </Grid>
                     <Grid
@@ -175,18 +208,24 @@ const AddGame = () => {
                         borderTop='1px solid rgba(0,0,0,0.5)'
                     >
                         <Grid item container xs={6}>
-                            <Grid item xs={6} display='flex' alignItems='center' justifyContent='space-between'>
-                                <CustomButton type='submit' title='RELEASE' />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <CustomButton
-                                    title='CANCEL'
-                                    onClick={undefined}
-                                    backgroundColor='#fff'
-                                    border='1px solid #A54CE5'
-                                    color='#A54CE5'
-                                />
-                            </Grid>
+                            {isLoading ? (
+                                <CircularProgress />
+                            ) : (
+                                <>
+                                    <Grid item xs={6} display='flex' alignItems='center' justifyContent='space-between'>
+                                        <CustomButton type='submit' title='RELEASE' />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <CustomButton
+                                            title='CANCEL'
+                                            onClick={undefined}
+                                            backgroundColor='#fff'
+                                            border='1px solid #A54CE5'
+                                            color='#A54CE5'
+                                        />
+                                    </Grid>
+                                </>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>
