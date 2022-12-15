@@ -97,22 +97,10 @@ const FilterDrop: React.FC<FilterDropProps> = ({
                 </FormControl>
             </Box>
             <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
-                <InputDate
-                    disabled={form.watch('endDate') || form.watch('startDate')}
-                    label='Start Date'
-                    type='date'
-                    form={form}
-                    name='startDate'
-                />
+                <InputDate label='Start Date' type='date' form={form} name='startDate' />
             </Box>
             <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
-                <InputDate
-                    disabled={form.watch('endDate') || form.watch('startDate')}
-                    label='End Date'
-                    type='date'
-                    form={form}
-                    name='endDate'
-                />
+                <InputDate label='End Date' type='date' form={form} name='endDate' />
             </Box>
             <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
                 <InputDate label='Start Time' type='time' form={form} name='startTime' />

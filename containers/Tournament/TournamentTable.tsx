@@ -110,7 +110,7 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                     {data.length > 0 &&
                         data.map((item: any, idx: number) => {
                             const check: any = `checkbox${idx + 1}`;
-                            const options: any = { hour: '2-digit', minute: '2-digit' };
+                            const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
                             const startTime = new Date(item.start_time).toLocaleString(undefined, options);
                             const endTime = new Date(item.end_time).toLocaleString(undefined, options);
                             return (
