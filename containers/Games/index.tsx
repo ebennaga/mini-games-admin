@@ -51,28 +51,7 @@ const Games = () => {
             });
 
             if (response.status === 200) {
-                const res = [
-                    {
-                        id: 1,
-                        name: 'Dart Rose',
-                        game_url: 'https://minigames.prozaplay.io/hopup/',
-                        description: 'Let’s Go Play Hop up ',
-                        banner_url: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-                        genre: 'Arcade',
-                        created_at: '2022-01-03 00:00:00'
-                    },
-                    {
-                        id: 2,
-                        name: 'Contra',
-                        game_url: 'https://minigames.prozaplay.io/hopup/',
-                        description: 'Let’s Go Play Hop up ',
-                        banner_url: 'https://prizeplay-minigames.s3.ap-southeast-3.amazonaws.com/thumbs/1/pp.png',
-                        genre: 'Arcade',
-                        created_at: '2022-02-03 00:00:00'
-                    },
-                    ...response.data.data
-                ];
-                setData(res);
+                setData(response.data.data);
                 setListTable(response.data.data);
             } else {
                 notify(response.message, 'error');
