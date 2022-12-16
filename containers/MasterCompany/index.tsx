@@ -69,7 +69,7 @@ const MasterCompanyContainer = () => {
                 endpoint: `companies?search=${form.watch('search')}`,
                 method: 'GET'
             });
-            console.log(result?.data.data);
+
             if (result.status === 200) {
                 setRemove(result?.data.data);
             }
