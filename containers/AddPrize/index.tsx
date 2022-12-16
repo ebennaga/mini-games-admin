@@ -8,6 +8,7 @@ import TitleCard from 'components/Layout/TitleCard';
 import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import InputDate from 'components/Input/InputDate';
 
 const unitList = [
     {
@@ -50,6 +51,7 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
             category: '',
             unit: '',
             qty: '',
+            expiredDate: '',
             is_active: false
         }
     });
@@ -122,12 +124,12 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                     image_url_1: form.watch('img'),
                     image_url_2: form.watch('img2'),
                     image_url_3: form.watch('img3'),
-                    expired_at: '',
+                    expired_at: form.watch('expiredDate'),
                     is_active: checked[0] ? checked[0] : checked[1]
                 }
             });
             if (response?.status === 200) {
-                // console.log(response);
+                console.log(response);
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -215,6 +217,30 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                             isMultiline={false}
                             isRequired
                         />
+                    </Box>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Expired Date</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ width: '70%' }}>
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <InputDate rules={{ required: true }} label='Expired Date' type='date' form={form} name='expiredDate' />
+                            </Box>
+                        </Box>
                     </Box>
 
                     <InputUpload isRequired label='Product Image 1' name='img' form={form} rules={rules} />
