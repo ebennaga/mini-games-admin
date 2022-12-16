@@ -6,10 +6,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 interface BadgeSelectedProps {
     total: number;
     onEdit?: any;
-    handleOpenDeleteDialog: any;
+    handleOpenDeleteDialog?: any;
+    handleOpenBan?: () => void;
 }
 
-const BadgeSelected: React.FC<BadgeSelectedProps> = ({ total, onEdit, handleOpenDeleteDialog }) => {
+const BadgeSelected: React.FC<BadgeSelectedProps> = ({ total, onEdit, handleOpenDeleteDialog, handleOpenBan }) => {
     return (
         <Box
             sx={{
@@ -25,16 +26,22 @@ const BadgeSelected: React.FC<BadgeSelectedProps> = ({ total, onEdit, handleOpen
             <Typography component='h4' fontSize='14px'>
                 {total} items selected
             </Typography>
-            <Box>
-                {total === 1 && onEdit && (
-                    <IconButton onClick={onEdit} sx={{ fontSize: '13px', color: '#A54CE5' }}>
-                        <EditIcon sx={{ mr: '10.24px' }} /> EDIT
-                    </IconButton>
-                )}
-                <IconButton onClick={handleOpenDeleteDialog} sx={{ fontSize: '13px', color: '#A54CE5' }}>
-                    <DeleteIcon sx={{ mr: '10.24px' }} /> REMOVE
+            {handleOpenBan ? (
+                <IconButton onClick={handleOpenBan} sx={{ fontSize: '13px', color: '#A54CE5' }}>
+                    <DeleteIcon sx={{ mr: '10.24px' }} /> Ban Account
                 </IconButton>
-            </Box>
+            ) : (
+                <Box>
+                    {total === 1 && onEdit && (
+                        <IconButton onClick={onEdit} sx={{ fontSize: '13px', color: '#A54CE5' }}>
+                            <EditIcon sx={{ mr: '10.24px' }} /> EDIT
+                        </IconButton>
+                    )}
+                    <IconButton onClick={handleOpenDeleteDialog} sx={{ fontSize: '13px', color: '#A54CE5' }}>
+                        <DeleteIcon sx={{ mr: '10.24px' }} /> REMOVE
+                    </IconButton>
+                </Box>
+            )}
         </Box>
     );
 };
