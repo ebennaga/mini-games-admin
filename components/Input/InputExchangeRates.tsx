@@ -14,6 +14,7 @@ interface InputExchangeRatesProps {
     form: any;
     handleSubmit: any;
     loadingSubmit: boolean;
+    loading: boolean;
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
@@ -24,7 +25,8 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
     descriptionName,
     form,
     handleSubmit,
-    loadingSubmit
+    loadingSubmit,
+    loading
 }) => {
     const router = useRouter();
 
@@ -39,7 +41,14 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         <FieldRequired />
                     </Box>
                     <Box sx={{ width: '30%' }}>
-                        <InputDate label='Effective Date' type='date' form={form} name={effectiveName} rules={{ required: true }} />
+                        <InputDate
+                            label='Effective Date'
+                            type='date'
+                            form={form}
+                            name={effectiveName}
+                            rules={{ required: true }}
+                            isLoading={loading}
+                        />
                     </Box>
                 </Stack>
                 <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
@@ -51,13 +60,13 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     </Box>
                     <Box sx={{ width: '30%' }}>
                         <Input
-                            isColor
                             type='text'
                             rules={{ required: true }}
                             form={form}
                             name={nameName}
                             label='Name'
                             placeholder='Enter Name'
+                            isLoading={loading}
                         />
                     </Box>
                 </Stack>
@@ -70,7 +79,6 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     </Box>
                     <Box sx={{ width: '30%' }}>
                         <Input
-                            isColor
                             type='number'
                             rules={{ required: true }}
                             form={form}
@@ -80,6 +88,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             startAdornment={
                                 <img src='/images/coin.png' alt='coins' width={20} height={20} style={{ marginRight: '9px' }} />
                             }
+                            isLoading={loading}
                         />
                     </Box>
                 </Stack>
@@ -92,7 +101,6 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     </Box>
                     <Box sx={{ width: '30%' }}>
                         <Input
-                            isColor
                             type='number'
                             rules={{ required: true }}
                             form={form}
@@ -104,6 +112,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                                     RP
                                 </Typography>
                             }
+                            isLoading={loading}
                         />
                     </Box>
                 </Stack>
@@ -116,7 +125,6 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     </Box>
                     <Box sx={{ width: '30%' }}>
                         <Input
-                            isColor
                             isTextArea
                             type='text'
                             rules={{ required: true }}
@@ -124,6 +132,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             name={descriptionName}
                             label='Description'
                             placeholder='Enter Description'
+                            isLoading={loading}
                         />
                     </Box>
                 </Stack>

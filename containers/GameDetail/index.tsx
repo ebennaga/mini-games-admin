@@ -85,7 +85,8 @@ const AddGame = () => {
             if (Object.keys(resData).length > 0) {
                 const response = await fetchAPI({
                     method: 'PUT',
-                    endpoint: `games/${router.query.id}`
+                    endpoint: `games/${router.query.id}`,
+                    data: resData
                 });
                 if (response.status === 200) {
                     notify('Successfully Edit Game!');
