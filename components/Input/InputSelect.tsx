@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Select, MenuItem, Typography, OutlinedInput, FormHelperText } from '@mui/material';
+import { FormControl, Select, MenuItem, Typography, OutlinedInput, FormHelperText, Skeleton, Box } from '@mui/material';
 import { Controller } from 'react-hook-form';
 
 interface InputSelectProps {
@@ -9,9 +9,10 @@ interface InputSelectProps {
     title: string;
     placeholder: string;
     rules?: any;
+    isLoading?: boolean;
 }
 
-const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title, placeholder, rules }) => {
+const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title, placeholder, rules, isLoading }) => {
     const {
         formState: { errors }
     } = form;
@@ -25,59 +26,73 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
     };
 
     return (
-        <FormControl fullWidth>
-            <Typography
-                component='span'
-                fontSize='12px'
-                sx={{ background: '#fff', position: 'absolute', top: '-9px', zIndex: 1, left: 14, px: 1, color: 'rgba(0, 0, 0, 1)' }}
-            >
-                {title}
-            </Typography>
-            <Controller
-                name={name}
-                control={form.control}
-                rules={rules}
-                render={() => {
-                    return (
-                        <Select
-                            fullWidth
-                            displayEmpty
-                            error={!!errType}
-                            value={form.watch(name)}
-                            onChange={handleChange}
-                            input={<OutlinedInput />}
-                            placeholder='Select Category'
-                            labelId='demo-simple-select-label'
-                            id='demo-simple-select'
-                            label='Role Code'
-                            sx={{
-                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#A54CE5'
-                                },
-                                '&:hover .MuiOutlinedInput-notchedOutline': {
-                                    borderColor: '#A54CE5'
-                                },
-                                '& .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input': {
-                                    color: form.watch(name) ? 'rgba(0, 0, 0,1)' : 'rgba(0, 0, 0, 0.38)'
-                                }
-                            }}
-                        >
-                            <MenuItem sx={{ fontSize: '16px' }} disabled value=''>
-                                {placeholder}
-                            </MenuItem>
-                            {dataSelect.map((item: any) => {
-                                return (
-                                    <MenuItem value={item.id} key={item.id}>
-                                        {item.title}
+        <Box>
+            {isLoading ? (
+                <Skeleton sx={{ height: '100px', mt: '-10px' }} />
+            ) : (
+                <FormControl fullWidth>
+                    <Typography
+                        component='span'
+                        fontSize='12px'
+                        sx={{
+                            background: '#fff',
+                            position: 'absolute',
+                            top: '-9px',
+                            zIndex: 1,
+                            left: 14,
+                            px: 1,
+                            color: 'rgba(0, 0, 0, 1)'
+                        }}
+                    >
+                        {title}
+                    </Typography>
+                    <Controller
+                        name={name}
+                        control={form.control}
+                        rules={rules}
+                        render={() => {
+                            return (
+                                <Select
+                                    fullWidth
+                                    displayEmpty
+                                    error={!!errType}
+                                    value={form.watch(name)}
+                                    onChange={handleChange}
+                                    input={<OutlinedInput />}
+                                    placeholder='Select Category'
+                                    labelId='demo-simple-select-label'
+                                    id='demo-simple-select'
+                                    label='Role Code'
+                                    sx={{
+                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#A54CE5'
+                                        },
+                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: '#A54CE5'
+                                        },
+                                        '& .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input': {
+                                            color: form.watch(name) ? 'rgba(0, 0, 0,1)' : 'rgba(0, 0, 0, 0.38)'
+                                        }
+                                    }}
+                                >
+                                    <MenuItem sx={{ fontSize: '16px' }} disabled value=''>
+                                        {placeholder}
                                     </MenuItem>
-                                );
-                            })}
-                        </Select>
-                    );
-                }}
-            />
-            <FormHelperText error={!!errType}>{errText}</FormHelperText>
-        </FormControl>
+                                    {dataSelect.map((item: any) => {
+                                        return (
+                                            <MenuItem value={item.id} key={item.id}>
+                                                {item.title}
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </Select>
+                            );
+                        }}
+                    />
+                    <FormHelperText error={!!errType}>{errText}</FormHelperText>
+                </FormControl>
+            )}
+        </Box>
     );
 };
 

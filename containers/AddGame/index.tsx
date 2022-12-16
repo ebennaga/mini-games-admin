@@ -9,6 +9,7 @@ import InputSelect from 'components/Input/InputSelect';
 import CustomButton from 'components/Button';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import convertBase64 from 'helpers/convertBase64';
 
 const AddGame = () => {
     const dataGenre = [
@@ -37,6 +38,9 @@ const AddGame = () => {
         setisLoading(true);
         try {
             const { description, genre, image, title, url } = data;
+
+            const imgBase64 = image ? await convertBase64(image) : null;
+
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: 'games',
@@ -45,7 +49,7 @@ const AddGame = () => {
                     description,
                     game_url: url,
                     version: 1,
-                    banner_url: url
+                    banner_url: imgBase64
                 }
             });
 
