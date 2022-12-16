@@ -7,6 +7,12 @@ const MENUBAR = [
         title: 'Client Account',
         href: '/client-account'
     },
+    {
+        active: '/icons/active/player-account.png',
+        icon: '/icons/navbar/player-account.png',
+        title: 'Player Account',
+        href: '/player-account'
+    },
     { active: '/icons/active/reconcile-active.png', icon: '/icons/navbar/reconcile.png', title: 'Reconcile', href: '/reconcile' },
     { active: '/icons/active/games-active.png', icon: '/icons/navbar/game.png', title: 'Games', href: '/games' },
     {
