@@ -11,10 +11,19 @@ interface InputImageProps {
     secondaryLabel: string;
     placeholder: string;
     isLocation?: boolean;
+    rules?: any;
 }
 
-const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLabel, placeholder, isLocation = false }) => {
+const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLabel, placeholder, isLocation = false, rules }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
+
+    const {
+        formState: { errors }
+    } = form;
+
+    const error = errors[name] || null;
+    const errType = !form.watch(name) && error?.type;
+    const errText = !form.watch(name) && errType === 'required' ? 'must be filled' : '';
 
     const valueInput = form.watch(name);
     const handleChange = (e: any) => {
@@ -34,9 +43,10 @@ const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLab
             <Controller
                 name={name}
                 control={form.control}
+                rules={rules}
                 render={() => {
                     return (
-                        <Box>
+                        <Box sx={{ bgcolor: errType || errMessage ? 'rgba(211, 47, 47, 0.04)' : '#fff' }}>
                             <input
                                 accept='image/*, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
                                 style={{ display: 'none' }}
@@ -48,7 +58,12 @@ const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLab
                             <label htmlFor='raised-button-file'>
                                 <ButtonBase
                                     component='span'
-                                    sx={{ border: '1px dashed rgba(0, 0, 0, 0.12)', width: '100%', height: '200px', opacity: 0 }}
+                                    sx={{
+                                        border: errType || errMessage ? '1px solid #D32F2F' : '1px dashed rgba(0, 0, 0, 0.12)',
+                                        width: '100%',
+                                        height: '200px',
+                                        opacity: 0
+                                    }}
                                 >
                                     Upload
                                 </ButtonBase>
@@ -63,7 +78,7 @@ const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLab
                     justifyContent: isLocation ? 'center' : '',
                     alignItems: isLocation ? 'center' : '',
                     flexDirection: 'column',
-                    border: '1px dashed rgba(0, 0, 0, 0.12)',
+                    border: errType || errMessage ? '1px solid #D32F2F' : '1px dashed rgba(0, 0, 0, 0.12)',
                     width: '100%',
                     height: '200px',
                     mt: '-200px',
@@ -86,8 +101,8 @@ const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLab
                 <Typography component='h3' fontSize='16px' sx={{ my: '11px', color: '#A54CE5', '& span': { color: 'rgba(0,0,0,0.8)' } }}>
                     {label} <span>{secondaryLabel}</span>
                 </Typography>
-                <Typography component='p' fontSize='16px' sx={{ color: errMessage ? 'red' : 'rgba(0,0,0,0.8)' }}>
-                    {valueInput && !errMessage ? valueInput.name : errMessage || placeholder}
+                <Typography component='p' fontSize='16px' sx={{ color: errMessage || errType ? 'red' : 'rgba(0,0,0,0.8)' }}>
+                    {valueInput && !errMessage ? valueInput.name : errMessage || errText || placeholder}
                 </Typography>
             </Box>
         </Box>

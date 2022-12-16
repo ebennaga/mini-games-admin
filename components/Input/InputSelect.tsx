@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Select, MenuItem, Typography, OutlinedInput } from '@mui/material';
+import { FormControl, Select, MenuItem, Typography, OutlinedInput, FormHelperText } from '@mui/material';
 import { Controller } from 'react-hook-form';
 
 interface InputSelectProps {
@@ -8,9 +8,18 @@ interface InputSelectProps {
     dataSelect: any;
     title: string;
     placeholder: string;
+    rules?: any;
 }
 
-const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title, placeholder }) => {
+const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title, placeholder, rules }) => {
+    const {
+        formState: { errors }
+    } = form;
+
+    const error = errors[name] || null;
+    const errType = !form.watch(name) && error?.type;
+    const errText = errType === 'required' ? 'Must be filled' : '';
+
     const handleChange = (e: any) => {
         form.setValue(name, e.target.value);
     };
@@ -20,18 +29,20 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
             <Typography
                 component='span'
                 fontSize='12px'
-                sx={{ background: '#fff', position: 'absolute', top: '-9px', zIndex: 1, left: 14, px: 1 }}
+                sx={{ background: '#fff', position: 'absolute', top: '-9px', zIndex: 1, left: 14, px: 1, color: 'rgba(0, 0, 0, 1)' }}
             >
                 {title}
             </Typography>
             <Controller
                 name={name}
                 control={form.control}
+                rules={rules}
                 render={() => {
                     return (
                         <Select
                             fullWidth
                             displayEmpty
+                            error={!!errType}
                             value={form.watch(name)}
                             onChange={handleChange}
                             input={<OutlinedInput />}
@@ -65,6 +76,7 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
                     );
                 }}
             />
+            <FormHelperText error={!!errType}>{errText}</FormHelperText>
         </FormControl>
     );
 };
