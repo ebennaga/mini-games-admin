@@ -16,6 +16,17 @@ interface InputDateProps {
 }
 
 const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, isCreate = false, isLoading }) => {
+    const {
+        formState: { errors }
+    } = form;
+    const error = errors[name] ? errors[name] : null;
+    const errType: string = error?.type;
+    let helperText: string = '';
+
+    if (errType === 'required') {
+        helperText = `${label} is required`;
+    }
+
     if (isLoading) {
         return <Skeleton sx={{ height: '100px', mt: '-15px' }} />;
     }
@@ -34,6 +45,7 @@ const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, i
                             id='date'
                             label={label}
                             type={type}
+                            helperText={helperText}
                             // defaultValue={form.watch(name)}
                             sx={{
                                 '& input': { pl: '40px' },
@@ -44,6 +56,13 @@ const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, i
                                 '& input[type="time"]::-webkit-inner-spin-button, input[type="time"]::-webkit-calendar-picker-indicator': {
                                     backgroundColor: 'red',
                                     opacity: 0
+                                },
+                                '& fieldset': {
+                                    border: !error ? '1px solid rgba(0, 0, 0, 0.28) !important' : '1px solid red !important'
+                                },
+
+                                '& .MuiFormHelperText-root ': {
+                                    color: 'red'
                                 }
                             }}
                             InputLabelProps={{
