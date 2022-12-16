@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, TextField } from '@mui/material';
+import { Box, Skeleton, TextField } from '@mui/material';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import { KeyboardArrowDown, ArrowDropDown } from '@mui/icons-material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -12,9 +12,13 @@ interface InputDateProps {
     name: string;
     rules?: any;
     isCreate?: any;
+    isLoading?: boolean;
 }
 
-const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, isCreate = false }) => {
+const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, isCreate = false, isLoading }) => {
+    if (isLoading) {
+        return <Skeleton sx={{ height: '100px', mt: '-15px' }} />;
+    }
     return (
         <Box display='flex' alignItems='center' justifyContent='center' width='100%' my='15px'>
             {type === 'date' ? <DateRangeIcon sx={{ mr: '-30px' }} /> : <AccessTimeIcon sx={{ mr: '-30px' }} />}
