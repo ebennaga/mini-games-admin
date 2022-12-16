@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
     Box,
@@ -32,9 +33,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import { alpha, styled } from '@mui/material/styles';
 import { useForm } from 'react-hook-form';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import CheckboxController from 'components/Checkbox';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import LoadingExchangeRates from 'containers/ExchangeRates/LoadingExchangeRates';
+import { useRouter } from 'next/router';
 
 const dummyData = [
     {
@@ -101,6 +106,13 @@ const Banner = () => {
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
     const checkBoxKeys: string[] = [];
     const [removeData, setRemoveData] = React.useState<any>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const [dataBanner, setDatabanner] = React.useState<any>([]);
+    const [routeId, setRouteId] = React.useState<any>(null);
+
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
+    const router = useRouter();
 
     const form = useForm({
         mode: 'all',
@@ -109,6 +121,7 @@ const Banner = () => {
             title: '',
             images: '',
             desc: '',
+            dummyData: dataBanner,
             showTo: '',
             isActive: 'Yes',
             checkedAll: false
@@ -140,6 +153,12 @@ const Banner = () => {
         setRow(event.target.value as string);
     };
 
+    const handleEdit = (id: any) => {
+        const table: any = form.watch('dummyData');
+        const filter = table.filter((item: any) => item.isAction);
+        router.push(`/banner/${filter[0].id}`);
+    };
+
     const handleCheckBoxAll = (e: any) => {
         const temp: any[] = [];
         form.setValue('checkedAll', e.target.checked);
@@ -168,6 +187,7 @@ const Banner = () => {
         checkBoxKeys.forEach((item: any) => {
             if (checkBox[item] === true) {
                 checkTrue.push(item);
+                console.log(1);
             }
         });
         setCheckedObj(checkTrue);
@@ -184,6 +204,7 @@ const Banner = () => {
                 setRemoveData([]);
             }
         }
+        setRouteId(id);
     };
 
     const handleRemoveData = () => {
@@ -199,10 +220,29 @@ const Banner = () => {
             form.setValue(datas, false);
         });
     };
+
+    const getBanner = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'banners?search='
+            });
+            if (response.status === 200) {
+                const resData = response.data.data;
+                setDatabanner(resData);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsLoading(false);
+    };
+
     React.useEffect(() => {
+        getBanner();
         setFilteredData(dummyData);
     }, []);
-
+    console.log('databanner', dataBanner);
     React.useEffect(() => {
         setPages(Math.round(filteredData.length / Number(row)));
     }, [pages, row]);
@@ -218,6 +258,9 @@ const Banner = () => {
             setIsChecked(false);
         }
     }, [checkBoxKeys, form.watch('checkedAll')]);
+    if (isLoading) {
+        return <LoadingExchangeRates />;
+    }
 
     return (
         <Box component='section'>
@@ -261,7 +304,12 @@ const Banner = () => {
                         </Typography>
                         <Box sx={{ display: 'flex' }}>
                             {checkedObj.length === 1 && (
-                                <ButtonBase sx={{ color: '#A54CE5', m: 1 }}>
+                                <ButtonBase
+                                    onClick={() => {
+                                        router.push(`/banner/${routeId}`);
+                                    }}
+                                    sx={{ color: '#A54CE5', m: 1 }}
+                                >
                                     <ModeEditIcon />
                                     <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>EDIT</Typography>
                                 </ButtonBase>
@@ -336,9 +384,10 @@ const Banner = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {getPaginatedData().length > 0 &&
-                                getPaginatedData().map((item: any) => {
+                            {dataBanner.length > 0 &&
+                                dataBanner.map((item: any) => {
                                     const check: any = `checkbox${item.id}`;
+
                                     return (
                                         <TableRow key={item.id}>
                                             <TableCell align='center' sx={{ width: '5%' }}>
@@ -354,7 +403,7 @@ const Banner = () => {
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.img}
+                                                {item.image_url}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -366,7 +415,7 @@ const Banner = () => {
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.showTo}
+                                                {item.link}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -375,7 +424,7 @@ const Banner = () => {
                                                 <Box sx={{ color: 'white', display: 'flex', justifyContent: 'center' }}>
                                                     <Box
                                                         sx={
-                                                            item.isActive === 'Yes'
+                                                            item.is_active === 'Yes'
                                                                 ? {
                                                                       backgroundColor: '#A54CE5',
                                                                       borderRadius: '64px',
@@ -390,7 +439,7 @@ const Banner = () => {
                                                                   }
                                                         }
                                                     >
-                                                        {item.isActive}
+                                                        {item.is_active ? 'Yes' : 'No'}
                                                     </Box>
                                                 </Box>
                                             </TableCell>

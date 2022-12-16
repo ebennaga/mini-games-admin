@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, List, Typography, Avatar, Paper, ButtonBase, CircularProgress } from '@mui/material';
 import Search from 'components/Search';
@@ -41,7 +42,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
     const path = router.asPath;
 
     const handleSearch = (data: any) => {
-        alert(data.search);
+        // alert(data.search);
     };
 
     const handleLogout = async () => {
