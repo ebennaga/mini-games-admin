@@ -409,7 +409,12 @@ const TournamentContainer = () => {
     }, [remove, input, search]);
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box
+            sx={{ width: '100%' }}
+            onClick={() => {
+                setOpenFilter(!openFilter);
+            }}
+        >
             {createTournament ? (
                 <CreateTournament form={form} createTour={createTournament} setCreateTour={setCreateTournament} />
             ) : (
