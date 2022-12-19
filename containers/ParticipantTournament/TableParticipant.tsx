@@ -146,7 +146,7 @@ const TableParticipant: React.FC<TableParticipantProps> = ({ name, form, nameIdx
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '25%' }}
                                     >
-                                        <Typography component='span'> {item.registrationDate}</Typography>
+                                        <Typography component='span'> {item.start_register}</Typography>
                                     </TableCell>
                                     <TableCell
                                         align='center'
