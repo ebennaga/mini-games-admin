@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Paper, FormControl, FormControlLabel, InputLabel, Select, Typography, Radio, MenuItem } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import InputDate from 'components/Input/InputDate';
-import Input from 'components/Input/Input';
+// import Input from 'components/Input/Input';
 import CustomButton from 'components/Button';
 
 interface FilterDropProps {
@@ -15,7 +15,7 @@ interface FilterDropProps {
     handleFiter: any;
     handleFilterButton: any;
     handleReset: any;
-    disabled: any;
+    disabled?: any;
 }
 
 const FilterDrop: React.FC<FilterDropProps> = ({
@@ -69,9 +69,9 @@ const FilterDrop: React.FC<FilterDropProps> = ({
                     </Box>
                 </FormControl>
             </Box>
-            <Box sx={{ mt: '20px' }}>
+            {/* <Box sx={{ mt: '20px' }}>
                 <Input name='titleSearch' isColor placeholder='Enter Title' label='Title' form={form} />
-            </Box>
+            </Box> */}
             <Box sx={{ mt: '30px' }}>
                 <FormControl fullWidth>
                     <InputLabel sx={{ fontWeight: 'bold' }} id='games'>
@@ -103,10 +103,10 @@ const FilterDrop: React.FC<FilterDropProps> = ({
                 <InputDate label='End Date' type='date' form={form} name='endDate' />
             </Box>
             <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
-                <InputDate label='Start Time' type='time' form={form} name='startTime' />
+                <InputDate disabled={form.watch('endTime')} label='Start Time' type='time' form={form} name='startTime' />
             </Box>
             <Box sx={{ ml: '6px', mr: '-6px', mt: '30px' }}>
-                <InputDate label='End Time' type='time' form={form} name='endTime' />
+                <InputDate disabled={form.watch('startTime')} label='End Time' type='time' form={form} name='endTime' />
             </Box>
             <Box sx={{ mt: '30px', justifyContent: 'space-between', display: 'flex', width: '100%' }}>
                 <CustomButton onClick={handleFilterButton} title='FILTER' width='150px' height='36px' />

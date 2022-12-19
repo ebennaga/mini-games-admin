@@ -60,6 +60,7 @@ const TournamentContainer = () => {
     const [deleted, setDeleted] = useState<number[]>([]);
     const [leaderboards, setLeaderboards] = useState<any>(null);
     const [remove, setRemove] = useState<any>([]);
+    const [gamesData, setGameDatas] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
     const [selectedValue, setSelectedValue] = React.useState('');
     const [search, setSearch] = useState<any>([]);
@@ -85,7 +86,6 @@ const TournamentContainer = () => {
                 setRemove(tournaments);
                 setRow(tournaments.length.toString());
                 setIsLoading(false);
-
                 // notify(response?.data.message, 'success');
             }
         } catch (error: any) {
@@ -117,6 +117,9 @@ const TournamentContainer = () => {
         const endIndex = startIndex + Number(row);
         if (isSearch) {
             return search.slice(startIndex, endIndex);
+        }
+        if ((game !== '0' && gamesData.length > 0) || (selectedValue && gamesData.length > 0) || gamesData.length > 0) {
+            return gamesData.slice(startIndex, endIndex);
         }
         return remove.slice(startIndex, endIndex);
     };
@@ -236,7 +239,7 @@ const TournamentContainer = () => {
                 return Date.parse(a.start_time) - Date.parse(b.start_time);
             });
             games = [...filter];
-            setRemove(games);
+            setGameDatas(games);
             setOpenFilter(false);
         }
         if (selectedValue === 'latest') {
@@ -244,7 +247,7 @@ const TournamentContainer = () => {
                 return Date.parse(b.start_time) - Date.parse(a.start_time);
             });
             games = [...filter];
-            setRemove(games);
+            setGameDatas(games);
             setOpenFilter(false);
         }
         if (game !== '0') {
@@ -252,8 +255,7 @@ const TournamentContainer = () => {
                 return item.game.id === game;
             });
             games = [...filter];
-
-            setRemove(games);
+            setGameDatas(games);
             setOpenFilter(false);
         }
         if (form.watch('startDate') && !form.watch('endDate')) {
@@ -261,7 +263,7 @@ const TournamentContainer = () => {
                 return item.start_time.slice(0, 10) === form.watch('startDate');
             });
             games = [...filter];
-            setRemove(games);
+            setGameDatas(games);
             setOpenFilter(false);
         }
         if (form.watch('endDate') && !form.watch('startDate')) {
@@ -269,7 +271,7 @@ const TournamentContainer = () => {
                 return item.end_time.slice(0, 10) === form.watch('endDate');
             });
             games = [...filter];
-            setRemove(games);
+            setGameDatas(games);
             setOpenFilter(false);
         }
 
@@ -279,17 +281,17 @@ const TournamentContainer = () => {
                 return eventDate >= new Date(form.watch('startDate')).getTime() && eventDate <= new Date(form.watch('endDate')).getTime();
             });
             games = [...filter];
-            setRemove(games);
+            setGameDatas(games);
             setOpenFilter(false);
         }
         if (form.watch('startTime') && !form.watch('endTime')) {
             const filter = games.filter((item: any) => {
                 const options: any = { hour: '2-digit', minute: '2-digit' };
-                const startTime = new Date(item.start_time).toLocaleString('', options);
+                const startTime = new Date(item.start_time).toLocaleString(undefined, options);
                 return startTime.slice(0, 5) === form.watch('startTime');
             });
             games = [...filter];
-            setRemove(games);
+            setGameDatas(games);
             setOpenFilter(false);
         }
         if (form.watch('endTime') && !form.watch('startTime')) {
@@ -299,7 +301,7 @@ const TournamentContainer = () => {
                 return endTime.slice(0, 5) === form.watch('endTime');
             });
             games = [...filter];
-            setRemove(games);
+            setGameDatas(games);
             setOpenFilter(false);
         }
         // if (form.watch('startTime') && form.watch('endTime')) {
@@ -326,11 +328,13 @@ const TournamentContainer = () => {
         //     setOpenFilter(false);
         // }
         if (selectedValue === 'all') {
-            handleFetchData();
+            setGameDatas(remove);
             setGame('0');
             form.reset();
+            setSelectedValue('');
             setOpenFilter(false);
         }
+        // setFilter(true);
     };
 
     const handleResetButton = () => {
@@ -459,7 +463,7 @@ const TournamentContainer = () => {
                         </Box>
                         {openFilter && (
                             <FilterDrop
-                                disabled={game !== '0'}
+                                // disabled={game !== '0'}
                                 handleReset={handleResetButton}
                                 selectedValue={selectedValue}
                                 game={game}
@@ -520,7 +524,7 @@ const TournamentContainer = () => {
                         {remove.length === 0 && !isLoading && (
                             <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
                                 <Typography variant='h6' component='h6'>
-                                    Data not found, Please reset the filter!
+                                    DATA NOT FOUND, PLEASE RESET THE FILTER
                                 </Typography>
                             </Box>
                         )}
