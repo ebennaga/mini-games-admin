@@ -304,29 +304,22 @@ const TournamentContainer = () => {
             setGameDatas(games);
             setOpenFilter(false);
         }
-        // if (form.watch('startTime') && form.watch('endTime')) {
-        //     const filter = games.filter((item: any) => {
-        //         const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
-        //         const start = new Date(item.start_time).toLocaleTimeString(undefined, options);
-        //         const end = new Date(item.end_time).toLocaleTimeString(undefined, options);
-        //         const [startHour, startMinute]: any = form.watch('startTime').split(':');
-        //         const [endHour, endMinute]: any = form.watch('endTime').split(':');
-        //         const [eventHourStart, eventMinuteStart]: any = start.split(':');
-        //         const [eventHourEnd, eventMinuteEnd]: any = end.split(':');
-
-        //         // const startTimestamp = startHour * 60 + startMinute;
-        //         // const endTimestamp = endHour * 60 + endMinute;
-        //         // const eventTimestampStart = eventHourStart * 60 + eventMinuteStart;
-        //         // const eventTimestampEnd = eventHourEnd * 60 + eventMinuteEnd;
-        //         // return eventTimestampEnd >= startTimestamp && eventTimestampStart <= endTimestamp;
-        //         return (
-        //             startHour <= eventHourStart && startMinute <= eventMinuteStart && endHour >= eventHourEnd && endMinute >= eventMinuteEnd
-        //         );
-        //     });
-        //     games = [...filter];
-        //     setRemove(games);
-        //     setOpenFilter(false);
-        // }
+        if (form.watch('startTime') && form.watch('endTime')) {
+            const filter = games.filter((item: any) => {
+                const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
+                const start = new Date(item.start_time).toLocaleTimeString(undefined, options);
+                const end = new Date(item.end_time).toLocaleTimeString(undefined, options);
+                return (
+                    start >= form.watch('startTime') &&
+                    end <= form.watch('endTime') &&
+                    end > form.watch('startTime') &&
+                    start < form.watch('endTime')
+                );
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
         if (selectedValue === 'all') {
             setGameDatas(remove);
             setGame('0');
