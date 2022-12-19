@@ -309,11 +309,19 @@ const TournamentContainer = () => {
                 const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
                 const start = new Date(item.start_time).toLocaleTimeString(undefined, options);
                 const end = new Date(item.end_time).toLocaleTimeString(undefined, options);
+                if (form.watch('endTime') > form.watch('startTime')) {
+                    return (
+                        start >= form.watch('startTime') &&
+                        end <= form.watch('endTime') &&
+                        end > form.watch('startTime') &&
+                        start < form.watch('endTime')
+                    );
+                }
                 return (
                     start >= form.watch('startTime') &&
                     end <= form.watch('endTime') &&
-                    end > form.watch('startTime') &&
-                    start < form.watch('endTime')
+                    end < form.watch('startTime') &&
+                    start > form.watch('endTime')
                 );
             });
             games = [...filter];
