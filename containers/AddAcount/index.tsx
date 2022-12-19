@@ -44,6 +44,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     const [isFilled, setIsFilled] = React.useState(false);
     const [isFilled1, setIsFilled1] = React.useState(false);
     const [isRequired, setIsRequired] = React.useState(false);
+    const [isValue, setIsValue] = React.useState(false);
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
@@ -80,10 +81,12 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     };
 
     const handleAddSetActive = (event: any) => {
+        setIsValue(true);
         form.setValue('activeRole', event.target.checked);
     };
 
     const handleAddSetNotActive = (event: any) => {
+        setIsValue(true);
         form.setValue('activeRole', !form.watch('activeRole'));
     };
 
@@ -135,6 +138,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             setIsFilled1(false);
         }
     }, [accessArr, isFilled]);
+
+    // console.log(form.watch('isActive'));
 
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
@@ -387,7 +392,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                             <Box>
                                 <FormControlLabel
                                     sx={{ color: 'black', fontWeight: 800 }}
-                                    value={!form.watch('activeRole')}
+                                    value={form.watch('activeRole')}
                                     control={<Checkbox color='secondary' />}
                                     label='No'
                                     labelPlacement='end'

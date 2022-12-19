@@ -68,6 +68,7 @@ const TournamentContainer = () => {
     const [isSearch, setIsSearch] = useState(false);
     const [isGame, setIsGame] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFilter, setIsFilter] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
     const notify = useNotify();
@@ -118,8 +119,10 @@ const TournamentContainer = () => {
         if (isSearch) {
             return search.slice(startIndex, endIndex);
         }
-        if ((game !== '0' && gamesData.length > 0) || (selectedValue && gamesData.length > 0) || gamesData.length > 0) {
-            return gamesData.slice(startIndex, endIndex);
+        if (isFilter) {
+            if ((game !== '0' && gamesData.length > 0) || (selectedValue && gamesData.length > 0) || gamesData.length >= 0) {
+                return gamesData.slice(startIndex, endIndex);
+            }
         }
         return remove.slice(startIndex, endIndex);
     };
@@ -304,29 +307,31 @@ const TournamentContainer = () => {
             setGameDatas(games);
             setOpenFilter(false);
         }
-        // if (form.watch('startTime') && form.watch('endTime')) {
-        //     const filter = games.filter((item: any) => {
-        //         const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
-        //         const start = new Date(item.start_time).toLocaleTimeString(undefined, options);
-        //         const end = new Date(item.end_time).toLocaleTimeString(undefined, options);
-        //         const [startHour, startMinute]: any = form.watch('startTime').split(':');
-        //         const [endHour, endMinute]: any = form.watch('endTime').split(':');
-        //         const [eventHourStart, eventMinuteStart]: any = start.split(':');
-        //         const [eventHourEnd, eventMinuteEnd]: any = end.split(':');
-
-        //         // const startTimestamp = startHour * 60 + startMinute;
-        //         // const endTimestamp = endHour * 60 + endMinute;
-        //         // const eventTimestampStart = eventHourStart * 60 + eventMinuteStart;
-        //         // const eventTimestampEnd = eventHourEnd * 60 + eventMinuteEnd;
-        //         // return eventTimestampEnd >= startTimestamp && eventTimestampStart <= endTimestamp;
-        //         return (
-        //             startHour <= eventHourStart && startMinute <= eventMinuteStart && endHour >= eventHourEnd && endMinute >= eventMinuteEnd
-        //         );
-        //     });
-        //     games = [...filter];
-        //     setRemove(games);
-        //     setOpenFilter(false);
-        // }
+        if (form.watch('startTime') && form.watch('endTime')) {
+            const filter = games.filter((item: any) => {
+                const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
+                const start = new Date(item.start_time).toLocaleTimeString(undefined, options);
+                const end = new Date(item.end_time).toLocaleTimeString(undefined, options);
+                if (form.watch('endTime') > form.watch('startTime')) {
+                    return (
+                        start >= form.watch('startTime') &&
+                        end <= form.watch('endTime') &&
+                        end > form.watch('startTime') &&
+                        start < form.watch('endTime')
+                    );
+                }
+                return (
+                    start >= form.watch('startTime') &&
+                    end <= form.watch('endTime') &&
+                    end < form.watch('startTime') &&
+                    start > form.watch('endTime')
+                );
+            });
+            games = [...filter];
+            // console.log(filter);
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
         if (selectedValue === 'all') {
             setGameDatas(remove);
             setGame('0');
@@ -334,15 +339,17 @@ const TournamentContainer = () => {
             setSelectedValue('');
             setOpenFilter(false);
         }
-        // setFilter(true);
+        setIsFilter(true);
     };
 
     const handleResetButton = () => {
+        setGameDatas(remove);
         setIsGame(false);
         setSelectedValue('');
         setGame('0');
-        form.reset();
-        return handleFetchData();
+        setIsFilter(false);
+        return form.reset();
+        // handleFetchData();
     };
 
     // console.log(remove);
@@ -390,7 +397,10 @@ const TournamentContainer = () => {
         if (isSearch) {
             const searched = remove.filter((item: any) => {
                 if (input) {
-                    if (item.name.toLowerCase().includes(input) || item.game.name.toLowerCase().includes(input)) {
+                    if (
+                        item.name.toLowerCase().includes(input.toLowerCase()) ||
+                        item.game.name.toLowerCase().includes(input.toLowerCase())
+                    ) {
                         return item;
                     }
                 }
@@ -400,12 +410,8 @@ const TournamentContainer = () => {
         if (form.watch('search') === '') {
             setIsSearch(false);
         }
-    }, [remove, input]);
-
-    // console.log(form.watch('startTime'));
-    // console.log(isGame);
-    // console.log(remove);
-
+    }, [remove, input, search]);
+    // console.log(getPaginatedData());
     return (
         <Box sx={{ width: '100%' }}>
             {createTournament ? (
@@ -521,7 +527,7 @@ const TournamentContainer = () => {
                                 handleChangeChekcbox={handleChangeChekcbox}
                             />
                         )}
-                        {remove.length === 0 && !isLoading && (
+                        {getPaginatedData().length === 0 && !isLoading && (
                             <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
                                 <Typography variant='h6' component='h6'>
                                     DATA NOT FOUND, PLEASE RESET THE FILTER
