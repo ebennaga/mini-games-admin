@@ -15,7 +15,7 @@ interface InputExchangeRatesProps {
     handleSubmit: any;
     loadingSubmit: boolean;
     loading?: boolean;
-    bonusName: string;
+    bonusName?: string;
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({

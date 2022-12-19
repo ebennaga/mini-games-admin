@@ -71,7 +71,7 @@ const ExchangeRatesAdd = () => {
                     handleSubmit={handleSubmit}
                     nameName='name'
                     descriptionName='description'
-                    bonusName='1'
+                    bonusName=''
                 />
             </Box>
         </Container>
