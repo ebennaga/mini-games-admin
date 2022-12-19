@@ -1,15 +1,16 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, FormControlLabel, Typography, FormGroup, Checkbox, Divider } from '@mui/material';
+import { Box, Typography, Divider, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import CustomButton from 'components/Button';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import InputUpload from 'components/Input/InputUpload';
 import { useForm } from 'react-hook-form';
-import CustomButton from 'components/Button';
-import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import { useRouter } from 'next/router';
 
-const AddBanner = () => {
+const EditBanner = () => {
     const rules = { required: true };
     const form = useForm({
         mode: 'onSubmit',
@@ -17,7 +18,8 @@ const AddBanner = () => {
         defaultValues: {
             title: '',
             img: '',
-            desc: ''
+            link: '',
+            isActive: true
         }
     });
     const router = useRouter();
@@ -25,44 +27,68 @@ const AddBanner = () => {
     const notify = useNotify();
     const [checked, setChecked] = React.useState([true, false]);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [loadingSubmit, setLoadingSubmit] = React.useState(false);
 
-    const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, false]);
-    };
-
-    const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([false, event.target.checked]);
-    };
-
-    const handleSubmit = async (data: any) => {
-        setIsLoading(true);
+    const fetchDetailBanners = async () => {
         try {
-            const response = await fetchAPI({
-                method: 'POST',
-                endpoint: '/banners',
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: `banners/${router.query.id}`
+            });
+            console.log('result', result);
+            if (result.status === 200) {
+                form.setValue('title', result.data.data.title);
+                // form.setValue('img', result.data.data.image_url);
+                form.setValue('link', result.data.data.link);
+                form.setValue('isActive', result.data.data.is_active);
+            }
+            setIsLoading(false);
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
+    const handleChange1 = () => {
+        const value = form.watch('isActive');
+        form.setValue('isActive', !value);
+    };
+
+    const handleChange2 = () => {
+        const value = form.watch('isActive');
+        form.setValue('isActive', !value);
+    };
+
+    React.useEffect(() => {
+        fetchDetailBanners();
+    }, []);
+
+    const handleSubmit = async (d: any) => {
+        setLoadingSubmit(true);
+        try {
+            const result = await fetchAPI({
+                endpoint: `banners/${router.query.id}`,
+                method: 'PUT',
                 data: {
-                    title: data.title,
-                    link: data.link,
-                    image_url: data.image_url,
-                    is_active: data.is_active
+                    title: d.title,
+                    is_active: d.is_active,
+                    img: d.image_url
                 }
             });
 
-            if (response?.status === 200) {
-                setIsLoading(false);
-                notify('Banner added successfully', 'success');
-                form.reset();
+            if (result.status === 200) {
+                notify('update banner successfully', 'success');
+                setLoadingSubmit(false);
             }
-            setIsLoading(false);
-        } catch (error: any) {
-            notify(error.message, 'error');
-            setIsLoading(false);
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setLoadingSubmit(false);
         }
     };
 
     return (
         <Box component='section'>
-            <TitleCard title='Add Banner' subtitle='Addtional description if required' isSearchExist={false} />
+            <TitleCard title='Edit Banner' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <Box sx={{ my: 3, mx: 2 }}>
                     <InputWithLabel
@@ -79,17 +105,18 @@ const AddBanner = () => {
                     />
                     <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} />
                     <InputWithLabel
-                        label='Description'
-                        name='desc'
+                        label='Show To'
+                        name='link'
                         type='text'
                         form={form}
-                        labelField='Description'
+                        labelField='Link'
                         rules={rules}
-                        placeHolder='Fill description'
+                        placeHolder=''
                         isSelectType={false}
                         isMultiline
+                        isRequired
                     />
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {/* <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
@@ -114,7 +141,7 @@ const AddBanner = () => {
                                 <FormControlLabel control={<Checkbox />} label='Lucky Raffle' />
                             </FormGroup>
                         </Box>
-                    </Box>
+                    </Box> */}
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
@@ -157,4 +184,4 @@ const AddBanner = () => {
     );
 };
 
-export default AddBanner;
+export default EditBanner;

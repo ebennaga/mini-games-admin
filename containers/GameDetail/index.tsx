@@ -1,11 +1,17 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable camelcase */
 import React from 'react';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, CircularProgress, Grid, Typography } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
 import InputImage from 'components/Input/InputImage';
 import InputSelect from 'components/Input/InputSelect';
 import CustomButton from 'components/Button';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+import { useRouter } from 'next/router';
+import convertBase64 from 'helpers/convertBase64';
 
 const AddGame = () => {
     const dataGenre = [
@@ -13,6 +19,15 @@ const AddGame = () => {
         { id: 2, title: 'RPG' },
         { id: 3, title: 'Racing' }
     ];
+
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const [isLoadingEdit, setIsLoadingEdit] = React.useState<boolean>(false);
+    const [detailGame, setDetailGame] = React.useState<any>({});
+
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
+
+    const router = useRouter();
 
     const form = useForm({
         mode: 'all',
@@ -25,9 +40,72 @@ const AddGame = () => {
         }
     });
 
-    const handleSubmit = (data: any) => {
-        console.log('response', data);
+    const fetchDetailGame = async () => {
+        setIsLoading(true);
+        try {
+            const { id } = router.query;
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: `games/${id}`
+            });
+
+            if (response.status === 200) {
+                const { banner_url, name, description, game_url } = response.data.data;
+                form.setValue('title', name);
+                form.setValue('url', game_url);
+                form.setValue('description', description);
+                form.setValue('image', banner_url);
+                setDetailGame(response.data.data);
+            } else {
+                notify(response.message, 'error');
+            }
+        } catch (err: any) {
+            notify(err.mesage, 'error');
+        }
+        setIsLoading(false);
     };
+
+    const handleSubmit = async (data: any) => {
+        setIsLoadingEdit(true);
+        try {
+            const { description, genre, image, title, url } = data;
+            const { description: descriptionGame, banner_url, name, game_url } = detailGame;
+
+            const toBase64 = image && image !== banner_url ? await convertBase64(image) : null;
+
+            let resData: any = {};
+
+            resData = title && title !== name ? { ...resData, name: title } : { ...resData };
+            resData = description && description !== descriptionGame ? { ...resData, description } : { ...resData };
+            resData = url && url !== game_url ? { ...resData, game_url: url } : { ...resData };
+            resData = image && image !== banner_url ? { ...resData, banner_url: toBase64 } : { ...resData };
+            // resData = { ...resData, version: 1 };
+            // resData = { ...resData, genre };
+
+            if (Object.keys(resData).length > 0) {
+                const response = await fetchAPI({
+                    method: 'PUT',
+                    endpoint: `games/${router.query.id}`,
+                    data: resData
+                });
+                if (response.status === 200) {
+                    notify('Successfully Edit Game!');
+                    fetchDetailGame();
+                } else {
+                    notify(response.message, 'error');
+                }
+            } else {
+                notify('No data has changed!', 'err');
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsLoadingEdit(false);
+    };
+
+    React.useEffect(() => {
+        fetchDetailGame();
+    }, []);
 
     return (
         <Box>
@@ -58,9 +136,10 @@ const AddGame = () => {
                             <Input
                                 name='title'
                                 label='Title'
-                                rules={{ minLength: 5, maxLength: 100 }}
+                                rules={{ required: true, minLength: 5, maxLength: 100 }}
                                 placeholder='Max 100 Character'
                                 form={form}
+                                isLoading={isLoading}
                             />
                         </Grid>
                     </Grid>
@@ -85,7 +164,14 @@ const AddGame = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <Input name='url' label='Url' rules={{ required: true }} placeholder='https://' form={form} />
+                            <Input
+                                name='url'
+                                label='Url'
+                                rules={{ required: true }}
+                                placeholder='https://'
+                                form={form}
+                                isLoading={isLoading}
+                            />
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
@@ -104,6 +190,7 @@ const AddGame = () => {
                                 rules={{ required: true }}
                                 placeholder='Game Description'
                                 form={form}
+                                isLoading={isLoading}
                                 isTextArea
                             />
                         </Grid>
@@ -135,6 +222,8 @@ const AddGame = () => {
                                 label='Click to upload'
                                 secondaryLabel='or drag and drop'
                                 placeholder='SVG, PNG, JPG or GIF (max. 3MB)'
+                                isLoading={isLoading}
+                                rules={{ required: true }}
                             />
                         </Grid>
                     </Grid>
@@ -159,7 +248,15 @@ const AddGame = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <InputSelect form={form} name='genre' dataSelect={dataGenre} title='Genre' placeholder='Select Genre' />
+                            <InputSelect
+                                form={form}
+                                name='genre'
+                                dataSelect={dataGenre}
+                                title='Genre'
+                                placeholder='Select Genre'
+                                isLoading={isLoading}
+                                rules={{ required: true }}
+                            />
                         </Grid>
                     </Grid>
                     <Grid
@@ -174,20 +271,26 @@ const AddGame = () => {
                         pt='30px'
                         borderTop='1px solid rgba(0,0,0,0.5)'
                     >
-                        <Grid item container xs={6}>
-                            <Grid item xs={6} display='flex' alignItems='center' justifyContent='space-between'>
-                                <CustomButton type='submit' title='Edit' />
+                        {isLoadingEdit ? (
+                            <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <CircularProgress />
                             </Grid>
-                            <Grid item xs={6}>
-                                <CustomButton
-                                    title='CANCEL'
-                                    onClick={undefined}
-                                    backgroundColor='#fff'
-                                    border='1px solid #A54CE5'
-                                    color='#A54CE5'
-                                />
+                        ) : (
+                            <Grid item container xs={6}>
+                                <Grid item xs={6} display='flex' alignItems='center' justifyContent='space-between'>
+                                    <CustomButton type='submit' title='Edit' />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <CustomButton
+                                        title='CANCEL'
+                                        onClick={undefined}
+                                        backgroundColor='#fff'
+                                        border='1px solid #A54CE5'
+                                        color='#A54CE5'
+                                    />
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        )}
                     </Grid>
                 </Grid>
             </form>

@@ -28,7 +28,7 @@ const EditCompanyContainer = () => {
                 method: 'GET',
                 endpoint: `companies/${router.query.id}`
             });
-            console.log(result.data.data);
+
             if (result.status === 200) {
                 form.setValue('name', result.data.data.name);
                 form.setValue('code', result.data.data.code);

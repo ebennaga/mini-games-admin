@@ -1,6 +1,17 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, FormControl, FormControlLabel, Checkbox } from '@mui/material';
+import {
+    TableContainer,
+    Table,
+    TableHead,
+    TableBody,
+    TableRow,
+    TableCell,
+    FormControl,
+    FormControlLabel,
+    Checkbox,
+    Skeleton
+} from '@mui/material';
 import BadgeSelected from 'components/BadgeSelected';
 
 interface TableGamesProps {
@@ -10,9 +21,10 @@ interface TableGamesProps {
     handleOpenDeleteDialog: any;
     nameRow: string;
     namePage: string;
+    isLoading: boolean;
 }
 
-const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, handleOpenDeleteDialog, onEdit }) => {
+const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, handleOpenDeleteDialog, onEdit, isLoading }) => {
     const [dataTable, setDataTable] = React.useState<Array<any>>([...form.watch(name)]);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [isAllChecked, setIsAllChecked] = React.useState<boolean>(false);
@@ -77,6 +89,9 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
         const { id } = getDataChecked[0];
         onEdit(id);
     };
+    React.useEffect(() => {
+        setDataTable(form.watch(name));
+    }, [form.watch(name)]);
 
     return (
         <>
@@ -127,56 +142,63 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {dataTable.map((item: any, index: number) => {
-                            return (
-                                index >= showTable.startIndex &&
-                                index <= showTable.endIndex && (
-                                    <TableRow key={index}>
-                                        <TableCell
-                                            align='center'
-                                            sx={{
-                                                fontWeight: 400,
-                                                fontSize: '16px',
-                                                borderRight: '1px solid rgba(0,0,0,0.2)',
-                                                borderLeft: '1px solid rgba(0,0,0,0.2)'
-                                            }}
-                                        >
-                                            {index + 1}.
-                                        </TableCell>
-                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                            {item.title}
-                                        </TableCell>
-                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                            {item.game_url}
-                                        </TableCell>
-                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                            {item.description}
-                                        </TableCell>
-                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                            {item.game_banner}
-                                        </TableCell>
-                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                            {item.genre}
-                                        </TableCell>
-                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                            <FormControl
+                        {!isLoading &&
+                            dataTable.map((item: any, index: number) => {
+                                return (
+                                    index >= showTable.startIndex &&
+                                    index <= showTable.endIndex && (
+                                        <TableRow key={index}>
+                                            <TableCell
+                                                align='center'
                                                 sx={{
-                                                    '& .css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root.Mui-checked': { color: '#A54CE5' }
+                                                    fontWeight: 400,
+                                                    fontSize: '16px',
+                                                    borderRight: '1px solid rgba(0,0,0,0.2)',
+                                                    borderLeft: '1px solid rgba(0,0,0,0.2)'
                                                 }}
                                             >
-                                                <Checkbox
-                                                    checked={!!item.isAction}
-                                                    // defaultChecked={item.isAction}
-                                                    onChange={(e) => handleCheck(e, item)}
-                                                />
-                                            </FormControl>
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                            );
-                        })}
+                                                {index + 1}.
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                                {item.name}
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                                {item.game_url}
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                                {item.description}
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                                {item.banner_url}
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                                {item.genre}
+                                            </TableCell>
+                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                                <FormControl
+                                                    sx={{
+                                                        '& .css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root.Mui-checked': {
+                                                            color: '#A54CE5'
+                                                        }
+                                                    }}
+                                                >
+                                                    <Checkbox
+                                                        checked={!!item.isAction}
+                                                        // defaultChecked={item.isAction}
+                                                        onChange={(e) => handleCheck(e, item)}
+                                                    />
+                                                </FormControl>
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                );
+                            })}
                     </TableBody>
                 </Table>
+                {isLoading &&
+                    [...Array(5)].map((_item: any, index: number) => (
+                        <Skeleton key={index} sx={{ height: '100px', mt: '-23px', width: '100%' }} />
+                    ))}
             </TableContainer>
         </>
     );

@@ -1,8 +1,12 @@
+/* eslint-disable no-unsafe-optional-chaining */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
-import { Box, ButtonBase, Typography } from '@mui/material';
+import { Box, ButtonBase, Grid, IconButton, Skeleton, Typography } from '@mui/material';
 import { Controller } from 'react-hook-form';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import ClearIcon from '@mui/icons-material/Clear';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface InputImageProps {
     name: string;
@@ -11,12 +15,31 @@ interface InputImageProps {
     secondaryLabel: string;
     placeholder: string;
     isLocation?: boolean;
+    rules?: any;
+    isLoading?: boolean;
 }
 
-const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLabel, placeholder, isLocation = false }) => {
+const InputImage: React.FC<InputImageProps> = ({
+    name,
+    form,
+    label,
+    secondaryLabel,
+    placeholder,
+    isLocation = false,
+    rules,
+    isLoading
+}) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
 
-    const valueInput = form.watch(name);
+    const {
+        formState: { errors }
+    } = form;
+
+    const error = errors[name] || null;
+    const errType = !form.watch(name) && error?.type;
+    const errText = !form.watch(name) && errType === 'required' ? 'must be filled' : '';
+
+    const valueInput: any = form.watch(name);
     const handleChange = (e: any) => {
         const file: any = e.target.files[0].size;
         const sizeInKB = Math.ceil(file / 1024);
@@ -26,70 +49,136 @@ const InputImage: React.FC<InputImageProps> = ({ name, form, label, secondaryLab
         } else {
             form.setValue(name, e.target.files[0]);
             setErrMessage('');
+            const reader = new FileReader();
+            reader.onload = () => {
+                const output: any = document.getElementById('preview');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
         }
     };
 
+    const handleClear = () => form.setValue(name, '');
+
     return (
         <Box>
-            <Controller
-                name={name}
-                control={form.control}
-                render={() => {
-                    return (
-                        <Box>
-                            <input
-                                accept='image/*, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
-                                style={{ display: 'none' }}
-                                id='raised-button-file'
-                                multiple
-                                type='file'
-                                onChange={(e) => handleChange(e)}
+            {isLoading ? (
+                <Skeleton sx={{ height: '370px', mt: '-90px', mb: '-70px' }} />
+            ) : valueInput ? (
+                <Grid container>
+                    <Grid container item xs={12}>
+                        <Grid item xs={8} display='flex' alignItems='top' gap='10px'>
+                            <Box
+                                width='41px'
+                                height='41px'
+                                borderRadius='900px'
+                                sx={{
+                                    background: 'rgba(165, 76, 229, 0.1)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                <UploadFileIcon sx={{ color: '#A54CE5' }} />
+                            </Box>
+                            <Box>
+                                <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
+                                    {valueInput.name || valueInput}
+                                </Typography>
+                                <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.5)' }}>
+                                    {valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB`} complete
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={4} sx={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
+                            <IconButton onClick={handleClear} sx={{ mr: '30px' }}>
+                                <ClearIcon />
+                            </IconButton>
+                            <CheckCircleIcon
+                                sx={{ color: '#A54CE5', fontSize: '30px', position: 'absolute', top: '-10px', right: '-10px' }}
                             />
-                            <label htmlFor='raised-button-file'>
-                                <ButtonBase
-                                    component='span'
-                                    sx={{ border: '1px dashed rgba(0, 0, 0, 0.12)', width: '100%', height: '200px', opacity: 0 }}
-                                >
-                                    Upload
-                                </ButtonBase>
-                            </label>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography component='p' sx={{ color: 'rgba(0,0,0,0.7)', fontSize: '14px', fontWeight: 'bold', my: 2 }}>
+                            Preview
+                        </Typography>
+                    </Grid>
+                    <img src={valueInput} id='preview' alt='Game Cover' width='200px' height='auto' />
+                </Grid>
+            ) : (
+                <>
+                    <Controller
+                        name={name}
+                        control={form.control}
+                        rules={rules}
+                        render={() => {
+                            return (
+                                <Box sx={{ bgcolor: errType || errMessage ? 'rgba(211, 47, 47, 0.04)' : '#fff' }}>
+                                    <input
+                                        accept='image/*, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
+                                        style={{ display: 'none' }}
+                                        id='raised-button-file'
+                                        multiple
+                                        type='file'
+                                        onChange={(e) => handleChange(e)}
+                                    />
+                                    <label htmlFor='raised-button-file'>
+                                        <ButtonBase
+                                            component='span'
+                                            sx={{
+                                                border: errType || errMessage ? '1px solid #D32F2F' : '1px dashed rgba(0, 0, 0, 0.12)',
+                                                width: '100%',
+                                                height: '200px',
+                                                opacity: 0
+                                            }}
+                                        >
+                                            Upload
+                                        </ButtonBase>
+                                    </label>
+                                </Box>
+                            );
+                        }}
+                    />
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: isLocation ? 'center' : '',
+                            alignItems: isLocation ? 'center' : '',
+                            flexDirection: 'column',
+                            border: errType || errMessage ? '1px solid #D32F2F' : '1px dashed rgba(0, 0, 0, 0.12)',
+                            width: '100%',
+                            height: '200px',
+                            mt: '-200px',
+                            padding: '24px 16px'
+                        }}
+                    >
+                        <Box
+                            width='41px'
+                            height='41px'
+                            borderRadius='900px'
+                            sx={{
+                                background: 'rgba(165, 76, 229, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <UploadFileIcon sx={{ color: '#A54CE5' }} />
                         </Box>
-                    );
-                }}
-            />
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: isLocation ? 'center' : '',
-                    alignItems: isLocation ? 'center' : '',
-                    flexDirection: 'column',
-                    border: '1px dashed rgba(0, 0, 0, 0.12)',
-                    width: '100%',
-                    height: '200px',
-                    mt: '-200px',
-                    padding: '24px 16px'
-                }}
-            >
-                <Box
-                    width='41px'
-                    height='41px'
-                    borderRadius='900px'
-                    sx={{
-                        background: 'rgba(165, 76, 229, 0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <UploadFileIcon sx={{ color: '#A54CE5' }} />
-                </Box>
-                <Typography component='h3' fontSize='16px' sx={{ my: '11px', color: '#A54CE5', '& span': { color: 'rgba(0,0,0,0.8)' } }}>
-                    {label} <span>{secondaryLabel}</span>
-                </Typography>
-                <Typography component='p' fontSize='16px' sx={{ color: errMessage ? 'red' : 'rgba(0,0,0,0.8)' }}>
-                    {valueInput && !errMessage ? valueInput.name : errMessage || placeholder}
-                </Typography>
-            </Box>
+                        <Typography
+                            component='h3'
+                            fontSize='16px'
+                            sx={{ my: '11px', color: '#A54CE5', '& span': { color: 'rgba(0,0,0,0.8)' } }}
+                        >
+                            {label} <span>{secondaryLabel}</span>
+                        </Typography>
+                        <Typography component='p' fontSize='16px' sx={{ color: errMessage || errType ? 'red' : 'rgba(0,0,0,0.8)' }}>
+                            {valueInput && !errMessage ? valueInput.name || valueInput : errMessage || errText || placeholder}
+                        </Typography>
+                    </Box>
+                </>
+            )}
         </Box>
     );
 };
