@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase } from '@mui/material';
 import InputDate from 'components/Input/InputDate';
@@ -9,6 +10,7 @@ import CustomButton from 'components/Button';
 import useNotify from 'hooks/useNotify';
 
 import useAPICaller from 'hooks/useAPICaller';
+import InputSelect from 'components/Input/InputSelect';
 import dataTable from './dataSelect';
 import TableAddTournament from './Table';
 
@@ -26,6 +28,15 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     const notify = useNotify();
 
     const { fetchAPI } = useAPICaller();
+    const dataType = [
+        { id: 1, title: 'Accumulation' },
+        { id: 2, title: 'High Score' }
+    ];
+    const dataGames = [
+        { id: 1, title: 'Hop Up' },
+        { id: 2, title: 'Tower Stack' },
+        { id: 3, title: 'Rose Dart' }
+    ];
     const handleFiter = (event: SelectChangeEvent) => {
         setGame(event.target.value as string);
     };
@@ -56,6 +67,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                     }
                 }
             });
+            console.log('response', response);
             if (response?.status === 200) {
                 // console.log(response);
             }
@@ -86,12 +98,23 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                     <Grid container mt='37px' color='rgba(0, 0, 0, 0.6)'>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    Tournament Title
-                                </Typography>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    :
-                                </Typography>
+                                <Box sx={{ mr: '70%' }}>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        Tournament Title
+                                    </Typography>
+
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
+                                    >
+                                        *Field Required
+                                    </Typography>
+                                </Box>
                             </Grid>
                             <Grid item xs={3}>
                                 <Input
@@ -106,90 +129,171 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    Tournament Image
-                                </Typography>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    :
-                                </Typography>
+                                <Box sx={{ mr: '70%' }}>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        Tournament Image
+                                    </Typography>
+
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
+                                    >
+                                        *Field Required
+                                    </Typography>
+                                </Box>
                             </Grid>
                             <Grid item xs={3}>
                                 <InputImage
                                     name='image'
                                     form={form}
                                     label='Click to upload'
+                                    rules={{ required: true }}
                                     secondaryLabel='or drag and drop'
                                     placeholder='SVG, PNG, JPG or GIF (max. 3MB)'
                                 />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    Duration
-                                </Typography>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' direction='column'>
+                                <Box sx={{ mr: '70%' }}>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        Duration
+                                    </Typography>
+
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
+                                    >
+                                        *Field Required
+                                    </Typography>
+                                </Box>
+
+                                {/* <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                     :
-                                </Typography>
+                                </Typography> */}
+                            </Grid>
+
+                            <Grid item xs={3}>
+                                <InputDate
+                                    isCreate
+                                    rules={{ required: true }}
+                                    form={form}
+                                    name='startDate'
+                                    label='Start Date'
+                                    type='date'
+                                />
                             </Grid>
                             <Grid item xs={3}>
-                                <InputDate isCreate form={form} name='startDate' label='Start Date' type='date' />
-                            </Grid>
-                            <Grid item xs={3}>
-                                <InputDate isCreate form={form} name='endDate' label='End Date' type='date' />
+                                <InputDate isCreate rules={{ required: true }} form={form} name='endDate' label='End Date' type='date' />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={3}>
-                                <InputDate isCreate form={form} name='startTime' label='Start Time' type='time' />
+                                <InputDate
+                                    isCreate
+                                    rules={{ required: true }}
+                                    form={form}
+                                    name='startTime'
+                                    label='Start Time'
+                                    type='time'
+                                />
                             </Grid>
                             <Grid item xs={3}>
-                                <InputDate isCreate form={form} name='endTime' label='End Time' type='time' />
+                                <InputDate isCreate rules={{ required: true }} form={form} name='endTime' label='End Time' type='time' />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    Games
-                                </Typography>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    :
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                <Box sx={{ mr: '70%' }}>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Games
-                                    </InputLabel>
-                                    <Select
-                                        MenuProps={MenuProps}
-                                        sx={{ color: game === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                        placeholder='Games'
-                                        labelId='demo-simple-select-label'
-                                        id='demo-simple-select'
-                                        value={game}
-                                        label='Games'
-                                        onChange={handleFiter}
+                                    </Typography>
+
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
                                     >
-                                        <MenuItem value='0' disabled>
-                                            Select Game
-                                        </MenuItem>
-                                        <MenuItem value='1'>Hop Up</MenuItem>
-                                        <MenuItem value='2'>Tower Stack</MenuItem>
-                                        <MenuItem value='3'>Rose Dart</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                        *Field Required
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <InputSelect
+                                    form={form}
+                                    name='games'
+                                    dataSelect={dataGames}
+                                    title='Games'
+                                    placeholder='Select Type'
+                                    rules={{ required: true }}
+                                />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    Tournament Fee
-                                </Typography>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    :
-                                </Typography>
+                                <Box sx={{ mr: '70%' }}>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        Tournament Type
+                                    </Typography>
+
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
+                                    >
+                                        *Field Required
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <InputSelect
+                                    form={form}
+                                    name='tournamentType'
+                                    dataSelect={dataType}
+                                    title='Genre'
+                                    placeholder='Select Type'
+                                    rules={{ required: true }}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                                <Box sx={{ mr: '70%' }}>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        Tournament Fee
+                                    </Typography>
+
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
+                                    >
+                                        *Field Required
+                                    </Typography>
+                                </Box>
                             </Grid>
                             <Grid item xs={3}>
                                 <Input
@@ -204,14 +308,69 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 />
                             </Grid>
                         </Grid>
+                        {/* <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                                <Box sx={{ mr: '70%' }}>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        Prize Type
+                                    </Typography>
+
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
+                                    >
+                                        *Field Required
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <FormControl fullWidth>
+                                    <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                        Type
+                                    </InputLabel>
+                                    <Select
+                                        MenuProps={MenuProps}
+                                        sx={{ color: game === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                        placeholder='Games'
+                                        labelId='demo-simple-select-label'
+                                        id='demo-simple-select'
+                                        value={game}
+                                        label='Games'
+                                        onChange={handleFiter}
+                                    >
+                                        <MenuItem value='0' disabled>
+                                            Select Type
+                                        </MenuItem>
+                                        <MenuItem value='1'>Accumulation</MenuItem>
+                                        <MenuItem value='2'>High Score</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </Grid> */}
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    Prizing Table
-                                </Typography>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    :
-                                </Typography>
+                                <Box sx={{ mr: '70%' }}>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        Prize Table
+                                    </Typography>
+
+                                    <Typography
+                                        sx={{
+                                            fontWeight: '400',
+                                            color: 'rgba(0, 0, 0, 0.6)',
+                                            fontSize: '12px',
+                                            position: 'relative',
+                                            bottom: '-10px'
+                                        }}
+                                    >
+                                        *Field Required
+                                    </Typography>
+                                </Box>
                             </Grid>
                             <Grid item xs={3}>
                                 <FormControl fullWidth>
