@@ -68,6 +68,7 @@ const TournamentContainer = () => {
     const [isSearch, setIsSearch] = useState(false);
     const [isGame, setIsGame] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFilter, setIsFilter] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
     const notify = useNotify();
@@ -118,8 +119,10 @@ const TournamentContainer = () => {
         if (isSearch) {
             return search.slice(startIndex, endIndex);
         }
-        if ((game !== '0' && gamesData.length > 0) || (selectedValue && gamesData.length > 0) || gamesData.length >= 0) {
-            return gamesData.slice(startIndex, endIndex);
+        if (isFilter) {
+            if ((game !== '0' && gamesData.length > 0) || (selectedValue && gamesData.length > 0) || gamesData.length >= 0) {
+                return gamesData.slice(startIndex, endIndex);
+            }
         }
         return remove.slice(startIndex, endIndex);
     };
@@ -325,7 +328,7 @@ const TournamentContainer = () => {
                 );
             });
             games = [...filter];
-            console.log(filter);
+            // console.log(filter);
             setGameDatas(games);
             setOpenFilter(false);
         }
@@ -336,7 +339,7 @@ const TournamentContainer = () => {
             setSelectedValue('');
             setOpenFilter(false);
         }
-        // setFilter(true);
+        setIsFilter(true);
     };
 
     const handleResetButton = () => {
@@ -344,6 +347,7 @@ const TournamentContainer = () => {
         setIsGame(false);
         setSelectedValue('');
         setGame('0');
+        setIsFilter(false);
         return form.reset();
         // handleFetchData();
     };
@@ -407,14 +411,9 @@ const TournamentContainer = () => {
             setIsSearch(false);
         }
     }, [remove, input, search]);
-
+    // console.log(getPaginatedData());
     return (
-        <Box
-            sx={{ width: '100%' }}
-            onClick={() => {
-                setOpenFilter(!openFilter);
-            }}
-        >
+        <Box sx={{ width: '100%' }}>
             {createTournament ? (
                 <CreateTournament form={form} createTour={createTournament} setCreateTour={setCreateTournament} />
             ) : (
@@ -528,7 +527,7 @@ const TournamentContainer = () => {
                                 handleChangeChekcbox={handleChangeChekcbox}
                             />
                         )}
-                        {(remove.length === 0 || gamesData.length === 0) && !isLoading && (
+                        {getPaginatedData().length === 0 && !isLoading && (
                             <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
                                 <Typography variant='h6' component='h6'>
                                     DATA NOT FOUND, PLEASE RESET THE FILTER
