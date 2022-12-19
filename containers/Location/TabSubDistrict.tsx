@@ -101,7 +101,7 @@ const TabSubDistrict: React.FC<TabSubDistrictProps> = ({
                                             {item?.provinceCode}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                            {item?.province}
+                                            {item?.name}
                                         </TableCell>
                                         <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                             {item?.cityCode}

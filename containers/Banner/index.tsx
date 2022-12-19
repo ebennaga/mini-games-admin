@@ -61,6 +61,16 @@ const dummyData = [
         isActive: 'No',
         action: false,
         checkedAll: false
+    },
+    {
+        id: '3',
+        title: 'Info Pre Launch Bonus',
+        img: 'banner1_info.jpg',
+        desc: 'Info Mengenai Top up Bonus Prize Play Sebelum Launch',
+        showTo: 'Home',
+        isActive: 'No',
+        action: false,
+        checkedAll: false
     }
 ];
 
@@ -106,6 +116,7 @@ const Banner = () => {
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
     const checkBoxKeys: string[] = [];
     const [removeData, setRemoveData] = React.useState<any>([]);
+    const [query, setQuery] = React.useState('');
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [dataBanner, setDatabanner] = React.useState<any>([]);
     const [routeId, setRouteId] = React.useState<any>(null);
@@ -258,6 +269,11 @@ const Banner = () => {
             setIsChecked(false);
         }
     }, [checkBoxKeys, form.watch('checkedAll')]);
+
+    const handleDataSearch = (keyword: any) => {
+        setQuery(keyword);
+    };
+
     if (isLoading) {
         return <LoadingExchangeRates />;
     }
@@ -289,6 +305,7 @@ const Banner = () => {
                 </DialogActions>
             </Dialog>
             <TitleCard
+                handleSearch={(keyword: any) => handleDataSearch(keyword)}
                 onConfirm={(value: boolean) => handleDialog(value)}
                 title='Banner'
                 subtitle='Addtional description if required'
@@ -385,76 +402,91 @@ const Banner = () => {
                         </TableHead>
                         <TableBody>
                             {dataBanner.length > 0 &&
-                                dataBanner.map((item: any) => {
-                                    const check: any = `checkbox${item.id}`;
+                                dataBanner // eslint-disable-next-line consistent-return, array-callback-return
+                                    .filter((post: any) => {
+                                        if (query === '') {
+                                            return post;
+                                        }
+                                        if (
+                                            post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
+                                            post.code.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.name.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.category.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.uom.toLowerCase().includes(query.toLowerCase())
+                                        ) {
+                                            return post;
+                                        }
+                                    })
+                                    .map((item: any) => {
+                                        const check: any = `checkbox${item.id}`;
 
-                                    return (
-                                        <TableRow key={item.id}>
-                                            <TableCell align='center' sx={{ width: '5%' }}>
-                                                {item.id}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.title}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.image_url}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.desc}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                {item.link}
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                align='center'
-                                            >
-                                                <Box sx={{ color: 'white', display: 'flex', justifyContent: 'center' }}>
-                                                    <Box
-                                                        sx={
-                                                            item.is_active === 'Yes'
-                                                                ? {
-                                                                      backgroundColor: '#A54CE5',
-                                                                      borderRadius: '64px',
-                                                                      width: '33px',
-                                                                      height: '20px'
-                                                                  }
-                                                                : {
-                                                                      backgroundColor: '#D32F2F',
-                                                                      borderRadius: '64px',
-                                                                      width: '33px',
-                                                                      height: '20px'
-                                                                  }
-                                                        }
-                                                    >
-                                                        {item.is_active ? 'Yes' : 'No'}
+                                        return (
+                                            <TableRow key={item.id}>
+                                                <TableCell align='center' sx={{ width: '5%' }}>
+                                                    {item.id}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.title}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.image_url}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.desc}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.link}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    <Box sx={{ color: 'white', display: 'flex', justifyContent: 'center' }}>
+                                                        <Box
+                                                            sx={
+                                                                item.is_active === 'Yes'
+                                                                    ? {
+                                                                          backgroundColor: '#A54CE5',
+                                                                          borderRadius: '64px',
+                                                                          width: '33px',
+                                                                          height: '20px'
+                                                                      }
+                                                                    : {
+                                                                          backgroundColor: '#D32F2F',
+                                                                          borderRadius: '64px',
+                                                                          width: '33px',
+                                                                          height: '20px'
+                                                                      }
+                                                            }
+                                                        >
+                                                            {item.is_active ? 'Yes' : 'No'}
+                                                        </Box>
                                                     </Box>
-                                                </Box>
-                                            </TableCell>
+                                                </TableCell>
 
-                                            <TableCell align='center' sx={{ width: '10%', fontWeight: 'bold' }}>
-                                                <CheckboxController
-                                                    form={form}
-                                                    name={`checkbox${item.id}`}
-                                                    checked={!!form.watch(check)}
-                                                    onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
+                                                <TableCell align='center' sx={{ width: '10%', fontWeight: 'bold' }}>
+                                                    <CheckboxController
+                                                        form={form}
+                                                        name={`checkbox${item.id}`}
+                                                        checked={!!form.watch(check)}
+                                                        onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                         </TableBody>
                     </Table>
                 </TableContainer>

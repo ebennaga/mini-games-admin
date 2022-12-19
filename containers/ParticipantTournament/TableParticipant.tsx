@@ -41,7 +41,9 @@ const TableParticipant: React.FC<TableParticipantProps> = ({ name, form, nameIdx
         setDataTable([...resArr]);
         form.setValue(name, [...resArr]);
     };
-
+    React.useEffect(() => {
+        setDataTable(form.watch(name));
+    }, [form.watch(name)]);
     const handleCheck = async (e: React.ChangeEvent<HTMLInputElement>, data: any) => {
         const isChecked = e.target.checked;
 
