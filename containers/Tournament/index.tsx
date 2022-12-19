@@ -390,7 +390,10 @@ const TournamentContainer = () => {
         if (isSearch) {
             const searched = remove.filter((item: any) => {
                 if (input) {
-                    if (item.name.toLowerCase().includes(input) || item.game.name.toLowerCase().includes(input)) {
+                    if (
+                        item.name.toLowerCase().includes(input.toLowerCase()) ||
+                        item.game.name.toLowerCase().includes(input.toLowerCase())
+                    ) {
                         return item;
                     }
                 }
@@ -400,11 +403,7 @@ const TournamentContainer = () => {
         if (form.watch('search') === '') {
             setIsSearch(false);
         }
-    }, [remove, input]);
-
-    // console.log(form.watch('startTime'));
-    // console.log(isGame);
-    // console.log(remove);
+    }, [remove, input, search]);
 
     return (
         <Box sx={{ width: '100%' }}>
