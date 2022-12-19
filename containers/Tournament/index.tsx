@@ -118,7 +118,7 @@ const TournamentContainer = () => {
         if (isSearch) {
             return search.slice(startIndex, endIndex);
         }
-        if ((game !== '0' && gamesData.length > 0) || (selectedValue && gamesData.length > 0) || gamesData.length > 0) {
+        if ((game !== '0' && gamesData.length > 0) || (selectedValue && gamesData.length > 0) || gamesData.length >= 0) {
             return gamesData.slice(startIndex, endIndex);
         }
         return remove.slice(startIndex, endIndex);
@@ -325,6 +325,7 @@ const TournamentContainer = () => {
                 );
             });
             games = [...filter];
+            console.log(filter);
             setGameDatas(games);
             setOpenFilter(false);
         }
@@ -339,11 +340,12 @@ const TournamentContainer = () => {
     };
 
     const handleResetButton = () => {
+        setGameDatas(remove);
         setIsGame(false);
         setSelectedValue('');
         setGame('0');
-        form.reset();
-        return handleFetchData();
+        return form.reset();
+        // handleFetchData();
     };
 
     // console.log(remove);
@@ -521,7 +523,7 @@ const TournamentContainer = () => {
                                 handleChangeChekcbox={handleChangeChekcbox}
                             />
                         )}
-                        {remove.length === 0 && !isLoading && (
+                        {(remove.length === 0 || gamesData.length === 0) && !isLoading && (
                             <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
                                 <Typography variant='h6' component='h6'>
                                     DATA NOT FOUND, PLEASE RESET THE FILTER
