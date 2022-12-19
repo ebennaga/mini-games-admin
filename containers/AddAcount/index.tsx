@@ -136,9 +136,6 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
         }
     }, [accessArr, isFilled]);
 
-    console.log({ isFilled });
-    console.log({ isRequired });
-    // console.log(roles);
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
             <Box sx={{ position: 'relative' }}>

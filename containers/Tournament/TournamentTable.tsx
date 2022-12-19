@@ -11,20 +11,22 @@ interface TournamentTableProps {
     handleChangeCheckboxAll: any;
     remove: any;
     handleChangeChekcbox: any;
-    setOpenDialogTour: any;
-    openDialogTour: any;
-    setLeaderboards: any;
+    // setOpenDialogTour: any;
+    // openDialogTour: any;
+    // setLeaderboards: any;
+    currentPage: any;
 }
 
 const TornamentTable: React.FC<TournamentTableProps> = ({
-    setOpenDialogTour,
+    // setOpenDialogTour,
     data,
     form,
     handleChangeCheckboxAll,
     remove,
     handleChangeChekcbox,
-    openDialogTour,
-    setLeaderboards
+    // openDialogTour,
+    // setLeaderboards,
+    currentPage
 }) => {
     return (
         <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
@@ -108,13 +110,13 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                     {data.length > 0 &&
                         data.map((item: any, idx: number) => {
                             const check: any = `checkbox${idx + 1}`;
-                            const options: any = { hour: '2-digit', minute: '2-digit' };
+                            const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
                             const startTime = new Date(item.start_time).toLocaleString(undefined, options);
                             const endTime = new Date(item.end_time).toLocaleString(undefined, options);
                             return (
                                 <TableRow key={item.id}>
                                     <TableCell align='center' sx={{ width: '5%' }}>
-                                        {item.id}.
+                                        {currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10}.
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {item.name}

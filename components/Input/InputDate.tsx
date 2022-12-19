@@ -12,10 +12,11 @@ interface InputDateProps {
     name: string;
     rules?: any;
     isCreate?: any;
+    disabled?: any;
     isLoading?: boolean;
 }
 
-const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, isCreate = false, isLoading }) => {
+const InputDate: React.FC<InputDateProps> = ({ isLoading, disabled = false, label, type, form, name, rules, isCreate = false }) => {
     const {
         formState: { errors }
     } = form;
@@ -41,6 +42,7 @@ const InputDate: React.FC<InputDateProps> = ({ label, type, form, name, rules, i
                 render={({ field }) => {
                     return (
                         <TextField
+                            disabled={disabled}
                             fullWidth
                             id='date'
                             label={label}

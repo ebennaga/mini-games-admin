@@ -3,7 +3,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-unreachable-loop */
 /* eslint-disable no-unused-vars */
-import { Typography, Box, Paper, MenuItem, FormControl, Select, ButtonBase } from '@mui/material';
+import { Typography, Box, Paper, MenuItem, FormControl, Select, ButtonBase, CircularProgress } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputSearch from 'components/Input/InputSearch';
 import React, { useEffect, useState } from 'react';
@@ -34,12 +34,12 @@ const TournamentContainer = () => {
             role: '0',
             start: new Date().toISOString().slice(0, 10) || '',
             end: new Date().toISOString().slice(0, 10) || '',
-            startDate: new Date().toISOString().slice(0, 10) || '',
-            endDate: new Date().toISOString().slice(0, 10) || '',
+            startDate: '',
+            endDate: '',
             maxDate: getCurrentDate(),
             title: '',
-            startTime: getCurrentTime(),
-            endTime: getCurrentTime(),
+            startTime: '',
+            endTime: '',
             image: '',
             fee: 0,
             pool: 0
@@ -51,7 +51,7 @@ const TournamentContainer = () => {
     const [openDialogTour, setOpenDialogTour] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
-    const [role, setRole] = useState('0');
+    const [game, setGame] = useState('0');
     const [createTournament, setCreateTournament] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [pages, setPages] = useState(1);
@@ -60,17 +60,22 @@ const TournamentContainer = () => {
     const [deleted, setDeleted] = useState<number[]>([]);
     const [leaderboards, setLeaderboards] = useState<any>(null);
     const [remove, setRemove] = useState<any>([]);
+    const [gamesData, setGameDatas] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
-    const [selectedValue, setSelectedValue] = React.useState('all');
+    const [selectedValue, setSelectedValue] = React.useState('');
     const [search, setSearch] = useState<any>([]);
     const [input, setInput] = useState('');
     const [isSearch, setIsSearch] = useState(false);
+    const [isGame, setIsGame] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
     const notify = useNotify();
     const { fetchAPI } = useAPICaller();
     const router = useRouter();
+
     const handleFetchData = async () => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
                 method: 'GET',
@@ -80,10 +85,12 @@ const TournamentContainer = () => {
                 const tournaments = response.data.data;
                 setRemove(tournaments);
                 setRow(tournaments.length.toString());
-                notify(response?.data.message, 'success');
+                setIsLoading(false);
+                // notify(response?.data.message, 'success');
             }
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
     };
     const handleRemoveData = async () => {
@@ -111,11 +118,19 @@ const TournamentContainer = () => {
         if (isSearch) {
             return search.slice(startIndex, endIndex);
         }
+        if ((game !== '0' && gamesData.length > 0) || (selectedValue && gamesData.length > 0) || gamesData.length > 0) {
+            return gamesData.slice(startIndex, endIndex);
+        }
         return remove.slice(startIndex, endIndex);
     };
 
     const handleChange = (event: SelectChangeEvent) => {
         setRow(event.target.value as string);
+    };
+
+    const handleChangeGame = (event: SelectChangeEvent) => {
+        setGame(event.target.value as string);
+        setIsGame(true);
     };
 
     const handleChangeChekcbox = (e: any, name: any, id: number) => {
@@ -216,6 +231,122 @@ const TournamentContainer = () => {
         }
     };
 
+    const handleFilterButton = () => {
+        let games: any = [...remove];
+
+        if (selectedValue === 'oldest') {
+            const filter = games.sort((a: any, b: any) => {
+                return Date.parse(a.start_time) - Date.parse(b.start_time);
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
+        if (selectedValue === 'latest') {
+            const filter = games.sort((a: any, b: any) => {
+                return Date.parse(b.start_time) - Date.parse(a.start_time);
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
+        if (game !== '0') {
+            const filter = games.filter((item: any) => {
+                return item.game.id === game;
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
+        if (form.watch('startDate') && !form.watch('endDate')) {
+            const filter = games.filter((item: any) => {
+                return item.start_time.slice(0, 10) === form.watch('startDate');
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
+        if (form.watch('endDate') && !form.watch('startDate')) {
+            const filter = games.filter((item: any) => {
+                return item.end_time.slice(0, 10) === form.watch('endDate');
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
+
+        if (form.watch('startDate') && form.watch('endDate')) {
+            const filter = games.filter((item: any) => {
+                const eventDate = new Date(item.start_time).getTime();
+                return eventDate >= new Date(form.watch('startDate')).getTime() && eventDate <= new Date(form.watch('endDate')).getTime();
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
+        if (form.watch('startTime') && !form.watch('endTime')) {
+            const filter = games.filter((item: any) => {
+                const options: any = { hour: '2-digit', minute: '2-digit' };
+                const startTime = new Date(item.start_time).toLocaleString(undefined, options);
+                return startTime.slice(0, 5) === form.watch('startTime');
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
+        if (form.watch('endTime') && !form.watch('startTime')) {
+            const filter = games.filter((item: any) => {
+                const options: any = { hour: '2-digit', minute: '2-digit' };
+                const endTime = new Date(item.end_time).toLocaleString(undefined, options);
+                return endTime.slice(0, 5) === form.watch('endTime');
+            });
+            games = [...filter];
+            setGameDatas(games);
+            setOpenFilter(false);
+        }
+        // if (form.watch('startTime') && form.watch('endTime')) {
+        //     const filter = games.filter((item: any) => {
+        //         const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
+        //         const start = new Date(item.start_time).toLocaleTimeString(undefined, options);
+        //         const end = new Date(item.end_time).toLocaleTimeString(undefined, options);
+        //         const [startHour, startMinute]: any = form.watch('startTime').split(':');
+        //         const [endHour, endMinute]: any = form.watch('endTime').split(':');
+        //         const [eventHourStart, eventMinuteStart]: any = start.split(':');
+        //         const [eventHourEnd, eventMinuteEnd]: any = end.split(':');
+
+        //         // const startTimestamp = startHour * 60 + startMinute;
+        //         // const endTimestamp = endHour * 60 + endMinute;
+        //         // const eventTimestampStart = eventHourStart * 60 + eventMinuteStart;
+        //         // const eventTimestampEnd = eventHourEnd * 60 + eventMinuteEnd;
+        //         // return eventTimestampEnd >= startTimestamp && eventTimestampStart <= endTimestamp;
+        //         return (
+        //             startHour <= eventHourStart && startMinute <= eventMinuteStart && endHour >= eventHourEnd && endMinute >= eventMinuteEnd
+        //         );
+        //     });
+        //     games = [...filter];
+        //     setRemove(games);
+        //     setOpenFilter(false);
+        // }
+        if (selectedValue === 'all') {
+            setGameDatas(remove);
+            setGame('0');
+            form.reset();
+            setSelectedValue('');
+            setOpenFilter(false);
+        }
+        // setFilter(true);
+    };
+
+    const handleResetButton = () => {
+        setIsGame(false);
+        setSelectedValue('');
+        setGame('0');
+        form.reset();
+        return handleFetchData();
+    };
+
+    // console.log(remove);
+
     // const handleDelete = () => {
     //     const filter = remove.filter((item: any) => {
     //         return !deleted.includes(item.id);
@@ -270,6 +401,10 @@ const TournamentContainer = () => {
             setIsSearch(false);
         }
     }, [remove, input]);
+
+    // console.log(form.watch('startTime'));
+    // console.log(isGame);
+    // console.log(remove);
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -328,13 +463,16 @@ const TournamentContainer = () => {
                         </Box>
                         {openFilter && (
                             <FilterDrop
+                                // disabled={game !== '0'}
+                                handleReset={handleResetButton}
                                 selectedValue={selectedValue}
-                                role={role}
+                                game={game}
                                 form={form}
                                 openFilter={openFilter}
                                 setOpenFilter={setOpenFilter}
                                 handleChangeRadio={handleChangeRadio}
-                                handleFiter
+                                handleFiter={handleChangeGame}
+                                handleFilterButton={handleFilterButton}
                             />
                         )}
                     </Paper>
@@ -366,16 +504,30 @@ const TournamentContainer = () => {
                         </Box>
                     )}
                     <Box sx={{ mt: '20px' }}>
-                        <Tables
-                            setLeaderboards={setLeaderboards}
-                            openDialogTour={openDialogTour}
-                            setOpenDialogTour={setOpenDialogTour}
-                            data={getPaginatedData()}
-                            form={form}
-                            handleChangeCheckboxAll={handleChangeCheckboxAll}
-                            remove={remove}
-                            handleChangeChekcbox={handleChangeChekcbox}
-                        />
+                        {isLoading ? (
+                            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <CircularProgress size={100} color='secondary' sx={{ marginTop: '50px' }} />
+                            </Box>
+                        ) : (
+                            <Tables
+                                currentPage={currentPage}
+                                // setLeaderboards={setLeaderboards}
+                                // openDialogTour={openDialogTour}
+                                // setOpenDialogTour={setOpenDialogTour}
+                                data={getPaginatedData()}
+                                form={form}
+                                handleChangeCheckboxAll={handleChangeCheckboxAll}
+                                remove={remove}
+                                handleChangeChekcbox={handleChangeChekcbox}
+                            />
+                        )}
+                        {remove.length === 0 && !isLoading && (
+                            <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
+                                <Typography variant='h6' component='h6'>
+                                    DATA NOT FOUND, PLEASE RESET THE FILTER
+                                </Typography>
+                            </Box>
+                        )}
                         <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', mt: '10px' }}>
                             <Box />
                             <Box
