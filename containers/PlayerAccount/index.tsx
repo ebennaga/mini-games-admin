@@ -99,6 +99,45 @@ const PlayerAccount = () => {
         form.setValue('idxAppears', result);
     }, [form.watch('row'), form.watch('page')]);
 
+    // Event filter by is_active
+    const handleFilter = () => {
+        form.setValue('dataTable', dummyData);
+        const { filterActive, dataTable } = form.watch();
+        const filterResult = dataTable.filter((item: any) => {
+            if (filterActive) {
+                return item?.is_active;
+            }
+            return !item?.is_active;
+        });
+        form.setValue('dataTable', filterResult);
+        setOpenFilter(false);
+    };
+
+    // Event Reset filter
+    const handleResetFilter = () => {
+        form.setValue('dataTable', dummyData);
+        setOpenFilter(false);
+    };
+
+    // Event Download Excel
+    const handleDownload = async () => {
+        const header = ['No.', 'id', 'Username', 'Name', 'Email', 'google_id', 'Coins', 'Points', 'Is Active'];
+        let csvStr = `${header.join(',')}\n`;
+
+        const table = form.watch('dataTable');
+        table.forEach((item: any, index: number) => {
+            const { id, username, name, email, google_id: googleId, coin, point, is_active: isActive } = item;
+
+            csvStr += `${index + 1},${id},${username},${name},${email},${googleId},${coin},${point},${isActive}\n`;
+        });
+
+        const hiddenElement = document.createElement('a');
+        hiddenElement.href = `data:text/csv;charset=utf-8,${encodeURI(csvStr)}`;
+        hiddenElement.target = '_blank';
+        hiddenElement.download = 'player-account.csv';
+        hiddenElement.click();
+    };
+
     // Read total of checked items
     React.useEffect(() => {
         const data = form.watch('dataTable');
@@ -127,26 +166,6 @@ const PlayerAccount = () => {
         }
     }, [form.watch('search')]);
 
-    // Event filter by is_active
-    const handleFilter = () => {
-        form.setValue('dataTable', dummyData);
-        const { filterActive, dataTable } = form.watch();
-        const filterResult = dataTable.filter((item: any) => {
-            if (filterActive) {
-                return item?.is_active;
-            }
-            return !item?.is_active;
-        });
-        form.setValue('dataTable', filterResult);
-        setOpenFilter(false);
-    };
-
-    // Event Reset filter
-    const handleResetFilter = () => {
-        form.setValue('dataTable', dummyData);
-        setOpenFilter(false);
-    };
-
     return (
         <Box>
             <HeaderChildren title='Player Account' subTitle='Additional description if required'>
@@ -167,7 +186,10 @@ const PlayerAccount = () => {
                             />
                         </Box>
                     </Box>
-                    <ButtonBase sx={{ padding: '10px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}>
+                    <ButtonBase
+                        onClick={handleDownload}
+                        sx={{ padding: '10px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}
+                    >
                         DOWNLOAD EXCEL
                     </ButtonBase>
                 </Box>

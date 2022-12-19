@@ -80,7 +80,9 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears, nam
     const handleMenuAccess = () => {
         setOpenMenuAccess(true);
     };
-
+    React.useEffect(() => {
+        setDataTable(form.watch(name));
+    }, [form.watch(name)]);
     return (
         <TableContainer>
             <Table aria-label='table roles'>
