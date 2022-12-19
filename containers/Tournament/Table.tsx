@@ -35,6 +35,8 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
                         <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Count Player</TableCell>
                         <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Point Prizes</TableCell>
                         <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Point Prizes / Player</TableCell>
+                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Coint Prizes</TableCell>
+                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Coint Prizes / Player</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody sx={{ backgroundColor: 'white' }}>
@@ -72,6 +74,36 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
                                         }}
                                     >
                                         {item.pointPrizes}
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            width: '5%',
+                                            fontWeight: 'bold',
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0'
+                                        }}
+                                    >
+                                        {item.playerPointPrizes}
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            width: '5%',
+                                            fontWeight: 'bold',
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0'
+                                        }}
+                                    >
+                                        {item.playerPointPrizes}
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            width: '5%',
+                                            fontWeight: 'bold',
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0'
+                                        }}
+                                    >
+                                        {item.playerPointPrizes}
                                     </TableCell>
                                     <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>{item.playerPointPrizes}</TableCell>
                                 </TableRow>
