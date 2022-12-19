@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     Box,
     Typography,
@@ -44,11 +45,15 @@ const AddClientTour = () => {
             fee: '',
             prizeTable: '',
             poolPrize: '',
-            startDate: new Date().toJSON().slice(0, 10) || '',
-            endDate: new Date().toJSON().slice(0, 10) || '',
+            // startDate: new Date().toJSON().slice(0, 10) || '',
+            startDate: '',
+            // endDate: new Date().toJSON().slice(0, 10) || '',
+            endDate: '',
             maxDate: getCurrentDate(),
-            startTime: getCurrentTime(),
-            endTime: getCurrentTime(),
+            // startTime: getCurrentTime(),
+            // endTime: getCurrentTime(),
+            startTime: '',
+            endTime: '',
             detailLocation: '',
             address: 'Intermark, Rawa Mekar Jaya, Serpong, Tangerang Selatan, Banten, Indonesia',
             lat: -6.30943345,
@@ -183,6 +188,24 @@ const AddClientTour = () => {
                                 <InputDate rules={{ required: true }} label='End Time' type='time' form={form} name='endTime' />
                             </Box>
                         </Box>
+                    </Box>
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Tournament Type'
+                            name='type'
+                            type='text'
+                            form={form}
+                            labelField='Type'
+                            placeHolder='Select Type'
+                            isSelectType
+                            listSelect={[
+                                { value: '1', label: 'Accumulatuion' },
+                                { value: '2', label: 'High Score' }
+                            ]}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
                     </Box>
                     <Box sx={{ my: '30px' }}>
                         <InputWithLabel

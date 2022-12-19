@@ -15,6 +15,7 @@ interface InputExchangeRatesProps {
     handleSubmit: any;
     loadingSubmit: boolean;
     loading?: boolean;
+    bonusName: string;
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
@@ -26,7 +27,8 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
     form,
     handleSubmit,
     loadingSubmit,
-    loading
+    loading,
+    bonusName
 }) => {
     const router = useRouter();
 
@@ -66,6 +68,28 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             name={nameName}
                             label='Name'
                             placeholder='Enter Name'
+                            isLoading={loading}
+                        />
+                    </Box>
+                </Stack>
+                <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <Typography component='h3' fontSize='16px' fontWeight={600}>
+                            Bonus
+                        </Typography>
+                        <FieldRequired />
+                    </Box>
+                    <Box sx={{ width: '30%' }}>
+                        <Input
+                            type='number'
+                            rules={{ required: true }}
+                            form={form}
+                            name={bonusName}
+                            label='Amount'
+                            placeholder='Enter Bonus'
+                            startAdornment={
+                                <img src='/images/coin.png' alt='coins' width={20} height={20} style={{ marginRight: '9px' }} />
+                            }
                             isLoading={loading}
                         />
                     </Box>

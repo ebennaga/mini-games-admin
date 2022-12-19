@@ -20,7 +20,8 @@ const ExchangeRatesAdd = () => {
             coins: '',
             idr: '',
             name: '',
-            description: ''
+            description: '',
+            bonus: ''
         }
     });
 
@@ -70,6 +71,7 @@ const ExchangeRatesAdd = () => {
                     handleSubmit={handleSubmit}
                     nameName='name'
                     descriptionName='description'
+                    bonusName='1'
                 />
             </Box>
         </Container>
