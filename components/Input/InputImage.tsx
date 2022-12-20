@@ -48,17 +48,19 @@ const InputImage: React.FC<InputImageProps> = ({
         console.log(type.split('/'));
         const sizeInKB = Math.ceil(file / 1024);
 
-        if (sizeInKB > 3072) {
-            setErrMessage('File image is to large! Image must be under 3072Kb!');
-        } else {
-            form.setValue(name, e.target.files[0]);
-            setErrMessage('');
-            const reader = new FileReader();
-            reader.onload = () => {
-                const output: any = document.getElementById('preview');
-                output.src = reader.result;
-            };
-            reader.readAsDataURL(e.target.files[0]);
+        if (type.split('/').includes('image')) {
+            if (sizeInKB > 3072) {
+                setErrMessage('File image is to large! Image must be under 3072Kb!');
+            } else {
+                form.setValue(name, e.target.files[0]);
+                setErrMessage('');
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const output: any = document.getElementById('preview');
+                    output.src = reader.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
         }
     };
 
