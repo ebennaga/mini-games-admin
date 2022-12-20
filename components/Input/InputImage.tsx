@@ -17,6 +17,7 @@ interface InputImageProps {
     isLocation?: boolean;
     rules?: any;
     isLoading?: boolean;
+    isImage?: boolean;
 }
 
 const InputImage: React.FC<InputImageProps> = ({
@@ -27,7 +28,8 @@ const InputImage: React.FC<InputImageProps> = ({
     placeholder,
     isLocation = false,
     rules,
-    isLoading
+    isLoading,
+    isImage = false
 }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
 
@@ -42,19 +44,23 @@ const InputImage: React.FC<InputImageProps> = ({
     const valueInput: any = form.watch(name);
     const handleChange = (e: any) => {
         const file: any = e.target.files[0].size;
+        const { type } = e.target.files[0];
+        // console.log(type.split('/'));
         const sizeInKB = Math.ceil(file / 1024);
 
-        if (sizeInKB > 3072) {
-            setErrMessage('File image is to large! Image must be under 3072Kb!');
-        } else {
-            form.setValue(name, e.target.files[0]);
-            setErrMessage('');
-            const reader = new FileReader();
-            reader.onload = () => {
-                const output: any = document.getElementById('preview');
-                output.src = reader.result;
-            };
-            reader.readAsDataURL(e.target.files[0]);
+        if (type.split('/').includes('image')) {
+            if (sizeInKB > 3072) {
+                setErrMessage('File image is to large! Image must be under 3072Kb!');
+            } else {
+                form.setValue(name, e.target.files[0]);
+                setErrMessage('');
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const output: any = document.getElementById('preview');
+                    output.src = reader.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
         }
     };
 
@@ -64,7 +70,7 @@ const InputImage: React.FC<InputImageProps> = ({
         <Box>
             {isLoading ? (
                 <Skeleton sx={{ height: '370px', mt: '-90px', mb: '-70px' }} />
-            ) : valueInput ? (
+            ) : valueInput && isImage ? (
                 <Grid container>
                     <Grid container item xs={12}>
                         <Grid item xs={8} display='flex' alignItems='top' gap='10px'>
@@ -116,7 +122,7 @@ const InputImage: React.FC<InputImageProps> = ({
                             return (
                                 <Box sx={{ bgcolor: errType || errMessage ? 'rgba(211, 47, 47, 0.04)' : '#fff' }}>
                                     <input
-                                        accept='image/*, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
+                                        accept={isImage ? 'image/*' : 'application/vnd.ms-excel'}
                                         style={{ display: 'none' }}
                                         id='raised-button-file'
                                         multiple

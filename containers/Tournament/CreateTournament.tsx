@@ -149,6 +149,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                             <Grid item xs={3}>
                                 <InputImage
+                                    isImage
                                     name='image'
                                     form={form}
                                     label='Click to upload'

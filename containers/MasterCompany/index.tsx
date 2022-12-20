@@ -260,7 +260,7 @@ const MasterCompanyContainer = () => {
                                     setSearch(searched);
                                 })}
                             >
-                                <InputSearch placeholder='Search by name, email, etc.' name='search' label='Search' form={form} />
+                                <InputSearch placeholder='Search by code or name' name='search' label='Search' form={form} />
                             </form>
                             <FilterList
                                 onClick={() => {

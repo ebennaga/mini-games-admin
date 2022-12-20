@@ -2,12 +2,13 @@ import React from 'react';
 import { Box, FormControlLabel, Typography, FormGroup, Checkbox, Divider } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
-import InputUpload from 'components/Input/InputUpload';
+// import InputUpload from 'components/Input/InputUpload';
 import { useForm } from 'react-hook-form';
 import CustomButton from 'components/Button';
 import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import InputImage from 'components/Input/InputImage';
 
 const AddBanner = () => {
     const rules = { required: true };
@@ -65,32 +66,24 @@ const AddBanner = () => {
             <TitleCard title='Add Banner' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <Box sx={{ my: 3, mx: 2 }}>
-                    <InputWithLabel
-                        label='Banner Title'
-                        name='title'
-                        type='text'
-                        form={form}
-                        labelField='Title'
-                        placeHolder='Max 100 Character'
-                        rules={rules}
-                        isSelectType={false}
-                        isMultiline={false}
-                        isRequired
-                    />
-                    <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} />
-                    <InputWithLabel
-                        label='Description'
-                        name='desc'
-                        type='text'
-                        form={form}
-                        labelField='Description'
-                        rules={rules}
-                        placeHolder='Fill description'
-                        isSelectType={false}
-                        isMultiline
-                    />
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                    <Box sx={{ width: '30%' }}>
+                        <InputWithLabel
+                            label='Banner Title'
+                            name='title'
+                            type='text'
+                            form={form}
+                            labelField='Title'
+                            placeHolder='Max 100 Character'
+                            rules={rules}
+                            isSelectType={false}
+                            isMultiline={false}
+                            isRequired
+                        />
+                    </Box>
+
+                    {/* <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} /> */}
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: 'center' }}>
+                        <Box sx={{ width: '8.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
                                 <Typography
@@ -107,16 +100,58 @@ const AddBanner = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '70%' }}>
+                        <Box sx={{ width: '21.2%' }}>
+                            <InputImage
+                                isImage
+                                name='img'
+                                form={form}
+                                label='Banner Image'
+                                secondaryLabel='or drag and drop'
+                                placeholder='SVG, PNG, JPG or GIF (max. 3MB)'
+                            />
+                        </Box>
+                    </Box>
+                    <Box sx={{ width: '30%' }}>
+                        <InputWithLabel
+                            label='Description'
+                            name='desc'
+                            type='text'
+                            form={form}
+                            labelField='Description'
+                            rules={rules}
+                            placeHolder='Fill description'
+                            isSelectType={false}
+                            isMultiline
+                        />
+                    </Box>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: '' }}>
+                        <Box sx={{ width: '8.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ width: '30%' }}>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox defaultChecked />} label='Home' />
-                                <FormControlLabel control={<Checkbox />} label='Redeem Prizes' />
-                                <FormControlLabel control={<Checkbox />} label='Lucky Raffle' />
+                                <FormControlLabel control={<Checkbox color='secondary' defaultChecked />} label='Home' />
+                                <FormControlLabel control={<Checkbox color='secondary' />} label='Redeem Prizes' />
+                                <FormControlLabel control={<Checkbox color='secondary' />} label='Lucky Raffle' />
                             </FormGroup>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: 'center' }}>
+                        <Box sx={{ width: '8.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
                                 <Typography
@@ -133,10 +168,16 @@ const AddBanner = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '70%' }}>
+                        <Box sx={{ width: '30%' }}>
                             <FormGroup row>
-                                <FormControlLabel control={<Checkbox checked={checked[0]} onChange={handleChange1} />} label='Yes' />
-                                <FormControlLabel control={<Checkbox checked={checked[1]} onChange={handleChange2} />} label='No' />
+                                <FormControlLabel
+                                    control={<Checkbox color='secondary' checked={checked[0]} onChange={handleChange1} />}
+                                    label='Yes'
+                                />
+                                <FormControlLabel
+                                    control={<Checkbox color='secondary' checked={checked[1]} onChange={handleChange2} />}
+                                    label='No'
+                                />
                             </FormGroup>
                         </Box>
                     </Box>
