@@ -108,6 +108,7 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
                         </Grid>
                         <Grid item xs={4}>
                             <InputImage
+                                isImage
                                 name='image'
                                 form={form}
                                 label='Click to upload'

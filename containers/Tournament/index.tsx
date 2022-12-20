@@ -413,8 +413,8 @@ const TournamentContainer = () => {
         if (form.watch('search') === '') {
             setIsSearch(false);
         }
-    }, [remove, input, search]);
-
+    }, [remove, input, search, currentPage]);
+    // console.log(getPaginatedData());
     return (
         <Box sx={{ width: '100%' }}>
             {createTournament ? (
