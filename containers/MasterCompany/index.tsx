@@ -22,7 +22,7 @@ import useNotify from 'hooks/useNotify';
 import { useForm } from 'react-hook-form';
 import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '@mui/icons-material';
 import CustomButton from 'components/Button';
-import CheckboxController from 'components/Checkbox';
+// import CheckboxController from 'components/Checkbox';
 import { useRouter } from 'next/router';
 import TableCompanies from './TableCompanies';
 import Pagination from './Pagination';
@@ -34,8 +34,8 @@ const MasterCompanyContainer = () => {
         defaultValues: {
             search: '',
             isActive: false,
-            name: '',
-            email: '',
+            // name: '',
+            // email: '',
             checkAll: false
         }
     });
@@ -48,7 +48,7 @@ const MasterCompanyContainer = () => {
     const [input, setInput] = useState('');
     const [isSearch, setIsSearch] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
-    const [role, setRole] = useState('0');
+    // const [role, setRole] = useState('0');
     const [checked, setIsChecked] = useState(false);
     const [checkedObj, setCheckedObj] = useState<string[]>([]);
     const [routeId, setRouteId] = useState<any>(null);
@@ -57,6 +57,8 @@ const MasterCompanyContainer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [remove, setRemove] = useState<any>([]);
     const [row, setRow] = useState('7');
+    const [filterData, setFilterData] = useState<any>([]);
+    const [isFilter, setIsFilter] = useState(false);
     const checkBoxKeys: string[] = [];
     const checkTrue: string[] = [];
     const [deleted, setDeleted] = useState<number[]>([]);
@@ -84,8 +86,13 @@ const MasterCompanyContainer = () => {
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
-        if (isSearch) {
+        if ((search.length > 0 && form.watch('search')) || form.watch('search')) {
             return search.slice(startIndex, endIndex);
+        }
+        if (isFilter) {
+            if (filterData.length >= 0) {
+                return filterData.slice(startIndex, endIndex);
+            }
         }
         return remove.slice(startIndex, endIndex);
     };
@@ -157,9 +164,30 @@ const MasterCompanyContainer = () => {
         setRouteId(id);
     };
 
-    const handleFiter = (event: SelectChangeEvent) => {
-        setRole(event.target.value as string);
+    const handleFilterButton = () => {
+        const data = [...remove];
+        const filter = data.filter((item: any) => {
+            if (form.watch('isActive') || !form.watch('isActive')) {
+                return item.is_active === form.watch('isActive');
+            }
+        });
+        setFilterData(filter);
+        setIsFilter(true);
+        setOpenFilter(false);
     };
+
+    const handleResetButton = () => {
+        // setRole('0');
+        setIsFilter(false);
+        setOpenFilter(false);
+        // form.reset();
+        // setCheckedObj([]);
+        // setIsChecked(false);
+    };
+
+    // const handleFiter = (event: SelectChangeEvent) => {
+    //     setRole(event.target.value as string);
+    // };
 
     const handleSwicth = (event: any) => {
         form.setValue('isActive', event.target.checked);
@@ -185,20 +213,11 @@ const MasterCompanyContainer = () => {
     }, [checkBoxKeys, form.watch('checkAll')]);
 
     useEffect(() => {
-        if (isSearch) {
-            const searched = remove.filter((item: any) => {
-                if (input) {
-                    if (item.name.toLowerCase().includes(input) || item.email.toLowerCase().includes(input)) {
-                        return item;
-                    }
-                }
-            });
-            setSearch(searched);
-        }
         if (form.watch('search') === '') {
             setIsSearch(false);
+            setSearch(remove);
         }
-    }, [remove, input]);
+    }, [search, form.watch()]);
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -226,8 +245,19 @@ const MasterCompanyContainer = () => {
                         >
                             <form
                                 onSubmit={form.handleSubmit((data: any) => {
-                                    setInput(data.search);
-                                    setIsSearch(true);
+                                    const datas = [...remove];
+                                    const searched = datas.filter((item: any) => {
+                                        if (
+                                            item?.name?.toLowerCase()?.includes(data.search.toLowerCase()) ||
+                                            item?.code?.toLowerCase()?.includes(data.search.toLowerCase())
+                                        ) {
+                                            return item;
+                                        }
+                                    });
+                                    if (pages === 1) {
+                                        setCurrentPage(1);
+                                    }
+                                    setSearch(searched);
                                 })}
                             >
                                 <InputSearch placeholder='Search by name, email, etc.' name='search' label='Search' form={form} />
@@ -254,7 +284,7 @@ const MasterCompanyContainer = () => {
                     {openFilter && (
                         <Paper
                             elevation={3}
-                            sx={{ width: '375px', height: '305px', position: 'absolute', zIndex: 2, padding: '20px', left: '330px' }}
+                            sx={{ width: '375px', height: '205px', position: 'absolute', zIndex: 2, padding: '20px', left: '330px' }}
                         >
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 700, fontSize: '20px' }}>Filters</Typography>
@@ -265,7 +295,7 @@ const MasterCompanyContainer = () => {
                                     sx={{ color: 'rgba(0, 0, 0, 0.6)', cursor: 'pointer' }}
                                 />
                             </Box>
-                            <Box sx={{ mt: '20px' }}>
+                            {/* <Box sx={{ mt: '20px' }}>
                                 <FormControl fullWidth>
                                     <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
                                         Role Code
@@ -287,7 +317,7 @@ const MasterCompanyContainer = () => {
                                         <MenuItem value='3'>Content Writer</MenuItem>
                                     </Select>
                                 </FormControl>
-                            </Box>
+                            </Box> */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px', mt: '20px' }}>
                                 <FormControlLabel
                                     sx={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 800 }}
@@ -300,8 +330,9 @@ const MasterCompanyContainer = () => {
                                 />
                             </Box>
                             <Box sx={{ mt: '30px', justifyContent: 'space-between', display: 'flex', width: '100%' }}>
-                                <CustomButton title='FILTER' width='159px' height='36px' />
+                                <CustomButton onClick={handleFilterButton} title='FILTER' width='159px' height='36px' />
                                 <CustomButton
+                                    onClick={handleResetButton}
                                     title='RESET'
                                     width='159px'
                                     height='36px'

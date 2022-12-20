@@ -113,13 +113,13 @@ const ExchangeRatesAdd = () => {
                 <InputExchangeRates
                     loadingSubmit={loadingSubmit}
                     loading={isLoading}
-                    effectiveName='effective'
+                    // effectiveName='effective'
                     coinsName='coins'
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
-                    nameName='name'
-                    descriptionName='description'
+                    // nameName='name'
+                    // descriptionName='description'
                 />
             </Box>
         </Container>
