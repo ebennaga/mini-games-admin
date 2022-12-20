@@ -1,41 +1,44 @@
 import React from 'react';
-import { Box, Stack, ButtonBase, Typography, CircularProgress } from '@mui/material';
+import { Box, Stack, ButtonBase, Typography, CircularProgress, FormControlLabel, Checkbox } from '@mui/material';
 import FieldRequired from 'components/FieldRequired';
 import { useRouter } from 'next/router';
-import InputDate from './InputDate';
+// import InputDate from './InputDate';
 import Input from './Input';
 
 interface InputExchangeRatesProps {
-    nameName: string;
-    effectiveName: string;
+    // nameName: string;
+    // effectiveName: string;
     coinsName: string;
     idrName: string;
-    descriptionName: string;
+    // descriptionName: string;
     form: any;
     handleSubmit: any;
     loadingSubmit: boolean;
     loading?: boolean;
-    bonusName?: string;
+    handleAddSetActive: any;
+    handleAddSetNotActive: any;
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
-    nameName,
-    effectiveName,
+    // nameName,
+    // effectiveName,
+    handleAddSetActive,
+    handleAddSetNotActive,
     coinsName,
     idrName,
-    descriptionName,
+    // descriptionName,
     form,
     handleSubmit,
     loadingSubmit,
-    loading,
-    bonusName
+    loading
+    // bonusName
 }) => {
     const router = useRouter();
 
     return (
         <form onSubmit={form.handleSubmit(handleSubmit)}>
             <Box sx={{ width: '100%' }}>
-                <Stack direction='row' spacing={30}>
+                {/* <Stack direction='row' spacing={30}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <Typography component='h3' fontSize='16px' fontWeight={600}>
                             Effective
@@ -52,8 +55,8 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             isLoading={loading}
                         />
                     </Box>
-                </Stack>
-                <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
+                </Stack> */}
+                {/* <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <Typography component='h3' fontSize='16px' fontWeight={600}>
                             Name
@@ -71,32 +74,10 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             isLoading={loading}
                         />
                     </Box>
-                </Stack>
+                </Stack> */}
                 <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <Typography component='h3' fontSize='16px' fontWeight={600}>
-                            Bonus
-                        </Typography>
-                        <FieldRequired />
-                    </Box>
-                    <Box sx={{ width: '30%' }}>
-                        <Input
-                            type='number'
-                            rules={{ required: true }}
-                            form={form}
-                            name={bonusName}
-                            label='Amount'
-                            placeholder='Enter Bonus'
-                            startAdornment={
-                                <img src='/images/coin.png' alt='coins' width={20} height={20} style={{ marginRight: '9px' }} />
-                            }
-                            isLoading={loading}
-                        />
-                    </Box>
-                </Stack>
-                <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <Typography component='h3' fontSize='16px' fontWeight={600}>
+                        <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)' }} component='h3' fontSize='16px' fontWeight={600}>
                             Coins
                         </Typography>
                         <FieldRequired />
@@ -116,9 +97,31 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         />
                     </Box>
                 </Stack>
+                <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)' }} component='h3' fontSize='16px' fontWeight={600}>
+                            Bonus
+                        </Typography>
+                        <FieldRequired />
+                    </Box>
+                    <Box sx={{ width: '30%' }}>
+                        <Input
+                            type='number'
+                            rules={{ required: true }}
+                            form={form}
+                            name='bonus'
+                            label='Amount'
+                            placeholder='Enter Amount'
+                            startAdornment={
+                                <img src='/images/coin.png' alt='coins' width={20} height={20} style={{ marginRight: '9px' }} />
+                            }
+                            isLoading={loading}
+                        />
+                    </Box>
+                </Stack>
                 <Stack direction='row' spacing={24} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <Typography component='h3' fontSize='16px' fontWeight={600}>
+                        <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)' }} component='h3' fontSize='16px' fontWeight={600}>
                             Indonesia Rupiah
                         </Typography>
                         <FieldRequired />
@@ -140,9 +143,9 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         />
                     </Box>
                 </Stack>
-                <Stack direction='row' spacing={24} sx={{ mt: 4 }}>
+                {/* <Stack direction='row' spacing={24} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <Typography component='h3' fontSize='16px' fontWeight={600}>
+                        <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)' }} component='h3' fontSize='16px' fontWeight={600}>
                             Indonesia Rupiah
                         </Typography>
                         <FieldRequired />
@@ -159,7 +162,67 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             isLoading={loading}
                         />
                     </Box>
-                </Stack>
+                </Stack> */}
+                <Box
+                    sx={{
+                        mt: '35px',
+                        width: '65%',
+                        display: 'flex',
+                        justifyContent: 'start',
+                        alignItems: 'center'
+                    }}
+                >
+                    <Box sx={{ width: '35%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
+                            <Typography
+                                sx={{
+                                    fontWeight: '400',
+                                    color: 'rgba(0, 0, 0, 0.6)',
+                                    fontSize: '12px',
+                                    position: 'relative',
+                                    bottom: '-10px'
+                                }}
+                            >
+                                *Field Required
+                            </Typography>
+                        </Box>
+                        <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                            width: '20%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            // border: '1px solid red',
+                            pl: '20px'
+                        }}
+                    >
+                        <Box>
+                            <FormControlLabel
+                                sx={{ color: 'black', fontWeight: 800 }}
+                                value={form.watch('activeRole')}
+                                control={<Checkbox color='secondary' />}
+                                label='Yes'
+                                labelPlacement='end'
+                                checked={form.watch('activeRole')}
+                                onChange={handleAddSetActive}
+                            />
+                        </Box>
+                        <Box>
+                            <FormControlLabel
+                                sx={{ color: 'black', fontWeight: 800 }}
+                                value={form.watch('activeRole')}
+                                control={<Checkbox color='secondary' />}
+                                label='No'
+                                labelPlacement='end'
+                                checked={!form.watch('activeRole')}
+                                onChange={handleAddSetNotActive}
+                            />
+                        </Box>
+                    </Box>
+                </Box>
                 <Stack direction='row' spacing={5} sx={{ mt: 50 }}>
                     {loadingSubmit ? (
                         <CircularProgress sx={{ ml: 5, color: '#A54CE5' }} />
