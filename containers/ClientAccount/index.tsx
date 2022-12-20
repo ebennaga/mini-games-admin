@@ -30,17 +30,17 @@ import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
     const dummy = [
-        { id: 1, name: 'Owi-kun', email: 'test@abc.com', isActive: true },
-        { id: 2, name: 'Arya', email: 'test@abc.com', isActive: false },
-        { id: 3, name: 'Eben', email: 'test@abc.com', isActive: true },
-        { id: 4, name: 'Amang', email: 'test@abc.com', isActive: false },
-        { id: 5, name: 'Suwardi', email: 'test@abc.com', isActive: false },
-        { id: 6, name: 'Saitama', email: 'test@abc.com', isActive: true },
-        { id: 7, name: 'Sasukekyun', email: 'test@abc.com', isActive: true },
-        { id: 8, name: 'Narto', email: 'test@abc.com', isActive: false },
-        { id: 9, name: 'Ed Sheeran', email: 'test@abc.com', isActive: true },
-        { id: 10, name: 'Tulus', email: 'test@abc.com', isActive: false },
-        { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', isActive: false }
+        { id: 1, name: 'Owi-kun', email: 'owi@abc.com', roles: 'Admin, Content Writer', is_active: true },
+        { id: 2, name: 'Arya', email: 'arya@abc.com', roles: 'Content Writer', is_active: false },
+        { id: 3, name: 'Eben', email: 'eben@abc.com', roles: 'Super Admin', is_active: true },
+        { id: 4, name: 'Amang', email: 'amang@abc.com', roles: 'Admin, Content Writer', is_active: false },
+        { id: 5, name: 'Suwardi', email: 'wardi@abc.com', roles: 'Admin, Content Writer', is_active: false },
+        { id: 6, name: 'Saitama', email: 'sai@abc.com', roles: 'Super Admin', is_active: true },
+        { id: 7, name: 'Sasukekyun', email: 'kyun@abc.com', roles: 'Admin, Content Writer', is_active: true },
+        { id: 8, name: 'Narto', email: 'arto@abc.com', roles: 'Content Writer', is_active: false },
+        { id: 9, name: 'Ed Sheeran', email: 'sheer@abc.com', roles: 'Admin, Content Writer', is_active: true },
+        { id: 10, name: 'Tulus', email: 'luhut@abc.com', roles: 'Admin, Content Writer, Super Admin', is_active: false },
+        { id: 11, name: 'Tidak Tulus', email: 'tilus@abc.com', roles: 'Content Writer', is_active: false }
     ];
     const form = useForm({
         mode: 'all',
@@ -67,8 +67,10 @@ const AccountContainer = () => {
     const [remove, setRemove] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
     const [search, setSearch] = useState<any>([]);
-    const [isSearch, setIsSearch] = useState(false);
-    const [input, setInput] = useState('');
+    // const [isSearch, setIsSearch] = useState(false);
+    // const [input] = useState('');
+    const [filterData, setFilterData] = useState<any>([]);
+    const [isFilter, setIsFilter] = useState(false);
     const [routeId, setRouteId] = useState<any>(null);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
@@ -76,8 +78,13 @@ const AccountContainer = () => {
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
-        if (isSearch) {
+        if (search.length > 0 || form.watch('search')) {
             return search.slice(startIndex, endIndex);
+        }
+        if (isFilter) {
+            if ((role !== '0' && filterData.length > 0) || filterData.length >= 0) {
+                return filterData.slice(startIndex, endIndex);
+            }
         }
         return remove.slice(startIndex, endIndex);
     };
@@ -167,6 +174,29 @@ const AccountContainer = () => {
         setCheckedObj([]);
     };
 
+    const handleFilterButton = () => {
+        const data = [...remove];
+        const filter = data.filter((item: any) => {
+            const toArr = item.roles.split(',');
+            if (form.watch('isActive') || !form.watch('isActive')) {
+                return item.is_active === form.watch('isActive') && toArr.includes(role);
+            }
+            return toArr.includes(role);
+        });
+        setFilterData(filter);
+        setIsFilter(true);
+        setOpenFilter(false);
+    };
+    console.log(getPaginatedData());
+    const handleResetButton = () => {
+        setRole('0');
+        setIsFilter(false);
+        setOpenFilter(false);
+        // form.reset();
+        // setCheckedObj([]);
+        // setIsChecked(false);
+    };
+
     useEffect(() => {
         setRemove(dummy);
     }, []);
@@ -187,26 +217,17 @@ const AccountContainer = () => {
     }, [checkBoxKeys, form.watch('checkAll')]);
 
     useEffect(() => {
-        if (isSearch) {
-            const searched = remove.filter((item: any) => {
-                if (input) {
-                    if (item.name.toLowerCase().includes(input) || item.email.toLowerCase().includes(input)) {
-                        return item;
-                    }
-                }
-            });
-            setSearch(searched);
-        }
         if (form.watch('search') === '') {
-            setIsSearch(false);
+            // setIsSearch(false);
+            setSearch(remove);
         }
-    }, [remove, input]);
+    }, [search, form.watch()]);
 
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ padding: '35px 25px' }}>
                 <Paper sx={{ width: '100%', height: '170px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
-                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Account</Typography>
+                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Client Account</Typography>
                     <Typography sx={{ fontSize: '14px', color: 'rgba(0, 0, 0, 0.6)', fontWeight: 400 }}>
                         Additional description if required
                     </Typography>
@@ -228,8 +249,19 @@ const AccountContainer = () => {
                         >
                             <form
                                 onSubmit={form.handleSubmit((data: any) => {
-                                    setInput(data.search);
-                                    setIsSearch(true);
+                                    const datas = [...remove];
+                                    const searched = datas.filter((item: any) => {
+                                        if (
+                                            item?.name?.toLowerCase()?.includes(data.search.toLowerCase()) ||
+                                            item?.email?.toLowerCase()?.includes(data.search.toLowerCase())
+                                        ) {
+                                            return item;
+                                        }
+                                    });
+                                    if (pages === 1) {
+                                        setCurrentPage(1);
+                                    }
+                                    setSearch(searched);
                                 })}
                             >
                                 <InputSearch placeholder='Search by name, email, etc.' name='search' label='Search' form={form} />
@@ -258,6 +290,11 @@ const AccountContainer = () => {
                             elevation={3}
                             sx={{ width: '375px', height: '305px', position: 'absolute', zIndex: 2, padding: '20px', left: '330px' }}
                         >
+                            {/* <form
+                                onSubmit={form.handleSubmit((data: any) => {
+                                    console.log('yeay');
+                                })}
+                            > */}
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)', fontWeight: 700, fontSize: '20px' }}>Filters</Typography>
                                 <Close
@@ -284,9 +321,9 @@ const AccountContainer = () => {
                                         <MenuItem value='0' disabled>
                                             Select Category
                                         </MenuItem>
-                                        <MenuItem value='1'>Super Admin</MenuItem>
-                                        <MenuItem value='2'>Admin</MenuItem>
-                                        <MenuItem value='3'>Content Writer</MenuItem>
+                                        <MenuItem value='Super Admin'>Super Admin</MenuItem>
+                                        <MenuItem value='Admin'>Admin</MenuItem>
+                                        <MenuItem value='Content Writer'>Content Writer</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Box>
@@ -302,8 +339,9 @@ const AccountContainer = () => {
                                 />
                             </Box>
                             <Box sx={{ mt: '30px', justifyContent: 'space-between', display: 'flex', width: '100%' }}>
-                                <CustomButton title='FILTER' width='159px' height='36px' />
+                                <CustomButton onClick={handleFilterButton} title='FILTER' width='159px' height='36px' />
                                 <CustomButton
+                                    onClick={handleResetButton}
                                     title='RESET'
                                     width='159px'
                                     height='36px'
@@ -313,6 +351,7 @@ const AccountContainer = () => {
                               '
                                 />
                             </Box>
+                            {/* </form> */}
                         </Paper>
                     )}
                 </Paper>
@@ -445,7 +484,7 @@ const AccountContainer = () => {
                                                     sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                     align='left'
                                                 >
-                                                    Admin, Content Writer
+                                                    {item.roles}
                                                 </TableCell>
                                                 <TableCell
                                                     sx={{
@@ -459,13 +498,13 @@ const AccountContainer = () => {
                                                         <Box
                                                             sx={{
                                                                 width: '70%',
-                                                                backgroundColor: item.isActive ? '#A54CE5' : 'red',
+                                                                backgroundColor: item.is_active ? '#A54CE5' : 'red',
                                                                 padding: '2px',
                                                                 borderRadius: '10px',
                                                                 color: 'white'
                                                             }}
                                                         >
-                                                            <Typography>{item.isActive ? 'Yes' : 'No'}</Typography>
+                                                            <Typography>{item.is_active ? 'Yes' : 'No'}</Typography>
                                                         </Box>
                                                     </Box>
                                                 </TableCell>
@@ -483,6 +522,13 @@ const AccountContainer = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {getPaginatedData().length === 0 && (
+                        <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
+                            <Typography variant='h6' component='h6'>
+                                DATA NOT FOUND, PLEASE RESET THE FILTER
+                            </Typography>
+                        </Box>
+                    )}
                     <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', mt: '10px' }}>
                         <Box />
                         <Box
