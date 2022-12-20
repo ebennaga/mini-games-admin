@@ -1,5 +1,7 @@
+/* eslint-disable import/no-named-as-default */
 import React from 'react';
 import { Container, Box, Paper, Typography } from '@mui/material';
+// eslint-disable-next-line import/no-named-as-default-member
 import InputExchangeRates from 'components/Input/InputExchangeRates';
 import { useForm } from 'react-hook-form';
 import useAPICaller from 'hooks/useAPICaller';
@@ -20,15 +22,9 @@ const ExchangeRatesAdd = () => {
             effective: new Date().toJSON().slice(0, 10) || '',
             coins: '',
             idr: '',
-<<<<<<< HEAD
             bonus: '',
             activeRole: false
             // description: '',
-=======
-            name: '',
-            description: '',
-            bonus: ''
->>>>>>> fd0d9b120fdc046841ea770a6310c0bac2567880
         }
     });
 
@@ -89,15 +85,9 @@ const ExchangeRatesAdd = () => {
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
-<<<<<<< HEAD
                     // descriptionName='description'
                     // effectiveName='effective'
                     // nameName='name'
-=======
-                    nameName='name'
-                    descriptionName='description'
-                    bonusName=''
->>>>>>> fd0d9b120fdc046841ea770a6310c0bac2567880
                 />
             </Box>
         </Container>
