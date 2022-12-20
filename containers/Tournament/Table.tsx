@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import numberFormat from 'helpers/numberFormat';
 
 interface TableAddTournamentProps {
     value: any;
@@ -63,7 +64,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
                                             borderRight: '1px solid #E0E0E0'
                                         }}
                                     >
-                                        {item.positionEnd}
+                                        {numberFormat(item.positionEnd)}
                                     </TableCell>
                                     <TableCell
                                         sx={{
@@ -73,7 +74,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
                                             borderRight: '1px solid #E0E0E0'
                                         }}
                                     >
-                                        {item.pointPrizes}
+                                        {numberFormat(item.pointPrizes)}
                                     </TableCell>
                                     <TableCell
                                         sx={{
@@ -83,7 +84,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
                                             borderRight: '1px solid #E0E0E0'
                                         }}
                                     >
-                                        {item.playerPointPrizes}
+                                        {numberFormat(item.playerPointPrizes)}
                                     </TableCell>
                                     <TableCell
                                         sx={{
@@ -93,7 +94,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
                                             borderRight: '1px solid #E0E0E0'
                                         }}
                                     >
-                                        {item.playerPointPrizes}
+                                        {numberFormat(item.cointPrizes)}
                                     </TableCell>
                                     <TableCell
                                         sx={{
@@ -103,9 +104,9 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
                                             borderRight: '1px solid #E0E0E0'
                                         }}
                                     >
-                                        {item.playerPointPrizes}
+                                        {numberFormat(item.playerCointPrizes)}
                                     </TableCell>
-                                    <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>{item.playerPointPrizes}</TableCell>
+                                    {/* <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>{item.playerPointPrizes}</TableCell> */}
                                 </TableRow>
                             );
                         })}

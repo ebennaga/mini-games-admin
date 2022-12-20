@@ -168,6 +168,7 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                             <Grid item xs={4}>
                                 {!isUpload ? (
                                     <InputImage
+                                        isImage
                                         name='image'
                                         form={form}
                                         label='Click to upload'

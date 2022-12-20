@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase } from '@mui/material';
 import InputDate from 'components/Input/InputDate';
@@ -7,36 +8,84 @@ import Input from 'components/Input/Input';
 import { Remove, Add } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import { useForm } from 'react-hook-form';
-import { getCurrentDate, getCurrentTime } from 'utils/date';
+import { getCurrentDate, getCurrentTime, getSplitDate } from 'utils/date';
 import { useRouter } from 'next/router';
-import TableAddTournament from './Table';
-import dataTable from './dataSelect';
+import TableAddTournament from 'containers/Tournament/Table';
+import dataTable from 'containers/Tournament/dataSelect';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+import InputSelect from 'components/Input/InputSelect';
 
-interface CreateTournamentProps {}
+interface EditTournamentProps {}
 
-const CreateTournament: React.FC<CreateTournamentProps> = () => {
+const EditTournament: React.FC<EditTournamentProps> = () => {
     const form = useForm({
         mode: 'all',
         defaultValues: {
             start: new Date().toISOString().slice(0, 10) || '',
             end: new Date().toISOString().slice(0, 10) || '',
-            startDate: new Date().toISOString().slice(0, 10) || '',
-            endDate: new Date().toISOString().slice(0, 10) || '',
+            // startDate: new Date().toISOString().slice(0, 10) || '',
+            startDate: '',
+            endDate: '',
+            // endDate: new Date().toISOString().slice(0, 10) || '',
             maxDate: getCurrentDate(),
             title: '',
             startTime: getCurrentTime(),
             endTime: getCurrentTime(),
             image: '',
-            fee: 0,
+            game: '',
+            fee: '',
             pool: 0
         }
     });
     const router = useRouter();
     const [game, setGame] = React.useState('0');
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [table, setTable] = React.useState('0');
+    const [loadingSubmit, setLoadingSubmit] = React.useState(false);
+
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
 
+    const dataGames = [
+        { id: 1, title: 'Hop Up' },
+        { id: 2, title: 'Tower Stack' },
+        { id: 3, title: 'Rose Dart' }
+    ];
+
+    const fetchDetailTournaments = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: `tournaments/${router.query.id}`
+            });
+            console.log('results', result);
+            if (result.status === 200) {
+                form.setValue('title', result.data.data.name);
+                form.setValue('game', result.data.data.game.id);
+                form.setValue('fee', result.data.data.entry_coin);
+                const startDate = getSplitDate(result.data.data.start_time);
+                const endDate = getSplitDate(result.data.data.end_time);
+                form.setValue('startDate', startDate.date);
+                form.setValue('startTime', startDate.time);
+                form.setValue('endDate', endDate.date);
+                form.setValue('endTime', endDate.time);
+                form.setValue('pool', result.data.data.total_point);
+            }
+            setIsLoading(false);
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
+
+    React.useEffect(() => {
+        fetchDetailTournaments();
+    }, []);
     const handleFiter = (event: SelectChangeEvent) => {
         setGame(event.target.value as string);
     };
@@ -45,10 +94,33 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
         setTable(event.target.value as string);
     };
 
-    const handleSubmit = (data: any) => {
-        console.log('response', data);
-    };
+    const handleSubmit = async (data: any) => {
+        setLoadingSubmit(true);
+        try {
+            const { title, endTime, fee, startTime } = form.watch();
+            const result = await fetchAPI({
+                endpoint: `tournaments/${router.query.id}`,
+                method: 'PUT',
+                data: {
+                    name: title,
+                    game_id: router.query.id,
+                    end_time: endTime,
+                    entry_coin: fee,
+                    start_time: startTime
+                }
+            });
 
+            if (result.status === 200) {
+                notify(result.data.message, 'success');
+                setLoadingSubmit(false);
+                console.log('hasilpost', result);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setLoadingSubmit(false);
+        }
+    };
+    console.log('hasil', form.watch());
     const MenuProps = {
         PaperProps: {
             style: {
@@ -62,7 +134,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
         <Box sx={{}}>
             <Box sx={{ padding: '40px 25px' }}>
                 <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
-                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Create Tournament</Typography>
+                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Edit Tournament</Typography>
                     <Typography sx={{ fontSize: '14px', fontWeight: 400, color: 'rgba(0, 0, 0, 0.6)' }}>
                         Additional description if required
                     </Typography>
@@ -100,12 +172,12 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
                             </Grid>
                             <Grid item xs={3}>
                                 <InputImage
-                                    isImage
                                     name='image'
                                     form={form}
                                     label='Click to upload'
                                     secondaryLabel='or drag and drop'
                                     placeholder='SVG, PNG, JPG or GIF (max. 3MB)'
+                                    rules={{ required: true }}
                                 />
                             </Grid>
                         </Grid>
@@ -119,19 +191,33 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
-                                <InputDate isCreate form={form} name='startDate' label='Start Date' type='date' />
+                                <InputDate
+                                    isCreate
+                                    rules={{ required: true }}
+                                    form={form}
+                                    name='startDate'
+                                    label='Start Date'
+                                    type='date'
+                                />
                             </Grid>
                             <Grid item xs={3}>
-                                <InputDate isCreate form={form} name='endDate' label='End Date' type='date' />
+                                <InputDate isCreate rules={{ required: true }} form={form} name='endDate' label='End Date' type='date' />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={3}>
-                                <InputDate isCreate form={form} name='startTime' label='Start Time' type='time' />
+                                <InputDate
+                                    isCreate
+                                    rules={{ required: true }}
+                                    form={form}
+                                    name='startTime'
+                                    label='Start Time'
+                                    type='time'
+                                />
                             </Grid>
                             <Grid item xs={3}>
-                                <InputDate isCreate form={form} name='endTime' label='End Time' type='time' />
+                                <InputDate isCreate rules={{ required: true }} form={form} name='endTime' label='End Time' type='time' />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
@@ -144,28 +230,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
-                                        Games
-                                    </InputLabel>
-                                    <Select
-                                        MenuProps={MenuProps}
-                                        sx={{ color: game === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                        placeholder='Games'
-                                        labelId='demo-simple-select-label'
-                                        id='demo-simple-select'
-                                        value={game}
-                                        label='Games'
-                                        onChange={handleFiter}
-                                    >
-                                        <MenuItem value='0' disabled>
-                                            Select Game
-                                        </MenuItem>
-                                        <MenuItem value='1'>Hop Up</MenuItem>
-                                        <MenuItem value='2'>Tower Stack</MenuItem>
-                                        <MenuItem value='3'>Rose Dart</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                <InputSelect form={form} name='game' dataSelect={dataGames} title='Games' placeholder='Select Game' />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
@@ -297,7 +362,15 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
                     width: '100%'
                 }}
             >
-                <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
+                <CustomButton
+                    onClick={handleSubmit}
+                    type='submit'
+                    padding='10px'
+                    width='193px'
+                    height='59px'
+                    title='Submit'
+                    backgroundColor='#A54CE5'
+                />
                 <CustomButton
                     onClick={() => {
                         router.push('/tournament');
@@ -315,4 +388,4 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
     );
 };
 
-export default CreateTournament;
+export default EditTournament;

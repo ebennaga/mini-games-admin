@@ -1,7 +1,7 @@
 import { Box, Typography, Paper, SelectChangeEvent, Skeleton } from '@mui/material';
 import React, { useState, SyntheticEvent, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import InputImage from 'components/Input/InputImage';
+import InputFile from 'components/Input/InputImage';
 import InputSearch from 'components/Input/InputSearch';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
@@ -124,9 +124,9 @@ const LocationContainer = () => {
         handleQuerySearch();
     }, [query]);
 
-    React.useEffect(() => {
-        console.log(filteredData);
-    });
+    // React.useEffect(() => {
+    //     console.log(filteredData);
+    // });
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ padding: '0px 25px' }}>
@@ -162,7 +162,7 @@ const LocationContainer = () => {
                         </Box>
                     </Box>
                     <Box>
-                        <InputImage
+                        <InputFile
                             name='image'
                             form={form}
                             label='Click to upload'
