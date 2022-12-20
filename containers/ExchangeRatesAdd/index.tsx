@@ -12,6 +12,7 @@ const ExchangeRatesAdd = () => {
     const router = useRouter();
 
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
+    // const [isValue, setIsValue] = React.useState(false);
 
     const form = useForm({
         mode: 'all',
@@ -19,15 +20,16 @@ const ExchangeRatesAdd = () => {
             effective: new Date().toJSON().slice(0, 10) || '',
             coins: '',
             idr: '',
-            name: '',
-            description: ''
+            bonus: '',
+            activeRole: false
+            // description: '',
         }
     });
 
     const handleSubmit = async (data: any) => {
         setLoadingSubmit(true);
         try {
-            const { effective, coins, idr, description, name } = data;
+            const { bonus, coins, idr, activeRole, name } = data;
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: 'exchange-rates',
@@ -35,8 +37,10 @@ const ExchangeRatesAdd = () => {
                     name,
                     coin: coins,
                     price: idr,
-                    description,
-                    effective_at: effective
+                    bonus,
+                    is_active: activeRole
+                    // description,
+                    // effective_at: effective
                 }
             });
 
@@ -48,6 +52,16 @@ const ExchangeRatesAdd = () => {
             notify(err.message);
         }
         setLoadingSubmit(false);
+    };
+
+    const handleAddSetActive = (event: any) => {
+        // setIsValue(true);
+        form.setValue('activeRole', event.target.checked);
+    };
+
+    const handleAddSetNotActive = () => {
+        // setIsValue(true);
+        form.setValue('activeRole', !form.watch('activeRole'));
     };
 
     return (
@@ -62,14 +76,16 @@ const ExchangeRatesAdd = () => {
             </Box>
             <Box sx={{ ml: -25, mt: 4 }}>
                 <InputExchangeRates
+                    handleAddSetActive={handleAddSetActive}
+                    handleAddSetNotActive={handleAddSetNotActive}
                     loadingSubmit={loadingSubmit}
-                    effectiveName='effective'
                     coinsName='coins'
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
-                    nameName='name'
-                    descriptionName='description'
+                    // descriptionName='description'
+                    // effectiveName='effective'
+                    // nameName='name'
                 />
             </Box>
         </Container>
