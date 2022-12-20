@@ -94,7 +94,6 @@ const MasterCompanyContainer = () => {
                 return filterData.slice(startIndex, endIndex);
             }
         }
-        console.log('yeet');
         return remove.slice(startIndex, endIndex);
     };
 
