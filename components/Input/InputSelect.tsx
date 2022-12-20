@@ -2,10 +2,14 @@ import React from 'react';
 import { FormControl, Select, MenuItem, Typography, OutlinedInput, FormHelperText, Skeleton, Box } from '@mui/material';
 import { Controller } from 'react-hook-form';
 
+interface DataSelect {
+    id: any;
+    title: string;
+}
 interface InputSelectProps {
     form: any;
     name: string;
-    dataSelect: any;
+    dataSelect: Array<DataSelect>;
     title: string;
     placeholder: string;
     rules?: any;
