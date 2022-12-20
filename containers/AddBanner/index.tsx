@@ -144,9 +144,9 @@ const AddBanner = () => {
                         </Box>
                         <Box sx={{ width: '30%' }}>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox defaultChecked />} label='Home' />
-                                <FormControlLabel control={<Checkbox />} label='Redeem Prizes' />
-                                <FormControlLabel control={<Checkbox />} label='Lucky Raffle' />
+                                <FormControlLabel control={<Checkbox color='secondary' defaultChecked />} label='Home' />
+                                <FormControlLabel control={<Checkbox color='secondary' />} label='Redeem Prizes' />
+                                <FormControlLabel control={<Checkbox color='secondary' />} label='Lucky Raffle' />
                             </FormGroup>
                         </Box>
                     </Box>
@@ -170,8 +170,14 @@ const AddBanner = () => {
                         </Box>
                         <Box sx={{ width: '30%' }}>
                             <FormGroup row>
-                                <FormControlLabel control={<Checkbox checked={checked[0]} onChange={handleChange1} />} label='Yes' />
-                                <FormControlLabel control={<Checkbox checked={checked[1]} onChange={handleChange2} />} label='No' />
+                                <FormControlLabel
+                                    control={<Checkbox color='secondary' checked={checked[0]} onChange={handleChange1} />}
+                                    label='Yes'
+                                />
+                                <FormControlLabel
+                                    control={<Checkbox color='secondary' checked={checked[1]} onChange={handleChange2} />}
+                                    label='No'
+                                />
                             </FormGroup>
                         </Box>
                     </Box>
