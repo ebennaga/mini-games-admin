@@ -330,31 +330,11 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 </Box>
                             </Grid>
                             <Grid item xs={3}>
-                                {/* <FormControl fullWidth>
-                                    <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
-                                        Copy Table
-                                    </InputLabel>
-                                    <Select
-                                        sx={{ color: table === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                        placeholder='Games'
-                                        labelId='demo-simple-select-label'
-                                        id='demo-simple-select'
-                                        value={table}
-                                        label='Copy Table'
-                                        onChange={handleTable}
-                                    >
-                                        <MenuItem value='0' disabled>
-                                            Select Table
-                                        </MenuItem>
-                                        {dataTable.length > 0 &&
-                                            dataTable.map((item: any) => <MenuItem value={item.id}>{item.label}</MenuItem>)}
-                                    </Select>
-                                </FormControl> */}
                                 <InputPrizingTable
                                     form={form}
                                     name='tournamentType'
-                                    dataSelect={dataType}
-                                    title='Genre'
+                                    dataSelect={dataTable}
+                                    title='Prizing Table'
                                     placeholder='Select Type'
                                     rules={{ required: true }}
                                 />
