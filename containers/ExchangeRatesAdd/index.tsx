@@ -20,9 +20,15 @@ const ExchangeRatesAdd = () => {
             effective: new Date().toJSON().slice(0, 10) || '',
             coins: '',
             idr: '',
+<<<<<<< HEAD
             bonus: '',
             activeRole: false
             // description: '',
+=======
+            name: '',
+            description: '',
+            bonus: ''
+>>>>>>> fd0d9b120fdc046841ea770a6310c0bac2567880
         }
     });
 
@@ -83,9 +89,15 @@ const ExchangeRatesAdd = () => {
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
+<<<<<<< HEAD
                     // descriptionName='description'
                     // effectiveName='effective'
                     // nameName='name'
+=======
+                    nameName='name'
+                    descriptionName='description'
+                    bonusName=''
+>>>>>>> fd0d9b120fdc046841ea770a6310c0bac2567880
                 />
             </Box>
         </Container>

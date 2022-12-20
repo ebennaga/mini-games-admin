@@ -31,6 +31,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
     handleSubmit,
     loadingSubmit,
     loading
+    // bonusName
 }) => {
     const router = useRouter();
 

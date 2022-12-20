@@ -13,25 +13,31 @@ interface DialogFilterProps {
     gameName: string;
     startDateName: string;
     endDateName: string;
+    tabName: string;
+    // eslint-disable-next-line no-unused-vars
+    onFilter: (data: any) => void;
+    onReset: () => void;
+    listGames: any;
 }
 
-const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, titleName, gameName, startDateName, endDateName }) => {
+const DialogFilter: React.FC<DialogFilterProps> = ({
+    open,
+    setOpen,
+    form,
+    titleName,
+    gameName,
+    startDateName,
+    endDateName,
+    tabName,
+    onFilter,
+    onReset,
+    listGames
+}) => {
     const radioList = [
         { value: 'all', label: 'All' },
         { value: 'latest', label: 'Latest' },
         { value: 'oldest', label: 'Oldest' }
     ];
-
-    const listGames = [
-        { id: 1, title: 'Hop Up' },
-        { id: 2, title: 'Crank Work' },
-        { id: 3, title: 'Rose Dart' }
-    ];
-
-    const handleSubmit = (data: any) => {
-        setOpen(false);
-        console.log('response', data);
-    };
 
     if (!open) {
         return null;
@@ -53,16 +59,23 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, titleN
                     <CloseIcon />
                 </IconButton>
             </Box>
-            <FormControl component='form' onSubmit={form.handleSubmit(handleSubmit)} fullWidth sx={{ mt: '24px' }}>
+            <FormControl component='form' onSubmit={form.handleSubmit(onFilter)} fullWidth sx={{ mt: '24px' }}>
                 <RadioGroup
                     row
                     aria-labelledby='radio-filter-time'
                     name='radio-filter'
-                    defaultValue='all'
+                    defaultValue={form.watch(tabName) || 'all'}
                     sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5, '& .Mui-checked': { color: '#A54CE5 !important' } }}
                 >
                     {radioList.map((item: any) => {
-                        return <FormControlLabel key={item.value} value={item.value} control={<Radio />} label={item.label} />;
+                        return (
+                            <FormControlLabel
+                                key={item.value}
+                                value={item.value}
+                                control={<Radio onClick={() => form.setValue(tabName, item.value)} />}
+                                label={item.label}
+                            />
+                        );
                     })}
                 </RadioGroup>
 
@@ -90,7 +103,7 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, titleN
                     </Grid>
                     <Grid item xs={6}>
                         <ButtonBase
-                            onClick={() => setOpen(false)}
+                            onClick={onReset}
                             sx={{ border: '1px solid #A54CE5', color: '#A54CE5', padding: '10px', width: '100%', borderRadius: '4px' }}
                         >
                             RESET
