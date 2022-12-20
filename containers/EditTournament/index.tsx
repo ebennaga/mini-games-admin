@@ -56,6 +56,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
     ];
 
     const fetchDetailTournaments = async () => {
+        setIsLoading(true);
         try {
             const result = await fetchAPI({
                 method: 'GET',
@@ -74,10 +75,12 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                 form.setValue('endTime', endDate.time);
                 form.setValue('pool', result.data.data.total_point);
             }
+            setIsLoading(false);
         } catch (err: any) {
             notify(err.message, 'error');
             setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     React.useEffect(() => {
@@ -94,25 +97,30 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
     const handleSubmit = async (data: any) => {
         setLoadingSubmit(true);
         try {
-            const { title } = data;
+            const { title, endTime, fee, startTime } = form.watch();
             const result = await fetchAPI({
                 endpoint: `tournaments/${router.query.id}`,
                 method: 'PUT',
                 data: {
-                    title
+                    name: title,
+                    game_id: router.query.id,
+                    end_time: endTime,
+                    entry_coin: fee,
+                    start_time: startTime
                 }
             });
-            console.log('hasilsaja', result);
-            if (result?.status === 200) {
+
+            if (result.status === 200) {
                 notify(result.data.message, 'success');
                 setLoadingSubmit(false);
+                console.log('hasilpost', result);
             }
         } catch (err: any) {
             notify(err.message, 'error');
             setLoadingSubmit(false);
         }
     };
-
+    console.log('hasil', form.watch());
     const MenuProps = {
         PaperProps: {
             style: {
@@ -354,7 +362,15 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                     width: '100%'
                 }}
             >
-                <CustomButton type='submit' padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
+                <CustomButton
+                    onClick={handleSubmit}
+                    type='submit'
+                    padding='10px'
+                    width='193px'
+                    height='59px'
+                    title='Submit'
+                    backgroundColor='#A54CE5'
+                />
                 <CustomButton
                     onClick={() => {
                         router.push('/tournament');
