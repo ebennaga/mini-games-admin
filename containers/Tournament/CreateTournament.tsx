@@ -8,7 +8,7 @@ import Input from 'components/Input/Input';
 import { Remove, Add } from '@mui/icons-material';
 import CustomButton from 'components/Button';
 import useNotify from 'hooks/useNotify';
-
+import InputPrizingTable from 'components/Input/InputPrizingTable';
 import useAPICaller from 'hooks/useAPICaller';
 import InputSelect from 'components/Input/InputSelect';
 import dataTable from './dataSelect';
@@ -67,7 +67,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                     }
                 }
             });
-            console.log('response', response);
+
             if (response?.status === 200) {
                 // console.log(response);
             }
@@ -308,50 +308,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 />
                             </Grid>
                         </Grid>
-                        {/* <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
-                                <Box sx={{ mr: '70%' }}>
-                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                        Prize Type
-                                    </Typography>
 
-                                    <Typography
-                                        sx={{
-                                            fontWeight: '400',
-                                            color: 'rgba(0, 0, 0, 0.6)',
-                                            fontSize: '12px',
-                                            position: 'relative',
-                                            bottom: '-10px'
-                                        }}
-                                    >
-                                        *Field Required
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
-                                        Type
-                                    </InputLabel>
-                                    <Select
-                                        MenuProps={MenuProps}
-                                        sx={{ color: game === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                        placeholder='Games'
-                                        labelId='demo-simple-select-label'
-                                        id='demo-simple-select'
-                                        value={game}
-                                        label='Games'
-                                        onChange={handleFiter}
-                                    >
-                                        <MenuItem value='0' disabled>
-                                            Select Type
-                                        </MenuItem>
-                                        <MenuItem value='1'>Accumulation</MenuItem>
-                                        <MenuItem value='2'>High Score</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        </Grid> */}
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
@@ -373,7 +330,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 </Box>
                             </Grid>
                             <Grid item xs={3}>
-                                <FormControl fullWidth>
+                                {/* <FormControl fullWidth>
                                     <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
                                         Copy Table
                                     </InputLabel>
@@ -392,7 +349,15 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                         {dataTable.length > 0 &&
                                             dataTable.map((item: any) => <MenuItem value={item.id}>{item.label}</MenuItem>)}
                                     </Select>
-                                </FormControl>
+                                </FormControl> */}
+                                <InputPrizingTable
+                                    form={form}
+                                    name='tournamentType'
+                                    dataSelect={dataType}
+                                    title='Genre'
+                                    placeholder='Select Type'
+                                    rules={{ required: true }}
+                                />
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
