@@ -9,9 +9,10 @@ interface DialogFilterProps {
     form: any;
     dataDate: any;
     handleFilter: any;
+    handleReset: () => void;
 }
 
-const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDate, handleFilter }) => {
+const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDate, handleFilter, handleReset }) => {
     const radioList = [
         { value: 'all', label: 'All' },
         { value: 'latest', label: 'Latest' },
@@ -24,6 +25,11 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDa
         setOpen(false);
         handleFilter(data, tabRadio);
         setTabRadio('all');
+    };
+
+    const onReset = () => {
+        handleReset();
+        setOpen(false);
     };
 
     if (!open) {
@@ -89,7 +95,7 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDa
                     </Grid>
                     <Grid item xs={6}>
                         <ButtonBase
-                            onClick={() => setOpen(false)}
+                            onClick={onReset}
                             sx={{ border: '1px solid #A54CE5', color: '#A54CE5', padding: '10px', width: '100%', borderRadius: '4px' }}
                         >
                             RESET
