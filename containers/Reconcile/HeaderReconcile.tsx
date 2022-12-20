@@ -14,9 +14,10 @@ interface HeaderReconcileProps {
     dataDate: any;
     handleDownload: any;
     handleFilter: any;
+    handleReset: () => void;
 }
 
-const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, dataDate, handleDownload, handleFilter }) => {
+const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, dataDate, handleDownload, handleFilter, handleReset }) => {
     const [isOpenFilter, setIsOpenFilter] = React.useState<boolean>(false);
 
     return (
@@ -44,6 +45,7 @@ const HeaderReconcile: React.FC<HeaderReconcileProps> = ({ form, handleGetData, 
                             open={isOpenFilter}
                             setOpen={setIsOpenFilter}
                             handleFilter={handleFilter}
+                            handleReset={handleReset}
                         />
                     </Box>
                 </Box>
