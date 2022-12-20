@@ -46,4 +46,19 @@ const getEndDdate = () => {
     return `${yyyy}-${mm + 1}-${dd}`;
 };
 
-export { getCurrentDate, getPastDate, getCurrentTime, getStartDate, getEndDdate };
+const getSplitDate = (date: any) => {
+    const thisdate = new Date(date);
+    // const mm = thisdate.getMonth();
+    // const yyyy = thisdate.getFullYear();
+    // const dd = thisdate.getDate();
+    const hour = thisdate.getHours();
+    const minute = thisdate.getMinutes();
+    const time = `${hour < 10 ? `0${hour}` : `${hour}`}:${minute < 10 ? `0${minute}` : `${minute}`}`;
+    // const localDate = `${yyyy}-${mm < 10 ? `0${mm}` : mm}-${dd < 10 ? `0${dd}` : dd}`;
+
+    const localDate = thisdate.toJSON().slice(0, 10);
+
+    return { date: localDate, time };
+};
+
+export { getCurrentDate, getPastDate, getCurrentTime, getStartDate, getEndDdate, getSplitDate };

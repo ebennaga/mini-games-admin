@@ -17,7 +17,6 @@ import {
     FormControlLabel,
     Radio,
     MenuItem,
-    TextField,
     TableContainer,
     Table,
     TableHead,
@@ -37,62 +36,85 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from 'next/router';
 import InputDate from 'components/Input/InputDate';
-import { getCurrentDate, getCurrentTime } from 'utils/date';
+import { getCurrentDate } from 'utils/date';
+import Input from 'components/Input/Input';
+import InputSelect from 'components/Input/InputSelect';
 
 const valueList = [
     {
-        value: '1',
-        label: 'Value 1'
+        id: 'closed',
+        title: 'Closed'
     },
     {
-        value: '2',
-        label: 'Value 2'
+        id: 'open',
+        title: 'Open'
     }
 ];
+
+const prizeType = [
+    { id: 'coins', title: 'Coins' },
+    { id: 'point', title: 'Point' }
+];
+
+const gamesSelect = [
+    { id: 'hop up', title: 'Hop Up' },
+    { id: 'rose dart', title: 'Rose Dart' },
+    { id: 'block stack', title: 'Block Stack' }
+];
+
+const tabList = ['All', 'Latest', 'Oldest'];
 
 const dummyData = [
     {
         id: 1,
         title: 'Touney Starling CP lt Ground',
-        start: '18-10-2022',
-        end: '25-10-2022',
+        start: '2022-12-20T04:45:18.000Z',
+        end: '2022-12-25T04:45:18.000Z',
         games: 'Hop Up',
         mode: 'Closed',
-        fee: 20,
-        prize: 10000
+        fee: 0,
+        prize: 10000,
+        prize_type: 'Coins'
     },
     {
         id: 2,
         title: 'Open Tourney Texxas Chicken 2022',
-        start: '18-10-2022',
-        end: '25-10-2022',
+        start: '2022-12-22T17:45:18.000Z',
+        end: '2022-12-24T17:45:18.000Z',
         games: 'Block Stack',
         mode: 'Open',
         fee: 20,
-        prize: 20000
+        prize: 20000,
+        prize_type: 'Point'
     },
     {
         id: 3,
         title: 'Tourney Starbuck Cp lt 2',
-        start: '18-10-2022',
-        end: '25-10-2022',
+        start: '2022-12-28T23:00:18.000Z',
+        end: '2022-12-31T16:59:18.000Z',
         games: 'Rose Dart',
         mode: 'Closed',
         fee: 20,
-        prize: 20000
+        prize: 20000,
+        prize_type: 'Point'
     },
     {
         id: 4,
         title: 'Tourney Starbuck Cp lt 2',
-        start: '18-10-2022',
-        end: '25-10-2022',
+        start: '2023-01-04T17:00:00.000Z',
+        end: '2023-01-08T17:00:00.000Z',
         games: 'Rose Dart',
         mode: 'Closed',
         fee: 20,
-        prize: 20000
+        prize: 20000,
+        prize_type: 'Point'
     }
 ];
+
 const ClientTournament = () => {
+    const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const timeOption: any = { hour: '2-digit', minute: '2-digit', hour12: false };
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -104,12 +126,14 @@ const ClientTournament = () => {
             mode: '',
             fee: 0,
             prize: 10000,
+            prizeType: '',
             checkedAll: false,
-            startDate: new Date().toJSON().slice(0, 10),
-            endDate: new Date().toJSON().slice(0, 10),
+            startDate: '',
+            endDate: '',
             maxDate: getCurrentDate(),
-            startTime: getCurrentTime(),
-            endTime: getCurrentTime()
+            startTime: '',
+            endTime: '',
+            keySearch: ''
         }
     });
     const [openFilter, setOpenFilter] = React.useState(false);
@@ -122,7 +146,7 @@ const ClientTournament = () => {
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
     const checkBoxKeys: string[] = [];
     const [openRemove, setOpenRemove] = React.useState(false);
-    const [val, setVal] = React.useState('1');
+    const [val, setVal] = React.useState<string>('All');
     const [removeData, setRemoveData] = React.useState<any>([]);
     const router = useRouter();
 
@@ -169,7 +193,7 @@ const ClientTournament = () => {
         setRow(event.target.value as string);
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeTab = (event: React.ChangeEvent<HTMLInputElement>) => {
         setVal(event.target.value);
     };
 
@@ -246,6 +270,128 @@ const ClientTournament = () => {
         router.push(`/tournament/client-tournament/${id}`);
     };
 
+    // Component Update for Search Event
+    const keySearch = form.watch('keySearch');
+    React.useEffect(() => {
+        const result = dummyData.filter((item: any) => {
+            if (keySearch) {
+                return item?.title?.toLowerCase()?.includes(keySearch.toLowerCase());
+            }
+            return item;
+        });
+        setFilteredData(result);
+    }, [keySearch]);
+
+    // Event Handler Filter
+    const handleFilter = () => {
+        let result: Array<any> = [];
+        const data = dummyData;
+        const { title, mode, prizeType: prize, games, startDate, startTime, endDate, endTime } = form.watch();
+
+        if (title) {
+            const arr = result.length > 0 ? result : data;
+            result = [...arr.filter((item: any) => item?.title?.toLowerCase()?.includes(title.toLowerCase()))];
+        }
+        if (mode) {
+            const arr = result.length > 0 ? result : data;
+            result = [...arr.filter((item: any) => item?.mode?.toLowerCase() === mode.toLowerCase())];
+        }
+        if (prize) {
+            const arr = result.length > 0 ? result : data;
+            result = [...arr.filter((item: any) => item?.prize_type?.toLowerCase() === prize.toLowerCase())];
+        }
+        if (games) {
+            const arr = result.length > 0 ? result : data;
+            result = [...arr.filter((item: any) => item?.games?.toLowerCase() === games.toLowerCase())];
+        }
+        if (startDate) {
+            const arr = result.length > 0 ? result : data;
+            result = [
+                ...arr.filter((item: any) => {
+                    const value: any = new Date(item.start.slice(0, 10));
+                    const filter: any = new Date(startDate);
+                    return value >= filter;
+                })
+            ];
+        }
+        if (endDate) {
+            const arr = result.length > 0 ? result : data;
+            result = [
+                ...arr.filter((item: any) => {
+                    const value: any = new Date(item.end.slice(0, 10));
+                    const filter: any = new Date(endDate);
+                    return value <= filter;
+                })
+            ];
+        }
+        if (startTime && !endTime) {
+            const arr = result.length > 0 ? result : data;
+            result = [
+                ...arr.filter((item: any) => {
+                    const itemStart = new Date(item.start).toLocaleString(undefined, timeOption);
+                    return itemStart === startTime;
+                })
+            ];
+        }
+        if (endTime && !startTime) {
+            const arr = result.length > 0 ? result : data;
+            result = [
+                ...arr.filter((item: any) => {
+                    const itemEnd = new Date(item?.end)?.toLocaleString(undefined, timeOption);
+                    return itemEnd === endTime;
+                })
+            ];
+        }
+        if (endTime && startTime) {
+            const arr = result.length > 0 ? result : data;
+            result = [
+                ...arr.filter((item: any) => {
+                    const itemStart = new Date(item.start).toLocaleString(undefined, timeOption);
+                    const itemEnd = new Date(item.end).toLocaleString(undefined, timeOption);
+                    return itemStart >= startTime && itemEnd <= endTime;
+                })
+            ];
+        }
+        if (!title && !mode && !prize && !games && !startDate && !startTime && !endDate && !endTime) {
+            result = [...dummyData];
+        }
+
+        if (val === 'Latest') {
+            result = [
+                ...result.sort((a: any, b: any) => {
+                    const first: any = new Date(a.start);
+                    const second: any = new Date(b.start);
+                    return first - second;
+                })
+            ];
+        }
+        if (val === 'Oldest') {
+            result = [
+                ...result.sort((a: any, b: any) => {
+                    const first: any = new Date(a.start);
+                    const second: any = new Date(b.start);
+                    return second - first;
+                })
+            ];
+        }
+        setFilteredData(result);
+        setOpenFilter(false);
+    };
+
+    // Event handle Reset filter
+    const handleResetFilter = () => {
+        form.setValue('title', '');
+        form.setValue('mode', '');
+        form.setValue('prizeType', '');
+        form.setValue('games', '');
+        form.setValue('startDate', '');
+        form.setValue('startTime', '');
+        form.setValue('endDate', '');
+        form.setValue('endTime', '');
+        setFilteredData(dummyData);
+        setOpenFilter(false);
+    };
+
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
     return (
@@ -274,52 +420,34 @@ const ClientTournament = () => {
                 </DialogTitle>
                 <DialogContent>
                     <FormControl sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <RadioGroup row aria-labelledby='demo-row-radio-buttons-group-label' name='row-radio-buttons-group'>
-                            <FormControlLabel
-                                sx={{ mr: 1 }}
-                                value='all'
-                                control={
-                                    <Radio
-                                        sx={{
-                                            color: 'grey',
-                                            '&.Mui-checked': {
-                                                color: '#A54CE5'
-                                            }
-                                        }}
+                        <RadioGroup
+                            defaultValue='All'
+                            value={val}
+                            row
+                            aria-labelledby='demo-row-radio-buttons-group-label'
+                            name='row-radio-buttons-group'
+                        >
+                            {tabList.map((item: any) => {
+                                return (
+                                    <FormControlLabel
+                                        key={item}
+                                        sx={{ mr: 1 }}
+                                        value={item}
+                                        control={
+                                            <Radio
+                                                onClick={(e: any) => handleChangeTab(e)}
+                                                sx={{
+                                                    color: 'grey',
+                                                    '&.Mui-checked': {
+                                                        color: '#A54CE5'
+                                                    }
+                                                }}
+                                            />
+                                        }
+                                        label={item}
                                     />
-                                }
-                                label='All'
-                            />
-                            <FormControlLabel
-                                sx={{ ml: 1, mr: 1 }}
-                                value='latest'
-                                control={
-                                    <Radio
-                                        sx={{
-                                            color: 'grey',
-                                            '&.Mui-checked': {
-                                                color: '#A54CE5'
-                                            }
-                                        }}
-                                    />
-                                }
-                                label='Latest'
-                            />
-                            <FormControlLabel
-                                sx={{ ml: 1, mr: 1 }}
-                                value='oldest'
-                                control={
-                                    <Radio
-                                        sx={{
-                                            color: 'grey',
-                                            '&.Mui-checked': {
-                                                color: '#A54CE5'
-                                            }
-                                        }}
-                                    />
-                                }
-                                label='Oldest'
-                            />
+                                );
+                            })}
                         </RadioGroup>
                     </FormControl>
                     <FormControl
@@ -329,13 +457,7 @@ const ClientTournament = () => {
                             marginBottom: '14px'
                         }}
                     >
-                        <TextField id='outlined-select-title' select label='Title' value={val} onChange={handleChange}>
-                            {valueList.map((option: any) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                        <Input form={form} name='title' label='Title' placeholder='Enter Title' />
                     </FormControl>
                     <FormControl
                         fullWidth
@@ -344,13 +466,25 @@ const ClientTournament = () => {
                             marginBottom: '14px'
                         }}
                     >
-                        <TextField id='outlined-select-games' select label='Games' value={val} onChange={handleChange}>
-                            {valueList.map((option: any) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                        <InputSelect form={form} name='mode' dataSelect={valueList} title='Tournament Mode' placeholder='Select Mode' />
+                    </FormControl>
+                    <FormControl
+                        fullWidth
+                        sx={{
+                            marginTop: '14px',
+                            marginBottom: '14px'
+                        }}
+                    >
+                        <InputSelect form={form} name='prizeType' dataSelect={prizeType} title='Prize Type' placeholder='Select Type' />
+                    </FormControl>
+                    <FormControl
+                        fullWidth
+                        sx={{
+                            marginTop: '14px',
+                            marginBottom: '14px'
+                        }}
+                    >
+                        <InputSelect form={form} name='games' dataSelect={gamesSelect} title='Games' placeholder='Select Games' />
                     </FormControl>
                     <Box sx={{ marginTop: '14px' }}>
                         <InputDate label='Start Date' type='date' form={form} name='startDate' />
@@ -358,23 +492,20 @@ const ClientTournament = () => {
                     <Box sx={{ marginTop: '24px' }}>
                         <InputDate label='End Date' type='date' form={form} name='endDate' />
                     </Box>
+                    <FormControl fullWidth>
+                        <InputDate label='Start Time' type='time' form={form} name='startTime' />
+                    </FormControl>
                     <FormControl
                         fullWidth
                         sx={{
-                            marginTop: '14px',
                             marginBottom: '14px'
                         }}
                     >
-                        <TextField id='outlined-select-mode' select label='Tournament Mode' value={val} onChange={handleChange}>
-                            {valueList.map((option: any) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                        <InputDate label='End Time' type='time' form={form} name='endTime' />
                     </FormControl>
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 2, mb: 3, mt: 2 }}>
                         <ButtonBase
+                            onClick={handleFilter}
                             sx={{
                                 background: '#A54CE5',
                                 borderRadius: '4px',
@@ -388,6 +519,7 @@ const ClientTournament = () => {
                             FILTER
                         </ButtonBase>
                         <ButtonBase
+                            onClick={handleResetFilter}
                             sx={{
                                 border: '1px solid #A54CE5',
                                 borderRadius: '4px',
@@ -429,6 +561,7 @@ const ClientTournament = () => {
             <Box component='section'>
                 <TitleCard
                     onConfirm={(value: boolean) => handleDialog(value)}
+                    handleSearch={(key: string) => form.setValue('keySearch', key)}
                     title='Client Tournament'
                     subtitle='Addtional description if required'
                     isSearchExist
@@ -472,13 +605,25 @@ const ClientTournament = () => {
                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                                         align='center'
                                     >
-                                        Start
+                                        Start Date
                                     </TableCell>
                                     <TableCell
                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
                                         align='center'
                                     >
-                                        End
+                                        Start Time
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                        align='center'
+                                    >
+                                        End Date
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                        align='center'
+                                    >
+                                        End Time
                                     </TableCell>
                                     <TableCell
                                         sx={{
@@ -509,6 +654,16 @@ const ClientTournament = () => {
                                         align='center'
                                     >
                                         Registration Fee
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Prize Type
                                     </TableCell>
                                     <TableCell
                                         sx={{
@@ -566,13 +721,25 @@ const ClientTournament = () => {
                                                     sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                     align='center'
                                                 >
-                                                    {item.start}
+                                                    {new Date(item.start).toLocaleString('id', dateOption)}
                                                 </TableCell>
                                                 <TableCell
                                                     sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                     align='center'
                                                 >
-                                                    {item.end}
+                                                    {new Date(item.start).toLocaleString(undefined, timeOption)}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {new Date(item.end).toLocaleString('id', dateOption)}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {new Date(item.end).toLocaleString(undefined, timeOption)}
                                                 </TableCell>
                                                 <TableCell
                                                     sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -591,6 +758,12 @@ const ClientTournament = () => {
                                                     align='center'
                                                 >
                                                     {item.fee}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.prize_type}
                                                 </TableCell>
                                                 <TableCell
                                                     sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
