@@ -36,28 +36,30 @@ const AddBanner = () => {
     };
 
     const handleSubmit = async (data: any) => {
-        setIsLoading(true);
-        try {
-            const response = await fetchAPI({
-                method: 'POST',
-                endpoint: '/banners',
-                data: {
-                    title: data.title,
-                    link: data.link,
-                    image_url: data.image_url,
-                    is_active: data.is_active
+        const { type }: any = form.watch('img');
+        if (type.split('/')[0] === 'image') {
+            setIsLoading(true);
+            try {
+                const response = await fetchAPI({
+                    method: 'POST',
+                    endpoint: '/banners',
+                    data: {
+                        title: data.title,
+                        link: data.link,
+                        image_url: data.image_url,
+                        is_active: data.is_active
+                    }
+                });
+                if (response?.status === 200) {
+                    setIsLoading(false);
+                    notify('Banner added successfully', 'success');
+                    form.reset();
                 }
-            });
-
-            if (response?.status === 200) {
                 setIsLoading(false);
-                notify('Banner added successfully', 'success');
-                form.reset();
+            } catch (error: any) {
+                notify(error.message, 'error');
+                setIsLoading(false);
             }
-            setIsLoading(false);
-        } catch (error: any) {
-            notify(error.message, 'error');
-            setIsLoading(false);
         }
     };
 
@@ -102,6 +104,7 @@ const AddBanner = () => {
                         </Box>
                         <Box sx={{ width: '21.2%' }}>
                             <InputImage
+                                rules={rules}
                                 isImage
                                 name='img'
                                 form={form}
@@ -175,7 +178,7 @@ const AddBanner = () => {
                                     label='Yes'
                                 />
                                 <FormControlLabel
-                                    control={<Checkbox color='secondary' checked={checked[1]} onChange={handleChange2} />}
+                                    control={<Checkbox color='secondary' checked={!checked[0]} onChange={handleChange2} />}
                                     label='No'
                                 />
                             </FormGroup>

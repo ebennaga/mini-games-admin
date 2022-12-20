@@ -35,6 +35,7 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [isLoadingPut, setIsLoadingPut] = React.useState<boolean>(false);
     const [isUpload, setIsUpload] = React.useState<boolean>(true);
+    const rules = { required: true };
 
     const fetchBlogsDetail = async () => {
         setIsLoading(true);
@@ -168,6 +169,7 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                             <Grid item xs={4}>
                                 {!isUpload ? (
                                     <InputImage
+                                        rules={rules}
                                         isImage
                                         name='image'
                                         form={form}

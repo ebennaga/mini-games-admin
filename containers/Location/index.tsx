@@ -163,6 +163,7 @@ const LocationContainer = () => {
                     </Box>
                     <Box>
                         <InputFile
+                            rules={{ required: true }}
                             name='image'
                             form={form}
                             label='Click to upload'
