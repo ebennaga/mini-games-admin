@@ -2,12 +2,13 @@ import React from 'react';
 import { Box, FormControlLabel, Typography, FormGroup, Checkbox, Divider } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
-import InputUpload from 'components/Input/InputUpload';
+// import InputUpload from 'components/Input/InputUpload';
 import { useForm } from 'react-hook-form';
 import CustomButton from 'components/Button';
 import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import InputImage from 'components/Input/InputImage';
 
 const AddBanner = () => {
     const rules = { required: true };
@@ -77,19 +78,8 @@ const AddBanner = () => {
                         isMultiline={false}
                         isRequired
                     />
-                    <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} />
-                    <InputWithLabel
-                        label='Description'
-                        name='desc'
-                        type='text'
-                        form={form}
-                        labelField='Description'
-                        rules={rules}
-                        placeHolder='Fill description'
-                        isSelectType={false}
-                        isMultiline
-                    />
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {/* <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} /> */}
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
@@ -107,7 +97,47 @@ const AddBanner = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '70%' }}>
+                        <Box sx={{ width: '30%' }}>
+                            <InputImage
+                                isImage
+                                name='img'
+                                form={form}
+                                label='Banner Image'
+                                secondaryLabel='or drag and drop'
+                                placeholder='SVG, PNG, JPG or GIF (max. 3MB)'
+                            />
+                        </Box>
+                    </Box>
+                    <InputWithLabel
+                        label='Description'
+                        name='desc'
+                        type='text'
+                        form={form}
+                        labelField='Description'
+                        rules={rules}
+                        placeHolder='Fill description'
+                        isSelectType={false}
+                        isMultiline
+                    />
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: '' }}>
+                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ width: '30%' }}>
                             <FormGroup>
                                 <FormControlLabel control={<Checkbox defaultChecked />} label='Home' />
                                 <FormControlLabel control={<Checkbox />} label='Redeem Prizes' />
@@ -115,7 +145,7 @@ const AddBanner = () => {
                             </FormGroup>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
@@ -133,7 +163,7 @@ const AddBanner = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '70%' }}>
+                        <Box sx={{ width: '30%' }}>
                             <FormGroup row>
                                 <FormControlLabel control={<Checkbox checked={checked[0]} onChange={handleChange1} />} label='Yes' />
                                 <FormControlLabel control={<Checkbox checked={checked[1]} onChange={handleChange2} />} label='No' />

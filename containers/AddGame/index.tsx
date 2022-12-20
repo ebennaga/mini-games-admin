@@ -159,6 +159,7 @@ const AddGame = () => {
                         </Grid>
                         <Grid item xs={4}>
                             <InputImage
+                                isImage
                                 rules={{ required: true }}
                                 name='image'
                                 form={form}
