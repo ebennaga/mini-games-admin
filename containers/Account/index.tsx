@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable array-callback-return */
 /* eslint-disable consistent-return */
 import {
@@ -71,7 +72,9 @@ const AccountContainer = () => {
     const [deleted, setDeleted] = useState<number[]>([]);
     const [remove, setRemove] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
+    const [isFilter, setIsFilter] = useState(false);
     const [search, setSearch] = useState<any>([]);
+    const [filterData, setFilterData] = useState<any>([]);
     const [input, setInput] = useState('');
     const [routeId, setRouteId] = useState<any>(null);
     const [isSearch, setIsSearch] = useState(false);
@@ -86,7 +89,7 @@ const AccountContainer = () => {
                 endpoint: `accounts?search=${form.watch('search')}`,
                 method: 'GET'
             });
-            console.log(result?.data.data);
+            // console.log(result?.data.data);
             if (result.status === 200) {
                 setRemove(result?.data.data);
             }
@@ -101,8 +104,14 @@ const AccountContainer = () => {
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
-        if (isSearch) {
+        if (search.length > 0 && form.watch('search')) {
             return search.slice(startIndex, endIndex);
+        }
+        if (isFilter) {
+            if ((role !== '0' && filterData.length > 0) || filterData.length >= 0) {
+                // console.log('set : ', isFilter);
+                return filterData.slice(startIndex, endIndex);
+            }
         }
         return remove.slice(startIndex, endIndex);
     };
@@ -172,11 +181,12 @@ const AccountContainer = () => {
     };
 
     const goToNextPage = () => {
-        if (currentPage !== pages) {
+        if (currentPage !== pages || currentPage > 1) {
             setCurrentPage((page) => page + 1);
         }
     };
-
+    // console.log({ currentPage });
+    // console.log({ pages });
     const goToPreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage((page) => page - 1);
@@ -206,14 +216,42 @@ const AccountContainer = () => {
         setOnDelete(!onDelete);
         setCheckedObj([]);
     };
+    const handleFilterButton = () => {
+        const data = [...remove];
+        const filter = data.filter((item: any) => {
+            const toArr = item.roles.split(',');
+            if (form.watch('isActive') || !form.watch('isActive')) {
+                return item.is_active === form.watch('isActive') && toArr.includes(role);
+            }
+            return toArr.includes(role);
+        });
+        setFilterData(filter);
+        setIsFilter(true);
+        setOpenFilter(false);
+    };
+
+    const handleResetButton = () => {
+        setRole('0');
+        setIsFilter(false);
+        setOpenFilter(false);
+        // form.reset();
+        // setCheckedObj([]);
+        // setIsChecked(false);
+    };
 
     useEffect(() => {
         fetchAccountData();
     }, []);
 
     useEffect(() => {
-        setPages(Math.ceil(remove.length / Number(row)));
-    }, [pages, row]);
+        if (search.length > 0) {
+            setPages(Math.ceil(search.length / Number(row)));
+        }
+        if (filterData.length > 0) {
+            setPages(Math.ceil(filterData.length / Number(row)));
+        }
+        setPages(Math.ceil(search.length / Number(row)));
+    }, [pages, row, currentPage, search, filterData]);
 
     useEffect(() => {
         [...Array(remove.length)].forEach((item: any, idx: number) => {
@@ -227,21 +265,11 @@ const AccountContainer = () => {
     }, [checkBoxKeys, form.watch('checkAll')]);
 
     useEffect(() => {
-        if (isSearch) {
-            const searched = remove.filter((item: any) => {
-                if (input) {
-                    if (item?.name?.toLowerCase()?.includes(input) || item?.email?.toLowerCase()?.includes(input)) {
-                        return item;
-                    }
-                }
-            });
-            setSearch(searched);
-        }
         if (form.watch('search') === '') {
             setIsSearch(false);
+            setSearch(remove);
         }
-    }, [remove, input]);
-
+    }, [search, form.watch()]);
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ padding: '35px 25px' }}>
@@ -268,8 +296,26 @@ const AccountContainer = () => {
                         >
                             <form
                                 onSubmit={form.handleSubmit((data: any) => {
-                                    setInput(data.search);
-                                    setIsSearch(true);
+                                    const datas = [...remove];
+                                    // console.log(data.search);
+                                    // if (isSearch) {
+                                    // console.log(datas);
+                                    const searched = datas.filter((item: any) => {
+                                        if (
+                                            item?.name?.toLowerCase()?.includes(data.search.toLowerCase()) ||
+                                            item?.email?.toLowerCase()?.includes(data.search.toLowerCase())
+                                        ) {
+                                            return item;
+                                        }
+                                    });
+                                    if (pages === 1) {
+                                        setCurrentPage(1);
+                                    }
+                                    // console.log(data.search);
+                                    // console.log(searched);
+                                    setSearch(searched);
+                                    // }
+                                    // setIsSearch(true);
                                 })}
                             >
                                 <InputSearch placeholder='Search by name, email, etc.' name='search' label='Search' form={form} />
@@ -324,9 +370,9 @@ const AccountContainer = () => {
                                         <MenuItem value='0' disabled>
                                             Select Category
                                         </MenuItem>
-                                        <MenuItem value='1'>Super Admin</MenuItem>
-                                        <MenuItem value='2'>Admin</MenuItem>
-                                        <MenuItem value='3'>Content Writer</MenuItem>
+                                        <MenuItem value='Super Admin'>Super Admin</MenuItem>
+                                        <MenuItem value='Admin'>Admin</MenuItem>
+                                        <MenuItem value='Content Creator'>Content Writer</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Box>
@@ -342,8 +388,9 @@ const AccountContainer = () => {
                                 />
                             </Box>
                             <Box sx={{ mt: '30px', justifyContent: 'space-between', display: 'flex', width: '100%' }}>
-                                <CustomButton title='FILTER' width='159px' height='36px' />
+                                <CustomButton onClick={handleFilterButton} title='FILTER' width='159px' height='36px' />
                                 <CustomButton
+                                    onClick={handleResetButton}
                                     title='RESET'
                                     width='159px'
                                     height='36px'
@@ -548,6 +595,13 @@ const AccountContainer = () => {
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                    )}
+                    {getPaginatedData().length === 0 && !isLoading && (
+                        <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
+                            <Typography variant='h6' component='h6'>
+                                DATA NOT FOUND, PLEASE RESET THE FILTER
+                            </Typography>
+                        </Box>
                     )}
                     <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between', mt: '10px' }}>
                         <Box />
