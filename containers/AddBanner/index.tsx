@@ -66,21 +66,24 @@ const AddBanner = () => {
             <TitleCard title='Add Banner' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <Box sx={{ my: 3, mx: 2 }}>
-                    <InputWithLabel
-                        label='Banner Title'
-                        name='title'
-                        type='text'
-                        form={form}
-                        labelField='Title'
-                        placeHolder='Max 100 Character'
-                        rules={rules}
-                        isSelectType={false}
-                        isMultiline={false}
-                        isRequired
-                    />
+                    <Box sx={{ width: '30%' }}>
+                        <InputWithLabel
+                            label='Banner Title'
+                            name='title'
+                            type='text'
+                            form={form}
+                            labelField='Title'
+                            placeHolder='Max 100 Character'
+                            rules={rules}
+                            isSelectType={false}
+                            isMultiline={false}
+                            isRequired
+                        />
+                    </Box>
+
                     {/* <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} /> */}
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: 'center' }}>
-                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                        <Box sx={{ width: '8.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
                                 <Typography
@@ -97,7 +100,7 @@ const AddBanner = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '30%' }}>
+                        <Box sx={{ width: '21.2%' }}>
                             <InputImage
                                 isImage
                                 name='img'
@@ -108,19 +111,21 @@ const AddBanner = () => {
                             />
                         </Box>
                     </Box>
-                    <InputWithLabel
-                        label='Description'
-                        name='desc'
-                        type='text'
-                        form={form}
-                        labelField='Description'
-                        rules={rules}
-                        placeHolder='Fill description'
-                        isSelectType={false}
-                        isMultiline
-                    />
+                    <Box sx={{ width: '30%' }}>
+                        <InputWithLabel
+                            label='Description'
+                            name='desc'
+                            type='text'
+                            form={form}
+                            labelField='Description'
+                            rules={rules}
+                            placeHolder='Fill description'
+                            isSelectType={false}
+                            isMultiline
+                        />
+                    </Box>
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: '' }}>
-                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                        <Box sx={{ width: '8.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
                                 <Typography
@@ -146,7 +151,7 @@ const AddBanner = () => {
                         </Box>
                     </Box>
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: 'center' }}>
-                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                        <Box sx={{ width: '8.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
                                 <Typography
