@@ -178,7 +178,7 @@ const AddBanner = () => {
                                     label='Yes'
                                 />
                                 <FormControlLabel
-                                    control={<Checkbox color='secondary' checked={checked[1]} onChange={handleChange2} />}
+                                    control={<Checkbox color='secondary' checked={!checked[0]} onChange={handleChange2} />}
                                     label='No'
                                 />
                             </FormGroup>

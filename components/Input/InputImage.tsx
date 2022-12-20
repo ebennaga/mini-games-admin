@@ -81,8 +81,8 @@ const InputImage: React.FC<InputImageProps> = ({
                         container
                         sx={{
                             my: '10px',
-                            border: !isImg ? '1px dashed red' : '',
-                            background: !isImg ? 'rgba(165, 76, 229, 0.1)' : '',
+                            border: !isImg && isImage ? '1px dashed red' : '',
+                            background: !isImg && isImage ? 'rgba(165, 76, 229, 0.1)' : '',
                             padding: '5px'
                         }}
                     >
@@ -134,7 +134,7 @@ const InputImage: React.FC<InputImageProps> = ({
                             </>
                         )}
                     </Grid>
-                    {!isImg && <Typography sx={{ textAlign: 'center', color: 'red' }}>File must be an image!</Typography>}
+                    {!isImg && isImage && <Typography sx={{ textAlign: 'center', color: 'red' }}>File must be an image!</Typography>}
                 </Box>
             ) : (
                 <>

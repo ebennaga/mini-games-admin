@@ -13,6 +13,7 @@ import useNotify from 'hooks/useNotify';
 interface CreateBlogsProps {}
 
 const CreateBlogs: React.FC<CreateBlogsProps> = () => {
+    const rules = { required: true };
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -108,6 +109,7 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
                         </Grid>
                         <Grid item xs={4}>
                             <InputImage
+                                rules={rules}
                                 isImage
                                 name='image'
                                 form={form}
