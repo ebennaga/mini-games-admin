@@ -45,7 +45,7 @@ const InputImage: React.FC<InputImageProps> = ({
     const handleChange = (e: any) => {
         const file: any = e.target.files[0].size;
         const { type } = e.target.files[0];
-        console.log(type.split('/'));
+        // console.log(type.split('/'));
         const sizeInKB = Math.ceil(file / 1024);
 
         if (type.split('/').includes('image')) {
