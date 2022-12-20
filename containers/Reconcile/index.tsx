@@ -172,6 +172,16 @@ const Reconcile = () => {
         }
     };
 
+    const handleResetFilter = () => {
+        form.setValue('dataTable', dummyTable);
+        form.setValue('minDate', getStartDate());
+        form.setValue('maxDate', getEndDdate());
+        form.setValue('orderDate', getPastDate(5, true));
+        form.setValue('orderTime', getCurrentTime());
+        form.setValue('transactionDate', new Date().toISOString().slice(0, 10));
+        form.setValue('transactionTime', getCurrentTime());
+    };
+
     return (
         <Box>
             <HeaderReconcile
@@ -180,6 +190,7 @@ const Reconcile = () => {
                 handleGetData={handleGetData}
                 handleDownload={() => handleDownloadExcel(fieldTable, form.watch('dataTable'))}
                 handleFilter={handleFilter}
+                handleReset={handleResetFilter}
                 // handleDownload={handleDownloadExcel}
             />
             <Table dataTable={form.watch('dataTable')} namePage='page' nameRow='row' form={form} />
