@@ -14,6 +14,7 @@ import { getCurrentDate, getCurrentTime } from 'utils/date';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Tables from './TournamentTable';
 import DeleteAccDialog from '../Account/DeleteAccDialog';
 import FilterDrop from './FilterDrop';
@@ -69,6 +70,7 @@ const TournamentContainer = () => {
     const [isGame, setIsGame] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isFilter, setIsFilter] = useState(false);
+    const [routeId, setRouteId] = useState<any>(null);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
     const notify = useNotify();
@@ -168,6 +170,7 @@ const TournamentContainer = () => {
                 setDeleted([]);
             }
         }
+        setRouteId(id);
     };
 
     const handleChangeCheckboxAll = (e: any) => {
@@ -497,6 +500,12 @@ const TournamentContainer = () => {
                         >
                             <Typography sx={{ fontWeight: 'bold' }}>{checkedObj.length} item selected</Typography>
                             <Box sx={{ width: '13%', display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+                                {checkedObj.length === 1 && (
+                                    <ButtonBase onClick={() => router.push(`/tournament/${routeId}`)} sx={{ color: '#A54CE5', m: 1 }}>
+                                        <ModeEditIcon />
+                                        <Typography sx={{ fontWeight: 500, fontSize: '13px', pl: 0.5 }}>EDIT</Typography>
+                                    </ButtonBase>
+                                )}
                                 <ButtonBase
                                     onClick={() => {
                                         setOpenDialog(!openDialog);
