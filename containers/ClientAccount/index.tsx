@@ -67,8 +67,6 @@ const AccountContainer = () => {
     const [remove, setRemove] = useState<any>([]);
     const [onDelete, setOnDelete] = useState(false);
     const [search, setSearch] = useState<any>([]);
-    // const [isSearch, setIsSearch] = useState(false);
-    // const [input] = useState('');
     const [filterData, setFilterData] = useState<any>([]);
     const [isFilter, setIsFilter] = useState(false);
     const [routeId, setRouteId] = useState<any>(null);
@@ -187,7 +185,7 @@ const AccountContainer = () => {
         setIsFilter(true);
         setOpenFilter(false);
     };
-    console.log(getPaginatedData());
+
     const handleResetButton = () => {
         setRole('0');
         setIsFilter(false);

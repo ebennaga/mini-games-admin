@@ -6,17 +6,17 @@ import { useRouter } from 'next/router';
 import Input from './Input';
 
 interface InputExchangeRatesProps {
-    // nameName: string;
-    // effectiveName: string;
+    // nameName?: string;
+    // effectiveName?: string;
     coinsName: string;
     idrName: string;
-    // descriptionName: string;
+    // descriptionName?: string;
     form: any;
     handleSubmit: any;
     loadingSubmit: boolean;
     loading?: boolean;
-    handleAddSetActive: any;
-    handleAddSetNotActive: any;
+    handleAddSetActive?: any;
+    handleAddSetNotActive?: any;
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
