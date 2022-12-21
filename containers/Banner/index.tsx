@@ -198,7 +198,6 @@ const Banner = () => {
         checkBoxKeys.forEach((item: any) => {
             if (checkBox[item] === true) {
                 checkTrue.push(item);
-                console.log(1);
             }
         });
         setCheckedObj(checkTrue);
@@ -253,7 +252,7 @@ const Banner = () => {
         getBanner();
         setFilteredData(dummyData);
     }, []);
-    console.log('databanner', dataBanner);
+
     React.useEffect(() => {
         setPages(Math.round(filteredData.length / Number(row)));
     }, [pages, row]);
@@ -409,10 +408,9 @@ const Banner = () => {
                                         }
                                         if (
                                             post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
-                                            post.code.toLowerCase().includes(query.toLowerCase()) ||
-                                            post.name.toLowerCase().includes(query.toLowerCase()) ||
-                                            post.category.toLowerCase().includes(query.toLowerCase()) ||
-                                            post.uom.toLowerCase().includes(query.toLowerCase())
+                                            post?.image_url?.toLowerCase()?.includes(query.toLowerCase()) ||
+                                            post?.link?.toLowerCase()?.includes(query.toLowerCase()) ||
+                                            post.title.toLowerCase().includes(query.toLowerCase())
                                         ) {
                                             return post;
                                         }
