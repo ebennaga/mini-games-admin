@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
+import RadioButton from 'components/Radio/RadioV2';
 
 const EditRole = () => {
     const { fetchAPI } = useAPICaller();
@@ -23,9 +24,19 @@ const EditRole = () => {
             isActive: true
         }
     });
-    const handleChange = () => {
-        const value = form.watch('isActive');
-        form.setValue('isActive', !value);
+    // const handleChange = () => {
+    //     const value = form.watch('isActive');
+    //     form.setValue('isActive', !value);
+    // };
+
+    const handleAddSetActive = (event: any) => {
+        // setIsValue(true);
+        form.setValue('isActive', event.target.checked);
+    };
+
+    const handleAddSetNotActive = () => {
+        // setIsValue(true);
+        form.setValue('isActive', !form.watch('isActive'));
     };
 
     const getDetailDataRoles = async () => {
@@ -79,7 +90,7 @@ const EditRole = () => {
     }, []);
     return (
         <Box>
-            <HeaderChildren title='Add Role' subTitle='Additional description if required'>
+            <HeaderChildren title='Edit Role' subTitle='Additional description if required'>
                 {' '}
             </HeaderChildren>
             <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -191,8 +202,24 @@ const EditRole = () => {
                                 :
                             </Typography>
                         </Grid>
-                        <Grid item xs={6}>
-                            <FormGroup
+                        <Grid item xs={6} display='flex'>
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('isActive')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('isActive')}
+                                label='No'
+                            />
+                            {/* <FormGroup
                                 sx={{
                                     display: 'flex',
                                     flexDirection: 'row',
@@ -207,7 +234,7 @@ const EditRole = () => {
                                     control={<Checkbox checked={!form.watch('isActive')} onChange={handleChange} />}
                                     label='No'
                                 />
-                            </FormGroup>
+                            </FormGroup> */}
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} spacing={3} mt={15} mb={5} borderTop='1px solid rgba(0,0,0,0.2)'>
@@ -225,6 +252,9 @@ const EditRole = () => {
                                 SUBMIT
                             </ButtonBase>
                             <ButtonBase
+                                onClick={() => {
+                                    router.push('/settings/roles');
+                                }}
                                 sx={{
                                     width: '-webkit-fill-available',
                                     padding: '17px',

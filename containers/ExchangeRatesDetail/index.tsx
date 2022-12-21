@@ -24,6 +24,7 @@ const ExchangeRatesAdd = () => {
             coins: 0,
             idr: 0,
             name: '',
+            activeRole: true,
             description: ''
         }
     });
@@ -94,6 +95,16 @@ const ExchangeRatesAdd = () => {
         setLoadingSubmit(false);
     };
 
+    const handleAddSetActive = (event: any) => {
+        // setIsValue(true);
+        form.setValue('activeRole', event.target.checked);
+    };
+
+    const handleAddSetNotActive = () => {
+        // setIsValue(true);
+        form.setValue('activeRole', !form.watch('activeRole'));
+    };
+
     // Component Did Mount and fetch data detail
     React.useEffect(() => {
         fetchDataDetail();
@@ -111,6 +122,8 @@ const ExchangeRatesAdd = () => {
             </Box>
             <Box sx={{ ml: -25, mt: 4 }}>
                 <InputExchangeRates
+                    handleAddSetActive={handleAddSetActive}
+                    handleAddSetNotActive={handleAddSetNotActive}
                     loadingSubmit={loadingSubmit}
                     loading={isLoading}
                     // effectiveName='effective'

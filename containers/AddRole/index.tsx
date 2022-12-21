@@ -1,15 +1,17 @@
 import React from 'react';
-import { Box, Grid, Typography, FormGroup, FormControlLabel, Checkbox, ButtonBase } from '@mui/material';
+import { Box, Grid, Typography, ButtonBase } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import { useRouter } from 'next/router';
+import RadioButton from 'components/Radio/RadioV2';
 
 const AddRole = () => {
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
-
+    const router = useRouter();
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -20,9 +22,14 @@ const AddRole = () => {
         }
     });
 
-    const handleChange = () => {
-        const value = form.watch('isActive');
-        form.setValue('isActive', !value);
+    const handleAddSetActive = (event: any) => {
+        // setIsValue(true);
+        form.setValue('isActive', event.target.checked);
+    };
+
+    const handleAddSetNotActive = () => {
+        // setIsValue(true);
+        form.setValue('isActive', !form.watch('isActive'));
     };
 
     const handleSubmit = async (data: any) => {
@@ -84,7 +91,7 @@ const AddRole = () => {
                                 rules={{ required: true }}
                                 placeholder='Enter role code'
                                 label='Code'
-                                borderColor='rgba(0, 0, 0, 0.9)'
+                                borderColor='red'
                             />
                         </Grid>
                     </Grid>
@@ -115,7 +122,7 @@ const AddRole = () => {
                                 rules={{ required: true }}
                                 placeholder='Enter role name'
                                 label='Name'
-                                borderColor='rgba(0, 0, 0, 0.9)'
+                                borderColor='red'
                             />
                         </Grid>
                     </Grid>
@@ -137,7 +144,7 @@ const AddRole = () => {
                                 rules={{ required: true }}
                                 placeholder='Enter role description'
                                 label='Description'
-                                borderColor='rgba(0, 0, 0, 0.9)'
+                                borderColor='red'
                                 isTextArea
                             />
                         </Grid>
@@ -162,8 +169,24 @@ const AddRole = () => {
                                 :
                             </Typography>
                         </Grid>
-                        <Grid item xs={6}>
-                            <FormGroup
+                        <Grid item xs={6} display='flex'>
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('isActive')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('isActive')}
+                                label='No'
+                            />
+                            {/* <FormGroup
                                 sx={{
                                     display: 'flex',
                                     flexDirection: 'row',
@@ -178,7 +201,7 @@ const AddRole = () => {
                                     control={<Checkbox checked={!form.watch('isActive')} onChange={handleChange} />}
                                     label='No'
                                 />
-                            </FormGroup>
+                            </FormGroup> */}
                         </Grid>
                     </Grid>
                     <Grid container item xs={12} spacing={3} mt={15} mb={5} borderTop='1px solid rgba(0,0,0,0.2)'>
@@ -196,6 +219,9 @@ const AddRole = () => {
                                 SUBMIT
                             </ButtonBase>
                             <ButtonBase
+                                onClick={() => {
+                                    router.push('/settings/roles');
+                                }}
                                 sx={{
                                     width: '-webkit-fill-available',
                                     padding: '17px',
