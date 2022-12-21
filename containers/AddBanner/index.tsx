@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import InputImage from 'components/Input/InputImage';
+import RadioButton from 'components/Radio/RadioV2';
 
 const AddBanner = () => {
     const rules = { required: true };
@@ -18,24 +19,43 @@ const AddBanner = () => {
         defaultValues: {
             title: '',
             img: '',
-            desc: ''
+            desc: '',
+            isActive: true,
+            link: ''
         }
     });
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
-    const [checked, setChecked] = React.useState([true, false]);
+    // const [checked, setChecked] = React.useState([true, false]);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    // const [value, setValue] = React.useState('female');
 
-    const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, false]);
+    // const handleChange = (event: any) => {
+    //     // console.log(event.target.checked);
+    //     form.setValue('isActive', event.target.value);
+    // };
+    const handleAddSetActive = (event: any) => {
+        // setIsValue(true);
+        form.setValue('isActive', event.target.checked);
     };
 
-    const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([false, event.target.checked]);
+    const handleAddSetNotActive = () => {
+        // setIsValue(true);
+        form.setValue('isActive', !form.watch('isActive'));
     };
+
+    // const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setChecked([event.target.checked, false]);
+    // };
+
+    // const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //     setChecked([false, event.target.checked]);
+    // };
 
     const handleSubmit = async (data: any) => {
+        // const { isActive, title, img, link, desc: description } = data;
+        const { isActive, title, img, link } = data;
         const { type }: any = form.watch('img');
         if (type.split('/')[0] === 'image') {
             setIsLoading(true);
@@ -44,10 +64,11 @@ const AddBanner = () => {
                     method: 'POST',
                     endpoint: '/banners',
                     data: {
-                        title: data.title,
-                        link: data.link,
-                        image_url: data.image_url,
-                        is_active: data.is_active
+                        title,
+                        link,
+                        image_url: img,
+                        // description,
+                        is_active: isActive
                     }
                 });
                 if (response?.status === 200) {
@@ -62,7 +83,7 @@ const AddBanner = () => {
             }
         }
     };
-
+    // console.log(form.watch('isActive'));
     return (
         <Box component='section'>
             <TitleCard title='Add Banner' subtitle='Addtional description if required' isSearchExist={false} />
@@ -127,7 +148,7 @@ const AddBanner = () => {
                             isMultiline
                         />
                     </Box>
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: '' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'baseline', alignItems: '' }}>
                         <Box sx={{ width: '8.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Show to</Typography>
@@ -153,7 +174,7 @@ const AddBanner = () => {
                             </FormGroup>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: '', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'baseline', alignItems: 'center' }}>
                         <Box sx={{ width: '8.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
@@ -171,17 +192,45 @@ const AddBanner = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '30%' }}>
-                            <FormGroup row>
-                                <FormControlLabel
-                                    control={<Checkbox color='secondary' checked={checked[0]} onChange={handleChange1} />}
-                                    label='Yes'
-                                />
-                                <FormControlLabel
-                                    control={<Checkbox color='secondary' checked={!checked[0]} onChange={handleChange2} />}
-                                    label='No'
-                                />
-                            </FormGroup>
+                        <Box sx={{ width: '10%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('isActive')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('isActive')}
+                                label='No'
+                            />
+                            {/* <FormGroup row>
+                                <RadioGroup
+                                    aria-labelledby='demo-controlled-radio-buttons-group'
+                                    name='controlled-radio-buttons-group'
+                                    value={form.watch('isActive')}
+                                    onChange={handleChange}
+                                    row
+                                >
+                                    <FormControlLabel
+                                        value='true'
+                                        // control={<Checkbox color='secondary' checked={checked[0]} onChange={handleChange1} />}
+                                        control={<Radio color='secondary' />}
+                                        label='Yes'
+                                    />
+                                    <FormControlLabel
+                                        value='false'
+                                        // control={<Checkbox color='secondary' checked={!checked[0]} onChange={handleChange2} />}
+                                        control={<Radio color='secondary' />}
+                                        label='No'
+                                    />
+                                </RadioGroup>
+                            </FormGroup> */}
                         </Box>
                     </Box>
                 </Box>

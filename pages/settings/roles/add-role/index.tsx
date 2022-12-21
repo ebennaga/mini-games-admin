@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Layout from 'components/Layout';
 
-const AddRoleContainer = dynamic(() => import('containers/AddRole'));
+const AddRoleContainer = dynamic(() => import('containers/AddRole/index'));
 
 const Page = () => {
     return (

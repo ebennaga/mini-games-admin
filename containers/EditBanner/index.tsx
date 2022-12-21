@@ -4,11 +4,12 @@ import { Box, Typography, Divider, Checkbox, FormControlLabel, FormGroup } from 
 import CustomButton from 'components/Button';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
-import InputUpload from 'components/Input/InputUpload';
+import InputImage from 'components/Input/InputImage';
 import { useForm } from 'react-hook-form';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
+import RadioButton from 'components/Radio/RadioV2';
 
 const EditBanner = () => {
     const rules = { required: true };
@@ -49,15 +50,25 @@ const EditBanner = () => {
         }
         setIsLoading(false);
     };
-    const handleChange1 = () => {
-        const value = form.watch('isActive');
-        form.setValue('isActive', !value);
+
+    const handleAddSetActive = (event: any) => {
+        // setIsValue(true);
+        form.setValue('isActive', event.target.checked);
     };
 
-    const handleChange2 = () => {
-        const value = form.watch('isActive');
-        form.setValue('isActive', !value);
+    const handleAddSetNotActive = () => {
+        // setIsValue(true);
+        form.setValue('isActive', !form.watch('isActive'));
     };
+    // const handleChange1 = () => {
+    //     const value = form.watch('isActive');
+    //     form.setValue('isActive', !value);
+    // };
+
+    // const handleChange2 = () => {
+    //     const value = form.watch('isActive');
+    //     form.setValue('isActive', !value);
+    // };
 
     React.useEffect(() => {
         fetchDetailBanners();
@@ -91,20 +102,67 @@ const EditBanner = () => {
             <TitleCard title='Edit Banner' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <Box sx={{ my: 3, mx: 2 }}>
-                    <InputWithLabel
-                        label='Banner Title'
-                        name='title'
-                        type='text'
-                        form={form}
-                        labelField='Title'
-                        placeHolder='Max 100 Character'
-                        rules={rules}
-                        isSelectType={false}
-                        isMultiline={false}
-                        isRequired
-                    />
-                    <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} />
-                    <InputWithLabel
+                    <Box width='40%'>
+                        <InputWithLabel
+                            label='Banner Title'
+                            name='title'
+                            type='text'
+                            form={form}
+                            labelField='Title'
+                            placeHolder='Max 100 Character'
+                            rules={rules}
+                            isSelectType={false}
+                            isMultiline={false}
+                            isRequired
+                        />
+                    </Box>
+                    <Box width='40%' sx={{ display: 'flex', my: '20px' }}>
+                        {/* <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} />
+                         */}
+                        <Box sx={{ width: '28.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ px: '10px' }}>
+                            <InputImage
+                                isImage
+                                form={form}
+                                name='img'
+                                rules={{ required: true }}
+                                label='Click to upload'
+                                secondaryLabel='or drag and drop'
+                                placeholder='Image (max. 3MB)'
+                            />
+                        </Box>
+                    </Box>
+                    <Box width='40%'>
+                        <InputWithLabel
+                            label='Show To'
+                            name='link'
+                            type='text'
+                            form={form}
+                            labelField='Link'
+                            rules={rules}
+                            placeHolder=''
+                            isSelectType={false}
+                            isMultiline
+                            isRequired
+                        />
+                    </Box>
+                    {/* <InputWithLabel
                         label='Show To'
                         name='link'
                         type='text'
@@ -115,7 +173,7 @@ const EditBanner = () => {
                         isSelectType={false}
                         isMultiline
                         isRequired
-                    />
+                    /> */}
                     {/* <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
@@ -142,8 +200,17 @@ const EditBanner = () => {
                             </FormGroup>
                         </Box>
                     </Box> */}
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            padding: '10px',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            width: '40%',
+                            mt: '20px'
+                        }}
+                    >
+                        <Box sx={{ width: '27%', display: 'flex', justifyContent: 'space-between', px: '10px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
                                 <Typography
@@ -160,11 +227,23 @@ const EditBanner = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '70%' }}>
-                            <FormGroup row>
-                                <FormControlLabel control={<Checkbox checked={checked[0]} onChange={handleChange1} />} label='Yes' />
-                                <FormControlLabel control={<Checkbox checked={checked[1]} onChange={handleChange2} />} label='No' />
-                            </FormGroup>
+                        <Box sx={{ width: '70%', display: 'flex' }}>
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('isActive')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('isActive')}
+                                label='No'
+                            />
                         </Box>
                     </Box>
                 </Box>

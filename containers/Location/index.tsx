@@ -1,7 +1,8 @@
 import { Box, Typography, Paper, SelectChangeEvent, Skeleton } from '@mui/material';
 import React, { useState, SyntheticEvent, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import InputFile from 'components/Input/InputImage';
+// import InputFile from 'components/Input/InputImage';
+import InputExcel from 'components/Input/InputExcel';
 import InputSearch from 'components/Input/InputSearch';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
@@ -18,7 +19,7 @@ const LocationContainer = () => {
     const form = useForm({
         mode: 'all',
         defaultValues: {
-            image: '',
+            excel: '',
             search: ''
         }
     });
@@ -127,6 +128,8 @@ const LocationContainer = () => {
     // React.useEffect(() => {
     //     console.log(filteredData);
     // });
+    // console.log(form.watch('excel'));
+
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ padding: '0px 25px' }}>
@@ -162,7 +165,16 @@ const LocationContainer = () => {
                         </Box>
                     </Box>
                     <Box>
-                        <InputFile
+                        <InputExcel
+                            rules={{ required: true }}
+                            name='excel'
+                            form={form}
+                            label='Click to upload'
+                            secondaryLabel='or drag and drop'
+                            placeholder='Excel (max. 3MB)'
+                            isLocation
+                        />
+                        {/* <InputFile
                             rules={{ required: true }}
                             name='image'
                             form={form}
@@ -170,7 +182,7 @@ const LocationContainer = () => {
                             secondaryLabel='or drag and drop'
                             placeholder='Excel (max. 3MB)'
                             isLocation
-                        />
+                        /> */}
                     </Box>
                 </Paper>
 

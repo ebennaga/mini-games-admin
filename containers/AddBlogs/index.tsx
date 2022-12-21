@@ -133,7 +133,7 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
                                 isColor
                                 name='description'
                                 label='Description'
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 placeholder='Max 500 Character'
                                 form={form}
                                 isTextArea

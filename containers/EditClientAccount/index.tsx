@@ -6,6 +6,9 @@ import InputWithLabel from 'components/Input/InputWithLabel';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+import RadioButton from 'components/Radio/RadioV2';
 
 interface EditClientAccountProps {}
 
@@ -34,7 +37,31 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
     const router = useRouter();
     const [roles, setRoles] = React.useState<any>([...form.watch('roles')]);
     const [companies, setCompanies] = React.useState<any>([...form.watch('companies')]);
+    const [isCompFilled, setIsCompFilled] = React.useState<boolean>(false);
+    const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
+    const [isError, setIsError] = React.useState<boolean>(false);
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
 
+    const submitHandler = async (datas: any) => {
+        if (isCompFilled && isRolesFilled) {
+            setIsError(false);
+            try {
+                const response = await fetchAPI({
+                    method: 'PUT',
+                    endpoint: `client-account/${router.query.id}`,
+                    data: {}
+                });
+                if (response.status === 200) {
+                    notify('Successfully create client account', 'success');
+                }
+            } catch (error: any) {
+                notify(error.message, 'error');
+            }
+        } else {
+            setIsError(true);
+        }
+    };
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
         form.setValue('role', event.target.value);
@@ -76,6 +103,24 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
     const handleAddSetNotActive = (event: any) => {
         form.setValue('activeRole', !form.watch('activeRole'));
     };
+
+    React.useEffect(() => {
+        if (companies.length <= 0 && roles.length <= 0) {
+            form.setValue('role', '0');
+            form.setValue('company', '0');
+            setIsCompFilled(false);
+            return setIsRolesFilled(false);
+        }
+
+        setIsCompFilled(true);
+        return setIsRolesFilled(true);
+    }, [companies, roles]);
+
+    React.useEffect(() => {
+        if (isCompFilled && isRolesFilled) {
+            setIsError(false);
+        }
+    }, [isCompFilled, isRolesFilled]);
 
     return (
         <Box sx={{ position: 'relative' }}>
@@ -145,6 +190,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                     label='Company'
                                     onChange={handleAddCompany}
                                     color='secondary'
+                                    error={isError}
                                 >
                                     <MenuItem value='0' disabled>
                                         Select Company
@@ -195,6 +241,9 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                         </Box>
                                     );
                                 })}
+                            {companies.length <= 0 && isError && (
+                                <Typography sx={{ color: 'red', fontSize: '11px' }}>Companies field is required!</Typography>
+                            )}
                         </Box>
                     </Box>
                     <Box sx={{ mt: '45px', width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -229,6 +278,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                     label='Role Code'
                                     onChange={handleAddRole}
                                     color='secondary'
+                                    error={isError}
                                 >
                                     <MenuItem value='0' disabled>
                                         Select Roles
@@ -279,6 +329,9 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                         </Box>
                                     );
                                 })}
+                            {roles.length <= 0 && isError && (
+                                <Typography sx={{ color: 'red', fontSize: '11px' }}>Roles field is required!</Typography>
+                            )}
                         </Box>
                     </Box>
                     <Box sx={{ mt: '35px', width: '35%', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
@@ -299,29 +352,23 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '35%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Box>
-                                <FormControlLabel
-                                    sx={{ color: 'black', fontWeight: 800 }}
-                                    value={form.watch('activeRole')}
-                                    control={<Checkbox color='secondary' />}
-                                    label='Yes'
-                                    labelPlacement='end'
-                                    checked={form.watch('activeRole')}
-                                    onChange={handleAddSetActive}
-                                />
-                            </Box>
-                            <Box>
-                                <FormControlLabel
-                                    sx={{ color: 'black', fontWeight: 800 }}
-                                    value={!form.watch('activeRole')}
-                                    control={<Checkbox color='secondary' />}
-                                    label='No'
-                                    labelPlacement='end'
-                                    checked={!form.watch('activeRole')}
-                                    onChange={handleAddSetNotActive}
-                                />
-                            </Box>
+                        <Box sx={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <RadioButton
+                                form={form}
+                                name='activeRole'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('activeRole')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='activeRole'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('activeRole')}
+                                label='No'
+                            />
                         </Box>
                     </Box>
                 </form>
@@ -339,7 +386,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                     width: '100%'
                 }}
             >
-                <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
+                <CustomButton onClick={submitHandler} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
                 <CustomButton
                     onClick={() => {
                         router.push('/client-account');

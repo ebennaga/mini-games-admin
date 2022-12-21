@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Stack, ButtonBase, Typography, CircularProgress, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Stack, ButtonBase, Typography, CircularProgress } from '@mui/material';
 import FieldRequired from 'components/FieldRequired';
 import { useRouter } from 'next/router';
 // import InputDate from './InputDate';
+import RadioButton from 'components/Radio/RadioV2';
 import Input from './Input';
 
 interface InputExchangeRatesProps {
@@ -189,38 +190,23 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         </Box>
                         <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                     </Box>
-                    <Box
-                        sx={{
-                            width: '20%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            // border: '1px solid red',
-                            pl: '20px'
-                        }}
-                    >
-                        <Box>
-                            <FormControlLabel
-                                sx={{ color: 'black', fontWeight: 800 }}
-                                value={form.watch('activeRole')}
-                                control={<Checkbox color='secondary' />}
-                                label='Yes'
-                                labelPlacement='end'
-                                checked={form.watch('activeRole')}
-                                onChange={handleAddSetActive}
-                            />
-                        </Box>
-                        <Box>
-                            <FormControlLabel
-                                sx={{ color: 'black', fontWeight: 800 }}
-                                value={form.watch('activeRole')}
-                                control={<Checkbox color='secondary' />}
-                                label='No'
-                                labelPlacement='end'
-                                checked={!form.watch('activeRole')}
-                                onChange={handleAddSetNotActive}
-                            />
-                        </Box>
+                    <Box sx={{ width: '15%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <RadioButton
+                            form={form}
+                            name='activeRole'
+                            handleChange={handleAddSetActive}
+                            rules={{ required: true }}
+                            checked={form.watch('activeRole')}
+                            label='Yes'
+                        />
+                        <RadioButton
+                            form={form}
+                            name='activeRole'
+                            handleChange={handleAddSetNotActive}
+                            rules={{ required: true }}
+                            checked={!form.watch('activeRole')}
+                            label='No'
+                        />
                     </Box>
                 </Box>
                 <Stack direction='row' spacing={5} sx={{ mt: 50 }}>

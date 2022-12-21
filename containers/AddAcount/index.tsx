@@ -20,6 +20,7 @@ import useNotify from 'hooks/useNotify';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import RadioButton from 'components/Radio/RadioV2';
 
 interface CreateAccountProps {}
 
@@ -80,6 +81,10 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
         }
     };
 
+    // const handleChangeRadio = (e: any) => {
+    //     form.setValue('activeRole', e.target.value);
+    // };
+
     const handleAddSetActive = (event: any) => {
         setIsValue(true);
         form.setValue('activeRole', event.target.checked);
@@ -139,7 +144,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
         }
     }, [accessArr, isFilled]);
 
-    // console.log(form.watch('isActive'));
+    console.log(form.watch('activeRole'));
 
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
@@ -377,8 +382,24 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '35%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Box>
+                        <Box sx={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <RadioButton
+                                form={form}
+                                name='activeRole'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('activeRole')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='activeRole'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('activeRole')}
+                                label='No'
+                            />
+                            {/* <Box>
                                 <FormControlLabel
                                     sx={{ color: 'black', fontWeight: 800 }}
                                     value={form.watch('activeRole')}
@@ -399,7 +420,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                     checked={!form.watch('activeRole')}
                                     onChange={handleAddSetNotActive}
                                 />
-                            </Box>
+                            </Box> */}
                         </Box>
                     </Box>
                 </Box>
