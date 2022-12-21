@@ -2,6 +2,7 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
+import * as XLSX from 'xlsx';
 import { Box, ButtonBase, Grid, IconButton, Skeleton, Typography } from '@mui/material';
 import { Controller } from 'react-hook-form';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -18,6 +19,7 @@ interface InputExcelProps {
     isLocation?: boolean;
     rules?: any;
     isLoading?: boolean;
+    setRemove: any;
     // isImage?: boolean;
 }
 
@@ -29,7 +31,8 @@ const InputExcel: React.FC<InputExcelProps> = ({
     placeholder,
     isLocation = false,
     rules,
-    isLoading
+    isLoading,
+    setRemove
     // isImage = false
 }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
@@ -43,24 +46,39 @@ const InputExcel: React.FC<InputExcelProps> = ({
     const errText = !form.watch(name) && errType === 'required' ? 'must be filled' : '';
 
     const valueInput: any = form.watch(name);
+    const types: any = valueInput.type?.split('/')[1];
     const handleChange = (e: any) => {
         const file: any = e.target.files[0]?.size;
         // console.log(e.target.files[0]);
         const type: any = e.target.files[0]?.type.split('/')[1];
         const sizeInKB = Math.ceil(file / 1024);
 
-        if (type !== 'vnd.ms-excel') {
-            setErrMessage('File must be an excel file');
-        }
+        // if (type !== 'vnd.ms-excel') {
+        //     setErrMessage('File must be an excel file');
+        // }
         if (sizeInKB > 5072) {
             setErrMessage('File is to large! Image must be under 5072Kb!');
+        }
+        if (type === 'vnd.ms-excel') {
+            form.setValue(name, e.target.files[0]);
+            setErrMessage('');
+            const reader = new FileReader();
+            reader.onload = (event: any) => {
+                const data: any = event.target.result;
+                const workbook = XLSX.read(data, { type: 'binary' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(sheet);
+                setRemove(json);
+            };
+            reader.readAsBinaryString(e.target.files[0]);
         }
         form.setValue('excel', e.target.files[0]);
     };
 
     const handleClear = () => form.setValue(name, '');
     // console.log(valueInput.type?.split('/')[0]);
-    console.log(error);
+    // console.log(form.watch('excel'));
     return (
         <Box>
             {isLoading ? (
@@ -70,14 +88,15 @@ const InputExcel: React.FC<InputExcelProps> = ({
                     <Grid
                         container
                         sx={{
+                            width: '340px',
                             my: '10px',
-                            border: '1px dashed rgba(0, 0, 0, 0.17)',
-                            background: '',
+                            border: types === 'vnd.ms-excel' ? '1px dashed rgba(0, 0, 0, 0.17)' : '1px dashed red',
+                            background: types === 'vnd.ms-excel' ? '' : 'rgba(211, 47, 47, 0.04)',
                             padding: '15px'
                         }}
                     >
-                        <Grid container item xs={12}>
-                            <Grid item xs={8} display='flex' alignItems='top' gap='10px'>
+                        <Grid container item xs={12} sx={{}}>
+                            <Grid item xs={8} display='flex' alignItems={types === 'vnd.ms-excel' ? 'top' : 'center'} gap='10px'>
                                 <Box
                                     width='41px'
                                     height='41px'
@@ -91,16 +110,20 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                 >
                                     <UploadFileIcon sx={{ color: '#A54CE5' }} />
                                 </Box>
-                                {!errMessage && (
-                                    <Box width='100%' sx={{ display: '', alignItems: 'center' }}>
-                                        <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
-                                            {valueInput.name || valueInput}
-                                        </Typography>
+                                <Box width='100%' sx={{ display: '', alignItems: 'center' }}>
+                                    <Typography
+                                        component='p'
+                                        fontSize={types === 'vnd.ms-excel' ? '16px' : '14px'}
+                                        sx={{ color: types === 'vnd.ms-excel' ? 'rgba(0,0,0,0.8)' : 'red' }}
+                                    >
+                                        {types === 'vnd.ms-excel' ? valueInput.name || valueInput : 'File must be an excel file'}
+                                    </Typography>
+                                    {types === 'vnd.ms-excel' && (
                                         <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
                                             {valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
                                         </Typography>
-                                    </Box>
-                                )}
+                                    )}
+                                </Box>
                             </Grid>
                             <Grid item xs={4} sx={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
                                 <IconButton onClick={handleClear} sx={{ mr: '30px' }}>
