@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase } from '@mui/material';
@@ -20,9 +21,52 @@ interface CreateTournamentProps {
     createTour: any;
 }
 
+const dummyData = [
+    {
+        id: 0,
+        positionStart: 2,
+        positionEnd: 4,
+        countPlayer: 2,
+        pointPrizes: 15000,
+        playerPointPrizes: 15000,
+        cointPrizes: 20000,
+        playerCointPrizes: 20001
+    },
+    {
+        id: 1,
+        positionStart: 2,
+        positionEnd: 4,
+        countPlayer: 2,
+        pointPrizes: 15000,
+        playerPointPrizes: 15000,
+        cointPrizes: 20000,
+        playerCointPrizes: 20000
+    },
+    {
+        id: 2,
+        positionStart: 2,
+        positionEnd: 4,
+        countPlayer: 2,
+        pointPrizes: 15000,
+        playerPointPrizes: 15000,
+        cointPrizes: 20000,
+        playerCointPrizes: 20000
+    },
+    {
+        id: 3,
+        positionStart: 2,
+        positionEnd: 4,
+        countPlayer: 2,
+        pointPrizes: 15000,
+        playerPointPrizes: 15000,
+        cointPrizes: 20000,
+        playerCointPrizes: 20001
+    }
+];
 const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, createTour, form }) => {
     const [game, setGame] = React.useState('0');
     const [table, setTable] = React.useState('0');
+    const [prizeData, setPrizeData] = React.useState<any>(dataTable);
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const notify = useNotify();
@@ -83,6 +127,42 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 width: 250
             }
         }
+    };
+
+    const handleAddRow = () => {
+        const filter = prizeData.map((item: any) => {
+            if (item.id === table) {
+                item.data = [
+                    ...item.data,
+                    {
+                        id: 4,
+                        positionStart: 5,
+                        positionEnd: 5,
+                        countPlayer: 5,
+                        pointPrizes: 15000,
+                        playerPointPrizes: 15000,
+                        cointPrizes: 20000,
+                        playerCointPrizes: 20000
+                    }
+                ];
+                return item;
+            }
+            return item;
+        });
+
+        setPrizeData(filter);
+    };
+
+    const handleDeleteRow = () => {
+        const filter = prizeData.map((item: any) => {
+            if (item.id === table) {
+                item.data.pop();
+                return item;
+            }
+            return item;
+        });
+
+        setPrizeData(filter);
     };
 
     return (
@@ -331,21 +411,41 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 </Box>
                             </Grid>
                             <Grid item xs={3}>
-                                <InputPrizingTable
+                                {/* <InputPrizingTable
                                     form={form}
                                     name='tournamentType'
                                     dataSelect={dataTable}
                                     title='Prizing Table'
                                     placeholder='Select Type'
                                     rules={{ required: true }}
-                                />
+                                /> */}
+                                <FormControl fullWidth>
+                                    <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                        Copy Table
+                                    </InputLabel>
+                                    <Select
+                                        sx={{ color: table === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                        placeholder='Games'
+                                        labelId='demo-simple-select-label'
+                                        id='demo-simple-select'
+                                        value={table}
+                                        label='Copy Table'
+                                        onChange={handleTable}
+                                    >
+                                        <MenuItem value='0' disabled>
+                                            Select Table
+                                        </MenuItem>
+                                        {dataTable.length > 0 &&
+                                            dataTable.map((item: any) => <MenuItem value={item.id}>{item.label}</MenuItem>)}
+                                    </Select>
+                                </FormControl>
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={6}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <TableAddTournament value={table} data={dataTable} />
+                                    <TableAddTournament value={table} data={prizeData} />
                                     <Box
                                         sx={{
                                             mt: '20px',
@@ -357,6 +457,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                         }}
                                     >
                                         <ButtonBase
+                                            onClick={handleDeleteRow}
                                             sx={{
                                                 backgroundColor: 'white',
                                                 padding: '20px',
@@ -372,6 +473,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                             <Typography sx={{ fontWeight: 600 }}>DELETE</Typography>
                                         </ButtonBase>
                                         <ButtonBase
+                                            onClick={handleAddRow}
                                             sx={{
                                                 backgroundColor: '#A54CE5',
                                                 padding: '20px',

@@ -113,7 +113,6 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
             if (result.status === 200) {
                 notify(result.data.message, 'success');
                 setLoadingSubmit(false);
-                console.log('hasilpost', result);
             }
         } catch (err: any) {
             notify(err.message, 'error');
