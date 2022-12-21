@@ -140,6 +140,7 @@ const Redemption = () => {
         }
         setData(result);
         setRow(result.length.toString());
+        setCurrentPage(1);
         setPages(1);
     };
 

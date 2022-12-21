@@ -131,18 +131,32 @@ const Reconcile = () => {
     const handleGetData = () => {
         const { minDate, maxDate } = form.watch();
         const table: any = dummyTable;
+        let resFilter: Array<any> = [];
 
-        const filter = table.map((item: any) => {
-            if (
-                new Date(item.orderTime).toISOString().slice(0, 10) >= new Date(minDate).toISOString().slice(0, 10) &&
-                new Date(item.orderTime).toISOString().slice(0, 10) <= new Date(maxDate).toISOString().slice(0, 10)
-            ) {
-                return item;
-            }
-            return null;
-        });
-        const resFilter = filter.filter((item: any) => item);
+        if (minDate) {
+            const arr = resFilter.length > 0 ? resFilter : table;
+            const keyDate: any = new Date(minDate).toLocaleString('id').slice(0, 10);
+            resFilter = [
+                ...arr.filter((item: any) => {
+                    const valueItem: any = new Date(item.orderTime).toLocaleString('id').slice(0, 10);
+                    return valueItem >= keyDate;
+                })
+            ];
+        }
+        if (maxDate) {
+            const arr = resFilter.length > 0 ? resFilter : table;
+            const keyDate: any = new Date(maxDate).toLocaleString('id').slice(0, 10);
+            resFilter = [
+                ...arr.filter((item: any) => {
+                    const valueItem: any = new Date(item.orderTime).toLocaleString('id').slice(0, 10);
+                    return valueItem <= keyDate;
+                })
+            ];
+        }
+
         form.setValue('dataTable', resFilter);
+        form.setValue('row', 5);
+        form.setValue('page', 1);
     };
 
     const handleFilter = (data: any, tabsValue: 'all' | 'latest' | 'oldest') => {
