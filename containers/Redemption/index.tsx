@@ -15,7 +15,7 @@ const dummyData = [
         nickname: 'Nopal',
         product: 'Mousepad Logitech',
         noOrder: '123113',
-        redeemTime: '2022-10-24 13:24:11',
+        redeemTime: '2022-12-20T17:01:00.000Z',
         processTime: '-',
         completedTime: '-',
         status: 'Pending',
@@ -26,7 +26,7 @@ const dummyData = [
         nickname: 'Nopal',
         product: 'Mousepad Logitech',
         noOrder: '123113',
-        redeemTime: '2022-10-24 13:24:11',
+        redeemTime: '2023-01-10T14:03:00.000Z',
         processTime: '-',
         completedTime: '-',
         status: 'Completed',
@@ -37,7 +37,7 @@ const dummyData = [
         nickname: 'Nopal',
         product: 'Mousepad Logitech',
         noOrder: '123113',
-        redeemTime: '2022-10-24 13:24:11',
+        redeemTime: '2022-12-25T17:01:00.000Z',
         processTime: '-',
         completedTime: '-',
         status: 'Delivered',
@@ -48,7 +48,7 @@ const dummyData = [
         nickname: 'Nopal',
         product: 'Mousepad Logitech',
         noOrder: '123113',
-        redeemTime: '2022-10-24 13:24:11',
+        redeemTime: '2023-02-20T01:31:00.000Z',
         processTime: '-',
         completedTime: '-',
         status: 'Process',
@@ -57,7 +57,13 @@ const dummyData = [
     }
 ];
 const Redemption = () => {
-    const form = useForm({});
+    const form = useForm({
+        mode: 'all',
+        defaultValues: {
+            startDate: '',
+            endDate: ''
+        }
+    });
     const [value, setValue] = React.useState(0);
     const [data, setData] = React.useState<any>(dummyData);
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -96,6 +102,47 @@ const Redemption = () => {
         setRow(event.target.value as string);
     };
 
+    // Event Get Data filter date
+    const handleGetData = () => {
+        const { startDate, endDate } = form.watch();
+        let result: Array<any> = [];
+
+        if (startDate && !endDate) {
+            const arr = result.length > 0 ? result : dummyData;
+            result = [
+                ...arr.filter((item: any) => {
+                    const valueData: any = new Date(item.redeemTime);
+                    const key: any = new Date(startDate);
+                    return valueData >= key;
+                })
+            ];
+        }
+        if (endDate && !startDate) {
+            const arr = result.length > 0 ? result : dummyData;
+            result = [
+                ...arr.filter((item: any) => {
+                    const valueData: any = new Date(item.redeemTime);
+                    const key: any = new Date(endDate);
+                    return valueData <= key;
+                })
+            ];
+        }
+        if (endDate && startDate) {
+            const arr = result.length > 0 ? result : dummyData;
+            result = [
+                ...arr.filter((item: any) => {
+                    const valueData: any = new Date(item.redeemTime);
+                    const keyStartDate: any = new Date(startDate);
+                    const keyEndDate: any = new Date(endDate);
+                    return valueData >= keyStartDate && valueData <= keyEndDate;
+                })
+            ];
+        }
+        setData(result);
+        setRow(result.length.toString());
+        setPages(1);
+    };
+
     React.useEffect(() => {
         setData(dummyData);
     }, []);
@@ -131,13 +178,17 @@ const Redemption = () => {
             setData(dummyData);
         }
     }, [value]);
+
     return (
         <Box>
             <HeaderChildren title='Redemption Prize' subTitle='Additional description if required'>
                 <Box display='flex' alignItems='center' justifyContent='space-between' mt={3}>
                     <Box display='flex' alignItems='center' gap='20px'>
                         <InputStartEndDate label='Date' nameStartDate='startDate' nameEndDate='endDate' form={form} />
-                        <ButtonBase sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px', mt: '7px' }}>
+                        <ButtonBase
+                            onClick={handleGetData}
+                            sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px', mt: '7px' }}
+                        >
                             GET DATA
                         </ButtonBase>
                     </Box>
