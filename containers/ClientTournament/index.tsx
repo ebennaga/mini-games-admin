@@ -378,6 +378,7 @@ const ClientTournament = () => {
         setRow(result.length.toString());
         setPages(1);
         setOpenFilter(false);
+        setCurrentPage(1);
     };
 
     // Event handle Reset filter
@@ -391,6 +392,9 @@ const ClientTournament = () => {
         form.setValue('endDate', '');
         form.setValue('endTime', '');
         setFilteredData(dummyData);
+        setRow(dummyData.length.toString());
+        setPages(1);
+        setCurrentPage(1);
         setOpenFilter(false);
     };
 
