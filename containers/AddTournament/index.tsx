@@ -36,6 +36,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
     const [table, setTable] = React.useState('0');
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
+    const rules = { required: true };
 
     const handleFiter = (event: SelectChangeEvent) => {
         setGame(event.target.value as string);
@@ -100,6 +101,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = () => {
                             </Grid>
                             <Grid item xs={3}>
                                 <InputImage
+                                    rules={rules}
                                     isImage
                                     name='image'
                                     form={form}

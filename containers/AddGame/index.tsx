@@ -22,6 +22,7 @@ const AddGame = () => {
 
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+    const rules = { required: true };
 
     const form = useForm({
         mode: 'all',
@@ -160,7 +161,7 @@ const AddGame = () => {
                         <Grid item xs={4}>
                             <InputImage
                                 isImage
-                                rules={{ required: true }}
+                                rules={rules}
                                 name='image'
                                 form={form}
                                 label='Click to upload'
