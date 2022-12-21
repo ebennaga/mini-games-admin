@@ -166,6 +166,7 @@ const LocationContainer = () => {
                     </Box>
                     <Box>
                         <InputExcel
+                            setRemove={setRemove}
                             rules={{ required: true }}
                             name='excel'
                             form={form}
