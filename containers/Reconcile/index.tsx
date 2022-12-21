@@ -203,12 +203,16 @@ const Reconcile = () => {
         ];
 
         form.setValue('dataTable', result);
+        form.setValue('page', 1);
+        form.setValue('row', 5);
     };
 
     const handleResetFilter = () => {
         form.setValue('dataTable', dummyTable);
         form.setValue('minDate', getStartDate());
         form.setValue('maxDate', getEndDdate());
+        form.setValue('page', 1);
+        form.setValue('row', 5);
         form.setValue('orderDate', '');
         form.setValue('orderTime', '');
         form.setValue('transactionDate', '');

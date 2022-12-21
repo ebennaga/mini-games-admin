@@ -375,6 +375,8 @@ const ClientTournament = () => {
             ];
         }
         setFilteredData(result);
+        setRow(result.length.toString());
+        setPages(1);
         setOpenFilter(false);
     };
 
