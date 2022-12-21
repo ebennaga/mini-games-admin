@@ -151,7 +151,7 @@ const TabPanelDelivered: React.FC<TabPanelDeliveredProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.redeemTime}
+                                                {new Date(item.redeemTime).toLocaleString('id')}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
