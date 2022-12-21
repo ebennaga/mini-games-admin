@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { getCurrentTime, getEndDdate, getPastDate, getStartDate } from 'utils/date';
+import { getEndDdate, getPastDate, getStartDate } from 'utils/date';
 import { useForm } from 'react-hook-form';
 import HeaderReconcile from './HeaderReconcile';
 import Table from './Table';
@@ -72,15 +72,17 @@ const Reconcile = () => {
         }
     ];
 
+    const timeOption: any = { hour: '2-digit', minute: '2-digit', hour12: false };
+
     const form = useForm({
         mode: 'all',
         defaultValues: {
             minDate: getStartDate(),
             maxDate: getEndDdate(),
-            orderDate: getPastDate(5, true),
-            transactionDate: new Date().toISOString().slice(0, 10) || '',
-            orderTime: getCurrentTime(),
-            transactionTime: getCurrentTime(),
+            orderDate: '',
+            transactionDate: '',
+            orderTime: '',
+            transactionTime: '',
             row: 5,
             page: 1,
             dataTable: dummyTable
@@ -144,42 +146,73 @@ const Reconcile = () => {
     };
 
     const handleFilter = (data: any, tabsValue: 'all' | 'latest' | 'oldest') => {
-        if (tabsValue === 'all') {
-            const { orderDate, orderTime, transactionDate, transactionTime } = data;
-            const order = new Date(`${orderDate} ${orderTime}`).toISOString();
-            const transaction = new Date(`${transactionDate} ${transactionTime}`).toISOString();
+        let result: Array<any> = [];
+        const dataTable = dummyTable;
+        const { orderDate, orderTime, transactionDate, transactionTime } = data;
 
-            const filter = dummyTable.filter(
-                (item: any) =>
-                    new Date(item.orderTime).toISOString() === order && new Date(item.transactionTime).toISOString() === transaction
-            );
-
-            form.setValue('dataTable', filter);
-        } else if (tabsValue === 'latest') {
-            const sort = dummyTable.sort((a: any, b: any) => {
-                const first: any = new Date(a.orderTime);
-                const second: any = new Date(b.orderTime);
-                return first - second;
-            });
-            form.setValue('dataTable', sort);
-        } else if (tabsValue === 'oldest') {
-            const sort = dummyTable.sort((a: any, b: any) => {
-                const first: any = new Date(a.orderTime);
-                const second: any = new Date(b.orderTime);
-                return second - first;
-            });
-            form.setValue('dataTable', sort);
+        if (orderDate) {
+            const arr = result.length > 0 ? result : dataTable;
+            result = [
+                ...arr.filter((item: any) => {
+                    const value: any = new Date(item.orderTime).toLocaleString('id').slice(0, 10);
+                    const filter: any = new Date(orderDate).toLocaleString('id').slice(0, 10);
+                    return value === filter;
+                })
+            ];
         }
+        if (transactionDate) {
+            const arr = result.length > 0 ? result : dataTable;
+            result = [
+                ...arr.filter((item: any) => {
+                    const value: any = new Date(item.transactionTime).toLocaleString('id').slice(0, 10);
+                    const filter: any = new Date(transactionDate).toLocaleString('id').slice(0, 10);
+                    return value === filter;
+                })
+            ];
+        }
+        if (orderTime) {
+            const arr = result.length > 0 ? result : dataTable;
+            result = [
+                ...arr.filter((item: any) => {
+                    const valueTime = new Date(item.orderTime).toLocaleString('ca', timeOption);
+                    return valueTime === orderTime;
+                })
+            ];
+        }
+        if (transactionTime) {
+            const arr = result.length > 0 ? result : dataTable;
+            result = [
+                ...arr.filter((item: any) => {
+                    const valueTime = new Date(item.transactionTime).toLocaleString('ca', timeOption);
+                    return valueTime === transactionTime;
+                })
+            ];
+        }
+        if (!orderDate && !orderTime && !transactionDate && !transactionTime) {
+            result = [...dataTable];
+        }
+
+        result = [
+            ...result.sort((a: any, b: any) => {
+                const first: any = new Date(a.orderTime);
+                const second: any = new Date(b.orderTime);
+                if (tabsValue === 'latest') return first - second;
+                if (tabsValue === 'oldest') return second - first;
+                return first;
+            })
+        ];
+
+        form.setValue('dataTable', result);
     };
 
     const handleResetFilter = () => {
         form.setValue('dataTable', dummyTable);
         form.setValue('minDate', getStartDate());
         form.setValue('maxDate', getEndDdate());
-        form.setValue('orderDate', getPastDate(5, true));
-        form.setValue('orderTime', getCurrentTime());
-        form.setValue('transactionDate', new Date().toISOString().slice(0, 10));
-        form.setValue('transactionTime', getCurrentTime());
+        form.setValue('orderDate', '');
+        form.setValue('orderTime', '');
+        form.setValue('transactionDate', '');
+        form.setValue('transactionTime', '');
     };
 
     return (

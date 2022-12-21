@@ -146,7 +146,7 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage }) => {
                                     border='1px solid rgba(0,0,0,0.2)'
                                     sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
                                 >
-                                    {item.orderTime}
+                                    {new Date(item.orderTime).toLocaleString('id')}
                                 </Grid>
                                 <Grid
                                     item
@@ -184,7 +184,7 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage }) => {
                                     border='1px solid rgba(0,0,0,0.2)'
                                     sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
                                 >
-                                    {item.transactionTime}
+                                    {new Date(item.transactionTime).toLocaleString('id')}
                                 </Grid>
                                 <Grid
                                     item
@@ -211,7 +211,7 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage }) => {
                                     border='1px solid rgba(0,0,0,0.2)'
                                     sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
                                 >
-                                    {item.settlementTime}
+                                    {new Date(item.settlementTime).toLocaleString('id')}
                                 </Grid>
                             </Grid>
                         </Grid>

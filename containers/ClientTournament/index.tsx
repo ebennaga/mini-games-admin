@@ -328,7 +328,7 @@ const ClientTournament = () => {
             const arr = result.length > 0 ? result : data;
             result = [
                 ...arr.filter((item: any) => {
-                    const itemStart = new Date(item.start).toLocaleString(undefined, timeOption);
+                    const itemStart = new Date(item.start).toLocaleString('ca', timeOption);
                     return itemStart === startTime;
                 })
             ];
@@ -337,7 +337,7 @@ const ClientTournament = () => {
             const arr = result.length > 0 ? result : data;
             result = [
                 ...arr.filter((item: any) => {
-                    const itemEnd = new Date(item?.end)?.toLocaleString(undefined, timeOption);
+                    const itemEnd = new Date(item?.end)?.toLocaleString('ca', timeOption);
                     return itemEnd === endTime;
                 })
             ];
@@ -346,8 +346,8 @@ const ClientTournament = () => {
             const arr = result.length > 0 ? result : data;
             result = [
                 ...arr.filter((item: any) => {
-                    const itemStart = new Date(item.start).toLocaleString(undefined, timeOption);
-                    const itemEnd = new Date(item.end).toLocaleString(undefined, timeOption);
+                    const itemStart = new Date(item.start).toLocaleString('ca', timeOption);
+                    const itemEnd = new Date(item.end).toLocaleString('ca', timeOption);
                     return itemStart >= startTime && itemEnd <= endTime;
                 })
             ];
