@@ -237,9 +237,9 @@ const Roles = () => {
                 title='Master Roles'
                 subtitle='Addtional description if required'
                 isSearchExist
-                isButtonCreateExist={false}
+                isButtonCreateExist
                 placeholderSeacrhText='Search by name, code, etc.'
-                href='/games/add-game'
+                href='/settings/roles/add-role'
             />
             <Box position='absolute' left='415px' top='57px'>
                 <FilterRoles

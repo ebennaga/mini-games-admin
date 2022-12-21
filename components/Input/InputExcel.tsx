@@ -6,9 +6,10 @@ import { Box, ButtonBase, Grid, IconButton, Skeleton, Typography } from '@mui/ma
 import { Controller } from 'react-hook-form';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import ClearIcon from '@mui/icons-material/Clear';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import { Cancel } from '@mui/icons-material';
 
-interface InputImageProps {
+interface InputExcelProps {
     name: string;
     form: any;
     label: string;
@@ -17,10 +18,10 @@ interface InputImageProps {
     isLocation?: boolean;
     rules?: any;
     isLoading?: boolean;
-    isImage?: boolean;
+    // isImage?: boolean;
 }
 
-const InputImage: React.FC<InputImageProps> = ({
+const InputExcel: React.FC<InputExcelProps> = ({
     name,
     form,
     label,
@@ -28,11 +29,11 @@ const InputImage: React.FC<InputImageProps> = ({
     placeholder,
     isLocation = false,
     rules,
-    isLoading,
-    isImage = false
+    isLoading
+    // isImage = false
 }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
-    const [isImg, setIsImg] = React.useState<boolean>(false);
+    // const [isImg, setIsImg] = React.useState<boolean>(false);
     const {
         formState: { errors }
     } = form;
@@ -43,36 +44,23 @@ const InputImage: React.FC<InputImageProps> = ({
 
     const valueInput: any = form.watch(name);
     const handleChange = (e: any) => {
-        const file: any = e.target.files[0].size;
-        const { type } = e.target.files[0];
-        if (type.split('/')[0] !== 'image') {
-            setIsImg(false);
-        } else {
-            setIsImg(true);
-        }
-
+        const file: any = e.target.files[0]?.size;
+        // console.log(e.target.files[0]);
+        const type: any = e.target.files[0]?.type.split('/')[1];
         const sizeInKB = Math.ceil(file / 1024);
-        if (type.split('/')[0] !== 'image') {
-            setErrMessage('File must be an Image!');
+
+        if (type !== 'vnd.ms-excel') {
+            setErrMessage('File must be an excel file');
         }
-        if (sizeInKB > 3072) {
-            setErrMessage('File image is to large! Image must be under 3072Kb!');
-        } else {
-            form.setValue(name, e.target.files[0]);
-            setErrMessage('');
-            const reader = new FileReader();
-            if (type.split('/')[0] === 'image') {
-                reader.onload = () => {
-                    const output: any = document.getElementById('preview');
-                    output.src = reader.result;
-                };
-            }
-            reader.readAsDataURL(e.target.files[0]);
+        if (sizeInKB > 5072) {
+            setErrMessage('File is to large! Image must be under 5072Kb!');
         }
+        form.setValue('excel', e.target.files[0]);
     };
 
     const handleClear = () => form.setValue(name, '');
-
+    // console.log(valueInput.type?.split('/')[0]);
+    console.log(error);
     return (
         <Box>
             {isLoading ? (
@@ -83,20 +71,19 @@ const InputImage: React.FC<InputImageProps> = ({
                         container
                         sx={{
                             my: '10px',
-                            border: !isImg && isImage ? '1px dashed red' : '',
-                            background: !isImg && isImage ? 'rgba(165, 76, 229, 0.1)' : '',
-                            padding: '15px 10px'
-                            // height: !isImg && isImage ? '270px' : ''
+                            border: '1px dashed rgba(0, 0, 0, 0.17)',
+                            background: '',
+                            padding: '15px'
                         }}
                     >
-                        <Grid container item xs={12} alignItems='center'>
-                            <Grid item xs={8} display='flex' alignItems='center' justifyContent='space-between' gap='10px'>
+                        <Grid container item xs={12}>
+                            <Grid item xs={8} display='flex' alignItems='top' gap='10px'>
                                 <Box
                                     width='41px'
                                     height='41px'
                                     borderRadius='900px'
                                     sx={{
-                                        background: 'rgba(165, 76, 229, 0.1)',
+                                        background: '',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center'
@@ -104,53 +91,30 @@ const InputImage: React.FC<InputImageProps> = ({
                                 >
                                     <UploadFileIcon sx={{ color: '#A54CE5' }} />
                                 </Box>
-                                <Box sx={{ display: !isImg && isImage ? 'flex' : '', alignItems: 'center', width: '100%' }}>
-                                    <Typography component='p' fontSize='16px' sx={{ color: !isImg && isImage ? 'red' : 'rgba(0,0,0,0.8)' }}>
-                                        {!isImg && isImage ? 'File must be an image ' : valueInput.name || valueInput}
-                                    </Typography>
-                                    <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.5)' }}>
-                                        {!isImg && isImage
-                                            ? ''
-                                            : valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
-                                    </Typography>
-                                </Box>
+                                {!errMessage && (
+                                    <Box width='100%' sx={{ display: '', alignItems: 'center' }}>
+                                        <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
+                                            {valueInput.name || valueInput}
+                                        </Typography>
+                                        <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
+                                            {valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
+                                        </Typography>
+                                    </Box>
+                                )}
                             </Grid>
-                            <Grid
-                                item
-                                xs={4}
-                                sx={{
-                                    width: '40px',
-                                    height: '40px',
-                                    position: 'relative',
-                                    display: 'flex',
-                                    justifyContent: isImg && isImage ? ' ' : 'flex-end'
-                                    // border: '1px solid red'
-                                }}
-                            >
+                            <Grid item xs={4} sx={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
                                 <IconButton onClick={handleClear} sx={{ mr: '30px' }}>
                                     <ClearIcon />
                                 </IconButton>
-                                {isImg && isImage && (
+                                {/* {isImage ? (
+                                    <Cancel sx={{ color: 'red', fontSize: '30px', position: 'absolute', top: '-10px', right: '-10px' }} />
+                                ) : (
                                     <CheckCircleIcon
                                         sx={{ color: '#A54CE5', fontSize: '30px', position: 'absolute', top: '-10px', right: '-10px' }}
                                     />
-                                )}
+                                )} */}
                             </Grid>
                         </Grid>
-                        {isImg && (
-                            <>
-                                {' '}
-                                <Grid item xs={12}>
-                                    <Typography
-                                        component='p'
-                                        sx={{ color: 'rgba(0,0,0,0.7)', fontSize: '14px', fontWeight: 'bold', my: 2 }}
-                                    >
-                                        Preview
-                                    </Typography>
-                                </Grid>
-                                <img src={valueInput} id='preview' alt='Game Cover' width='200px' height='auto' />
-                            </>
-                        )}
                     </Grid>
                     {/* {!isImg && isImage && <Typography sx={{ textAlign: 'center', color: 'red' }}>File must be an image!</Typography>} */}
                 </Box>
@@ -164,7 +128,7 @@ const InputImage: React.FC<InputImageProps> = ({
                             return (
                                 <Box sx={{ bgcolor: errType || errMessage ? 'rgba(211, 47, 47, 0.04)' : '#fff' }}>
                                     <input
-                                        accept={isImage ? 'image/*' : 'application/vnd.ms-excel'}
+                                        accept='application/*'
                                         style={{ display: 'none' }}
                                         id='raised-button-file'
                                         multiple
@@ -231,4 +195,4 @@ const InputImage: React.FC<InputImageProps> = ({
     );
 };
 
-export default InputImage;
+export default InputExcel;

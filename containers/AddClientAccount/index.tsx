@@ -1,11 +1,14 @@
 /* eslint-disable no-unused-vars */
 import { Close } from '@mui/icons-material';
-import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, FormControlLabel, Checkbox } from '@mui/material';
+import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel } from '@mui/material';
 import CustomButton from 'components/Button';
 import InputWithLabel from 'components/Input/InputWithLabel';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import RadioButton from 'components/Radio/RadioV2';
 
 interface CreateClientAccountProps {}
 
@@ -24,7 +27,32 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const [accessArr, setAccessArr] = React.useState<string[]>([]);
     const [roles, setRoles] = React.useState<any>([]);
     const [companies, setCompanies] = React.useState<any>([]);
+    const [isCompFilled, setIsCompFilled] = React.useState<boolean>(false);
+    const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
+    const [isError, setIsError] = React.useState<boolean>(false);
     const router = useRouter();
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
+
+    const submitHandler = async (data: any) => {
+        if (isCompFilled && isRolesFilled) {
+            setIsError(false);
+            try {
+                const response = await fetchAPI({
+                    method: 'POST',
+                    endpoint: 'client-account',
+                    data: {}
+                });
+                if (response.status === 200) {
+                    notify('Successfully create client account', 'success');
+                }
+            } catch (error: any) {
+                notify(error.message, 'error');
+            }
+        } else {
+            setIsError(true);
+        }
+    };
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
@@ -84,6 +112,26 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const handleAddSetNotActive = (event: any) => {
         form.setValue('activeRole', !form.watch('activeRole'));
     };
+
+    React.useEffect(() => {
+        if (companies.length <= 0 && roles.length <= 0) {
+            form.setValue('role', '0');
+            form.setValue('company', '0');
+            setIsCompFilled(false);
+            return setIsRolesFilled(false);
+        }
+
+        setIsCompFilled(true);
+        return setIsRolesFilled(true);
+    }, [companies, roles]);
+
+    React.useEffect(() => {
+        if (isCompFilled && isRolesFilled) {
+            setIsError(false);
+        }
+    }, [isCompFilled, isRolesFilled]);
+    // console.log({ isCompFilled });
+    // console.log({ isRolesFilled });
 
     return (
         <Box sx={{ position: 'relative' }}>
@@ -153,6 +201,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     label='Company'
                                     onChange={handleAddCompany}
                                     color='secondary'
+                                    error={isError}
                                 >
                                     <MenuItem value='0' disabled>
                                         Select Company
@@ -203,6 +252,9 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                         </Box>
                                     );
                                 })}
+                            {companies.length <= 0 && isError && (
+                                <Typography sx={{ color: 'red', fontSize: '11px' }}>Companies field is required!</Typography>
+                            )}
                         </Box>
                     </Box>
                     <Box sx={{ mt: '45px', width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -237,6 +289,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     label='Role Code'
                                     onChange={handleAddRole}
                                     color='secondary'
+                                    error={isError}
                                 >
                                     <MenuItem value='0' disabled>
                                         Select Roles
@@ -287,6 +340,9 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                         </Box>
                                     );
                                 })}
+                            {roles.length <= 0 && isError && (
+                                <Typography sx={{ color: 'red', fontSize: '11px' }}>Roles field is required!</Typography>
+                            )}
                         </Box>
                     </Box>
                     <Box sx={{ mt: '35px', width: '35%', display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
@@ -307,29 +363,23 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '35%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Box>
-                                <FormControlLabel
-                                    sx={{ color: 'black', fontWeight: 800 }}
-                                    value={form.watch('activeRole')}
-                                    control={<Checkbox color='secondary' />}
-                                    label='Yes'
-                                    labelPlacement='end'
-                                    checked={form.watch('activeRole')}
-                                    onChange={handleAddSetActive}
-                                />
-                            </Box>
-                            <Box>
-                                <FormControlLabel
-                                    sx={{ color: 'black', fontWeight: 800 }}
-                                    value={!form.watch('activeRole')}
-                                    control={<Checkbox color='secondary' />}
-                                    label='No'
-                                    labelPlacement='end'
-                                    checked={!form.watch('activeRole')}
-                                    onChange={handleAddSetNotActive}
-                                />
-                            </Box>
+                        <Box sx={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <RadioButton
+                                form={form}
+                                name='activeRole'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('activeRole')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='activeRole'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('activeRole')}
+                                label='No'
+                            />
                         </Box>
                     </Box>
                 </form>
@@ -347,7 +397,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                     width: '100%'
                 }}
             >
-                <CustomButton onClick={() => {}} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
+                <CustomButton onClick={submitHandler} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
                 <CustomButton
                     onClick={() => {
                         // setCreateAcc(!createAcc);

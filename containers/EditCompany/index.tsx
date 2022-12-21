@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControlLabel, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -6,6 +6,7 @@ import useNotify from 'hooks/useNotify';
 import useAPICaller from 'hooks/useAPICaller';
 import { useRouter } from 'next/router';
 import CustomButton from 'components/Button';
+import RadioButton from 'components/Radio/RadioV2';
 
 const EditCompanyContainer = () => {
     const form = useForm({
@@ -135,29 +136,23 @@ const EditCompanyContainer = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '35%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Box>
-                                <FormControlLabel
-                                    sx={{ color: 'black', fontWeight: 800 }}
-                                    value={form.watch('active')}
-                                    control={<Checkbox color='secondary' />}
-                                    label='Yes'
-                                    labelPlacement='end'
-                                    checked={form.watch('active')}
-                                    onChange={handleAddSetActive}
-                                />
-                            </Box>
-                            <Box>
-                                <FormControlLabel
-                                    sx={{ color: 'black', fontWeight: 800 }}
-                                    value={!form.watch('active')}
-                                    control={<Checkbox color='secondary' />}
-                                    label='No'
-                                    labelPlacement='end'
-                                    checked={!form.watch('active')}
-                                    onChange={handleAddSetNotActive}
-                                />
-                            </Box>
+                        <Box sx={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <RadioButton
+                                form={form}
+                                name='active'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('active')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='active'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('active')}
+                                label='No'
+                            />
                         </Box>
                     </Box>
                 </Box>

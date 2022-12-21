@@ -21,6 +21,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import RadioButton from 'components/Radio/RadioV2';
 
 interface CreateAccountProps {}
 
@@ -331,29 +332,23 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ width: '35%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Box>
-                                <FormControlLabel
-                                    sx={{ color: 'black', fontWeight: 800 }}
-                                    value={form.watch('activeRole')}
-                                    control={<Checkbox color='secondary' />}
-                                    label='Yes'
-                                    labelPlacement='end'
-                                    checked={form.watch('activeRole')}
-                                    onChange={handleAddSetActive}
-                                />
-                            </Box>
-                            <Box>
-                                <FormControlLabel
-                                    sx={{ color: 'black', fontWeight: 800 }}
-                                    value={!form.watch('activeRole')}
-                                    control={<Checkbox color='secondary' />}
-                                    label='No'
-                                    labelPlacement='end'
-                                    checked={!form.watch('activeRole')}
-                                    onChange={handleAddSetNotActive}
-                                />
-                            </Box>
+                        <Box sx={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetActive}
+                                rules={{ required: true }}
+                                checked={form.watch('activeRole')}
+                                label='Yes'
+                            />
+                            <RadioButton
+                                form={form}
+                                name='isActive'
+                                handleChange={handleAddSetNotActive}
+                                rules={{ required: true }}
+                                checked={!form.watch('activeRole')}
+                                label='No'
+                            />
                         </Box>
                     </Box>
                 </Box>
