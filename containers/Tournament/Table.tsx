@@ -15,7 +15,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ value, data }) 
         if (data) {
             setDataTable(data[0].data);
         }
-    }, []);
+    }, [data]);
 
     React.useEffect(() => {
         if (value === 1 || value === 2 || value === 3) {

@@ -24,7 +24,6 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDa
     const handleSubmit = (data: any) => {
         setOpen(false);
         handleFilter(data, tabRadio);
-        setTabRadio('all');
     };
 
     const onReset = () => {
@@ -58,6 +57,7 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDa
                     aria-labelledby='radio-filter-time'
                     name='radio-filter'
                     defaultValue='all'
+                    value={tabRadio}
                     sx={{ display: 'flex', justifyContent: 'space-between', mb: 1.5, '& .Mui-checked': { color: '#A54CE5' } }}
                 >
                     {radioList.map((item: any) => {
@@ -71,19 +71,18 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, dataDa
                         );
                     })}
                 </RadioGroup>
-                {tabRadio === 'all' &&
-                    dataDate.map((item: any) => {
-                        return (
-                            <InputDate
-                                key={item.name}
-                                form={form}
-                                type={item.type}
-                                label={item.label}
-                                // defaultValue={item.defaultValue}
-                                name={item.name}
-                            />
-                        );
-                    })}
+                {dataDate.map((item: any) => {
+                    return (
+                        <InputDate
+                            key={item.name}
+                            form={form}
+                            type={item.type}
+                            label={item.label}
+                            // defaultValue={item.defaultValue}
+                            name={item.name}
+                        />
+                    );
+                })}
                 <Grid container spacing={2} mt={0.3}>
                     <Grid item xs={6}>
                         <ButtonBase

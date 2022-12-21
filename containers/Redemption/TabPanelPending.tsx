@@ -120,7 +120,7 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.redeemTime}
+                                                {new Date(item.redeemTime).toLocaleString('id')}
                                             </TableCell>
 
                                             <TableCell

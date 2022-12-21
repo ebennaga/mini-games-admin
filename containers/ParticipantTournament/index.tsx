@@ -245,12 +245,18 @@ const ParticipantTournament = () => {
             form.setValue('dataTable', resFilter);
         }
 
+        form.setValue('page', 1);
+        form.setValue('idxAppears', { startIndex: 0, endIndex: 5 });
+        form.setValue('row', 5);
         setIsDialogFilter(false);
     };
 
     // Event Reset Filter
     const handleResetFilter = () => {
         form.setValue('dataTable', dummyData);
+        form.setValue('page', 1);
+        form.setValue('idxAppears', { startIndex: 0, endIndex: 5 });
+        form.setValue('row', 5);
         form.setValue('tabFilter', 'all');
         form.setValue('titleFilter', '');
         form.setValue('gamesFilter', '');
