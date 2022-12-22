@@ -11,9 +11,11 @@ interface FilterRolesProps {
     dataSelect: any;
     open: boolean;
     setOpen: any;
+    onFilter: () => void;
+    onReset: () => void;
 }
 
-const FilterRoles: React.FC<FilterRolesProps> = ({ form, nameSelect, nameActive, dataSelect, open, setOpen }) => {
+const FilterRoles: React.FC<FilterRolesProps> = ({ form, nameSelect, nameActive, dataSelect, open, setOpen, onFilter, onReset }) => {
     const handleClose = () => {
         setOpen(false);
     };
@@ -50,11 +52,13 @@ const FilterRoles: React.FC<FilterRolesProps> = ({ form, nameSelect, nameActive,
                 </Box>
                 <Box display='flex' justifyContent='space-between' gap='11px'>
                     <ButtonBase
+                        onClick={onFilter}
                         sx={{ bgcolor: '#A54CE5', width: '-webkit-fill-available', borderRadius: '4px', padding: '8px', color: '#fff' }}
                     >
                         FILTER
                     </ButtonBase>
                     <ButtonBase
+                        onClick={onReset}
                         sx={{
                             border: '1px solid #A54CE5',
                             width: '-webkit-fill-available',

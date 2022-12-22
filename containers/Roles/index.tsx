@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { Box, ButtonBase, IconButton } from '@mui/material';
-import HeaderChildren from 'components/HeaderChildren';
-import InputSearch from 'components/Input/InputSearch';
+import { Box } from '@mui/material';
 import React from 'react';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import PaginationCard from 'components/PaginationCard';
@@ -19,21 +16,12 @@ import FilterRoles from './FilterRoles';
 import DialogMenuAccess from './DialogMenuAccess';
 
 const Roles = () => {
-    // const dataTable = [
-    //     { id: 1, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: false },
-    //     { id: 2, roleCode: 'Mkt', roleName: 'Marketing', description: 'Lorem lorem halo lorem!', isActive: true },
-    //     { id: 3, roleCode: 'Cw', roleName: 'Content Writer', description: 'Lorem lorem halo lorem!', isActive: false },
-    //     { id: 4, roleCode: 'SA', roleName: 'Super Admin', description: 'Lorem lorem halo lorem!', isActive: false },
-    //     { id: 5, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: true },
-    //     { id: 6, roleCode: 'Mkt', roleName: 'Marketing', description: 'Lorem lorem halo lorem!', isActive: true },
-    //     { id: 7, roleCode: 'Admin', roleName: 'Admin Operational', description: 'Lorem lorem halo lorem!', isActive: true }
-    // ];
-
     const dataSelect = [
-        { id: 1, title: 'Content Writer' },
-        { id: 2, title: 'Digital Marketing' },
-        { id: 3, title: 'Admin Operational' },
-        { id: 4, title: 'Super Admin' }
+        { id: 'user', title: 'User' },
+        { id: 'content writer', title: 'Content Writer' },
+        { id: 'digital marketing', title: 'Digital Marketing' },
+        { id: 'admin', title: 'Admin' },
+        { id: 'super admin', title: 'Super Admin' }
     ];
 
     const dataAccesss = [
@@ -60,7 +48,7 @@ const Roles = () => {
     const [openDialogFailed, setOpenDialogFailed] = React.useState<boolean>(false);
     const [dataRoles, setDataRoles] = React.useState<Array<any>>([]);
     const [isLoading, setIsloading] = React.useState<boolean>(true);
-    // const [dataDetailRoles, setDataDetailRoles] = React.useState<any>(null);
+
     const { fetchAPI } = useAPICaller();
     const [query, setQuery] = React.useState('');
     const router = useRouter();
@@ -131,6 +119,35 @@ const Roles = () => {
         setOpenDialogFailed(true);
     };
 
+    // Event Filter data
+    const handleFilter = () => {
+        const dataTable = dataRoles;
+        const { filterActive, filterSelect } = form.watch();
+        let result: Array<any> = [];
+
+        if (filterSelect) {
+            result = [...dataTable.filter((item: any) => item.code.toLowerCase() === filterSelect.toLowerCase())];
+        }
+
+        const arr: Array<any> = result.length > 0 ? result : dataTable;
+        result = [...arr.filter((item: any) => item.is_active === filterActive)];
+
+        form.setValue('dataTable', result);
+        form.setValue('idxAppears', { startIndex: 0, endIndex: 5 });
+        form.setValue('page', 1);
+        form.setValue('row', 5);
+        setIsDialogFilter(false);
+    };
+
+    // Event Reset Filter
+    const handleReset = () => {
+        form.setValue('dataTable', dataRoles);
+        form.setValue('idxAppears', { startIndex: 0, endIndex: 5 });
+        form.setValue('page', 1);
+        form.setValue('row', 5);
+        setIsDialogFilter(false);
+    };
+
     // Update useForm idxAppears value, while doing pagination events
     React.useEffect(() => {
         const page = form.watch('page');
@@ -150,9 +167,6 @@ const Roles = () => {
         setTotalChecked(countItems);
     }, [form.watch('dataTable')]);
 
-    // React.useEffect(() => {
-    //     setFilteredData(dataRoles);
-    // }, []);
     const handleDataSearch = (keyword: any) => {
         setQuery(keyword);
     };
@@ -181,7 +195,6 @@ const Roles = () => {
 
     React.useEffect(() => {
         getRoles();
-        form.setValue('dataTable', dataRoles);
     }, []);
 
     React.useEffect(() => {
@@ -200,37 +213,12 @@ const Roles = () => {
         form.setValue('dataTable', temp);
         form.setValue('page', 1);
     }, [query]);
+
     if (isLoading) {
         return <LoadingExchangeRates />;
     }
     return (
         <Box>
-            {/* <HeaderChildren title='Master Roles' subTitle='Additional description if required'>
-                <Box display='flex' alignItems='center' justifyContent='space-between'>
-                    <Box mt='27px' display='flex' alignItems='center' position='relative'>
-                        <InputSearch name='search' label='Search' placeholder='Search by name, code, etc.' form={form} />
-                        <IconButton sx={{ ml: '35px' }} onClick={() => setIsDialogFilter(!isDialogFilter)}>
-                            <FilterListIcon />
-                        </IconButton>
-                        <Box position='absolute' left='315px' top='57px'>
-                            <FilterRoles
-                                form={form}
-                                nameSelect='filterSelect'
-                                nameActive='filterActive'
-                                dataSelect={dataSelect}
-                                open={isDialogFilter}
-                                setOpen={setIsDialogFilter}
-                            />
-                        </Box>
-                    </Box>
-                    <ButtonBase
-                        onClick={() => router.push('/settings/roles/add-role')}
-                        sx={{ padding: '10px 16px', color: '#fff', bgcolor: '#A54CE5', borderRadius: '4px', fontSize: '14px' }}
-                    >
-                        CREATE NEW
-                    </ButtonBase>
-                </Box>
-            </HeaderChildren> */}
             <TitleCard
                 handleSearch={(keyword: any) => handleDataSearch(keyword)}
                 onConfirm={(value: boolean) => handleDialog(value)}
@@ -243,6 +231,8 @@ const Roles = () => {
             />
             <Box position='absolute' left='415px' top='57px'>
                 <FilterRoles
+                    onFilter={handleFilter}
+                    onReset={handleReset}
                     form={form}
                     nameSelect='filterSelect'
                     nameActive='filterActive'

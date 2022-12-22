@@ -51,25 +51,15 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears, nam
 
     const handleCheck = async (e: React.ChangeEvent<HTMLInputElement>, data: any) => {
         const isChecked = e.target.checked;
-
-        let newArr: any = [...dataTable];
-        dataTable.forEach((item: any, index: number) => {
+        const result = dataTable.map((item: any) => {
             if (item.id === data.id) {
-                const filter = newArr.filter((itm: any) => itm.id !== data.id);
-                if (isChecked) {
-                    newArr = [...filter, { ...data, isAction: true }];
-                } else {
-                    newArr = [...filter, { ...data, isAction: false }];
-                    setIsAllChecked(false);
-                }
+                const finalItem = { ...item, isAction: isChecked };
+                return finalItem;
             }
-
-            if (index === dataTable.length - 1) {
-                newArr.sort((a: any, b: any) => a.id - b.id);
-                setDataTable([...newArr]);
-                form.setValue(name, [...newArr]);
-            }
+            return item;
         });
+        setDataTable([...result]);
+        form.setValue(name, [...result]);
     };
 
     const handleMore = (data: any) => {
@@ -80,9 +70,11 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears, nam
     const handleMenuAccess = () => {
         setOpenMenuAccess(true);
     };
+
     React.useEffect(() => {
         setDataTable(form.watch(name));
     }, [form.watch(name)]);
+
     return (
         <TableContainer>
             <Table aria-label='table roles'>
