@@ -49,6 +49,7 @@ const InputExcel: React.FC<InputExcelProps> = ({
     const types: any = valueInput?.type?.split('/')[1];
     const size = valueInput?.size;
     const sizeExcelInKb = Math.ceil(size / 1024);
+    // eslint-disable-next-line consistent-return
     const handleChange = (e: any) => {
         const file: any = e.target.files[0]?.size;
         const sizeInKB = Math.ceil(file / 1024);
