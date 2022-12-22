@@ -49,17 +49,11 @@ const InputExcel: React.FC<InputExcelProps> = ({
     const types: any = valueInput.type?.split('/')[1];
     const handleChange = (e: any) => {
         const file: any = e.target.files[0]?.size;
-        // console.log(e.target.files[0]);
-        const type: any = e.target.files[0]?.type.split('/')[1];
         const sizeInKB = Math.ceil(file / 1024);
-
-        // if (type !== 'vnd.ms-excel') {
-        //     setErrMessage('File must be an excel file');
-        // }
         if (sizeInKB > 5072) {
             setErrMessage('File is to large! Image must be under 5072Kb!');
         }
-        if (type === 'vnd.ms-excel') {
+        if (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
             form.setValue(name, e.target.files[0]);
             setErrMessage('');
             const reader = new FileReader();
@@ -90,13 +84,29 @@ const InputExcel: React.FC<InputExcelProps> = ({
                         sx={{
                             width: '340px',
                             my: '10px',
-                            border: types === 'vnd.ms-excel' ? '1px dashed rgba(0, 0, 0, 0.17)' : '1px dashed red',
-                            background: types === 'vnd.ms-excel' ? '' : 'rgba(211, 47, 47, 0.04)',
+                            border:
+                                types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                    ? '1px dashed rgba(0, 0, 0, 0.17)'
+                                    : '1px dashed red',
+                            background:
+                                types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                    ? ''
+                                    : 'rgba(211, 47, 47, 0.04)',
                             padding: '15px'
                         }}
                     >
                         <Grid container item xs={12} sx={{}}>
-                            <Grid item xs={8} display='flex' alignItems={types === 'vnd.ms-excel' ? 'top' : 'center'} gap='10px'>
+                            <Grid
+                                item
+                                xs={8}
+                                display='flex'
+                                alignItems={
+                                    types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                        ? 'top'
+                                        : 'center'
+                                }
+                                gap='10px'
+                            >
                                 <Box
                                     width='41px'
                                     height='41px'
@@ -113,16 +123,29 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                 <Box width='100%' sx={{ display: '', alignItems: 'center' }}>
                                     <Typography
                                         component='p'
-                                        fontSize={types === 'vnd.ms-excel' ? '16px' : '14px'}
-                                        sx={{ color: types === 'vnd.ms-excel' ? 'rgba(0,0,0,0.8)' : 'red' }}
+                                        fontSize={
+                                            types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                                ? '16px'
+                                                : '14px'
+                                        }
+                                        sx={{
+                                            color:
+                                                types === 'vnd.ms-excel' ||
+                                                types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                                    ? 'rgba(0,0,0,0.8)'
+                                                    : 'red'
+                                        }}
                                     >
-                                        {types === 'vnd.ms-excel' ? valueInput.name || valueInput : 'File must be an excel file'}
+                                        {types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                            ? valueInput.name || valueInput
+                                            : 'File must be an excel file'}
                                     </Typography>
-                                    {types === 'vnd.ms-excel' && (
-                                        <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
-                                            {valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
-                                        </Typography>
-                                    )}
+                                    {types === 'vnd.ms-excel' ||
+                                        (types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet' && (
+                                            <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
+                                                {valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
+                                            </Typography>
+                                        ))}
                                 </Box>
                             </Grid>
                             <Grid item xs={4} sx={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
