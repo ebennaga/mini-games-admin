@@ -71,7 +71,7 @@ const InputExcel: React.FC<InputExcelProps> = ({
     };
 
     const handleClear = () => form.setValue(name, '');
-    // console.log(valueInput.type?.split('/')[0]);
+    // console.log(valueInput.size);
     // console.log(form.watch('excel'));
     return (
         <Box>
@@ -140,12 +140,11 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                             ? valueInput.name || valueInput
                                             : 'File must be an excel file'}
                                     </Typography>
-                                    {types === 'vnd.ms-excel' ||
-                                        (types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet' && (
-                                            <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
-                                                {valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
-                                            </Typography>
-                                        ))}
+                                    {(types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') && (
+                                        <Typography component='p' fontSize='14px' sx={{ color: 'rgba(0,0,0,0.8)' }}>
+                                            {valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
+                                        </Typography>
+                                    )}
                                 </Box>
                             </Grid>
                             <Grid item xs={4} sx={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
