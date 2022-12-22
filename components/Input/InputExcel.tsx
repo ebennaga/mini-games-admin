@@ -19,7 +19,8 @@ interface InputExcelProps {
     isLocation?: boolean;
     rules?: any;
     isLoading?: boolean;
-    setRemove: any;
+    // eslint-disable-next-line react/no-unused-prop-types
+    setRemove?: any;
     // isImage?: boolean;
 }
 
@@ -31,8 +32,8 @@ const InputExcel: React.FC<InputExcelProps> = ({
     placeholder,
     isLocation = false,
     rules,
-    isLoading,
-    setRemove
+    isLoading
+    // setRemove
     // isImage = false
 }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
@@ -54,10 +55,12 @@ const InputExcel: React.FC<InputExcelProps> = ({
         const file: any = e.target.files[0]?.size;
         const sizeInKB = Math.ceil(file / 1024);
         if (sizeInKB > 3072) {
+            // console.log('e');
             form.setValue(name, '');
             return setErrMessage('File is to large! Image must be under 3072Kb!');
         }
         if (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            // console.log('ee');
             form.setValue(name, e.target.files[0]);
             setErrMessage('');
             const reader = new FileReader();
@@ -67,11 +70,12 @@ const InputExcel: React.FC<InputExcelProps> = ({
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
                 const json = XLSX.utils.sheet_to_json(sheet);
-                setRemove(json);
+                console.log(json);
             };
             reader.readAsBinaryString(e.target.files[0]);
         }
         form.setValue('excel', e.target.files[0]);
+        // console.log('eee');
     };
 
     const handleClear = () => {
@@ -95,7 +99,7 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                 (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') &&
                                 sizeExcelInKb <= 3072
                                     ? '1px dashed rgba(0, 0, 0, 0.17)'
-                                    : '1px dashed red',
+                                    : '1px solid red',
                             background:
                                 (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') &&
                                 sizeExcelInKb <= 3072
@@ -104,10 +108,10 @@ const InputExcel: React.FC<InputExcelProps> = ({
                             padding: '15px'
                         }}
                     >
-                        <Grid container item xs={12} sx={{}}>
+                        <Grid container item xs={12} sx={{ justifyContent: 'space-between' }}>
                             <Grid
                                 item
-                                xs={8}
+                                xs={10}
                                 display='flex'
                                 alignItems={
                                     (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') &&
@@ -130,7 +134,7 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                 >
                                     <UploadFileIcon sx={{ color: '#A54CE5' }} />
                                 </Box>
-                                <Box width='100%' sx={{ display: '', alignItems: 'center' }}>
+                                <Box width='120%' sx={{ display: '', alignItems: 'center', textAlign: 'center' }}>
                                     <Typography
                                         component='p'
                                         fontSize={
@@ -157,17 +161,19 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                     )}
                                 </Box>
                             </Grid>
-                            <Grid item xs={4} sx={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
+                            <Grid
+                                item
+                                xs={2}
+                                sx={{
+                                    position: 'relative',
+                                    display: 'flex',
+                                    justifyContent: 'space-between'
+                                }}
+                            >
+                                <Box />
                                 <IconButton onClick={handleClear} sx={{ mr: '30px' }}>
                                     <ClearIcon />
                                 </IconButton>
-                                {/* {isImage ? (
-                                    <Cancel sx={{ color: 'red', fontSize: '30px', position: 'absolute', top: '-10px', right: '-10px' }} />
-                                ) : (
-                                    <CheckCircleIcon
-                                        sx={{ color: '#A54CE5', fontSize: '30px', position: 'absolute', top: '-10px', right: '-10px' }}
-                                    />
-                                )} */}
                             </Grid>
                         </Grid>
                     </Grid>
