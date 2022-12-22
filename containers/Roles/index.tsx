@@ -87,19 +87,26 @@ const Roles = () => {
             form.setValue('page', input.page - 1);
         }
     };
-
+    console.log('datatable', form.watch('dataTable'));
     // Event Remove Item
     const handleRemove = async () => {
         // setOpenDialogConfirm(false);
         // setTotalChecked(0);
         try {
-            const response = await fetchAPI({
-                endpoint: `roles/${router.query.id}`,
-                method: 'DELETE'
+            const table = form.watch('dataTable');
+            table.map(async (item: any) => {
+                if (item.isAction) {
+                    const response = await fetchAPI({
+                        endpoint: `roles/${item.id}`,
+                        method: 'DELETE'
+                    });
+                    if (response.status === 200) {
+                        console.log(1);
+                    }
+                }
             });
-            if (response.status === 200) {
-                notify(response.data.message, 'success');
-            }
+
+            // console.log('responseDelte', response);
         } catch (error: any) {
             notify(error.message, 'error');
         }
