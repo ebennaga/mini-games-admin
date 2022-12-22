@@ -70,7 +70,7 @@ import { useRouter } from 'next/router';
 const ProductPrizes = () => {
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
-    const [category, setCategory] = React.useState('1');
+    const [categoryValue, setCategoryValue] = React.useState('1');
     const [query, setQuery] = React.useState('');
     const [row, setRow] = React.useState('0');
     const [filteredData, setFilteredData] = React.useState<any>([]);
@@ -80,6 +80,13 @@ const ProductPrizes = () => {
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
     const checkBoxKeys: string[] = [];
     const [removeData, setRemoveData] = React.useState<any>([]);
+    const [categoryList, setCategoryList] = React.useState<any>([]);
+    const [filteredShow, setFilteredShow] = React.useState<any>({});
+    const [value, setValue] = React.useState('all');
+
+    const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValue((event.target as HTMLInputElement).value);
+    };
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const router = useRouter();
@@ -101,10 +108,10 @@ const ProductPrizes = () => {
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCategory(event.target.value);
+        setCategoryValue(event.target.value);
     };
-    const handleDialog = (value: boolean) => {
-        setOpenFilter(value);
+    const handleDialog = (x: boolean) => {
+        setOpenFilter(x);
     };
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -262,6 +269,32 @@ const ProductPrizes = () => {
             setIsChecked(false);
         }
     }, [checkBoxKeys, form.watch('checkedAll')]);
+    const resetButton = () => {
+        setCategoryValue('1');
+        setFilteredShow({});
+        (document.getElementById('range') as HTMLInputElement).value = '';
+    };
+    React.useEffect(() => {
+        const cat = filteredData.map((i: any) => i.category);
+
+        const catDone = filteredData.filter(({ category }: any, index: number) => !cat.includes(category, index + 1));
+        setCategoryList(catDone);
+    }, [filteredData]);
+    const handleSubmit = () => {
+        const qty = (document.getElementById('range') as HTMLInputElement).value;
+        const choosedCat = categoryList[parseInt(categoryValue, 10) - 1].category;
+        setFilteredShow({ qty, choosedCat, value });
+        setOpenFilter(false);
+    };
+    React.useEffect(() => {
+        // eslint-disable-next-line array-callback-return, consistent-return
+        const update = filteredData.filter((item: any) => {
+            if (item.category === filteredShow.choosedCat) {
+                return item;
+            }
+        });
+        setFilteredData(update);
+    }, [filteredShow]);
     return (
         <Box component='section'>
             <Dialog
@@ -311,112 +344,135 @@ const ProductPrizes = () => {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <FormControl sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <RadioGroup row aria-labelledby='demo-row-radio-buttons-group-label' name='row-radio-buttons-group'>
-                            <FormControlLabel
-                                sx={{ mr: 1 }}
-                                value='all'
-                                control={
-                                    <Radio
-                                        checked
-                                        sx={{
-                                            color: 'grey',
-                                            '&.Mui-checked': {
-                                                color: '#A54CE5'
-                                            }
-                                        }}
-                                    />
-                                }
-                                label='All'
-                            />
-                            <FormControlLabel
-                                sx={{ ml: 1, mr: 1 }}
-                                value='latest'
-                                control={
-                                    <Radio
-                                        sx={{
-                                            color: 'grey',
-                                            '&.Mui-checked': {
-                                                color: '#A54CE5'
-                                            }
-                                        }}
-                                    />
-                                }
-                                label='Latest'
-                            />
-                            <FormControlLabel
-                                sx={{ ml: 1, mr: 1 }}
-                                value='oldest'
-                                control={
-                                    <Radio
-                                        sx={{
-                                            color: 'grey',
-                                            '&.Mui-checked': {
-                                                color: '#A54CE5'
-                                            }
-                                        }}
-                                    />
-                                }
-                                label='Oldest'
-                            />
-                        </RadioGroup>
-                    </FormControl>
-                    <FormControl
-                        fullWidth
-                        sx={{
-                            marginTop: '14px',
-                            marginBottom: '24px'
-                        }}
-                    >
-                        <InputLabel htmlFor='outlined-adornment-search'>Range Qty</InputLabel>
-                        <OutlinedInput
-                            id='outlined-adornment-search'
-                            startAdornment={<InputAdornment position='start' />}
-                            label='Range Qty'
-                            placeholder='Fill Amount'
-                        />
-                    </FormControl>
-                    <FormControl fullWidth>
-                        <TextField id='outlined-select-currency' select label='Product Category' value={category} onChange={handleChange}>
-                            {filteredData.map((option: any, index: number) => (
-                                <MenuItem key={index + 1} value={index + 1}>
-                                    {option.category}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </FormControl>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 2, mb: 3, mt: 2 }}>
-                        <ButtonBase
+                    <form onSubmit={form.handleSubmit(handleSubmit)}>
+                        <FormControl sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <RadioGroup
+                                value={value}
+                                onChange={handleChangeRadio}
+                                row
+                                aria-labelledby='demo-row-radio-buttons-group-label'
+                                name='row-radio-buttons-group'
+                            >
+                                <FormControlLabel
+                                    sx={{ mr: 1 }}
+                                    value='all'
+                                    control={
+                                        <Radio
+                                            id='all'
+                                            name='type'
+                                            value='all'
+                                            sx={{
+                                                color: 'grey',
+                                                '&.Mui-checked': {
+                                                    color: '#A54CE5'
+                                                }
+                                            }}
+                                        />
+                                    }
+                                    label='All'
+                                />
+                                <FormControlLabel
+                                    sx={{ ml: 1, mr: 1 }}
+                                    value='latest'
+                                    control={
+                                        <Radio
+                                            name='type'
+                                            value='latest'
+                                            sx={{
+                                                color: 'grey',
+                                                '&.Mui-checked': {
+                                                    color: '#A54CE5'
+                                                }
+                                            }}
+                                        />
+                                    }
+                                    label='Latest'
+                                />
+                                <FormControlLabel
+                                    sx={{ ml: 1, mr: 1 }}
+                                    value='oldest'
+                                    control={
+                                        <Radio
+                                            name='type'
+                                            value='oldest'
+                                            sx={{
+                                                color: 'grey',
+                                                '&.Mui-checked': {
+                                                    color: '#A54CE5'
+                                                }
+                                            }}
+                                        />
+                                    }
+                                    label='Oldest'
+                                />
+                            </RadioGroup>
+                        </FormControl>
+                        <FormControl
+                            fullWidth
                             sx={{
-                                background: '#A54CE5',
-                                borderRadius: '4px',
-                                width: '100%',
-                                pt: 1,
-                                pb: 1,
-                                color: 'white',
-                                fontWeight: 500
+                                marginTop: '14px',
+                                marginBottom: '24px'
                             }}
                         >
-                            FILTER
-                        </ButtonBase>
-                        <ButtonBase
-                            sx={{
-                                border: '1px solid #A54CE5',
-                                borderRadius: '4px',
-                                width: '100%',
-                                fontWeight: 500,
-                                background: 'white',
-                                color: '#A54CE5'
-                            }}
-                        >
-                            RESET
-                        </ButtonBase>
-                    </Box>
+                            <InputLabel htmlFor='outlined-adornment-search'>Range Qty</InputLabel>
+                            <OutlinedInput
+                                id='range'
+                                required
+                                startAdornment={<InputAdornment position='start' />}
+                                label='Range Qty'
+                                placeholder='Fill Amount'
+                            />
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <TextField
+                                id='outlined-select-currency'
+                                select
+                                label='Product Category'
+                                value={categoryValue}
+                                onChange={handleChange}
+                            >
+                                {categoryList.map((option: any, index: number) => (
+                                    <MenuItem key={index + 1} value={index + 1}>
+                                        {option.category}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </FormControl>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 2, mb: 3, mt: 2 }}>
+                            <ButtonBase
+                                type='submit'
+                                sx={{
+                                    background: '#A54CE5',
+                                    borderRadius: '4px',
+                                    width: '100%',
+                                    pt: 1,
+                                    pb: 1,
+                                    color: 'white',
+                                    fontWeight: 500
+                                }}
+                            >
+                                FILTER
+                            </ButtonBase>
+                            <ButtonBase
+                                onClick={resetButton}
+                                sx={{
+                                    border: '1px solid #A54CE5',
+                                    borderRadius: '4px',
+                                    width: '100%',
+                                    fontWeight: 500,
+                                    background: 'white',
+                                    color: '#A54CE5'
+                                }}
+                            >
+                                RESET
+                            </ButtonBase>
+                        </Box>
+                    </form>
                 </DialogContent>
             </Dialog>
             <TitleCard
                 handleSearch={(keyword: any) => handleDataSearch(keyword)}
-                onConfirm={(value: boolean) => handleDialog(value)}
+                onConfirm={(x: boolean) => handleDialog(x)}
                 title='Product Prizes'
                 subtitle='Addtional description if required'
                 isSearchExist
@@ -559,9 +615,14 @@ const ProductPrizes = () => {
                                 getPaginatedData()
                                     // eslint-disable-next-line consistent-return, array-callback-return
                                     .filter((post: any) => {
+                                        // if (post.category === filteredShow.choosedCat) {
+                                        //     console.log('msk');
+                                        //     return post;
+                                        // }
                                         if (query === '') {
                                             return post;
                                         }
+
                                         if (
                                             post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
                                             post.code.toLowerCase().includes(query.toLowerCase()) ||
