@@ -108,10 +108,10 @@ const InputExcel: React.FC<InputExcelProps> = ({
                             padding: '15px'
                         }}
                     >
-                        <Grid container item xs={12} sx={{}}>
+                        <Grid container item xs={12} sx={{ justifyContent: 'space-between' }}>
                             <Grid
                                 item
-                                xs={8}
+                                xs={10}
                                 display='flex'
                                 alignItems={
                                     (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') &&
@@ -134,7 +134,7 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                 >
                                     <UploadFileIcon sx={{ color: '#A54CE5' }} />
                                 </Box>
-                                <Box width='100%' sx={{ display: '', alignItems: 'center' }}>
+                                <Box width='120%' sx={{ display: '', alignItems: 'center', textAlign: 'center' }}>
                                     <Typography
                                         component='p'
                                         fontSize={
@@ -161,17 +161,19 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                     )}
                                 </Box>
                             </Grid>
-                            <Grid item xs={4} sx={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
+                            <Grid
+                                item
+                                xs={2}
+                                sx={{
+                                    position: 'relative',
+                                    display: 'flex',
+                                    justifyContent: 'space-between'
+                                }}
+                            >
+                                <Box />
                                 <IconButton onClick={handleClear} sx={{ mr: '30px' }}>
                                     <ClearIcon />
                                 </IconButton>
-                                {/* {isImage ? (
-                                    <Cancel sx={{ color: 'red', fontSize: '30px', position: 'absolute', top: '-10px', right: '-10px' }} />
-                                ) : (
-                                    <CheckCircleIcon
-                                        sx={{ color: '#A54CE5', fontSize: '30px', position: 'absolute', top: '-10px', right: '-10px' }}
-                                    />
-                                )} */}
                             </Grid>
                         </Grid>
                     </Grid>
