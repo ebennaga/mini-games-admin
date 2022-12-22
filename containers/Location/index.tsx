@@ -175,15 +175,6 @@ const LocationContainer = () => {
                             placeholder='Excel (max. 3MB)'
                             isLocation
                         />
-                        {/* <InputFile
-                            rules={{ required: true }}
-                            name='image'
-                            form={form}
-                            label='Click to upload'
-                            secondaryLabel='or drag and drop'
-                            placeholder='Excel (max. 3MB)'
-                            isLocation
-                        /> */}
                     </Box>
                 </Paper>
 
