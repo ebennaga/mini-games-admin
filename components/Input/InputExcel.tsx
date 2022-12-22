@@ -46,12 +46,15 @@ const InputExcel: React.FC<InputExcelProps> = ({
     const errText = !form.watch(name) && errType === 'required' ? 'must be filled' : '';
 
     const valueInput: any = form.watch(name);
-    const types: any = valueInput.type?.split('/')[1];
+    const types: any = valueInput?.type?.split('/')[1];
+    const size = valueInput?.size;
+    const sizeExcelInKb = Math.ceil(size / 1024);
     const handleChange = (e: any) => {
         const file: any = e.target.files[0]?.size;
         const sizeInKB = Math.ceil(file / 1024);
-        if (sizeInKB > 5072) {
-            setErrMessage('File is to large! Image must be under 5072Kb!');
+        if (sizeInKB > 3072) {
+            form.setValue(name, '');
+            return setErrMessage('File is to large! Image must be under 3072Kb!');
         }
         if (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
             form.setValue(name, e.target.files[0]);
@@ -70,14 +73,17 @@ const InputExcel: React.FC<InputExcelProps> = ({
         form.setValue('excel', e.target.files[0]);
     };
 
-    const handleClear = () => form.setValue(name, '');
-    // console.log(valueInput.size);
-    // console.log(form.watch('excel'));
+    const handleClear = () => {
+        form.setValue(name, '');
+        setErrMessage('');
+    };
+    // console.log(sizeExcelInKb >= 3072);
+    // console.log(errMessage);
     return (
         <Box>
             {isLoading ? (
                 <Skeleton sx={{ height: '370px', mt: '-90px', mb: '-70px' }} />
-            ) : valueInput ? (
+            ) : valueInput && sizeExcelInKb <= 3072 ? (
                 <Box>
                     <Grid
                         container
@@ -85,11 +91,13 @@ const InputExcel: React.FC<InputExcelProps> = ({
                             width: '340px',
                             my: '10px',
                             border:
-                                types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') &&
+                                sizeExcelInKb <= 3072
                                     ? '1px dashed rgba(0, 0, 0, 0.17)'
                                     : '1px dashed red',
                             background:
-                                types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') &&
+                                sizeExcelInKb <= 3072
                                     ? ''
                                     : 'rgba(211, 47, 47, 0.04)',
                             padding: '15px'
@@ -101,7 +109,8 @@ const InputExcel: React.FC<InputExcelProps> = ({
                                 xs={8}
                                 display='flex'
                                 alignItems={
-                                    types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                                    (types === 'vnd.ms-excel' || types === 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') &&
+                                    sizeExcelInKb <= 3072
                                         ? 'top'
                                         : 'center'
                                 }
