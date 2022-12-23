@@ -105,12 +105,13 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     data: {
                         name: data.name,
                         email: data.email,
+                        code: data.code,
                         role_ids: roles.join(', ')
                     }
                 });
                 if (result.status === 200) {
                     notify('Create account successfully', 'success');
-
+                    console.log('resuldata', result);
                     setIsLoading(false);
                     form.reset();
                     setRoles([]);
