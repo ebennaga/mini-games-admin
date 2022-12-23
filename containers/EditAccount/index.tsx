@@ -79,11 +79,12 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 method: 'GET',
                 endpoint: `accounts/${router.query.id}`
             });
-
+            console.log('results', result);
             if (result.status === 200) {
                 const dataFetch = result.data.data;
                 form.setValue('name', result.data.data.name);
                 form.setValue('email', result.data.data.email);
+
                 form.setValue('activeRole', result.data.data.is_active);
                 if (dataFetch.role_id && dataFetch.role_id.length === 1) {
                     form.setValue('role', dataFetch.role_id);
@@ -144,8 +145,10 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         role_ids: roles.join(',')
                     }
                 });
+                console.log('results', result);
                 if (result.status === 200) {
                     notify('Update account successfully', 'success');
+                    console.log(1);
                     setIsLoading1(false);
                     setRoles([]);
                     setIsFilled(false);
