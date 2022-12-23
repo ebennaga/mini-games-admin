@@ -25,7 +25,8 @@ import {
     TableCell,
     SelectChangeEvent,
     Select,
-    TableHead
+    TableHead,
+    Switch
 } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -39,7 +40,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
-
+import { alpha, styled } from '@mui/material/styles';
 // const dummyData = [
 //     {
 //         id: '1',
@@ -68,6 +69,17 @@ import { useRouter } from 'next/router';
 // ];
 
 const ProductPrizes = () => {
+    const PurpleSwitch = styled(Switch)(({ theme }) => ({
+        '& .MuiSwitch-switchBase.Mui-checked': {
+            color: '#9C27B0',
+            '&:hover': {
+                backgroundColor: alpha('#9C27B0', theme.palette.action.hoverOpacity)
+            }
+        },
+        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+            backgroundColor: '#9C27B0'
+        }
+    }));
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
     const [categoryValue, setCategoryValue] = React.useState('1');
@@ -83,7 +95,7 @@ const ProductPrizes = () => {
     const [categoryList, setCategoryList] = React.useState<any>([]);
     const [filteredShow, setFilteredShow] = React.useState<any>({});
     const [value, setValue] = React.useState('all');
-
+    const [checkedSwitch, setCheckedSwitch] = React.useState(true);
     const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue((event.target as HTMLInputElement).value);
     };
@@ -250,10 +262,6 @@ const ProductPrizes = () => {
         handleFetchData();
         // setFilteredData(dummyData);
     }, []);
-
-    // React.useEffect(() => {
-    //     console.log(removeData);
-    // }, [removeData]);
     React.useEffect(() => {
         setPages(Math.round(filteredData.length / Number(row)));
     }, [pages, row]);
@@ -289,9 +297,13 @@ const ProductPrizes = () => {
     React.useEffect(() => {
         // eslint-disable-next-line array-callback-return, consistent-return
         const update = filteredData.filter((item: any) => {
-            if (item.category === filteredShow.choosedCat) {
+            if (item.category === filteredShow.choosedCat && item.is_active === checkedSwitch) {
                 return item;
             }
+            // jika sudah ada data qty
+            // if (item.qty === filteredShow.qty && item.category === filteredShow.choosedCat && item.is_active === checkedSwitch) {
+            //     return item;
+            // }
         });
         setFilteredData(update);
     }, [filteredShow]);
@@ -438,6 +450,13 @@ const ProductPrizes = () => {
                                 ))}
                             </TextField>
                         </FormControl>
+                        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
+                            <Typography sx={{ color: 'rgba(0, 0, 0, 0.6);', fontWeight: 500, fontSize: '16px' }}>Is Active</Typography>
+                            <PurpleSwitch
+                                checked={checkedSwitch}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCheckedSwitch(e.target.checked)}
+                            />
+                        </Box>
                         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 2, mb: 3, mt: 2 }}>
                             <ButtonBase
                                 type='submit'
