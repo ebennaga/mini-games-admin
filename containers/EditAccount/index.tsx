@@ -132,7 +132,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
         fetchDetailAccount();
     }, []);
 
-    const handleSubmitData = async (d: any) => {
+    const handleSubmitData = async () => {
+        const d = form.watch();
         if (isFilled) {
             setIsLoading1(true);
             try {
@@ -147,7 +148,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 });
                 console.log('results', result);
                 if (result.status === 200) {
-                    notify('Update account successfully', 'success');
+                    notify(result.data.message, 'success');
                     console.log(1);
                     setIsLoading1(false);
                     setRoles([]);
@@ -163,7 +164,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             setIsRequired(true);
         }
     };
-
+    console.log('isfilled', isFilled);
     React.useEffect(() => {
         if (roles.length > 0) {
             setIsFilled(true);
@@ -370,6 +371,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 >
                     <CustomButton
                         isLoading={isLoading1}
+                        onClick={handleSubmitData}
                         type='submit'
                         padding='10px'
                         width='193px'
