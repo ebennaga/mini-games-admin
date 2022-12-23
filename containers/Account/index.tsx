@@ -79,6 +79,7 @@ const AccountContainer = () => {
     const [routeId, setRouteId] = useState<any>(null);
     const [isSearch, setIsSearch] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    // const [checkTrue, setCheckTrue] = useState<any>([]);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
 
@@ -131,12 +132,14 @@ const AccountContainer = () => {
     const handleChangeChekcbox = (e: any, name: any, id: number) => {
         form.setValue(name, e.target.checked);
         const checkBox: any = { ...form.watch() };
+        console.log(checkBoxKeys);
         checkBoxKeys.forEach((item: any) => {
             if (checkBox[item] === true) {
                 checkTrue.push(item);
+                // setCheckTrue([...checkTrue, item]);
             }
         });
-
+        // console.log('response', checkTrue);
         setCheckedObj(checkTrue);
         if (e.target.checked) {
             setDeleted([...deleted, id]);
@@ -153,6 +156,8 @@ const AccountContainer = () => {
         }
         setRouteId(id);
     };
+    // console.log('response', form.watch());
+    // console.log('response', checkedObj);
 
     const handleChangeCheckboxAll = (e: any) => {
         form.setValue('checkAll', e.target.checked);
@@ -253,11 +258,12 @@ const AccountContainer = () => {
         }
         setPages(Math.ceil(search.length / Number(row)));
     }, [pages, row, currentPage, search, filterData]);
-
+    // console.log('response', remove);
     useEffect(() => {
-        [...Array(remove.length)].forEach((item: any, idx: number) => {
-            checkBoxKeys.push(`checkbox${idx + 1}`);
-        });
+        // [...Array(remove.length)].forEach((item: any, idx: number) => {
+        //     checkBoxKeys.push(`checkbox${idx + 1}`);
+        // });
+        remove.forEach((item: any) => checkBoxKeys.push(`checkbox${item.id}`));
         if (checkedObj.length > 0 || form.watch('checkAll')) {
             setIsChecked(true);
         } else {
@@ -516,9 +522,10 @@ const AccountContainer = () => {
                                 <TableBody>
                                     {getPaginatedData().length > 0 &&
                                         getPaginatedData().map((item: any, idx: number) => {
-                                            const check: any = `checkbox${
-                                                currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
-                                            }`;
+                                            // const check: any = `checkbox${
+                                            //     currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
+                                            // }`;
+                                            const check: any = `checkbox${item.id}`;
                                             return (
                                                 <TableRow key={item.id}>
                                                     <TableCell align='center' sx={{ width: '5%' }}>
@@ -567,26 +574,28 @@ const AccountContainer = () => {
                                                     <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
                                                         <CheckboxController
                                                             form={form}
-                                                            name={`checkbox${
-                                                                currentPage === 1
-                                                                    ? idx + 1
-                                                                    : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
-                                                            }`}
+                                                            // name={`checkbox${
+                                                            //     currentPage === 1
+                                                            //         ? idx + 1
+                                                            //         : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
+                                                            // }`}
+                                                            name={`checkbox${item?.id}`}
                                                             checked={!!form.watch(check)}
                                                             onChange={(e: any) =>
-                                                                handleChangeChekcbox(
-                                                                    e,
-                                                                    `checkbox${
-                                                                        currentPage === 1
-                                                                            ? idx + 1
-                                                                            : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
-                                                                    }`,
-                                                                    Number(
-                                                                        currentPage === 1
-                                                                            ? idx + 1
-                                                                            : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
-                                                                    )
-                                                                )
+                                                                // handleChangeChekcbox(
+                                                                //     e,
+                                                                //     `checkbox${
+                                                                //         currentPage === 1
+                                                                //             ? idx + 1
+                                                                //             : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
+                                                                //     }`,
+                                                                //     Number(
+                                                                //         currentPage === 1
+                                                                //             ? idx + 1
+                                                                //             : currentPage > 1 && idx + 1 + (currentPage - 1) * 10
+                                                                //     )
+                                                                // )
+                                                                handleChangeChekcbox(e, `checkbox${item?.id}`, Number(item.id))
                                                             }
                                                         />
                                                     </TableCell>
