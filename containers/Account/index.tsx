@@ -33,19 +33,6 @@ import { useRouter } from 'next/router';
 import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
-    // const dummy = [
-    //     { id: 1, name: 'Owi-kun', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-    //     { id: 2, name: 'Rinto', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-    //     { id: 3, name: 'Eben', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-    //     { id: 4, name: 'Amang', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-    //     { id: 5, name: 'Suwardi', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-    //     { id: 6, name: 'Saitama', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-    //     { id: 7, name: 'Sasukekyun', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-    //     { id: 8, name: 'Narto', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-    //     { id: 9, name: 'Ed Sheeran', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: true },
-    //     { id: 10, name: 'Tulus', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false },
-    //     { id: 11, name: 'Tidak Tulus', email: 'test@abc.com', access: ['Admin', 'Content Creator'], isActive: false }
-    // ];
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const form = useForm({
@@ -79,7 +66,7 @@ const AccountContainer = () => {
     const [routeId, setRouteId] = useState<any>(null);
     const [isSearch, setIsSearch] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    // const [checkTrue, setCheckTrue] = useState<any>([]);
+
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
 
@@ -110,7 +97,6 @@ const AccountContainer = () => {
         }
         if (isFilter) {
             if ((role !== '0' && filterData.length > 0) || filterData.length >= 0) {
-                // console.log('set : ', isFilter);
                 return filterData.slice(startIndex, endIndex);
             }
         }
@@ -132,14 +118,13 @@ const AccountContainer = () => {
     const handleChangeChekcbox = (e: any, name: any, id: number) => {
         form.setValue(name, e.target.checked);
         const checkBox: any = { ...form.watch() };
-        console.log(checkBoxKeys);
+
         checkBoxKeys.forEach((item: any) => {
             if (checkBox[item] === true) {
                 checkTrue.push(item);
-                // setCheckTrue([...checkTrue, item]);
             }
         });
-        // console.log('response', checkTrue);
+
         setCheckedObj(checkTrue);
         if (e.target.checked) {
             setDeleted([...deleted, id]);
@@ -156,8 +141,6 @@ const AccountContainer = () => {
         }
         setRouteId(id);
     };
-    // console.log('response', form.watch());
-    // console.log('response', checkedObj);
 
     const handleChangeCheckboxAll = (e: any) => {
         form.setValue('checkAll', e.target.checked);
@@ -165,11 +148,21 @@ const AccountContainer = () => {
         if (e.target.checked) {
             setCheckedObj(checkBoxKeys);
             const checkBox: any = { ...form.watch() };
-            [...Array(remove.length)].forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            // [...Array(remove.length)].forEach((item: any, idx: number) => {
+            //     const datas: any = `checkbox${idx + 1}`;
+            //     form.setValue(datas, e.target.checked);
+            //     arr.push(idx + 1);
+            //     if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
+            //         form.setValue(datas, true);
+            //     } else {
+            //         form.setValue(datas, false);
+            //     }
+            // });
+            remove.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, e.target.checked);
-                arr.push(idx + 1);
-                if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
+                arr.push(item.id);
+                if (checkBox[item.id] === undefined || checkBox[item.id] === false) {
                     form.setValue(datas, true);
                 } else {
                     form.setValue(datas, false);
@@ -178,8 +171,12 @@ const AccountContainer = () => {
             setDeleted(arr);
         } else if (!e.target.checked) {
             setCheckedObj([]);
-            [...Array(remove.length)].forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            // [...Array(remove.length)].forEach((item: any, idx: number) => {
+            //     const datas: any = `checkbox${idx + 1}`;
+            //     form.setValue(datas, false);
+            // });
+            remove.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
             });
             setDeleted([]);
@@ -191,8 +188,7 @@ const AccountContainer = () => {
             setCurrentPage((page) => page + 1);
         }
     };
-    // console.log({ currentPage });
-    // console.log({ pages });
+
     const goToPreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage((page) => page - 1);
@@ -258,7 +254,7 @@ const AccountContainer = () => {
         }
         setPages(Math.ceil(search.length / Number(row)));
     }, [pages, row, currentPage, search, filterData]);
-    // console.log('response', remove);
+
     useEffect(() => {
         // [...Array(remove.length)].forEach((item: any, idx: number) => {
         //     checkBoxKeys.push(`checkbox${idx + 1}`);
@@ -304,9 +300,6 @@ const AccountContainer = () => {
                             <form
                                 onSubmit={form.handleSubmit((data: any) => {
                                     const datas = [...remove];
-                                    // console.log(data.search);
-                                    // if (isSearch) {
-                                    // console.log(datas);
                                     const searched = datas.filter((item: any) => {
                                         if (
                                             item?.name?.toLowerCase()?.includes(data.search.toLowerCase()) ||
@@ -318,11 +311,7 @@ const AccountContainer = () => {
                                     if (pages === 1) {
                                         setCurrentPage(1);
                                     }
-                                    // console.log(data.search);
-                                    // console.log(searched);
                                     setSearch(searched);
-                                    // }
-                                    // setIsSearch(true);
                                 })}
                             >
                                 <InputSearch placeholder='Search by name, email, etc.' name='search' label='Search' form={form} />
