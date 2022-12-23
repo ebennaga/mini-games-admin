@@ -33,6 +33,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [isLoadingMenus, setIsLoadingMenus] = React.useState<boolean>(false);
     const [menus, setMenus] = React.useState<Array<any>>(userState?.menus);
+    const [menuAccess, setMenuAccess] = React.useState<Array<any>>([]);
 
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
@@ -68,12 +69,26 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
     const setShowMenu = async (showMenu: any, menuBar: any) => {
         if (showMenu.length > 0) {
             let result: any = [];
+            let titleList = '';
             await showMenu.forEach((item: any) => {
                 if (item.have_permission) {
-                    const filterMenu = menuBar.filter((itm: any) => itm.title === item.name);
+                    const filterMenu = menuBar.filter((itm: any, index: number, self: any) => {
+                        const list = itm?.dropdownList?.find((i: any) => i.title === item.name);
+                        if (list) {
+                            titleList = itm.title;
+                        }
+                        return itm.title === item.name || list;
+                    });
                     result = [...result, ...filterMenu];
                 }
             });
+
+            // Delete duplicate data array
+            result = [
+                ...result.filter((item: any, index: number, self: any) => {
+                    return index === self.findIndex((val: any) => val.title === item.title);
+                })
+            ];
             return result;
         }
         return null;
@@ -91,6 +106,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                 const resMenus = await setShowMenu(showMenu, MENUBAR);
                 setMenus(resMenus);
                 setUser({ ...userState, menus: resMenus });
+                setMenuAccess(showMenu);
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -137,6 +153,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                                     const isActive = router.asPath === item.href;
                                     return item.dropdownList ? (
                                         <DropdownCard
+                                            menuAccess={menuAccess}
                                             key={item.title}
                                             title={item.title}
                                             listDropdown={item.dropdownList}

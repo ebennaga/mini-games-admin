@@ -9,13 +9,27 @@ interface DropdownCardProps {
     listDropdown: any;
     icon: string;
     isActive: boolean;
+    menuAccess: Array<any>;
 }
 
-const DropdownCard: React.FC<DropdownCardProps> = ({ title, listDropdown, icon, isActive }) => {
+const DropdownCard: React.FC<DropdownCardProps> = ({ title, listDropdown, icon, isActive, menuAccess }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [resultList, setResultList] = useState<Array<any>>([]);
     const arrIcon = icon.split('.');
     const iconActive = `${arrIcon[0]}-active.${arrIcon[1]}`;
     const router = useRouter();
+
+    React.useEffect(() => {
+        let result: Array<any> = [];
+        // eslint-disable-next-line array-callback-return
+        menuAccess.map((item: any) => {
+            if (item?.have_permission) {
+                result = [...result, listDropdown.filter((value: any) => value.title === item.name)[0]];
+            }
+        });
+
+        setResultList(result);
+    }, [listDropdown, menuAccess]);
 
     return (
         <ListItem
@@ -40,15 +54,17 @@ const DropdownCard: React.FC<DropdownCardProps> = ({ title, listDropdown, icon, 
             </ListItemButton>
             <Collapse in={isOpen} timeout='auto' unmountOnExit sx={{ width: '100%' }}>
                 <List component='div' disablePadding>
-                    {listDropdown.map((item: any, index: number) => {
+                    {resultList.map((item: any, index: number) => {
                         return (
-                            <ListItemButton
-                                key={index}
-                                sx={{ p: '10px 0 10px 53px', color: 'black' }}
-                                onClick={() => router.push(item.href)}
-                            >
-                                <ListItemText primary={item.title} sx={{ '& span': { fontSize: '14px' } }} />
-                            </ListItemButton>
+                            item && (
+                                <ListItemButton
+                                    key={index}
+                                    sx={{ p: '10px 0 10px 53px', color: 'black' }}
+                                    onClick={() => router.push(item?.href)}
+                                >
+                                    <ListItemText primary={item?.title} sx={{ '& span': { fontSize: '14px' } }} />
+                                </ListItemButton>
+                            )
                         );
                     })}
                 </List>

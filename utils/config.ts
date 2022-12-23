@@ -18,11 +18,11 @@ const MENUBAR = [
     {
         active: '/icons/active/tournament.png',
         icon: '/icons/navbar/tournament.png',
-        title: 'Tournament',
+        title: 'Tournaments',
         href: '/tournament',
         dropdownList: [
             { title: 'Tournaments', href: '/tournament' },
-            { title: 'Participant Tournament', href: '/tournament/participant-tournament' },
+            { title: 'Participant Tournaments', href: '/tournament/participant-tournament' },
             { title: 'Client Tournament', href: '/tournament/client-tournament' }
         ]
     },
@@ -33,7 +33,7 @@ const MENUBAR = [
         title: 'Content',
         href: '/content',
         dropdownList: [
-            { title: 'Banner', href: '/banner' },
+            { title: 'Banners', href: '/banner' },
             { title: 'Blogs', href: '/blogs' }
         ]
     },
@@ -44,10 +44,10 @@ const MENUBAR = [
         href: '/settings',
         dropdownList: [
             { title: 'Exchange Rates', href: '/exchange-rates' },
-            { title: 'Location', href: '/settings/location' },
-
+            { title: 'Locations', href: '/settings/location' },
             { title: 'Product Prizes', href: '/settings/product-prizes' },
-            { title: 'Roles', href: '/settings/roles' }
+            { title: 'Roles', href: '/settings/roles' },
+            { title: 'Companies', href: '/settings/company' }
         ]
     }
 ];
