@@ -136,6 +136,7 @@ const AccountContainer = () => {
                 checkTrue.push(item);
             }
         });
+
         setCheckedObj(checkTrue);
         if (e.target.checked) {
             setDeleted([...deleted, id]);
