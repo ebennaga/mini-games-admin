@@ -115,9 +115,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
     };
 
     React.useEffect(() => {
-        if (userState?.api_token && !userState?.menus) {
-            handleMenus();
-        }
+        handleMenus();
     }, []);
 
     return (
