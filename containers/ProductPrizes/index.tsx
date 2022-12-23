@@ -250,6 +250,10 @@ const ProductPrizes = () => {
             });
             if (response?.status === 200) {
                 const products = response.data?.data;
+                const cat = products.map((i: any) => i.category);
+
+                const catDone = products.filter(({ category }: any, index: number) => !cat.includes(category, index + 1));
+                setCategoryList(catDone);
                 setFilteredData(products);
                 setRow(products.length.toString());
                 notify(response?.data.message, 'success');
@@ -258,6 +262,7 @@ const ProductPrizes = () => {
             notify(error.message, 'error');
         }
     };
+
     React.useEffect(() => {
         handleFetchData();
         // setFilteredData(dummyData);
@@ -280,14 +285,15 @@ const ProductPrizes = () => {
     const resetButton = () => {
         setCategoryValue('1');
         setFilteredShow({});
+        handleFetchData();
         (document.getElementById('range') as HTMLInputElement).value = '';
     };
-    React.useEffect(() => {
-        const cat = filteredData.map((i: any) => i.category);
+    // React.useEffect(() => {
+    //     const cat = filteredData.map((i: any) => i.category);
 
-        const catDone = filteredData.filter(({ category }: any, index: number) => !cat.includes(category, index + 1));
-        setCategoryList(catDone);
-    }, [filteredData]);
+    //     const catDone = filteredData.filter(({ category }: any, index: number) => !cat.includes(category, index + 1));
+    //     setCategoryList(catDone);
+    // }, [categoryList]);
     const handleSubmit = () => {
         const qty = (document.getElementById('range') as HTMLInputElement).value;
         const choosedCat = categoryList[parseInt(categoryValue, 10) - 1].category;
@@ -295,17 +301,19 @@ const ProductPrizes = () => {
         setOpenFilter(false);
     };
     React.useEffect(() => {
-        // eslint-disable-next-line array-callback-return, consistent-return
-        const update = filteredData.filter((item: any) => {
-            if (item.category === filteredShow.choosedCat && item.is_active === checkedSwitch) {
-                return item;
-            }
-            // jika sudah ada data qty
-            // if (item.qty === filteredShow.qty && item.category === filteredShow.choosedCat && item.is_active === checkedSwitch) {
-            //     return item;
-            // }
-        });
-        setFilteredData(update);
+        if (filteredShow.choosedCat) {
+            // eslint-disable-next-line array-callback-return, consistent-return
+            const update = filteredData.filter((item: any) => {
+                if (item.category === filteredShow.choosedCat && item.is_active === checkedSwitch) {
+                    return item;
+                }
+                // jika sudah ada data qty
+                // if (item.qty === filteredShow.qty && item.category === filteredShow.choosedCat && item.is_active === checkedSwitch) {
+                //     return item;
+                // }
+            });
+            setFilteredData(update);
+        }
     }, [filteredShow]);
     return (
         <Box component='section'>
