@@ -79,7 +79,10 @@ const AccountContainer = () => {
             });
             // console.log(result?.data.data);
             if (result.status === 200) {
-                setRemove(result?.data.data);
+                const totalFilter = result.data.data;
+                const filter = totalFilter.filter((item: any) => item.name !== null);
+                // console.log('totalfilter', filter);
+                setRemove(filter);
             }
             // setIsLoading(false);
         } catch (error: any) {

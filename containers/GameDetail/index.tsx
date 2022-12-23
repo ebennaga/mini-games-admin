@@ -54,6 +54,7 @@ const AddGame = () => {
                 form.setValue('title', name);
                 form.setValue('url', game_url);
                 form.setValue('description', description);
+
                 form.setValue('image', banner_url);
                 setDetailGame(response.data.data);
             } else {
@@ -79,6 +80,7 @@ const AddGame = () => {
             resData = description && description !== descriptionGame ? { ...resData, description } : { ...resData };
             resData = url && url !== game_url ? { ...resData, game_url: url } : { ...resData };
             resData = image && image !== banner_url ? { ...resData, banner_url: toBase64 } : { ...resData };
+            console.log('name', name);
             // resData = { ...resData, version: 1 };
             // resData = { ...resData, genre };
 
@@ -88,6 +90,7 @@ const AddGame = () => {
                     endpoint: `games/${router.query.id}`,
                     data: resData
                 });
+                console.log('dataresponse', data);
                 if (response.status === 200) {
                     notify('Successfully Edit Game!');
                     fetchDetailGame();
@@ -279,7 +282,7 @@ const AddGame = () => {
                         ) : (
                             <Grid item container xs={6}>
                                 <Grid item xs={6} display='flex' alignItems='center' justifyContent='space-between'>
-                                    <CustomButton type='submit' title='Edit' />
+                                    <CustomButton type='submit' title='Edit' onClick={handleSubmit} />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <CustomButton

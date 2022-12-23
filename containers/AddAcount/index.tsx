@@ -111,7 +111,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 });
                 if (result.status === 200) {
                     notify('Create account successfully', 'success');
-                    console.log('resuldata', result);
+
                     setIsLoading(false);
                     form.reset();
                     setRoles([]);
@@ -148,7 +148,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
         }
     }, [accessArr, isFilled]);
 
-    console.log(form.watch('activeRole'));
+    // console.log(form.watch('activeRole'));
 
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
