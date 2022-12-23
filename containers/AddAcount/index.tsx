@@ -110,6 +110,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 });
                 if (result.status === 200) {
                     notify('Create account successfully', 'success');
+
                     setIsLoading(false);
                     form.reset();
                     setRoles([]);
@@ -117,6 +118,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     setIsFilled(false);
                     setIsFilled1(false);
                     setIsRequired(false);
+                } else if (result.status === 422) {
+                    notify(`${result.data.message}`, 'error');
                 }
             } catch (error: any) {
                 notify(error.message, 'error');
