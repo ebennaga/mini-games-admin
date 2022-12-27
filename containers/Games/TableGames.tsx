@@ -21,10 +21,10 @@ interface TableGamesProps {
     handleOpenDeleteDialog: any;
     nameRow: string;
     namePage: string;
-    isLoading: boolean;
+    // isLoading: boolean;
 }
 
-const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, handleOpenDeleteDialog, onEdit, isLoading }) => {
+const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, handleOpenDeleteDialog, onEdit }) => {
     const [dataTable, setDataTable] = React.useState<Array<any>>([...form.watch(name)]);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [isAllChecked, setIsAllChecked] = React.useState<boolean>(false);
@@ -142,63 +142,62 @@ const TableGames: React.FC<TableGamesProps> = ({ name, nameRow, namePage, form, 
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {!isLoading &&
-                            dataTable.map((item: any, index: number) => {
-                                return (
-                                    index >= showTable.startIndex &&
-                                    index <= showTable.endIndex && (
-                                        <TableRow key={index}>
-                                            <TableCell
-                                                align='center'
+                        {dataTable.map((item: any, index: number) => {
+                            return (
+                                index >= showTable.startIndex &&
+                                index <= showTable.endIndex && (
+                                    <TableRow key={index}>
+                                        <TableCell
+                                            align='center'
+                                            sx={{
+                                                fontWeight: 400,
+                                                fontSize: '16px',
+                                                borderRight: '1px solid rgba(0,0,0,0.2)',
+                                                borderLeft: '1px solid rgba(0,0,0,0.2)'
+                                            }}
+                                        >
+                                            {index + 1}.
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.name}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.game_url}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.description}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.banner_url}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            {item.genre}
+                                        </TableCell>
+                                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
+                                            <FormControl
                                                 sx={{
-                                                    fontWeight: 400,
-                                                    fontSize: '16px',
-                                                    borderRight: '1px solid rgba(0,0,0,0.2)',
-                                                    borderLeft: '1px solid rgba(0,0,0,0.2)'
+                                                    '& .css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root.Mui-checked': {
+                                                        color: '#A54CE5'
+                                                    }
                                                 }}
                                             >
-                                                {index + 1}.
-                                            </TableCell>
-                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                                {item.name}
-                                            </TableCell>
-                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                                {item.game_url}
-                                            </TableCell>
-                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                                {item.description}
-                                            </TableCell>
-                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                                {item.banner_url}
-                                            </TableCell>
-                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                                {item.genre}
-                                            </TableCell>
-                                            <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)' }}>
-                                                <FormControl
-                                                    sx={{
-                                                        '& .css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root.Mui-checked': {
-                                                            color: '#A54CE5'
-                                                        }
-                                                    }}
-                                                >
-                                                    <Checkbox
-                                                        checked={!!item.isAction}
-                                                        // defaultChecked={item.isAction}
-                                                        onChange={(e) => handleCheck(e, item)}
-                                                    />
-                                                </FormControl>
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                );
-                            })}
+                                                <Checkbox
+                                                    checked={!!item.isAction}
+                                                    // defaultChecked={item.isAction}
+                                                    onChange={(e) => handleCheck(e, item)}
+                                                />
+                                            </FormControl>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            );
+                        })}
                     </TableBody>
                 </Table>
-                {isLoading &&
+                {/* {isLoading &&
                     [...Array(5)].map((_item: any, index: number) => (
                         <Skeleton key={index} sx={{ height: '100px', mt: '-23px', width: '100%' }} />
-                    ))}
+                    ))} */}
             </TableContainer>
         </>
     );

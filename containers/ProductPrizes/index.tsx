@@ -25,7 +25,8 @@ import {
     TableCell,
     SelectChangeEvent,
     Select,
-    TableHead
+    TableHead,
+    Skeleton
 } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -70,6 +71,7 @@ import { useRouter } from 'next/router';
 const ProductPrizes = () => {
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [category, setCategory] = React.useState('1');
     const [query, setQuery] = React.useState('');
     const [row, setRow] = React.useState('0');
@@ -200,6 +202,7 @@ const ProductPrizes = () => {
     const handleRemoveData = async () => {
         // setOpenDialogConfirm(false);
         // setTotalChecked(0);
+
         try {
             const response = await fetchAPI({
                 endpoint: `/product-prizes/${router.query.id}`,
@@ -224,6 +227,7 @@ const ProductPrizes = () => {
         setQuery(keyword);
     };
     const handleFetchData = async () => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
                 method: 'GET',
@@ -233,10 +237,12 @@ const ProductPrizes = () => {
                 const products = response.data?.data;
                 setFilteredData(products);
                 setRow(products.length.toString());
-                notify(response?.data.message, 'success');
+                // notify(response?.data.message, 'success');
+                setIsLoading(false);
             }
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
     };
     React.useEffect(() => {
@@ -445,224 +451,234 @@ const ProductPrizes = () => {
                 </Box>
             )}
             <Box sx={{ mt: '20px' }}>
-                <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
-                    <Table sx={{ width: '100%' }}>
-                        <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
-                            <TableRow>
-                                <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
-                                <TableCell
-                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                    align='center'
-                                >
-                                    Product Code
-                                </TableCell>
-                                <TableCell
-                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                    align='center'
-                                >
-                                    Product Name
-                                </TableCell>
-                                <TableCell
-                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                    align='center'
-                                >
-                                    Product Category
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    UOM
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    Qty
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    Image 1
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    Image 2
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    Image 3
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    Expired Date
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    Is Active
-                                </TableCell>
-                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                    <FormControlLabel
-                                        control={
-                                            <CheckboxController
-                                                name='action'
-                                                form={form}
-                                                onChange={handleCheckBoxAll}
-                                                checked={form.watch('checkedAll')}
-                                                disabled={filteredData.length === 0}
-                                            />
-                                        }
-                                        label='Action'
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {getPaginatedData().length > 0 &&
-                                getPaginatedData()
-                                    // eslint-disable-next-line consistent-return, array-callback-return
-                                    .filter((post: any) => {
-                                        if (query === '') {
-                                            return post;
-                                        }
-                                        if (
-                                            post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
-                                            post.code.toLowerCase().includes(query.toLowerCase()) ||
-                                            post.name.toLowerCase().includes(query.toLowerCase()) ||
-                                            post.category.toLowerCase().includes(query.toLowerCase()) ||
-                                            post.uom.toLowerCase().includes(query.toLowerCase())
-                                        ) {
-                                            return post;
-                                        }
-                                    })
-                                    .map((item: any, idx: number) => {
-                                        const check: any = `checkbox${idx + 1}`;
-                                        return (
-                                            <TableRow key={item.id}>
-                                                <TableCell align='center' sx={{ width: '5%' }}>
-                                                    {item.id}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.code}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.name}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.category}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.uom}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.qty}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.image_url_1}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.image_url_2}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.image_url_3}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.expired_at}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    <Box sx={{ color: 'white' }}>
-                                                        <Box
-                                                            sx={
-                                                                item.is_active === true
-                                                                    ? { backgroundColor: '#A54CE5', borderRadius: '64px' }
-                                                                    : { backgroundColor: '#D32F2F', borderRadius: '64px' }
-                                                            }
-                                                        >
-                                                            {item.is_active.toString()}
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
+                        <Table sx={{ width: '100%' }}>
+                            <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
+                                <TableRow>
+                                    <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
+                                    <TableCell
+                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                        align='center'
+                                    >
+                                        Product Code
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                        align='center'
+                                    >
+                                        Product Name
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                        align='center'
+                                    >
+                                        Product Category
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        UOM
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Qty
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Image 1
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Image 2
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Image 3
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Expired Date
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Is Active
+                                    </TableCell>
+                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                        <FormControlLabel
+                                            control={
+                                                <CheckboxController
+                                                    name='action'
+                                                    form={form}
+                                                    onChange={handleCheckBoxAll}
+                                                    checked={form.watch('checkedAll')}
+                                                    disabled={filteredData.length === 0}
+                                                />
+                                            }
+                                            label='Action'
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {getPaginatedData().length > 0 &&
+                                    getPaginatedData()
+                                        // eslint-disable-next-line consistent-return, array-callback-return
+                                        .filter((post: any) => {
+                                            if (query === '') {
+                                                return post;
+                                            }
+                                            if (
+                                                post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
+                                                post.code.toLowerCase().includes(query.toLowerCase()) ||
+                                                post.name.toLowerCase().includes(query.toLowerCase()) ||
+                                                post.category.toLowerCase().includes(query.toLowerCase()) ||
+                                                post.uom.toLowerCase().includes(query.toLowerCase())
+                                            ) {
+                                                return post;
+                                            }
+                                        })
+                                        .map((item: any, idx: number) => {
+                                            const check: any = `checkbox${idx + 1}`;
+                                            return (
+                                                <TableRow key={item.id}>
+                                                    <TableCell align='center' sx={{ width: '5%' }}>
+                                                        {item.id}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.code}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.name}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.category}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.uom}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.qty}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.image_url_1}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.image_url_2}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.image_url_3}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.expired_at}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        <Box sx={{ color: 'white' }}>
+                                                            <Box
+                                                                sx={
+                                                                    item.is_active === true
+                                                                        ? { backgroundColor: '#A54CE5', borderRadius: '64px' }
+                                                                        : { backgroundColor: '#D32F2F', borderRadius: '64px' }
+                                                                }
+                                                            >
+                                                                {item.is_active.toString()}
+                                                            </Box>
                                                         </Box>
-                                                    </Box>
-                                                </TableCell>
-                                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                                    <CheckboxController
-                                                        form={form}
-                                                        name={`checkbox${item.id}`}
-                                                        checked={!!form.watch(check)}
-                                                        onChange={(e: any) => handleSingleCheckBox(e, `checkbox${idx + 1}`, item.id)}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                                    </TableCell>
+                                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                                        <CheckboxController
+                                                            form={form}
+                                                            name={`checkbox${item.id}`}
+                                                            checked={!!form.watch(check)}
+                                                            onChange={(e: any) => handleSingleCheckBox(e, `checkbox${idx + 1}`, item.id)}
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
+
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', fontSize: '12px', fontWeight: 400 }}>
                     <Typography>Rows per page</Typography>
                     <FormControl>

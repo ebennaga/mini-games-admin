@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
@@ -223,9 +223,9 @@ const Roles = () => {
         form.setValue('page', 1);
     }, [query]);
 
-    if (isLoading) {
-        return <LoadingExchangeRates />;
-    }
+    // if (isLoading) {
+    //     return <LoadingExchangeRates />;
+    // }
     return (
         <Box>
             <TitleCard
@@ -260,13 +260,23 @@ const Roles = () => {
                 </Box>
             ) : null}
             <Box mt='30px'>
-                <TableRoles
-                    form={form}
-                    name='dataTable'
-                    nameIdxAppears='idxAppears'
-                    nameMenuAccess='menuAccess'
-                    setOpenMenuAccess={setOpenMenuAccess}
-                />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TableRoles
+                        form={form}
+                        name='dataTable'
+                        nameIdxAppears='idxAppears'
+                        nameMenuAccess='menuAccess'
+                        setOpenMenuAccess={setOpenMenuAccess}
+                    />
+                )}
+
                 <PaginationCard
                     totalItem={dataRoles.length}
                     handlePrev={handlePrev}

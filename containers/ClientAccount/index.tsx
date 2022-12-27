@@ -16,8 +16,10 @@ import {
     InputLabel,
     FormControlLabel,
     Switch,
-    ButtonBase
+    ButtonBase,
+    Skeleton
 } from '@mui/material';
+import useNotify from 'hooks/useNotify';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputSearch from 'components/Input/InputSearch';
 import React, { useEffect, useState } from 'react';
@@ -26,6 +28,7 @@ import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '
 import CustomButton from 'components/Button';
 import CheckboxController from 'components/Checkbox';
 import { useRouter } from 'next/router';
+import useAPICaller from 'hooks/useAPICaller';
 import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
@@ -52,8 +55,9 @@ const AccountContainer = () => {
             checkAll: false
         }
     });
-
+    const { fetchAPI } = useAPICaller();
     const router = useRouter();
+    const notify = useNotify();
     const [openDialog, setOpenDialog] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
@@ -70,8 +74,31 @@ const AccountContainer = () => {
     const [filterData, setFilterData] = useState<any>([]);
     const [isFilter, setIsFilter] = useState(false);
     const [routeId, setRouteId] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
+
+    const fetchAccountData = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                endpoint: `accounts?search=${form.watch('search')}`,
+                method: 'GET'
+            });
+            // console.log(result?.data.data);
+            if (result.status === 200) {
+                const totalFilter = result.data.data;
+                const filter = totalFilter.filter((item: any) => item.name !== null);
+                // console.log('totalfilter', filter);
+                setRemove(filter);
+            }
+            setIsLoading(false);
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -195,8 +222,12 @@ const AccountContainer = () => {
         // setIsChecked(false);
     };
 
+    // useEffect(() => {
+    //     setRemove(dummy);
+    // }, []);
+
     useEffect(() => {
-        setRemove(dummy);
+        fetchAccountData();
     }, []);
 
     useEffect(() => {
@@ -405,121 +436,133 @@ const AccountContainer = () => {
                     </Box>
                 )}
                 <Box sx={{ mt: '20px' }}>
-                    <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
-                        <Table sx={{ width: '100%' }} aria-label='simple table'>
-                            <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
-                                <TableRow>
-                                    <TableCell align='center' sx={{ width: '5%', fontWeight: 'bold' }}>
-                                        No.
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='left'
-                                    >
-                                        Name
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='left'
-                                    >
-                                        Email
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='left'
-                                    >
-                                        Role
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            width: '8%',
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Is Active
-                                    </TableCell>
-                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                        <FormControlLabel
-                                            control={
-                                                <CheckboxController
-                                                    name='action'
-                                                    form={form}
-                                                    onChange={handleChangeCheckboxAll}
-                                                    checked={form.watch('checkAll')}
-                                                    disabled={remove.length === 0}
-                                                />
-                                            }
-                                            label='Action'
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {getPaginatedData().length > 0 &&
-                                    getPaginatedData().map((item: any) => {
-                                        const check: any = `checkbox${item.id}`;
-                                        return (
-                                            <TableRow key={item.id}>
-                                                <TableCell align='center' sx={{ width: '5%' }}>
-                                                    {item.id}.
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='left'
-                                                >
-                                                    {item.name}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='left'
-                                                >
-                                                    {item.email}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='left'
-                                                >
-                                                    {item.roles}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{
-                                                        width: '5%',
-                                                        borderLeft: '1px solid #E0E0E0',
-                                                        borderRight: '1px solid #E0E0E0'
-                                                    }}
-                                                    align='center'
-                                                >
-                                                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                                        <Box
-                                                            sx={{
-                                                                width: '70%',
-                                                                backgroundColor: item.is_active ? '#A54CE5' : 'red',
-                                                                padding: '2px',
-                                                                borderRadius: '10px',
-                                                                color: 'white'
-                                                            }}
-                                                        >
-                                                            <Typography>{item.is_active ? 'Yes' : 'No'}</Typography>
-                                                        </Box>
-                                                    </Box>
-                                                </TableCell>
-                                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                    {isLoading ? (
+                        <Box
+                            sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+                        >
+                            {/* <CircularProgress size={100} color='secondary' /> */}
+                            {[...Array(6)].map((item: any, index: number) => (
+                                <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                            ))}
+                        </Box>
+                    ) : (
+                        <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
+                            <Table sx={{ width: '100%' }} aria-label='simple table'>
+                                <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
+                                    <TableRow>
+                                        <TableCell align='center' sx={{ width: '5%', fontWeight: 'bold' }}>
+                                            No.
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='left'
+                                        >
+                                            Name
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='left'
+                                        >
+                                            Email
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='left'
+                                        >
+                                            Role
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                width: '8%',
+                                                borderLeft: '1px solid #E0E0E0',
+                                                borderRight: '1px solid #E0E0E0',
+                                                fontWeight: 'bold'
+                                            }}
+                                            align='center'
+                                        >
+                                            Is Active
+                                        </TableCell>
+                                        <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                            <FormControlLabel
+                                                control={
                                                     <CheckboxController
+                                                        name='action'
                                                         form={form}
-                                                        name={`checkbox${item.id}`}
-                                                        checked={!!form.watch(check)}
-                                                        onChange={(e: any) => handleChangeChekcbox(e, `checkbox${item.id}`, item.id)}
+                                                        onChange={handleChangeCheckboxAll}
+                                                        checked={form.watch('checkAll')}
+                                                        disabled={remove.length === 0}
                                                     />
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                                }
+                                                label='Action'
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {getPaginatedData().length > 0 &&
+                                        getPaginatedData().map((item: any, idx: number) => {
+                                            const check: any = `checkbox${item.id}`;
+                                            return (
+                                                <TableRow key={item.id}>
+                                                    <TableCell align='center' sx={{ width: '5%' }}>
+                                                        {currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10}.
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='left'
+                                                    >
+                                                        {item.name}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='left'
+                                                    >
+                                                        {item.email}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='left'
+                                                    >
+                                                        {item.roles}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{
+                                                            width: '5%',
+                                                            borderLeft: '1px solid #E0E0E0',
+                                                            borderRight: '1px solid #E0E0E0'
+                                                        }}
+                                                        align='center'
+                                                    >
+                                                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                            <Box
+                                                                sx={{
+                                                                    width: '70%',
+                                                                    backgroundColor: item.is_active ? '#A54CE5' : 'red',
+                                                                    padding: '2px',
+                                                                    borderRadius: '10px',
+                                                                    color: 'white'
+                                                                }}
+                                                            >
+                                                                <Typography>{item.is_active ? 'Yes' : 'No'}</Typography>
+                                                            </Box>
+                                                        </Box>
+                                                    </TableCell>
+                                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                                        <CheckboxController
+                                                            form={form}
+                                                            name={`checkbox${item.id}`}
+                                                            checked={!!form.watch(check)}
+                                                            onChange={(e: any) => handleChangeChekcbox(e, `checkbox${item.id}`, item.id)}
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+
                     {getPaginatedData().length === 0 && (
                         <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
                             <Typography variant='h6' component='h6'>

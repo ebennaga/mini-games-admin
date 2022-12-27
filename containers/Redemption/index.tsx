@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, ButtonBase, Divider, Tabs, Tab, SelectChangeEvent } from '@mui/material';
+import { Box, ButtonBase, Divider, Tabs, Tab, SelectChangeEvent, Skeleton } from '@mui/material';
 import InputStartEndDate from 'components/Input/InputStartEndDate';
 import { useForm } from 'react-hook-form';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -68,6 +68,7 @@ const Redemption = () => {
     const [data, setData] = React.useState<any>(dummyData);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [row, setRow] = React.useState(dummyData.length.toString());
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
     // const [styles, setStyles] = React.useState({});
     const [pages, setPages] = React.useState(1);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -180,6 +181,13 @@ const Redemption = () => {
         }
     }, [value]);
 
+    React.useEffect(() => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 2000);
+    }, []);
+
     return (
         <Box>
             <HeaderChildren title='Redemption Prize' subTitle='Additional description if required'>
@@ -210,136 +218,147 @@ const Redemption = () => {
             </HeaderChildren>
 
             <Box sx={{ marginTop: '14px' }}>
-                <Tabs
-                    value={value}
-                    onChange={handleChange}
-                    indicatorColor='secondary'
-                    textColor='inherit'
-                    aria-label='basic tabs example'
-                    TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }}
-                    sx={{
-                        '& .MuiTabs-indicator': {
-                            display: 'flex',
-                            justifyContent: 'center',
-                            backgroundColor: 'transparent'
-                        },
-                        '& .MuiTabs-indicatorSpan': {
-                            maxWidth: 150,
-                            width: '100%',
-                            backgroundColor: '#A54CE5'
-                        },
-                        '& .MuiButtonBase-root': {
-                            minHeight: 0
-                        }
-                    }}
-                >
-                    <Tab
-                        label='All'
-                        {...a11yProps(0)}
-                        sx={{
-                            textTransform: 'none',
-                            '&.Mui-selected': {
-                                fontWeight: 'bold',
-                                color: '#A54CE5'
-                            }
-                        }}
-                    />
-                    <Tab
-                        label='Pending'
-                        {...a11yProps(1)}
-                        sx={{
-                            textTransform: 'none',
-                            '&.Mui-selected': {
-                                fontWeight: 'bold',
-                                color: '#A54CE5'
-                            }
-                        }}
-                    />
-                    <Tab
-                        label='Process'
-                        {...a11yProps(2)}
-                        sx={{
-                            textTransform: 'none',
-                            '&.Mui-selected': {
-                                fontWeight: 'bold',
-                                color: '#A54CE5'
-                            }
-                        }}
-                    />
-                    <Tab
-                        label='Delivered'
-                        {...a11yProps(3)}
-                        sx={{
-                            textTransform: 'none',
-                            '&.Mui-selected': {
-                                fontWeight: 'bold',
-                                color: '#A54CE5'
-                            }
-                        }}
-                    />
-                    <Tab
-                        label='Completed'
-                        {...a11yProps(4)}
-                        sx={{
-                            textTransform: 'none',
-                            '&.Mui-selected': {
-                                fontWeight: 'bold',
-                                color: '#A54CE5'
-                            }
-                        }}
-                    />
-                </Tabs>
-                <Divider />
-                <TabPanelAll
-                    value={value}
-                    index={0}
-                    goToNextPage={goToNextPage}
-                    goToPrevPage={goToPreviousPage}
-                    getPaginatedData={getPaginatedData}
-                    data={data}
-                    row={row}
-                    handleViewRow={handleViewRow}
-                />
-                <TabPanelPending
-                    value={value}
-                    index={1}
-                    goToNextPage={goToNextPage}
-                    goToPrevPage={goToPreviousPage}
-                    getPaginatedData={getPaginatedData}
-                    data={data}
-                    row={row}
-                    handleViewRow={handleViewRow}
-                />
-                <TabPanelProcess
-                    value={value}
-                    index={2}
-                    goToNextPage={goToNextPage}
-                    goToPrevPage={goToPreviousPage}
-                    getPaginatedData={getPaginatedData}
-                    data={data}
-                    row={row}
-                    handleViewRow={handleViewRow}
-                />
-                <TabPanelDelivered
-                    value={value}
-                    index={3}
-                    goToNextPage={goToNextPage}
-                    goToPrevPage={goToPreviousPage}
-                    getPaginatedData={getPaginatedData}
-                    data={data}
-                    row={row}
-                    handleViewRow={handleViewRow}
-                />
-                <TabPanelComplete
-                    value={value}
-                    index={4}
-                    goToNextPage={goToNextPage}
-                    goToPrevPage={goToPreviousPage}
-                    getPaginatedData={getPaginatedData}
-                    data={data}
-                    row={row}
-                    handleViewRow={handleViewRow}
-                />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <>
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            indicatorColor='secondary'
+                            textColor='inherit'
+                            aria-label='basic tabs example'
+                            TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }}
+                            sx={{
+                                '& .MuiTabs-indicator': {
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    backgroundColor: 'transparent'
+                                },
+                                '& .MuiTabs-indicatorSpan': {
+                                    maxWidth: 150,
+                                    width: '100%',
+                                    backgroundColor: '#A54CE5'
+                                },
+                                '& .MuiButtonBase-root': {
+                                    minHeight: 0
+                                }
+                            }}
+                        >
+                            <Tab
+                                label='All'
+                                {...a11yProps(0)}
+                                sx={{
+                                    textTransform: 'none',
+                                    '&.Mui-selected': {
+                                        fontWeight: 'bold',
+                                        color: '#A54CE5'
+                                    }
+                                }}
+                            />
+                            <Tab
+                                label='Pending'
+                                {...a11yProps(1)}
+                                sx={{
+                                    textTransform: 'none',
+                                    '&.Mui-selected': {
+                                        fontWeight: 'bold',
+                                        color: '#A54CE5'
+                                    }
+                                }}
+                            />
+                            <Tab
+                                label='Process'
+                                {...a11yProps(2)}
+                                sx={{
+                                    textTransform: 'none',
+                                    '&.Mui-selected': {
+                                        fontWeight: 'bold',
+                                        color: '#A54CE5'
+                                    }
+                                }}
+                            />
+                            <Tab
+                                label='Delivered'
+                                {...a11yProps(3)}
+                                sx={{
+                                    textTransform: 'none',
+                                    '&.Mui-selected': {
+                                        fontWeight: 'bold',
+                                        color: '#A54CE5'
+                                    }
+                                }}
+                            />
+                            <Tab
+                                label='Completed'
+                                {...a11yProps(4)}
+                                sx={{
+                                    textTransform: 'none',
+                                    '&.Mui-selected': {
+                                        fontWeight: 'bold',
+                                        color: '#A54CE5'
+                                    }
+                                }}
+                            />
+                        </Tabs>
+                        <Divider />
+                        <TabPanelAll
+                            value={value}
+                            index={0}
+                            goToNextPage={goToNextPage}
+                            goToPrevPage={goToPreviousPage}
+                            getPaginatedData={getPaginatedData}
+                            data={data}
+                            row={row}
+                            handleViewRow={handleViewRow}
+                        />
+                        <TabPanelPending
+                            value={value}
+                            index={1}
+                            goToNextPage={goToNextPage}
+                            goToPrevPage={goToPreviousPage}
+                            getPaginatedData={getPaginatedData}
+                            data={data}
+                            row={row}
+                            handleViewRow={handleViewRow}
+                        />
+                        <TabPanelProcess
+                            value={value}
+                            index={2}
+                            goToNextPage={goToNextPage}
+                            goToPrevPage={goToPreviousPage}
+                            getPaginatedData={getPaginatedData}
+                            data={data}
+                            row={row}
+                            handleViewRow={handleViewRow}
+                        />
+                        <TabPanelDelivered
+                            value={value}
+                            index={3}
+                            goToNextPage={goToNextPage}
+                            goToPrevPage={goToPreviousPage}
+                            getPaginatedData={getPaginatedData}
+                            data={data}
+                            row={row}
+                            handleViewRow={handleViewRow}
+                        />
+                        <TabPanelComplete
+                            value={value}
+                            index={4}
+                            goToNextPage={goToNextPage}
+                            goToPrevPage={goToPreviousPage}
+                            getPaginatedData={getPaginatedData}
+                            data={data}
+                            row={row}
+                            handleViewRow={handleViewRow}
+                        />
+                    </>
+                )}
             </Box>
         </Box>
     );

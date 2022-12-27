@@ -12,7 +12,8 @@ import {
     FormControlLabel,
     Switch,
     ButtonBase,
-    CircularProgress
+    CircularProgress,
+    Skeleton
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputSearch from 'components/Input/InputSearch';
@@ -398,8 +399,13 @@ const MasterCompanyContainer = () => {
                 )}
                 <Box sx={{ mt: isLoading ? '50px' : '20px' }}>
                     {isLoading ? (
-                        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <CircularProgress size={100} color='secondary' />
+                        <Box
+                            sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+                        >
+                            {/* <CircularProgress size={100} color='secondary' /> */}
+                            {[...Array(6)].map((item: any, index: number) => (
+                                <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                            ))}
                         </Box>
                     ) : (
                         <TableCompanies

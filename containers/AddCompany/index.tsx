@@ -23,7 +23,9 @@ const EditCompanyContainer = () => {
     const [isLoading, setIsLoading] = React.useState(false);
 
     const handleSubmitData = async (d: any) => {
-        setIsLoading(true);
+        // console.log(d);
+        // setIsLoading(true);
+        // console.log('s : ', d);
         try {
             const result = await fetchAPI({
                 endpoint: 'companies',
@@ -31,7 +33,7 @@ const EditCompanyContainer = () => {
                 data: {
                     name: d.name,
                     code: d.code,
-                    is_active: d.is_active
+                    is_active: d.active
                 }
             });
             if (result.status === 200) {
@@ -54,7 +56,7 @@ const EditCompanyContainer = () => {
     const handleAddSetNotActive = () => {
         form.setValue('active', !form.watch('active'));
     };
-
+    // console.log('ss');
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
             <Box sx={{ position: 'relative' }}>
@@ -114,7 +116,7 @@ const EditCompanyContainer = () => {
                                 form={form}
                                 name='active'
                                 handleChange={handleAddSetActive}
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 checked={form.watch('active')}
                                 label='Yes'
                             />
@@ -122,7 +124,7 @@ const EditCompanyContainer = () => {
                                 form={form}
                                 name='active'
                                 handleChange={handleAddSetNotActive}
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 checked={!form.watch('active')}
                                 label='No'
                             />

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Box, ButtonBase, IconButton } from '@mui/material';
+import { Box, ButtonBase, IconButton, Skeleton } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import InputSearch from 'components/Input/InputSearch';
 import React from 'react';
@@ -82,11 +82,12 @@ const PlayerAccount = () => {
             if (response.status === 200) {
                 notify(response.data.message, 'success');
                 form.setValue('dataTable', response.data.data);
-
                 setListTable(response.data.data);
+                setIsLoading(false);
             }
         } catch (err: any) {
             notify(err.message, 'error');
+            setIsLoading(false);
         }
     };
 
@@ -246,13 +247,23 @@ const PlayerAccount = () => {
                 </Box>
             ) : null}
             <Box mt='30px'>
-                <TablePlayerAccount
-                    idPlayer={idPlayer}
-                    setIdPlayer={setIdPlayer}
-                    form={form}
-                    name='dataTable'
-                    nameIdxAppears='idxAppears'
-                />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TablePlayerAccount
+                        idPlayer={idPlayer}
+                        setIdPlayer={setIdPlayer}
+                        form={form}
+                        name='dataTable'
+                        nameIdxAppears='idxAppears'
+                    />
+                )}
+
                 <PaginationCard
                     totalItem={formDataTable.length}
                     handlePrev={handlePrev}
