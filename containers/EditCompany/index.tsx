@@ -51,11 +51,11 @@ const EditCompanyContainer = () => {
                 method: 'PUT',
                 data: {
                     name: d.name,
-                    email: d.code,
-                    is_active: d.is_active
+                    code: d.code,
+                    is_active: d.active
                 }
             });
-            console.log(result);
+            // console.log(result);
             if (result.status === 200) {
                 notify('Update company successfully', 'success');
                 setIsLoading(false);
