@@ -27,7 +27,7 @@ import {
     SelectChangeEvent,
     Select,
     TableHead,
-    Switch
+    Switch,
     Skeleton,
     CircularProgress
 } from '@mui/material';
@@ -70,7 +70,6 @@ import { alpha, styled } from '@mui/material/styles';
 //         is_active: 'Yes'
 //     }
 // ];
-
 
 const ProductPrizes = () => {
     const PurpleSwitch = styled(Switch)(({ theme }) => ({
@@ -210,7 +209,6 @@ const ProductPrizes = () => {
     const handleEditData = () => {
         router.push(`/settings/product-prizes/${removeData[0].id}/`);
     };
-
     const handleFetchData = async () => {
         setIsLoading(true);
         try {
@@ -220,10 +218,13 @@ const ProductPrizes = () => {
             });
             if (response?.status === 200) {
                 const products = response.data?.data;
+                const cat = products.map((i: any) => i.category);
+
+                const catDone = products.filter(({ category }: any, index: number) => !cat.includes(category, index + 1));
+                setCategoryList(catDone);
                 setFilteredData(products);
                 setRow(products.length.toString());
-                // notify(response?.data.message, 'success');
-                setIsLoading(false);
+                notify(response?.data.message, 'success');
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -237,9 +238,9 @@ const ProductPrizes = () => {
         try {
             let errMessage = '';
             await Promise.all(
-                removeData.map(async (value: any) => {
+                removeData.map(async (x: any) => {
                     const response = await fetchAPI({
-                        endpoint: `/product-prizes/${value.id}`,
+                        endpoint: `/product-prizes/${x.id}`,
                         method: 'DELETE'
                     });
 
@@ -272,27 +273,6 @@ const ProductPrizes = () => {
     const handleDataSearch = (keyword: any) => {
         setQuery(keyword);
     };
-    const handleFetchData = async () => {
-        try {
-            const response = await fetchAPI({
-                method: 'GET',
-                endpoint: '/product-prizes'
-            });
-            if (response?.status === 200) {
-                const products = response.data?.data;
-                const cat = products.map((i: any) => i.category);
-
-                const catDone = products.filter(({ category }: any, index: number) => !cat.includes(category, index + 1));
-                setCategoryList(catDone);
-                setFilteredData(products);
-                setRow(products.length.toString());
-                notify(response?.data.message, 'success');
-            }
-        } catch (error: any) {
-            notify(error.message, 'error');
-        }
-    };
-
 
     React.useEffect(() => {
         handleFetchData();
