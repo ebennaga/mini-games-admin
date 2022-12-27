@@ -25,6 +25,7 @@ import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '
 import CustomButton from 'components/Button';
 // import CheckboxController from 'components/Checkbox';
 import { useRouter } from 'next/router';
+import DeleteDialog from './DeleteDialog';
 import TableCompanies from './TableCompanies';
 import Pagination from './Pagination';
 // import DeleteAccDialog from './DeleteAccDialog';
@@ -60,6 +61,7 @@ const MasterCompanyContainer = () => {
     const [row, setRow] = useState('7');
     const [filterData, setFilterData] = useState<any>([]);
     const [isFilter, setIsFilter] = useState(false);
+    const [onDelete, setOnDelete] = useState(false);
     const checkBoxKeys: string[] = [];
     const checkTrue: string[] = [];
     const [deleted, setDeleted] = useState<number[]>([]);
@@ -84,10 +86,10 @@ const MasterCompanyContainer = () => {
         setIsLoading(false);
     };
 
-    const handleRemove = async () => {
+    const handleRemove = async (id: any) => {
         try {
             const response = await fetchAPI({
-                endpoint: `companies/${routeId}`,
+                endpoint: `companies/${id}`,
                 method: 'DELETE'
             });
             if (response.status === 200) {
@@ -98,7 +100,7 @@ const MasterCompanyContainer = () => {
             notify(err.message, 'error');
         }
     };
-    console.log('data', remove);
+    // console.log('data', remove);
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
@@ -111,6 +113,19 @@ const MasterCompanyContainer = () => {
             }
         }
         return remove.slice(startIndex, endIndex);
+    };
+
+    const handleDelete = () => {
+        // console.log(deleted);
+        deleted.forEach((item: any) => {
+            handleRemove(item);
+        });
+        const filter = remove.filter((item: any) => {
+            return !deleted.includes(item.id);
+        });
+        setRemove(filter);
+        setOnDelete(!onDelete);
+        setCheckedObj([]);
     };
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -402,7 +417,9 @@ const MasterCompanyContainer = () => {
                                 </ButtonBase>
                             )}
                             <ButtonBase
-                                onClick={handleRemove}
+                                onClick={() => {
+                                    setOpenDialog(!openDialog);
+                                }}
                                 sx={{ color: '#A54CE5', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                             >
                                 <Delete />
@@ -440,6 +457,17 @@ const MasterCompanyContainer = () => {
                     />
                 </Box>
             </Box>
+            <DeleteDialog
+                form={form}
+                setIsChecked={setIsChecked}
+                setOnDelete={setOnDelete}
+                onDelete={onDelete}
+                handleDelete={handleDelete}
+                open={openDialog}
+                setOpen={setOpenDialog}
+                qty={checkedObj.length}
+                titleDialog='Are you sure remove this account ?'
+            />
         </Box>
     );
 };
