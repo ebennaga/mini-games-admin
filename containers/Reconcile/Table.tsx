@@ -97,7 +97,6 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage, isLoading
                 <LoadingTable />
             ) : (
                 dataTable.map((item: any, index: number) => {
-                    console.log(item);
                     return (
                         index >= showTable.startIndex &&
                         index <= showTable.endIndex && (
