@@ -141,7 +141,7 @@ const EditCompanyContainer = () => {
                                 form={form}
                                 name='active'
                                 handleChange={handleAddSetActive}
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 checked={form.watch('active')}
                                 label='Yes'
                             />
@@ -149,7 +149,7 @@ const EditCompanyContainer = () => {
                                 form={form}
                                 name='active'
                                 handleChange={handleAddSetNotActive}
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 checked={!form.watch('active')}
                                 label='No'
                             />
