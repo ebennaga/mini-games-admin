@@ -71,7 +71,7 @@ const MasterCompanyContainer = () => {
                 endpoint: `companies?search=${form.watch('search')}`,
                 method: 'GET'
             });
-            console.log('result', result);
+
             if (result.status === 200) {
                 setRemove(result?.data.data);
             }
@@ -83,6 +83,21 @@ const MasterCompanyContainer = () => {
         setIsLoading(false);
     };
 
+    const handleRemove = async () => {
+        try {
+            const response = await fetchAPI({
+                endpoint: `companies/${routeId}`,
+                method: 'DELETE'
+            });
+            if (response.status === 200) {
+                notify(response.data.message, 'success');
+                await fetchCompaniesData();
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+    };
+    console.log('data', remove);
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
@@ -121,6 +136,7 @@ const MasterCompanyContainer = () => {
             [...Array(remove.length)].forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, e.target.checked);
+
                 arr.push(idx + 1);
                 if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
                     form.setValue(datas, true);
@@ -385,9 +401,7 @@ const MasterCompanyContainer = () => {
                                 </ButtonBase>
                             )}
                             <ButtonBase
-                                onClick={() => {
-                                    setOpenDialog(!openDialog);
-                                }}
+                                onClick={handleRemove}
                                 sx={{ color: '#A54CE5', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                             >
                                 <Delete />
