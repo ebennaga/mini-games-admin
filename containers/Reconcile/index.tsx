@@ -182,6 +182,9 @@ const Reconcile = () => {
                 })
             ];
         }
+        if (!minDate && !maxDate) {
+            resFilter = table;
+        }
 
         form.setValue('dataTable', resFilter);
         form.setValue('row', 5);
