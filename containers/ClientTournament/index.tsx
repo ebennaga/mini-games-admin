@@ -27,7 +27,8 @@ import {
     SelectChangeEvent,
     Popover,
     DialogActions,
-    DialogContentText
+    DialogContentText,
+    Skeleton
 } from '@mui/material';
 import CheckboxController from 'components/Checkbox';
 import { useForm } from 'react-hook-form';
@@ -142,6 +143,7 @@ const ClientTournament = () => {
     const [filteredData, setFilteredData] = React.useState<any>([]);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [pages, setPages] = React.useState(1);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [checked, setIsChecked] = React.useState(false);
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
     const checkBoxKeys: string[] = [];
@@ -400,6 +402,13 @@ const ClientTournament = () => {
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
+
+    React.useEffect(() => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 2000);
+    }, []);
     return (
         <Box>
             <Dialog
@@ -596,225 +605,237 @@ const ClientTournament = () => {
                     </Box>
                 )}
                 <Box sx={{ mt: '20px' }}>
-                    <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
-                        <Table sx={{ width: '100%' }}>
-                            <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
-                                <TableRow>
-                                    <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='center'
-                                    >
-                                        Title
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='center'
-                                    >
-                                        Start Date
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='center'
-                                    >
-                                        Start Time
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='center'
-                                    >
-                                        End Date
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='center'
-                                    >
-                                        End Time
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Games
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Tournament Mode
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Registration Fee
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Prize Type
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Total Prize
-                                    </TableCell>
-                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                        <FormControlLabel
-                                            control={
-                                                <CheckboxController
-                                                    name='action'
-                                                    form={form}
-                                                    onChange={handleCheckBoxAll}
-                                                    checked={form.watch('checkedAll')}
-                                                    disabled={filteredData.length === 0}
-                                                />
-                                            }
-                                            label='Action'
-                                        />
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            width: '8%',
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        More
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {getPaginatedData().length > 0 &&
-                                    getPaginatedData().map((item: any) => {
-                                        const check: any = `checkbox${item.id}`;
-                                        return (
-                                            <TableRow key={item.id}>
-                                                <TableCell align='center' sx={{ width: '5%' }}>
-                                                    {item.id}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.title}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {new Date(item.start).toLocaleString('id', dateOption)}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {new Date(item.start).toLocaleString(undefined, timeOption)}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {new Date(item.end).toLocaleString('id', dateOption)}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {new Date(item.end).toLocaleString(undefined, timeOption)}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.games}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.mode}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.fee}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.prize_type}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.prize}
-                                                </TableCell>
-                                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                    {isLoading ? (
+                        <Box
+                            sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+                        >
+                            {/* <CircularProgress size={100} color='secondary' /> */}
+                            {[...Array(6)].map((item: any, index: number) => (
+                                <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                            ))}
+                        </Box>
+                    ) : (
+                        <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
+                            <Table sx={{ width: '100%' }}>
+                                <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
+                                    <TableRow>
+                                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='center'
+                                        >
+                                            Title
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='center'
+                                        >
+                                            Start Date
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='center'
+                                        >
+                                            Start Time
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='center'
+                                        >
+                                            End Date
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                            align='center'
+                                        >
+                                            End Time
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                borderLeft: '1px solid #E0E0E0',
+                                                borderRight: '1px solid #E0E0E0',
+                                                fontWeight: 'bold'
+                                            }}
+                                            align='center'
+                                        >
+                                            Games
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                borderLeft: '1px solid #E0E0E0',
+                                                borderRight: '1px solid #E0E0E0',
+                                                fontWeight: 'bold'
+                                            }}
+                                            align='center'
+                                        >
+                                            Tournament Mode
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                borderLeft: '1px solid #E0E0E0',
+                                                borderRight: '1px solid #E0E0E0',
+                                                fontWeight: 'bold'
+                                            }}
+                                            align='center'
+                                        >
+                                            Registration Fee
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                borderLeft: '1px solid #E0E0E0',
+                                                borderRight: '1px solid #E0E0E0',
+                                                fontWeight: 'bold'
+                                            }}
+                                            align='center'
+                                        >
+                                            Prize Type
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                borderLeft: '1px solid #E0E0E0',
+                                                borderRight: '1px solid #E0E0E0',
+                                                fontWeight: 'bold'
+                                            }}
+                                            align='center'
+                                        >
+                                            Total Prize
+                                        </TableCell>
+                                        <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                            <FormControlLabel
+                                                control={
                                                     <CheckboxController
+                                                        name='action'
                                                         form={form}
-                                                        name={`checkbox${item.id}`}
-                                                        checked={!!form.watch(check)}
-                                                        onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
+                                                        onChange={handleCheckBoxAll}
+                                                        checked={form.watch('checkedAll')}
+                                                        disabled={filteredData.length === 0}
                                                     />
-                                                </TableCell>
-                                                <TableCell align='center' sx={{ borderLeft: '1px solid #E0E0E0' }}>
-                                                    <IconButton onClick={handleClick}>
-                                                        <MoreVertIcon />
-                                                    </IconButton>
-                                                    <Popover
-                                                        id={id}
-                                                        open={open}
-                                                        anchorEl={anchorEl}
-                                                        onClose={handleClose}
-                                                        anchorOrigin={{
-                                                            vertical: 'bottom',
-                                                            horizontal: 'right'
-                                                        }}
+                                                }
+                                                label='Action'
+                                            />
+                                        </TableCell>
+                                        <TableCell
+                                            sx={{
+                                                width: '8%',
+                                                borderLeft: '1px solid #E0E0E0',
+                                                borderRight: '1px solid #E0E0E0',
+                                                fontWeight: 'bold'
+                                            }}
+                                            align='center'
+                                        >
+                                            More
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {getPaginatedData().length > 0 &&
+                                        getPaginatedData().map((item: any) => {
+                                            const check: any = `checkbox${item.id}`;
+                                            return (
+                                                <TableRow key={item.id}>
+                                                    <TableCell align='center' sx={{ width: '5%' }}>
+                                                        {item.id}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
                                                     >
-                                                        <Box sx={{ p: 1 }}>
-                                                            <CustomButton
-                                                                onClick={() => router.push('/settings/product-prizes')}
-                                                                width='121px'
-                                                                height='30px'
-                                                                title='SET PRIZE'
-                                                            />
-                                                        </Box>
-                                                    </Popover>
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                                        {item.title}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {new Date(item.start).toLocaleString('id', dateOption)}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {new Date(item.start).toLocaleString(undefined, timeOption)}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {new Date(item.end).toLocaleString('id', dateOption)}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {new Date(item.end).toLocaleString(undefined, timeOption)}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.games}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.mode}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.fee}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.prize_type}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.prize}
+                                                    </TableCell>
+                                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                                        <CheckboxController
+                                                            form={form}
+                                                            name={`checkbox${item.id}`}
+                                                            checked={!!form.watch(check)}
+                                                            onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell align='center' sx={{ borderLeft: '1px solid #E0E0E0' }}>
+                                                        <IconButton onClick={handleClick}>
+                                                            <MoreVertIcon />
+                                                        </IconButton>
+                                                        <Popover
+                                                            id={id}
+                                                            open={open}
+                                                            anchorEl={anchorEl}
+                                                            onClose={handleClose}
+                                                            anchorOrigin={{
+                                                                vertical: 'bottom',
+                                                                horizontal: 'right'
+                                                            }}
+                                                        >
+                                                            <Box sx={{ p: 1 }}>
+                                                                <CustomButton
+                                                                    onClick={() => router.push('/settings/product-prizes')}
+                                                                    width='121px'
+                                                                    height='30px'
+                                                                    title='SET PRIZE'
+                                                                />
+                                                            </Box>
+                                                        </Popover>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', fontSize: '12px', fontWeight: 400 }}>
                         <Typography>Rows per page</Typography>
                         <FormControl>

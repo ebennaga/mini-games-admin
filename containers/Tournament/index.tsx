@@ -3,7 +3,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-unreachable-loop */
 /* eslint-disable no-unused-vars */
-import { Typography, Box, Paper, MenuItem, FormControl, Select, ButtonBase, CircularProgress } from '@mui/material';
+import { Typography, Box, Paper, MenuItem, FormControl, Select, ButtonBase, CircularProgress, Skeleton } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputSearch from 'components/Input/InputSearch';
 import React, { useEffect, useState } from 'react';
@@ -520,8 +520,19 @@ const TournamentContainer = () => {
                     )}
                     <Box sx={{ mt: '20px' }}>
                         {isLoading ? (
-                            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <CircularProgress size={100} color='secondary' sx={{ marginTop: '50px' }} />
+                            <Box
+                                sx={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    flexDirection: 'column'
+                                }}
+                            >
+                                {/* <CircularProgress size={100} color='secondary' /> */}
+                                {[...Array(6)].map((item: any, index: number) => (
+                                    <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                                ))}
                             </Box>
                         ) : (
                             <Tables

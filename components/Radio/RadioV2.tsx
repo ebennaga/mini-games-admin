@@ -6,7 +6,7 @@ interface RadioButtonProps {
     handleChange: any;
     form: any;
     name: string;
-    rules: any;
+    rules?: any;
     checked: any;
     label: string;
 }
