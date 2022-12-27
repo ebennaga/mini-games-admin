@@ -7,9 +7,11 @@ interface TablePlayerAccountProps {
     form: any;
     name: string;
     nameIdxAppears: string;
+    setIdPlayer: any;
+    idPlayer: any;
 }
 
-const TablePlayerAccount: React.FC<TablePlayerAccountProps> = ({ form, name, nameIdxAppears }) => {
+const TablePlayerAccount: React.FC<TablePlayerAccountProps> = ({ form, name, nameIdxAppears, setIdPlayer, idPlayer }) => {
     const [isAllChecked, setIsAllChecked] = React.useState<boolean>(false);
     const [dataTable, setDataTable] = React.useState<Array<any>>(form.watch(name));
 
@@ -35,8 +37,20 @@ const TablePlayerAccount: React.FC<TablePlayerAccountProps> = ({ form, name, nam
 
     const handleCheck = async (e: React.ChangeEvent<HTMLInputElement>, data: any) => {
         const isChecked = e.target.checked;
-
         let newArr: any = [...dataTable];
+        if (isChecked) {
+            setIdPlayer([...idPlayer, data.id]);
+        }
+        if (!isChecked) {
+            if (idPlayer.length > 0) {
+                const filter = idPlayer.filter((items: any) => {
+                    return data.id !== items;
+                });
+                setIdPlayer(filter);
+            } else {
+                setIdPlayer([]);
+            }
+        }
         dataTable.forEach((item: any, index: number) => {
             if (item.id === data.id) {
                 const filter = newArr.filter((itm: any) => itm.id !== data.id);
@@ -47,7 +61,6 @@ const TablePlayerAccount: React.FC<TablePlayerAccountProps> = ({ form, name, nam
                     setIsAllChecked(false);
                 }
             }
-
             if (index === dataTable.length - 1) {
                 newArr.sort((a: any, b: any) => a.id - b.id);
                 setDataTable([...newArr]);
@@ -60,7 +73,7 @@ const TablePlayerAccount: React.FC<TablePlayerAccountProps> = ({ form, name, nam
     React.useEffect(() => {
         setDataTable(form.watch(name));
     }, [form.watch(name)]);
-
+    // console.log(dataTable);
     return (
         <TableContainer>
             <Table aria-label='table player account'>
