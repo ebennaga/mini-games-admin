@@ -37,9 +37,10 @@ const EditCompanyContainer = () => {
                 }
             });
             if (result.status === 200) {
-                notify('Add company successfully', 'success');
+                notify(result.data.message, 'success');
                 setIsLoading(false);
                 form.reset();
+                router.push('/settings/company');
             }
         } catch (error: any) {
             notify(error.message, 'error');
