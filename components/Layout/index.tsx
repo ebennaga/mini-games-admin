@@ -118,6 +118,8 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
         handleMenus();
     }, []);
 
+    console.log(menus);
+
     return (
         <Box sx={{ bgcolor: '#fff', minHeight: '100vh', display: 'flex' }}>
             <Box
