@@ -2,6 +2,8 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { getEndDdate, getPastDate, getStartDate } from 'utils/date';
 import { useForm } from 'react-hook-form';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import HeaderReconcile from './HeaderReconcile';
 import Table from './Table';
 
@@ -27,52 +29,58 @@ const Reconcile = () => {
         'Transaction Status',
         'Settlement Time'
     ];
-    const dummyTable = [
-        {
-            id: 1,
-            userId: 18,
-            email: 'test@mail.com',
-            orderId: 'SAMPEL_20221024_001',
-            orderTime: '2022-12-24T17:01:00.000Z',
-            orderAmount: '10000',
-            transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
-            bank: 'BCA',
-            transactionTime: '2022-12-20T17:01:00.000Z',
-            grossAmount: '10000.00',
-            transactionStatus: 'Settlement',
-            settlementTime: '2022-12-20T17:01:00.000Z'
-        },
-        {
-            id: 2,
-            userId: 19,
-            email: 'allright@mail.com',
-            orderId: 'SAMPEL_20221024_001',
-            orderTime: '2022-12-13T17:00:00.000Z',
-            orderAmount: '10000',
-            transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
-            bank: 'BCA',
-            transactionTime: '2022-12-09T17:00:00.000Z',
-            grossAmount: '10000.00',
-            transactionStatus: 'Settlement',
-            settlementTime: '2022-12-20T17:01:00.000Z'
-        },
-        {
-            id: 3,
-            userId: 20,
-            email: 'test@mail.com',
-            orderId: 'SAMPEL_20221024_001',
-            orderTime: '2022-12-29T17:00:00.000Z',
-            orderAmount: '10000',
-            transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
-            bank: 'BCA',
-            transactionTime: '2022-12-25T17:00:00.000Z',
-            grossAmount: '10000.00',
-            transactionStatus: 'Settlement',
-            settlementTime: '2022-12-20T17:01:00.000Z'
-        }
-    ];
+    // const dummyTable = [
+    //     {
+    //         id: 1,
+    //         userId: 18,
+    //         email: 'test@mail.com',
+    //         orderId: 'SAMPEL_20221024_001',
+    //         orderTime: '2022-12-24T17:01:00.000Z',
+    //         orderAmount: '10000',
+    //         transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
+    //         bank: 'BCA',
+    //         transactionTime: '2022-12-20T17:01:00.000Z',
+    //         grossAmount: '10000.00',
+    //         transactionStatus: 'Settlement',
+    //         settlementTime: '2022-12-20T17:01:00.000Z'
+    //     },
+    //     {
+    //         id: 2,
+    //         userId: 19,
+    //         email: 'allright@mail.com',
+    //         orderId: 'SAMPEL_20221024_001',
+    //         orderTime: '2022-12-13T17:00:00.000Z',
+    //         orderAmount: '10000',
+    //         transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
+    //         bank: 'BCA',
+    //         transactionTime: '2022-12-09T17:00:00.000Z',
+    //         grossAmount: '10000.00',
+    //         transactionStatus: 'Settlement',
+    //         settlementTime: '2022-12-20T17:01:00.000Z'
+    //     },
+    //     {
+    //         id: 3,
+    //         userId: 20,
+    //         email: 'test@mail.com',
+    //         orderId: 'SAMPEL_20221024_001',
+    //         orderTime: '2022-12-29T17:00:00.000Z',
+    //         orderAmount: '10000',
+    //         transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
+    //         bank: 'BCA',
+    //         transactionTime: '2022-12-25T17:00:00.000Z',
+    //         grossAmount: '10000.00',
+    //         transactionStatus: 'Settlement',
+    //         settlementTime: '2022-12-20T17:01:00.000Z'
+    //     }
+    // ];
+
+    const [dataTable, setDataTable] = React.useState<any>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
     const timeOption: any = { hour: '2-digit', minute: '2-digit', hour12: false };
+
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
 
     const form = useForm({
         mode: 'all',
@@ -85,9 +93,29 @@ const Reconcile = () => {
             transactionTime: '',
             row: 5,
             page: 1,
-            dataTable: dummyTable
+            dataTable
         }
     });
+
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({ method: 'GET', endpoint: 'reconciles' });
+            if (response.status === 200) {
+                setDataTable(response.data.data);
+                form.setValue('dataTable', response.data.data);
+            } else {
+                throw new Error(response.data.message);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsLoading(false);
+    };
+
+    React.useEffect(() => {
+        fetchData();
+    }, []);
 
     React.useEffect(() => {
         const input = form.watch();
@@ -105,8 +133,7 @@ const Reconcile = () => {
         array.forEach((element: any) => {
             const {
                 id,
-                userId,
-                email,
+                user: { id: userId, email },
                 orderId,
                 orderTime,
                 orderAmount,
@@ -130,7 +157,7 @@ const Reconcile = () => {
 
     const handleGetData = () => {
         const { minDate, maxDate } = form.watch();
-        const table: any = dummyTable;
+        const table: any = dataTable;
         let resFilter: Array<any> = [];
 
         if (minDate) {
@@ -161,11 +188,11 @@ const Reconcile = () => {
 
     const handleFilter = (data: any, tabsValue: 'all' | 'latest' | 'oldest') => {
         let result: Array<any> = [];
-        const dataTable = dummyTable;
+        const table = dataTable;
         const { orderDate, orderTime, transactionDate, transactionTime } = data;
 
         if (orderDate) {
-            const arr = result.length > 0 ? result : dataTable;
+            const arr = result.length > 0 ? result : table;
             result = [
                 ...arr.filter((item: any) => {
                     const value: any = new Date(item.orderTime).toLocaleString('id').slice(0, 10);
@@ -175,7 +202,7 @@ const Reconcile = () => {
             ];
         }
         if (transactionDate) {
-            const arr = result.length > 0 ? result : dataTable;
+            const arr = result.length > 0 ? result : table;
             result = [
                 ...arr.filter((item: any) => {
                     const value: any = new Date(item.transactionTime).toLocaleString('id').slice(0, 10);
@@ -185,7 +212,7 @@ const Reconcile = () => {
             ];
         }
         if (orderTime) {
-            const arr = result.length > 0 ? result : dataTable;
+            const arr = result.length > 0 ? result : table;
             result = [
                 ...arr.filter((item: any) => {
                     const valueTime = new Date(item.orderTime).toLocaleString('ca', timeOption);
@@ -194,7 +221,7 @@ const Reconcile = () => {
             ];
         }
         if (transactionTime) {
-            const arr = result.length > 0 ? result : dataTable;
+            const arr = result.length > 0 ? result : table;
             result = [
                 ...arr.filter((item: any) => {
                     const valueTime = new Date(item.transactionTime).toLocaleString('ca', timeOption);
@@ -203,7 +230,7 @@ const Reconcile = () => {
             ];
         }
         if (!orderDate && !orderTime && !transactionDate && !transactionTime) {
-            result = [...dataTable];
+            result = [...table];
         }
 
         result = [
@@ -222,7 +249,7 @@ const Reconcile = () => {
     };
 
     const handleResetFilter = () => {
-        form.setValue('dataTable', dummyTable);
+        form.setValue('dataTable', dataTable);
         form.setValue('minDate', getStartDate());
         form.setValue('maxDate', getEndDdate());
         form.setValue('page', 1);
@@ -242,9 +269,9 @@ const Reconcile = () => {
                 handleDownload={() => handleDownloadExcel(fieldTable, form.watch('dataTable'))}
                 handleFilter={handleFilter}
                 handleReset={handleResetFilter}
-                // handleDownload={handleDownloadExcel}
+                isLoading={isLoading}
             />
-            <Table dataTable={form.watch('dataTable')} namePage='page' nameRow='row' form={form} />
+            <Table dataTable={form.watch('dataTable')} namePage='page' nameRow='row' form={form} isLoading={isLoading} />
         </Box>
     );
 };
