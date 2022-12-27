@@ -50,6 +50,8 @@ const SignIn = () => {
                 setUser(response?.data.data);
                 notify(response?.data.message, 'success');
                 router.push('/');
+            } else {
+                notify(response.data.message, 'error');
             }
             setIsLoading(false);
         } catch (error: any) {
