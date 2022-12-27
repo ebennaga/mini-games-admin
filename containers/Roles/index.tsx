@@ -71,6 +71,26 @@ const Roles = () => {
 
     const roleMenuAccess: any = form.watch('menuAccess');
 
+    const getRoles = async () => {
+        setIsloading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'roles?search='
+            });
+
+            if (response.status === 200) {
+                const resData = response.data.data;
+
+                setDataRoles(resData);
+                form.setValue('dataTable', resData);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsloading(false);
+    };
+
     // Event Next page
     const handleNext = () => {
         const input = form.watch();
@@ -90,8 +110,6 @@ const Roles = () => {
     console.log('datatable', form.watch('dataTable'));
     // Event Remove Item
     const handleRemove = async () => {
-        // setOpenDialogConfirm(false);
-        // setTotalChecked(0);
         try {
             const table = form.watch('dataTable');
             table.map(async (item: any) => {
@@ -101,7 +119,10 @@ const Roles = () => {
                         method: 'DELETE'
                     });
                     if (response.status === 200) {
-                        console.log(1);
+                        notify(response.data.message, 'success');
+                        await getRoles();
+                        setOpenDialogConfirm(false);
+                        setTotalChecked(0);
                     }
                 }
             });
@@ -179,25 +200,6 @@ const Roles = () => {
     };
     const handleDialog = (value: boolean) => {
         setIsDialogFilter(value);
-    };
-    const getRoles = async () => {
-        setIsloading(true);
-        try {
-            const response = await fetchAPI({
-                method: 'GET',
-                endpoint: 'roles?search='
-            });
-
-            if (response.status === 200) {
-                const resData = response.data.data;
-
-                setDataRoles(resData);
-                form.setValue('dataTable', resData);
-            }
-        } catch (err: any) {
-            notify(err.message, 'error');
-        }
-        setIsloading(false);
     };
 
     React.useEffect(() => {
