@@ -36,7 +36,8 @@ const AddGame = () => {
             url: '',
             description: '',
             image: '',
-            genre: ''
+            genre: '',
+            imageInput: ''
         }
     });
 
@@ -55,6 +56,7 @@ const AddGame = () => {
                 form.setValue('url', game_url);
                 form.setValue('description', description);
 
+                form.setValue('imageInput', banner_url);
                 form.setValue('image', banner_url);
                 setDetailGame(response.data.data);
             } else {
