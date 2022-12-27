@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import { getEndDdate, getPastDate, getStartDate } from 'utils/date';
 import { useForm } from 'react-hook-form';
 import useAPICaller from 'hooks/useAPICaller';
@@ -107,8 +107,10 @@ const Reconcile = () => {
             } else {
                 throw new Error(response.data.message);
             }
+            // setIsLoading(false);
         } catch (err: any) {
             notify(err.message, 'error');
+            setIsLoading(false);
         }
         setIsLoading(false);
     };
@@ -271,7 +273,16 @@ const Reconcile = () => {
                 handleReset={handleResetFilter}
                 isLoading={isLoading}
             />
-            <Table dataTable={form.watch('dataTable')} namePage='page' nameRow='row' form={form} isLoading={isLoading} />
+            {isLoading ? (
+                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                    {/* <CircularProgress size={100} color='secondary' /> */}
+                    {[...Array(6)].map((item: any, index: number) => (
+                        <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                    ))}
+                </Box>
+            ) : (
+                <Table dataTable={form.watch('dataTable')} namePage='page' nameRow='row' form={form} isLoading={isLoading} />
+            )}
         </Box>
     );
 };

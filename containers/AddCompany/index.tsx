@@ -23,21 +23,21 @@ const EditCompanyContainer = () => {
     const [isLoading, setIsLoading] = React.useState(false);
 
     const handleSubmitData = async (d: any) => {
-        setIsLoading(true);
         try {
             const result = await fetchAPI({
                 endpoint: 'companies',
                 method: 'POST',
                 data: {
                     name: d.name,
-                    email: d.code,
-                    is_active: d.is_active
+                    code: d.code,
+                    is_active: d.active
                 }
             });
             if (result.status === 200) {
-                notify('Add company successfully', 'success');
+                notify(result.data.message, 'success');
                 setIsLoading(false);
                 form.reset();
+                router.push('/settings/company');
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -53,7 +53,7 @@ const EditCompanyContainer = () => {
     const handleAddSetNotActive = () => {
         form.setValue('active', !form.watch('active'));
     };
-
+    // console.log('ss');
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
             <Box sx={{ position: 'relative' }}>
@@ -113,7 +113,7 @@ const EditCompanyContainer = () => {
                                 form={form}
                                 name='active'
                                 handleChange={handleAddSetActive}
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 checked={form.watch('active')}
                                 label='Yes'
                             />
@@ -121,7 +121,7 @@ const EditCompanyContainer = () => {
                                 form={form}
                                 name='active'
                                 handleChange={handleAddSetNotActive}
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 checked={!form.watch('active')}
                                 label='No'
                             />

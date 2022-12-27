@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
@@ -71,6 +71,26 @@ const Roles = () => {
 
     const roleMenuAccess: any = form.watch('menuAccess');
 
+    const getRoles = async () => {
+        setIsloading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'roles?search='
+            });
+
+            if (response.status === 200) {
+                const resData = response.data.data;
+
+                setDataRoles(resData);
+                form.setValue('dataTable', resData);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsloading(false);
+    };
+
     // Event Next page
     const handleNext = () => {
         const input = form.watch();
@@ -90,8 +110,6 @@ const Roles = () => {
     console.log('datatable', form.watch('dataTable'));
     // Event Remove Item
     const handleRemove = async () => {
-        // setOpenDialogConfirm(false);
-        // setTotalChecked(0);
         try {
             const table = form.watch('dataTable');
             table.map(async (item: any) => {
@@ -101,7 +119,10 @@ const Roles = () => {
                         method: 'DELETE'
                     });
                     if (response.status === 200) {
-                        console.log(1);
+                        notify(response.data.message, 'success');
+                        await getRoles();
+                        setOpenDialogConfirm(false);
+                        setTotalChecked(0);
                     }
                 }
             });
@@ -180,25 +201,6 @@ const Roles = () => {
     const handleDialog = (value: boolean) => {
         setIsDialogFilter(value);
     };
-    const getRoles = async () => {
-        setIsloading(true);
-        try {
-            const response = await fetchAPI({
-                method: 'GET',
-                endpoint: 'roles?search='
-            });
-
-            if (response.status === 200) {
-                const resData = response.data.data;
-
-                setDataRoles(resData);
-                form.setValue('dataTable', resData);
-            }
-        } catch (err: any) {
-            notify(err.message, 'error');
-        }
-        setIsloading(false);
-    };
 
     React.useEffect(() => {
         getRoles();
@@ -221,9 +223,9 @@ const Roles = () => {
         form.setValue('page', 1);
     }, [query]);
 
-    if (isLoading) {
-        return <LoadingExchangeRates />;
-    }
+    // if (isLoading) {
+    //     return <LoadingExchangeRates />;
+    // }
     return (
         <Box>
             <TitleCard
@@ -258,13 +260,23 @@ const Roles = () => {
                 </Box>
             ) : null}
             <Box mt='30px'>
-                <TableRoles
-                    form={form}
-                    name='dataTable'
-                    nameIdxAppears='idxAppears'
-                    nameMenuAccess='menuAccess'
-                    setOpenMenuAccess={setOpenMenuAccess}
-                />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TableRoles
+                        form={form}
+                        name='dataTable'
+                        nameIdxAppears='idxAppears'
+                        nameMenuAccess='menuAccess'
+                        setOpenMenuAccess={setOpenMenuAccess}
+                    />
+                )}
+
                 <PaginationCard
                     totalItem={dataRoles.length}
                     handlePrev={handlePrev}

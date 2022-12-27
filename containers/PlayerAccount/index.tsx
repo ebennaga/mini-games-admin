@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Box, ButtonBase, IconButton } from '@mui/material';
+import { Box, ButtonBase, IconButton, Skeleton } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import InputSearch from 'components/Input/InputSearch';
 import React from 'react';
@@ -52,8 +52,10 @@ const PlayerAccount = () => {
     const [dialogSuccessDel, setDialogSuccessDel] = React.useState<boolean>(false);
     const [dialogBanAccount, setDialogBanAccount] = React.useState<boolean>(false);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
+    const [idPlayer, setIdPlayer] = React.useState<any>([]);
     const [listTable, setListTable] = React.useState<any>([]);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [loadingBan, setLoadingBan] = React.useState(false);
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
 
@@ -80,11 +82,12 @@ const PlayerAccount = () => {
             if (response.status === 200) {
                 notify(response.data.message, 'success');
                 form.setValue('dataTable', response.data.data);
-
                 setListTable(response.data.data);
+                setIsLoading(false);
             }
         } catch (err: any) {
             notify(err.message, 'error');
+            setIsLoading(false);
         }
     };
 
@@ -92,8 +95,24 @@ const PlayerAccount = () => {
 
     // Event Remove Item
     const handleBanAccount = async () => {
-        setDialogBanAccount(false);
-        setDialogSuccessDel(true);
+        // setIsLoading(true);
+        setLoadingBan(true);
+        try {
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `accounts/${idPlayer}/ban`
+            });
+
+            if (response.status === 200) {
+                setDialogSuccessDel(true);
+                setDialogBanAccount(false);
+                notify(response.data.message, 'success');
+                setLoadingBan(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setLoadingBan(false);
+        }
     };
 
     // Event Next page
@@ -194,7 +213,6 @@ const PlayerAccount = () => {
             form.setValue('dataTable', listTable);
         }
     }, [form.watch('search')]);
-
     return (
         <Box>
             <HeaderChildren title='Player Account' subTitle='Additional description if required'>
@@ -229,7 +247,23 @@ const PlayerAccount = () => {
                 </Box>
             ) : null}
             <Box mt='30px'>
-                <TablePlayerAccount form={form} name='dataTable' nameIdxAppears='idxAppears' />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TablePlayerAccount
+                        idPlayer={idPlayer}
+                        setIdPlayer={setIdPlayer}
+                        form={form}
+                        name='dataTable'
+                        nameIdxAppears='idxAppears'
+                    />
+                )}
+
                 <PaginationCard
                     totalItem={formDataTable.length}
                     handlePrev={handlePrev}
@@ -247,6 +281,7 @@ const PlayerAccount = () => {
                 setOpen={setDialogBanAccount}
                 textConfirmButton='REMOVE'
                 textCancelButton='CANCEL'
+                loading={loadingBan}
             />
             <DialogSuccess title='Success Remove Account' open={dialogSuccessDel} setOpen={setDialogSuccessDel} />
         </Box>

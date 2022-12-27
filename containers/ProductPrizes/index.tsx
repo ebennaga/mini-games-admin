@@ -175,10 +175,12 @@ const ProductPrizes = () => {
                 const products = response.data?.data;
                 setFilteredData(products);
                 setRow(products.length.toString());
-                notify(response?.data.message, 'success');
+                // notify(response?.data.message, 'success');
+                setIsLoading(false);
             }
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
         setIsLoading(false);
     };
@@ -649,7 +651,15 @@ const ProductPrizes = () => {
                                     })}
                         </TableBody>
                     </Table>
-                    {isLoading && [...Array(5)].map((_item: any, index: number) => <Skeleton key={index} sx={{ height: '90px' }} />)}
+                    {isLoading && (
+                        <Box
+                            sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+                        >
+                            {[...Array(6)].map((item: any, index: number) => (
+                                <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                            ))}
+                        </Box>
+                    )}
                 </TableContainer>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', fontSize: '12px', fontWeight: 400 }}>
                     <Typography>Rows per page</Typography>

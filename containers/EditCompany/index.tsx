@@ -35,6 +35,7 @@ const EditCompanyContainer = () => {
                 form.setValue('code', result.data.data.code);
                 form.setValue('active', result.data.data.is_active);
             }
+
             setIsLoading(false);
         } catch (error: any) {
             notify(error.message, 'error');
@@ -51,11 +52,11 @@ const EditCompanyContainer = () => {
                 method: 'PUT',
                 data: {
                     name: d.name,
-                    email: d.code,
-                    is_active: d.is_active
+                    code: d.code,
+                    is_active: d.active
                 }
             });
-            console.log(result);
+            // console.log(result);
             if (result.status === 200) {
                 notify('Update company successfully', 'success');
                 setIsLoading(false);
@@ -141,7 +142,7 @@ const EditCompanyContainer = () => {
                                 form={form}
                                 name='active'
                                 handleChange={handleAddSetActive}
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 checked={form.watch('active')}
                                 label='Yes'
                             />
@@ -149,7 +150,7 @@ const EditCompanyContainer = () => {
                                 form={form}
                                 name='active'
                                 handleChange={handleAddSetNotActive}
-                                rules={{ required: true }}
+                                // rules={{ required: true }}
                                 checked={!form.watch('active')}
                                 label='No'
                             />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box, Typography, ButtonBase, Paper } from '@mui/material';
+import { Container, Box, Typography, ButtonBase, Paper, Skeleton } from '@mui/material';
 import Search from 'components/Search';
 import { useForm } from 'react-hook-form';
 // import TableExchange from 'components/Table/TableExchange';
@@ -10,7 +10,7 @@ import useNotify from 'hooks/useNotify';
 import BadgeSelected from 'components/BadgeSelected';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import TableExchange from './TableExchange';
-import LoadingExchangeRates from './LoadingExchangeRates';
+// import LoadingExchangeRates from './LoadingExchangeRates';
 
 const ExchangeRates = () => {
     const [isLoading, setIsloading] = React.useState<boolean>(true);
@@ -122,9 +122,9 @@ const ExchangeRates = () => {
         setTotalChecked(countItems);
     }, [form.watch('dataTable')]);
 
-    if (isLoading) {
-        return <LoadingExchangeRates />;
-    }
+    // if (isLoading) {
+    //     return <LoadingExchangeRates />;
+    // }
     return (
         <Container sx={{ mt: 12 }}>
             <Box sx={{ ml: -25, height: 120 }} component={Paper}>
@@ -169,7 +169,16 @@ const ExchangeRates = () => {
             )}
             <Box sx={{ ml: -25, mt: 3 }}>
                 {/* <TableExchange /> */}
-                <TableExchange form={form} name='dataTable' nameIdxAppears='idxAppears' />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TableExchange form={form} name='dataTable' nameIdxAppears='idxAppears' />
+                )}
             </Box>
             <PaginationCard
                 totalItem={dataSearch ? dataSearch.length : data.length}
