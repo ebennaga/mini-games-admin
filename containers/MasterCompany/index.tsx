@@ -12,7 +12,8 @@ import {
     FormControlLabel,
     Switch,
     ButtonBase,
-    CircularProgress
+    CircularProgress,
+    Skeleton
 } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputSearch from 'components/Input/InputSearch';
@@ -24,6 +25,7 @@ import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '
 import CustomButton from 'components/Button';
 // import CheckboxController from 'components/Checkbox';
 import { useRouter } from 'next/router';
+import DeleteDialog from './DeleteDialog';
 import TableCompanies from './TableCompanies';
 import Pagination from './Pagination';
 // import DeleteAccDialog from './DeleteAccDialog';
@@ -59,6 +61,7 @@ const MasterCompanyContainer = () => {
     const [row, setRow] = useState('7');
     const [filterData, setFilterData] = useState<any>([]);
     const [isFilter, setIsFilter] = useState(false);
+    const [onDelete, setOnDelete] = useState(false);
     const checkBoxKeys: string[] = [];
     const checkTrue: string[] = [];
     const [deleted, setDeleted] = useState<number[]>([]);
@@ -83,6 +86,21 @@ const MasterCompanyContainer = () => {
         setIsLoading(false);
     };
 
+    const handleRemove = async (id: any) => {
+        try {
+            const response = await fetchAPI({
+                endpoint: `companies/${id}`,
+                method: 'DELETE'
+            });
+            if (response.status === 200) {
+                notify(response.data.message, 'success');
+                await fetchCompaniesData();
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+    };
+    // console.log('data', remove);
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
@@ -95,6 +113,19 @@ const MasterCompanyContainer = () => {
             }
         }
         return remove.slice(startIndex, endIndex);
+    };
+
+    const handleDelete = () => {
+        // console.log(deleted);
+        deleted.forEach((item: any) => {
+            handleRemove(item);
+        });
+        const filter = remove.filter((item: any) => {
+            return !deleted.includes(item.id);
+        });
+        setRemove(filter);
+        setOnDelete(!onDelete);
+        setCheckedObj([]);
     };
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -121,6 +152,7 @@ const MasterCompanyContainer = () => {
             [...Array(remove.length)].forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, e.target.checked);
+
                 arr.push(idx + 1);
                 if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
                     form.setValue(datas, true);
@@ -398,8 +430,13 @@ const MasterCompanyContainer = () => {
                 )}
                 <Box sx={{ mt: isLoading ? '50px' : '20px' }}>
                     {isLoading ? (
-                        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <CircularProgress size={100} color='secondary' />
+                        <Box
+                            sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+                        >
+                            {/* <CircularProgress size={100} color='secondary' /> */}
+                            {[...Array(6)].map((item: any, index: number) => (
+                                <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                            ))}
                         </Box>
                     ) : (
                         <TableCompanies
@@ -420,6 +457,17 @@ const MasterCompanyContainer = () => {
                     />
                 </Box>
             </Box>
+            <DeleteDialog
+                form={form}
+                setIsChecked={setIsChecked}
+                setOnDelete={setOnDelete}
+                onDelete={onDelete}
+                handleDelete={handleDelete}
+                open={openDialog}
+                setOpen={setOpenDialog}
+                qty={checkedObj.length}
+                titleDialog='Are you sure remove this account ?'
+            />
         </Box>
     );
 };

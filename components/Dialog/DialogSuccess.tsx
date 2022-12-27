@@ -10,6 +10,7 @@ interface DialogSuccessProps {
 
 const DialogSuccess: React.FC<DialogSuccessProps> = ({ title, open, setOpen }) => {
     const handleClose = () => {
+        // window.location.reload();
         setOpen(false);
     };
 

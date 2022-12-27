@@ -105,11 +105,13 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     data: {
                         name: data.name,
                         email: data.email,
+                        code: data.code,
                         role_ids: roles.join(', ')
                     }
                 });
                 if (result.status === 200) {
                     notify('Create account successfully', 'success');
+
                     setIsLoading(false);
                     form.reset();
                     setRoles([]);
@@ -117,6 +119,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     setIsFilled(false);
                     setIsFilled1(false);
                     setIsRequired(false);
+                } else if (result.status === 422) {
+                    notify(`${result.data.message}`, 'error');
                 }
             } catch (error: any) {
                 notify(error.message, 'error');
@@ -144,7 +148,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
         }
     }, [accessArr, isFilled]);
 
-    console.log(form.watch('activeRole'));
+    // console.log(form.watch('activeRole'));
 
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>

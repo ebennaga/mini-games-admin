@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
     Box,
@@ -27,6 +28,8 @@ import {
     Select,
     TableHead,
     Switch
+    Skeleton,
+    CircularProgress
 } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -68,6 +71,7 @@ import { alpha, styled } from '@mui/material/styles';
 //     }
 // ];
 
+
 const ProductPrizes = () => {
     const PurpleSwitch = styled(Switch)(({ theme }) => ({
         '& .MuiSwitch-switchBase.Mui-checked': {
@@ -99,6 +103,9 @@ const ProductPrizes = () => {
     const handleChangeRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue((event.target as HTMLInputElement).value);
     };
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const [isLoadingRemove, setIsLoadingRemove] = React.useState<boolean>(false);
+
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const router = useRouter();
@@ -145,7 +152,7 @@ const ProductPrizes = () => {
         form.setValue('checkedAll', e.target.checked);
         if (e.target.checked) {
             filteredData.forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, e.target.checked);
                 temp.push(item);
             });
@@ -155,7 +162,7 @@ const ProductPrizes = () => {
             setCheckedObj([]);
             setRemoveData([]);
             filteredData.forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
             });
         }
@@ -191,7 +198,7 @@ const ProductPrizes = () => {
         if (!e.target.checked) {
             if (removeData.length > 0) {
                 const filter = removeData.filter((item: any) => {
-                    return id !== item;
+                    return id !== item.id;
                 });
                 setRemoveData(filter);
             } else {
@@ -200,43 +207,66 @@ const ProductPrizes = () => {
         }
     };
 
-    // const handleRemoveData = () => {
-    //     const res = filteredData.filter((item: any) => !removeData.includes(item));
-    //     setCheckedObj([]);
-    //     setFilteredData(res);
-    //     setRemoveData([]);
-    //     setOpenRemove(false);
-    //     setRow(res.length);
-    //     form.setValue('checkedAll', false);
-    //     filteredData.forEach((item: any, idx: number) => {
-    //         const datas: any = `checkbox${idx + 1}`;
-    //         form.setValue(datas, false);
-    //     });
-    // };
     const handleEditData = () => {
         router.push(`/settings/product-prizes/${removeData[0].id}/`);
     };
-    const handleRemoveData = async () => {
-        // setOpenDialogConfirm(false);
-        // setTotalChecked(0);
+
+    const handleFetchData = async () => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
-                endpoint: `/product-prizes/${router.query.id}`,
-                method: 'DELETE'
+                method: 'GET',
+                endpoint: '/product-prizes'
             });
-            if (response.status === 200) {
-                notify(response.data.message, 'success');
-                const res = filteredData.filter((item: any) => !removeData.includes(item));
+            if (response?.status === 200) {
+                const products = response.data?.data;
+                setFilteredData(products);
+                setRow(products.length.toString());
+                // notify(response?.data.message, 'success');
+                setIsLoading(false);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
+
+    const handleRemoveData = async () => {
+        setIsLoadingRemove(true);
+        try {
+            let errMessage = '';
+            await Promise.all(
+                removeData.map(async (value: any) => {
+                    const response = await fetchAPI({
+                        endpoint: `/product-prizes/${value.id}`,
+                        method: 'DELETE'
+                    });
+
+                    if (response.status !== 200) {
+                        errMessage = response.data.message;
+                    }
+                })
+            );
+
+            if (errMessage) {
+                notify(errMessage, 'error');
+            } else {
+                await handleFetchData();
                 setRemoveData([]);
                 setCheckedObj([]);
-                setRow(res.length);
                 form.setValue('checkedAll', false);
+                filteredData.forEach((item: any, idx: number) => {
+                    const datas: any = `checkbox${item.id}`;
+                    form.setValue(datas, false);
+                });
             }
         } catch (error: any) {
             notify(error.message, 'error');
         }
 
         setOpenRemove(false);
+        setIsLoadingRemove(false);
     };
 
     const handleDataSearch = (keyword: any) => {
@@ -263,18 +293,19 @@ const ProductPrizes = () => {
         }
     };
 
+
     React.useEffect(() => {
         handleFetchData();
         // setFilteredData(dummyData);
     }, []);
+
     React.useEffect(() => {
         setPages(Math.round(filteredData.length / Number(row)));
     }, [pages, row]);
 
     React.useEffect(() => {
-        // console.log(filteredData.length);
-        [...Array(filteredData.length)].forEach((item: any, idx: number) => {
-            checkBoxKeys.push(`checkbox${idx + 1}`);
+        filteredData.forEach((item: any, idx: number) => {
+            checkBoxKeys.push(`checkbox${item.id}`);
         });
         if (checkedObj.length > 0 || form.watch('checkedAll')) {
             setIsChecked(true);
@@ -329,17 +360,22 @@ const ProductPrizes = () => {
                 <DialogContent sx={{ m: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <DialogContentText id='alert-dialog-description'>{checkedObj.length} items selected</DialogContentText>
                 </DialogContent>
-                <DialogActions sx={{ m: 1 }}>
-                    <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
-                    <CustomButton
-                        title='CANCEL'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                        border='1px solid #A54CE5'
-                        height='47px'
-                        onClick={() => setOpenRemove(false)}
-                    />
-                </DialogActions>
+
+                {isLoadingRemove ? (
+                    <CircularProgress sx={{ margin: 'auto', color: '#a54ce5' }} />
+                ) : (
+                    <DialogActions sx={{ m: 1 }}>
+                        <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
+                        <CustomButton
+                            title='CANCEL'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            border='1px solid #A54CE5'
+                            height='47px'
+                            onClick={() => setOpenRemove(false)}
+                        />
+                    </DialogActions>
+                )}
             </Dialog>
             <Dialog
                 open={openFilter}
@@ -638,7 +674,8 @@ const ProductPrizes = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {getPaginatedData().length > 0 &&
+                            {!isLoading &&
+                                getPaginatedData().length > 0 &&
                                 getPaginatedData()
                                     // eslint-disable-next-line consistent-return, array-callback-return
                                     .filter((post: any) => {
@@ -661,11 +698,11 @@ const ProductPrizes = () => {
                                         }
                                     })
                                     .map((item: any, idx: number) => {
-                                        const check: any = `checkbox${idx + 1}`;
+                                        const check: any = `checkbox${item.id}`;
                                         return (
                                             <TableRow key={item.id}>
                                                 <TableCell align='center' sx={{ width: '5%' }}>
-                                                    {item.id}
+                                                    {idx + 1}
                                                 </TableCell>
                                                 <TableCell
                                                     sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -733,7 +770,7 @@ const ProductPrizes = () => {
                                                                     : { backgroundColor: '#D32F2F', borderRadius: '64px' }
                                                             }
                                                         >
-                                                            {item.is_active.toString()}
+                                                            {item.is_active ? 'Yes' : 'No'}
                                                         </Box>
                                                     </Box>
                                                 </TableCell>
@@ -742,7 +779,7 @@ const ProductPrizes = () => {
                                                         form={form}
                                                         name={`checkbox${item.id}`}
                                                         checked={!!form.watch(check)}
-                                                        onChange={(e: any) => handleSingleCheckBox(e, `checkbox${idx + 1}`, item.id)}
+                                                        onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
                                                     />
                                                 </TableCell>
                                             </TableRow>
@@ -750,6 +787,15 @@ const ProductPrizes = () => {
                                     })}
                         </TableBody>
                     </Table>
+                    {isLoading && (
+                        <Box
+                            sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+                        >
+                            {[...Array(6)].map((item: any, index: number) => (
+                                <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                            ))}
+                        </Box>
+                    )}
                 </TableContainer>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', fontSize: '12px', fontWeight: 400 }}>
                     <Typography>Rows per page</Typography>

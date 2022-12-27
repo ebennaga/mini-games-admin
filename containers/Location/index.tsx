@@ -179,10 +179,11 @@ const LocationContainer = () => {
                 </Paper>
 
                 {isLoading ? (
-                    <Box mt={4}>
-                        {[...Array(5)].map((_item: any, index: number) => {
-                            return <Skeleton key={index} sx={{ height: '90px' }} />;
-                        })}
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
                     </Box>
                 ) : (
                     <Box>

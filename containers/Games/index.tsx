@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import PaginationCard from 'components/PaginationCard';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
@@ -53,8 +53,10 @@ const Games = () => {
             if (response.status === 200) {
                 setData(response.data.data);
                 setListTable(response.data.data);
+                setIsLoading(false);
             } else {
                 notify(response.message, 'error');
+                setIsLoading(false);
             }
         } catch (err: any) {
             notify(err.message);
@@ -189,15 +191,25 @@ const Games = () => {
                 />
             </Box>
             <Box>
-                <TableGames
-                    isLoading={isLoading}
-                    namePage='page'
-                    nameRow='row'
-                    name='dataTable'
-                    form={form}
-                    onEdit={(id: number) => handleEdit(id)}
-                    handleOpenDeleteDialog={handleOpenDeleteDialog}
-                />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TableGames
+                        // isLoading={isLoading}
+                        namePage='page'
+                        nameRow='row'
+                        name='dataTable'
+                        form={form}
+                        onEdit={(id: number) => handleEdit(id)}
+                        handleOpenDeleteDialog={handleOpenDeleteDialog}
+                    />
+                )}
+
                 <PaginationCard
                     totalItem={form.watch('dataTable').length}
                     handlePrev={handlePrev}

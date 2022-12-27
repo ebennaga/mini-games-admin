@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import BadgeSelected from 'components/BadgeSelected';
@@ -95,6 +95,7 @@ const ParticipantTournament = () => {
     const [isDialogFilter, setIsDialogFilter] = React.useState<boolean>(false);
     const [openDialogConfirm, setOpenDialogConfirm] = React.useState<boolean>(false);
     const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [query, setQuery] = React.useState('');
     const [filteredData, setFilteredData] = React.useState<any>([]);
@@ -313,6 +314,14 @@ const ParticipantTournament = () => {
     const handleDialog = (value: boolean) => {
         setIsDialogFilter(value);
     };
+
+    React.useEffect(() => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 2000);
+    }, []);
+
     return (
         <Box>
             <TitleCard
@@ -346,7 +355,16 @@ const ParticipantTournament = () => {
                 </Box>
             ) : null}
             <Box mt={5}>
-                <TableParticipant name='dataTable' form={form} nameIdxAppears='idxAppears' />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TableParticipant name='dataTable' form={form} nameIdxAppears='idxAppears' />
+                )}
             </Box>
             <PaginationCard
                 totalItem={filteredData.length}

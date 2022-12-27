@@ -24,7 +24,8 @@ import {
     TableCell,
     TableBody,
     Select,
-    SelectChangeEvent
+    SelectChangeEvent,
+    Skeleton
 } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import CustomButton from 'components/Button';
@@ -273,9 +274,9 @@ const Banner = () => {
         setQuery(keyword);
     };
 
-    if (isLoading) {
-        return <LoadingExchangeRates />;
-    }
+    // if (isLoading) {
+    //     return <LoadingExchangeRates />;
+    // }
 
     return (
         <Box component='section'>
@@ -339,155 +340,165 @@ const Banner = () => {
                 </Box>
             )}
             <Box sx={{ mt: '20px' }}>
-                <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
-                    <Table sx={{ width: '100%' }}>
-                        <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
-                            <TableRow>
-                                <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
-                                <TableCell
-                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                    align='center'
-                                >
-                                    Title
-                                </TableCell>
-                                <TableCell
-                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                    align='center'
-                                >
-                                    Images
-                                </TableCell>
-                                <TableCell
-                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                    align='center'
-                                >
-                                    Description
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    Show to
-                                </TableCell>
-                                <TableCell
-                                    sx={{
-                                        borderLeft: '1px solid #E0E0E0',
-                                        borderRight: '1px solid #E0E0E0',
-                                        fontWeight: 'bold'
-                                    }}
-                                    align='center'
-                                >
-                                    Is Active
-                                </TableCell>
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
+                        <Table sx={{ width: '100%' }}>
+                            <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
+                                <TableRow>
+                                    <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
+                                    <TableCell
+                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                        align='center'
+                                    >
+                                        Title
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                        align='center'
+                                    >
+                                        Images
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                        align='center'
+                                    >
+                                        Description
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Show to
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{
+                                            borderLeft: '1px solid #E0E0E0',
+                                            borderRight: '1px solid #E0E0E0',
+                                            fontWeight: 'bold'
+                                        }}
+                                        align='center'
+                                    >
+                                        Is Active
+                                    </TableCell>
 
-                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                    <FormControlLabel
-                                        control={
-                                            <CheckboxController
-                                                name='action'
-                                                form={form}
-                                                onChange={handleCheckBoxAll}
-                                                checked={form.watch('checkedAll')}
-                                                disabled={filteredData.length === 0}
-                                            />
-                                        }
-                                        label='Action'
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {dataBanner.length > 0 &&
-                                dataBanner // eslint-disable-next-line consistent-return, array-callback-return
-                                    .filter((post: any) => {
-                                        if (query === '') {
-                                            return post;
-                                        }
-                                        if (
-                                            post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
-                                            post?.image_url?.toLowerCase()?.includes(query.toLowerCase()) ||
-                                            post?.link?.toLowerCase()?.includes(query.toLowerCase()) ||
-                                            post.title.toLowerCase().includes(query.toLowerCase())
-                                        ) {
-                                            return post;
-                                        }
-                                    })
-                                    .map((item: any) => {
-                                        const check: any = `checkbox${item.id}`;
+                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                        <FormControlLabel
+                                            control={
+                                                <CheckboxController
+                                                    name='action'
+                                                    form={form}
+                                                    onChange={handleCheckBoxAll}
+                                                    checked={form.watch('checkedAll')}
+                                                    disabled={filteredData.length === 0}
+                                                />
+                                            }
+                                            label='Action'
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {dataBanner.length > 0 &&
+                                    dataBanner // eslint-disable-next-line consistent-return, array-callback-return
+                                        .filter((post: any) => {
+                                            if (query === '') {
+                                                return post;
+                                            }
+                                            if (
+                                                post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
+                                                post?.image_url?.toLowerCase()?.includes(query.toLowerCase()) ||
+                                                post?.link?.toLowerCase()?.includes(query.toLowerCase()) ||
+                                                post.title.toLowerCase().includes(query.toLowerCase())
+                                            ) {
+                                                return post;
+                                            }
+                                        })
+                                        .map((item: any) => {
+                                            const check: any = `checkbox${item.id}`;
 
-                                        return (
-                                            <TableRow key={item.id}>
-                                                <TableCell align='center' sx={{ width: '5%' }}>
-                                                    {item.id}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.title}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.image_url}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.desc}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    {item.link}
-                                                </TableCell>
-                                                <TableCell
-                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                    align='center'
-                                                >
-                                                    <Box sx={{ color: 'white', display: 'flex', justifyContent: 'center' }}>
-                                                        <Box
-                                                            sx={
-                                                                item.is_active === 'Yes'
-                                                                    ? {
-                                                                          backgroundColor: '#A54CE5',
-                                                                          borderRadius: '64px',
-                                                                          width: '33px',
-                                                                          height: '20px'
-                                                                      }
-                                                                    : {
-                                                                          backgroundColor: '#D32F2F',
-                                                                          borderRadius: '64px',
-                                                                          width: '33px',
-                                                                          height: '20px'
-                                                                      }
-                                                            }
-                                                        >
-                                                            {item.is_active ? 'Yes' : 'No'}
+                                            return (
+                                                <TableRow key={item.id}>
+                                                    <TableCell align='center' sx={{ width: '5%' }}>
+                                                        {item.id}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.title}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.image_url}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.desc}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        {item.link}
+                                                    </TableCell>
+                                                    <TableCell
+                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                        align='center'
+                                                    >
+                                                        <Box sx={{ color: 'white', display: 'flex', justifyContent: 'center' }}>
+                                                            <Box
+                                                                sx={
+                                                                    item.is_active === 'Yes'
+                                                                        ? {
+                                                                              backgroundColor: '#A54CE5',
+                                                                              borderRadius: '64px',
+                                                                              width: '33px',
+                                                                              height: '20px'
+                                                                          }
+                                                                        : {
+                                                                              backgroundColor: '#D32F2F',
+                                                                              borderRadius: '64px',
+                                                                              width: '33px',
+                                                                              height: '20px'
+                                                                          }
+                                                                }
+                                                            >
+                                                                {item.is_active ? 'Yes' : 'No'}
+                                                            </Box>
                                                         </Box>
-                                                    </Box>
-                                                </TableCell>
+                                                    </TableCell>
 
-                                                <TableCell align='center' sx={{ width: '10%', fontWeight: 'bold' }}>
-                                                    <CheckboxController
-                                                        form={form}
-                                                        name={`checkbox${item.id}`}
-                                                        checked={!!form.watch(check)}
-                                                        onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                                    <TableCell align='center' sx={{ width: '10%', fontWeight: 'bold' }}>
+                                                        <CheckboxController
+                                                            form={form}
+                                                            name={`checkbox${item.id}`}
+                                                            checked={!!form.watch(check)}
+                                                            onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
+
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', fontSize: '12px', fontWeight: 400 }}>
                     <Typography>Rows per page</Typography>
                     <FormControl>

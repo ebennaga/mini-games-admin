@@ -1,4 +1,5 @@
-import { Box, ButtonBase, IconButton } from '@mui/material';
+/* eslint-disable no-unused-vars */
+import { Box, ButtonBase, IconButton, Skeleton } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import InputSearch from 'components/Input/InputSearch';
 import React from 'react';
@@ -8,47 +9,55 @@ import BadgeSelected from 'components/BadgeSelected';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import DialogSuccess from 'components/Dialog/DialogSuccess';
 import PaginationCard from 'components/PaginationCard';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import FilterPlayerAccount from './FilterPlayerAccount';
 import TablePlayerAccount from './TablePlayerAccount';
 
 const PlayerAccount = () => {
-    const dummyData = [
-        {
-            id: 5,
-            username: 'master',
-            name: 'Rinto',
-            email: 'masterrinto@mail.com',
-            google_id: 'googleidnih1234',
-            coin: 1000,
-            point: 500,
-            is_active: true
-        },
-        {
-            id: 9,
-            username: 'jawir',
-            name: 'Otnir',
-            email: 'jawirotnir@mail.com',
-            google_id: 'googleidjawir1234',
-            coin: 800,
-            point: 400,
-            is_active: false
-        },
-        {
-            id: 11,
-            username: 'okeoke',
-            name: 'Rintoke',
-            email: 'okerinto@mail.com',
-            google_id: 'googleid1234oke',
-            coin: 2000,
-            point: 100,
-            is_active: true
-        }
-    ];
+    // const dummyData = [
+    //     {
+    //         id: 5,
+    //         username: 'master',
+    //         name: 'Rinto',
+    //         email: 'masterrinto@mail.com',
+    //         google_id: 'googleidnih1234',
+    //         coin: 1000,
+    //         point: 500,
+    //         is_active: true
+    //     },
+    //     {
+    //         id: 9,
+    //         username: 'jawir',
+    //         name: 'Otnir',
+    //         email: 'jawirotnir@mail.com',
+    //         google_id: 'googleidjawir1234',
+    //         coin: 800,
+    //         point: 400,
+    //         is_active: false
+    //     },
+    //     {
+    //         id: 11,
+    //         username: 'okeoke',
+    //         name: 'Rintoke',
+    //         email: 'okerinto@mail.com',
+    //         google_id: 'googleid1234oke',
+    //         coin: 2000,
+    //         point: 100,
+    //         is_active: true
+    //     }
+    // ];
 
     const [openFilter, setOpenFilter] = React.useState<boolean>(false);
     const [dialogSuccessDel, setDialogSuccessDel] = React.useState<boolean>(false);
     const [dialogBanAccount, setDialogBanAccount] = React.useState<boolean>(false);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
+    const [idPlayer, setIdPlayer] = React.useState<any>([]);
+    const [listTable, setListTable] = React.useState<any>([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [loadingBan, setLoadingBan] = React.useState(false);
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
 
     const form = useForm({
         mode: 'all',
@@ -57,17 +66,53 @@ const PlayerAccount = () => {
             row: 5,
             page: 1,
             filterActive: false,
-            dataTable: dummyData,
+            dataTable: listTable,
             idxAppears: { startIndex: 0, endIndex: 5 }
         }
     });
+
+    const handleFecthData = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: `accounts/players`
+            });
+
+            if (response.status === 200) {
+                notify(response.data.message, 'success');
+                form.setValue('dataTable', response.data.data);
+                setListTable(response.data.data);
+                setIsLoading(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+    };
 
     const formDataTable = form.watch('dataTable');
 
     // Event Remove Item
     const handleBanAccount = async () => {
-        setDialogBanAccount(false);
-        setDialogSuccessDel(true);
+        // setIsLoading(true);
+        setLoadingBan(true);
+        try {
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `accounts/${idPlayer}/ban`
+            });
+
+            if (response.status === 200) {
+                setDialogSuccessDel(true);
+                setDialogBanAccount(false);
+                notify(response.data.message, 'success');
+                setLoadingBan(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setLoadingBan(false);
+        }
     };
 
     // Event Next page
@@ -101,7 +146,7 @@ const PlayerAccount = () => {
 
     // Event filter by is_active
     const handleFilter = () => {
-        form.setValue('dataTable', dummyData);
+        form.setValue('dataTable', listTable);
         const { filterActive, dataTable } = form.watch();
         const filterResult = dataTable.filter((item: any) => {
             if (filterActive) {
@@ -115,7 +160,7 @@ const PlayerAccount = () => {
 
     // Event Reset filter
     const handleResetFilter = () => {
-        form.setValue('dataTable', dummyData);
+        form.setValue('dataTable', listTable);
         setOpenFilter(false);
     };
 
@@ -138,6 +183,9 @@ const PlayerAccount = () => {
         hiddenElement.click();
     };
 
+    React.useEffect(() => {
+        handleFecthData();
+    }, []);
     // Read total of checked items
     React.useEffect(() => {
         const data = form.watch('dataTable');
@@ -162,10 +210,9 @@ const PlayerAccount = () => {
 
             form.setValue('dataTable', searchResult);
         } else {
-            form.setValue('dataTable', dummyData);
+            form.setValue('dataTable', listTable);
         }
     }, [form.watch('search')]);
-
     return (
         <Box>
             <HeaderChildren title='Player Account' subTitle='Additional description if required'>
@@ -200,7 +247,23 @@ const PlayerAccount = () => {
                 </Box>
             ) : null}
             <Box mt='30px'>
-                <TablePlayerAccount form={form} name='dataTable' nameIdxAppears='idxAppears' />
+                {isLoading ? (
+                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                        {/* <CircularProgress size={100} color='secondary' /> */}
+                        {[...Array(6)].map((item: any, index: number) => (
+                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                        ))}
+                    </Box>
+                ) : (
+                    <TablePlayerAccount
+                        idPlayer={idPlayer}
+                        setIdPlayer={setIdPlayer}
+                        form={form}
+                        name='dataTable'
+                        nameIdxAppears='idxAppears'
+                    />
+                )}
+
                 <PaginationCard
                     totalItem={formDataTable.length}
                     handlePrev={handlePrev}
@@ -218,6 +281,7 @@ const PlayerAccount = () => {
                 setOpen={setDialogBanAccount}
                 textConfirmButton='REMOVE'
                 textCancelButton='CANCEL'
+                loading={loadingBan}
             />
             <DialogSuccess title='Success Remove Account' open={dialogSuccessDel} setOpen={setDialogSuccessDel} />
         </Box>
