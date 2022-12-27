@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
     Box,
@@ -26,7 +27,8 @@ import {
     SelectChangeEvent,
     Select,
     TableHead,
-    Skeleton
+    Skeleton,
+    CircularProgress
 } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -41,37 +43,9 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
 
-// const dummyData = [
-//     {
-//         id: '1',
-//         code: 'PC0001',
-//         name: 'Mousepad Logitech',
-//         category: 'Accessories',
-//         uom: 'Pcs',
-//         qty: '5',
-//         img1: 'https://drivegoogle/image acc_001-2022.Jpeg',
-//         img2: 'https://drivegoogle/image acc_002-2022.Jpeg',
-//         img3: 'https://drivegoogle/image acc_003-2022.Jpeg',
-//         isActive: 'No'
-//     },
-//     {
-//         id: '2',
-//         code: 'PC0002',
-//         name: 'Mousepad Logitech',
-//         category: 'Accessories',
-//         uom: 'Pcs',
-//         qty: '5',
-//         img1: 'https://drivegoogle/image acc_001-2022.Jpeg',
-//         img2: 'https://drivegoogle/image acc_002-2022.Jpeg',
-//         img3: 'https://drivegoogle/image acc_003-2022.Jpeg',
-//         is_active: 'Yes'
-//     }
-// ];
-
 const ProductPrizes = () => {
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
-    const [isLoading, setIsLoading] = React.useState(false);
     const [category, setCategory] = React.useState('1');
     const [query, setQuery] = React.useState('');
     const [row, setRow] = React.useState('0');
@@ -82,6 +56,9 @@ const ProductPrizes = () => {
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
     const checkBoxKeys: string[] = [];
     const [removeData, setRemoveData] = React.useState<any>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const [isLoadingRemove, setIsLoadingRemove] = React.useState<boolean>(false);
+
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const router = useRouter();
@@ -128,7 +105,7 @@ const ProductPrizes = () => {
         form.setValue('checkedAll', e.target.checked);
         if (e.target.checked) {
             filteredData.forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, e.target.checked);
                 temp.push(item);
             });
@@ -138,7 +115,7 @@ const ProductPrizes = () => {
             setCheckedObj([]);
             setRemoveData([]);
             filteredData.forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
             });
         }
@@ -174,7 +151,7 @@ const ProductPrizes = () => {
         if (!e.target.checked) {
             if (removeData.length > 0) {
                 const filter = removeData.filter((item: any) => {
-                    return id !== item;
+                    return id !== item.id;
                 });
                 setRemoveData(filter);
             } else {
@@ -183,49 +160,10 @@ const ProductPrizes = () => {
         }
     };
 
-    // const handleRemoveData = () => {
-    //     const res = filteredData.filter((item: any) => !removeData.includes(item));
-    //     setCheckedObj([]);
-    //     setFilteredData(res);
-    //     setRemoveData([]);
-    //     setOpenRemove(false);
-    //     setRow(res.length);
-    //     form.setValue('checkedAll', false);
-    //     filteredData.forEach((item: any, idx: number) => {
-    //         const datas: any = `checkbox${idx + 1}`;
-    //         form.setValue(datas, false);
-    //     });
-    // };
     const handleEditData = () => {
         router.push(`/settings/product-prizes/${removeData[0].id}/`);
     };
-    const handleRemoveData = async () => {
-        // setOpenDialogConfirm(false);
-        // setTotalChecked(0);
 
-        try {
-            const response = await fetchAPI({
-                endpoint: `/product-prizes/${router.query.id}`,
-                method: 'DELETE'
-            });
-            if (response.status === 200) {
-                notify(response.data.message, 'success');
-                const res = filteredData.filter((item: any) => !removeData.includes(item));
-                setRemoveData([]);
-                setCheckedObj([]);
-                setRow(res.length);
-                form.setValue('checkedAll', false);
-            }
-        } catch (error: any) {
-            notify(error.message, 'error');
-        }
-
-        setOpenRemove(false);
-    };
-
-    const handleDataSearch = (keyword: any) => {
-        setQuery(keyword);
-    };
     const handleFetchData = async () => {
         setIsLoading(true);
         try {
@@ -244,23 +182,62 @@ const ProductPrizes = () => {
             notify(error.message, 'error');
             setIsLoading(false);
         }
+        setIsLoading(false);
     };
+
+    const handleRemoveData = async () => {
+        setIsLoadingRemove(true);
+        try {
+            let errMessage = '';
+            await Promise.all(
+                removeData.map(async (value: any) => {
+                    const response = await fetchAPI({
+                        endpoint: `/product-prizes/${value.id}`,
+                        method: 'DELETE'
+                    });
+
+                    if (response.status !== 200) {
+                        errMessage = response.data.message;
+                    }
+                })
+            );
+
+            if (errMessage) {
+                notify(errMessage, 'error');
+            } else {
+                await handleFetchData();
+                setRemoveData([]);
+                setCheckedObj([]);
+                form.setValue('checkedAll', false);
+                filteredData.forEach((item: any, idx: number) => {
+                    const datas: any = `checkbox${item.id}`;
+                    form.setValue(datas, false);
+                });
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+
+        setOpenRemove(false);
+        setIsLoadingRemove(false);
+    };
+
+    const handleDataSearch = (keyword: any) => {
+        setQuery(keyword);
+    };
+
     React.useEffect(() => {
         handleFetchData();
         // setFilteredData(dummyData);
     }, []);
 
-    // React.useEffect(() => {
-    //     console.log(removeData);
-    // }, [removeData]);
     React.useEffect(() => {
         setPages(Math.round(filteredData.length / Number(row)));
     }, [pages, row]);
 
     React.useEffect(() => {
-        // console.log(filteredData.length);
-        [...Array(filteredData.length)].forEach((item: any, idx: number) => {
-            checkBoxKeys.push(`checkbox${idx + 1}`);
+        filteredData.forEach((item: any, idx: number) => {
+            checkBoxKeys.push(`checkbox${item.id}`);
         });
         if (checkedObj.length > 0 || form.watch('checkedAll')) {
             setIsChecked(true);
@@ -282,17 +259,22 @@ const ProductPrizes = () => {
                 <DialogContent sx={{ m: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <DialogContentText id='alert-dialog-description'>{checkedObj.length} items selected</DialogContentText>
                 </DialogContent>
-                <DialogActions sx={{ m: 1 }}>
-                    <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
-                    <CustomButton
-                        title='CANCEL'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                        border='1px solid #A54CE5'
-                        height='47px'
-                        onClick={() => setOpenRemove(false)}
-                    />
-                </DialogActions>
+
+                {isLoadingRemove ? (
+                    <CircularProgress sx={{ margin: 'auto', color: '#a54ce5' }} />
+                ) : (
+                    <DialogActions sx={{ m: 1 }}>
+                        <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
+                        <CustomButton
+                            title='CANCEL'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            border='1px solid #A54CE5'
+                            height='47px'
+                            onClick={() => setOpenRemove(false)}
+                        />
+                    </DialogActions>
+                )}
             </Dialog>
             <Dialog
                 open={openFilter}
@@ -451,234 +433,234 @@ const ProductPrizes = () => {
                 </Box>
             )}
             <Box sx={{ mt: '20px' }}>
-                {isLoading ? (
-                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-                        {/* <CircularProgress size={100} color='secondary' /> */}
-                        {[...Array(6)].map((item: any, index: number) => (
-                            <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
-                        ))}
-                    </Box>
-                ) : (
-                    <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
-                        <Table sx={{ width: '100%' }}>
-                            <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
-                                <TableRow>
-                                    <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='center'
-                                    >
-                                        Product Code
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='center'
-                                    >
-                                        Product Name
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
-                                        align='center'
-                                    >
-                                        Product Category
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        UOM
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Qty
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Image 1
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Image 2
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Image 3
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Expired Date
-                                    </TableCell>
-                                    <TableCell
-                                        sx={{
-                                            borderLeft: '1px solid #E0E0E0',
-                                            borderRight: '1px solid #E0E0E0',
-                                            fontWeight: 'bold'
-                                        }}
-                                        align='center'
-                                    >
-                                        Is Active
-                                    </TableCell>
-                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                        <FormControlLabel
-                                            control={
-                                                <CheckboxController
-                                                    name='action'
-                                                    form={form}
-                                                    onChange={handleCheckBoxAll}
-                                                    checked={form.watch('checkedAll')}
-                                                    disabled={filteredData.length === 0}
-                                                />
-                                            }
-                                            label='Action'
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {getPaginatedData().length > 0 &&
-                                    getPaginatedData()
-                                        // eslint-disable-next-line consistent-return, array-callback-return
-                                        .filter((post: any) => {
-                                            if (query === '') {
-                                                return post;
-                                            }
-                                            if (
-                                                post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
-                                                post.code.toLowerCase().includes(query.toLowerCase()) ||
-                                                post.name.toLowerCase().includes(query.toLowerCase()) ||
-                                                post.category.toLowerCase().includes(query.toLowerCase()) ||
-                                                post.uom.toLowerCase().includes(query.toLowerCase())
-                                            ) {
-                                                return post;
-                                            }
-                                        })
-                                        .map((item: any, idx: number) => {
-                                            const check: any = `checkbox${idx + 1}`;
-                                            return (
-                                                <TableRow key={item.id}>
-                                                    <TableCell align='center' sx={{ width: '5%' }}>
-                                                        {item.id}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.code}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.name}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.category}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.uom}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.qty}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.image_url_1}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.image_url_2}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.image_url_3}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.expired_at}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        <Box sx={{ color: 'white' }}>
-                                                            <Box
-                                                                sx={
-                                                                    item.is_active === true
-                                                                        ? { backgroundColor: '#A54CE5', borderRadius: '64px' }
-                                                                        : { backgroundColor: '#D32F2F', borderRadius: '64px' }
-                                                                }
-                                                            >
-                                                                {item.is_active.toString()}
-                                                            </Box>
+                <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
+                    <Table sx={{ width: '100%' }}>
+                        <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
+                            <TableRow>
+                                <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>No.</TableCell>
+                                <TableCell
+                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                    align='center'
+                                >
+                                    Product Code
+                                </TableCell>
+                                <TableCell
+                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                    align='center'
+                                >
+                                    Product Name
+                                </TableCell>
+                                <TableCell
+                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0', fontWeight: 'bold' }}
+                                    align='center'
+                                >
+                                    Product Category
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    UOM
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Qty
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Image 1
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Image 2
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Image 3
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Expired Date
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Is Active
+                                </TableCell>
+                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                    <FormControlLabel
+                                        control={
+                                            <CheckboxController
+                                                name='action'
+                                                form={form}
+                                                onChange={handleCheckBoxAll}
+                                                checked={form.watch('checkedAll')}
+                                                disabled={filteredData.length === 0}
+                                            />
+                                        }
+                                        label='Action'
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {!isLoading &&
+                                getPaginatedData().length > 0 &&
+                                getPaginatedData()
+                                    // eslint-disable-next-line consistent-return, array-callback-return
+                                    .filter((post: any) => {
+                                        if (query === '') {
+                                            return post;
+                                        }
+                                        if (
+                                            post.id.toString().toLowerCase().includes(query.toLowerCase()) ||
+                                            post.code.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.name.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.category.toLowerCase().includes(query.toLowerCase()) ||
+                                            post.uom.toLowerCase().includes(query.toLowerCase())
+                                        ) {
+                                            return post;
+                                        }
+                                    })
+                                    .map((item: any, idx: number) => {
+                                        const check: any = `checkbox${item.id}`;
+                                        return (
+                                            <TableRow key={item.id}>
+                                                <TableCell align='center' sx={{ width: '5%' }}>
+                                                    {idx + 1}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.code}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.name}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.category}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.uom}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.qty}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.image_url_1}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.image_url_2}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.image_url_3}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    {item.expired_at}
+                                                </TableCell>
+                                                <TableCell
+                                                    sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                    align='center'
+                                                >
+                                                    <Box sx={{ color: 'white' }}>
+                                                        <Box
+                                                            sx={
+                                                                item.is_active === true
+                                                                    ? { backgroundColor: '#A54CE5', borderRadius: '64px' }
+                                                                    : { backgroundColor: '#D32F2F', borderRadius: '64px' }
+                                                            }
+                                                        >
+                                                            {item.is_active ? 'Yes' : 'No'}
                                                         </Box>
-                                                    </TableCell>
-                                                    <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
-                                                        <CheckboxController
-                                                            form={form}
-                                                            name={`checkbox${item.id}`}
-                                                            checked={!!form.watch(check)}
-                                                            onChange={(e: any) => handleSingleCheckBox(e, `checkbox${idx + 1}`, item.id)}
-                                                        />
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                )}
-
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
+                                                    <CheckboxController
+                                                        form={form}
+                                                        name={`checkbox${item.id}`}
+                                                        checked={!!form.watch(check)}
+                                                        onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                        </TableBody>
+                    </Table>
+                    {isLoading && (
+                        <Box
+                            sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+                        >
+                            {[...Array(6)].map((item: any, index: number) => (
+                                <Skeleton variant='rounded' width='100%' height='60px' key={index} sx={{ mt: '15px' }} />
+                            ))}
+                        </Box>
+                    )}
+                </TableContainer>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end', fontSize: '12px', fontWeight: 400 }}>
                     <Typography>Rows per page</Typography>
                     <FormControl>
