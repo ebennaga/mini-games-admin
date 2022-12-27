@@ -23,9 +23,6 @@ const EditCompanyContainer = () => {
     const [isLoading, setIsLoading] = React.useState(false);
 
     const handleSubmitData = async (d: any) => {
-        // console.log(d);
-        // setIsLoading(true);
-        // console.log('s : ', d);
         try {
             const result = await fetchAPI({
                 endpoint: 'companies',
