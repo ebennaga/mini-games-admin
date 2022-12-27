@@ -19,7 +19,7 @@ import {
     ButtonBase,
     Skeleton
 } from '@mui/material';
-import useNotify from 'hooks/useNotify';
+// import useNotify from 'hooks/useNotify';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputSearch from 'components/Input/InputSearch';
 import React, { useEffect, useState } from 'react';
@@ -28,7 +28,7 @@ import { FilterList, ArrowBackIos, ArrowForwardIos, Close, Edit, Delete } from '
 import CustomButton from 'components/Button';
 import CheckboxController from 'components/Checkbox';
 import { useRouter } from 'next/router';
-import useAPICaller from 'hooks/useAPICaller';
+// import useAPICaller from 'hooks/useAPICaller';
 import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
@@ -55,9 +55,9 @@ const AccountContainer = () => {
             checkAll: false
         }
     });
-    const { fetchAPI } = useAPICaller();
+    // const { fetchAPI } = useAPICaller();
     const router = useRouter();
-    const notify = useNotify();
+    // const notify = useNotify();
     const [openDialog, setOpenDialog] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
@@ -78,27 +78,27 @@ const AccountContainer = () => {
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
 
-    const fetchAccountData = async () => {
-        setIsLoading(true);
-        try {
-            const result = await fetchAPI({
-                endpoint: `accounts?search=${form.watch('search')}`,
-                method: 'GET'
-            });
-            // console.log(result?.data.data);
-            if (result.status === 200) {
-                const totalFilter = result.data.data;
-                const filter = totalFilter.filter((item: any) => item.name !== null);
-                // console.log('totalfilter', filter);
-                setRemove(filter);
-            }
-            setIsLoading(false);
-        } catch (error: any) {
-            notify(error.message, 'error');
-            setIsLoading(false);
-        }
-        setIsLoading(false);
-    };
+    // const fetchAccountData = async () => {
+    //     setIsLoading(true);
+    //     try {
+    //         const result = await fetchAPI({
+    //             endpoint: `accounts?search=${form.watch('search')}`,
+    //             method: 'GET'
+    //         });
+    //         // console.log(result?.data.data);
+    //         if (result.status === 200) {
+    //             const totalFilter = result.data.data;
+    //             const filter = totalFilter.filter((item: any) => item.name !== null);
+    //             // console.log('totalfilter', filter);
+    //             setRemove(filter);
+    //         }
+    //         setIsLoading(false);
+    //     } catch (error: any) {
+    //         notify(error.message, 'error');
+    //         setIsLoading(false);
+    //     }
+    //     setIsLoading(false);
+    // };
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -222,13 +222,17 @@ const AccountContainer = () => {
         // setIsChecked(false);
     };
 
-    // useEffect(() => {
-    //     setRemove(dummy);
-    // }, []);
-
     useEffect(() => {
-        fetchAccountData();
+        setRemove(dummy);
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 2000);
     }, []);
+
+    // useEffect(() => {
+    //     fetchAccountData();
+    // }, []);
 
     useEffect(() => {
         setPages(Math.ceil(remove.length / Number(row)));
