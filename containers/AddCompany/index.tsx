@@ -30,14 +30,15 @@ const EditCompanyContainer = () => {
                 method: 'POST',
                 data: {
                     name: d.name,
-                    email: d.code,
+                    code: d.code,
                     is_active: d.is_active
                 }
             });
             if (result.status === 200) {
-                notify('Add company successfully', 'success');
+                notify(result.data.message, 'success');
                 setIsLoading(false);
                 form.reset();
+                router.push('/settings/company');
             }
         } catch (error: any) {
             notify(error.message, 'error');
