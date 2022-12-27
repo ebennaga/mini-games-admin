@@ -32,7 +32,7 @@ const InputImage: React.FC<InputImageProps> = ({
     isImage = false
 }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
-    const [isImg, setIsImg] = React.useState<boolean>(false);
+    const [isImg, setIsImg] = React.useState<boolean>(true);
     const {
         formState: { errors }
     } = form;
@@ -42,6 +42,7 @@ const InputImage: React.FC<InputImageProps> = ({
     const errText = !form.watch(name) && errType === 'required' ? 'must be filled' : '';
 
     const valueInput: any = form.watch(name);
+    // const valueSrc: any = form.watch('imageInput');
     const handleChange = (e: any) => {
         const file: any = e.target.files[0].size;
         const { type } = e.target.files[0];
@@ -64,6 +65,7 @@ const InputImage: React.FC<InputImageProps> = ({
             if (type.split('/')[0] === 'image') {
                 reader.onload = () => {
                     const output: any = document.getElementById('preview');
+                    // console.log(output);
                     output.src = reader.result;
                 };
             }
@@ -72,7 +74,6 @@ const InputImage: React.FC<InputImageProps> = ({
     };
 
     const handleClear = () => form.setValue(name, '');
-
     return (
         <Box>
             {isLoading ? (
@@ -105,7 +106,7 @@ const InputImage: React.FC<InputImageProps> = ({
                                     <UploadFileIcon sx={{ color: '#A54CE5' }} />
                                 </Box>
                                 <Box sx={{ display: !isImg && isImage ? 'flex' : '', alignItems: 'center', width: '100%' }}>
-                                    <Typography component='p' fontSize='16px' sx={{ color: !isImg && isImage ? 'red' : 'rgba(0,0,0,0.8)' }}>
+                                    <Typography component='p' fontSize='15px' sx={{ color: !isImg && isImage ? 'red' : 'rgba(0,0,0,0.8)' }}>
                                         {!isImg && isImage ? 'File must be an image ' : valueInput.name || valueInput}
                                     </Typography>
                                     <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.5)' }}>
