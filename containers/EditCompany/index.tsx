@@ -35,6 +35,7 @@ const EditCompanyContainer = () => {
                 form.setValue('code', result.data.data.code);
                 form.setValue('active', result.data.data.is_active);
             }
+
             setIsLoading(false);
         } catch (error: any) {
             notify(error.message, 'error');
