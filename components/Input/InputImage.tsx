@@ -32,7 +32,7 @@ const InputImage: React.FC<InputImageProps> = ({
     isImage = false
 }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
-    const [isImg, setIsImg] = React.useState<boolean>(false);
+    // const [isImg, setIsImg] = React.useState<boolean>(false);
     const {
         formState: { errors }
     } = form;
@@ -45,16 +45,16 @@ const InputImage: React.FC<InputImageProps> = ({
     const handleChange = (e: any) => {
         const file: any = e.target.files[0].size;
         const { type } = e.target.files[0];
-        if (type.split('/')[0] !== 'image') {
-            setIsImg(false);
-        } else {
-            setIsImg(true);
-        }
+        // if (type.split('/')[0] !== 'image') {
+        //     setIsImg(false);
+        // } else {
+        //     setIsImg(true);
+        // }
 
         const sizeInKB = Math.ceil(file / 1024);
-        if (type.split('/')[0] !== 'image') {
-            setErrMessage('File must be an Image!');
-        }
+        // if (type.split('/')[0] !== 'image') {
+        //     setErrMessage('File must be an Image!');
+        // }
         if (sizeInKB > 3072) {
             setErrMessage('File image is to large! Image must be under 3072Kb!');
         } else {
@@ -83,10 +83,10 @@ const InputImage: React.FC<InputImageProps> = ({
                         container
                         sx={{
                             my: '10px',
-                            border: !isImg && isImage ? '1px dashed red' : '',
-                            background: !isImg && isImage ? 'rgba(165, 76, 229, 0.1)' : '',
+                            border: !isImage ? '1px dashed red' : '',
+                            background: !isImage ? 'rgba(165, 76, 229, 0.1)' : '',
                             padding: '15px 10px'
-                            // height: !isImg && isImage ? '270px' : ''
+                            // height:  isImage ? '270px' : ''
                         }}
                     >
                         <Grid container item xs={12} alignItems='center'>
@@ -104,14 +104,12 @@ const InputImage: React.FC<InputImageProps> = ({
                                 >
                                     <UploadFileIcon sx={{ color: '#A54CE5' }} />
                                 </Box>
-                                <Box sx={{ display: !isImg && isImage ? 'flex' : '', alignItems: 'center', width: '100%' }}>
-                                    <Typography component='p' fontSize='16px' sx={{ color: !isImg && isImage ? 'red' : 'rgba(0,0,0,0.8)' }}>
-                                        {!isImg && isImage ? 'File must be an image ' : valueInput.name || valueInput}
+                                <Box sx={{ display: isImage ? 'flex' : '', alignItems: 'center', width: '100%' }}>
+                                    <Typography component='p' fontSize='16px' sx={{ color: !isImage ? 'red' : 'rgba(0,0,0,0.8)' }}>
+                                        {!isImage ? 'File must be an image ' : valueInput.name || valueInput}
                                     </Typography>
                                     <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.5)' }}>
-                                        {!isImg && isImage
-                                            ? ''
-                                            : valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
+                                        {!isImage ? '' : valueInput?.size && `${(valueInput?.size / 1024000).toFixed(3)}MB complete`}
                                     </Typography>
                                 </Box>
                             </Grid>
@@ -123,36 +121,31 @@ const InputImage: React.FC<InputImageProps> = ({
                                     height: '40px',
                                     position: 'relative',
                                     display: 'flex',
-                                    justifyContent: isImg && isImage ? ' ' : 'flex-end'
+                                    justifyContent: isImage ? ' ' : 'flex-end'
                                     // border: '1px solid red'
                                 }}
                             >
                                 <IconButton onClick={handleClear} sx={{ mr: '30px' }}>
                                     <ClearIcon />
                                 </IconButton>
-                                {isImg && isImage && (
+                                {isImage && (
                                     <CheckCircleIcon
                                         sx={{ color: '#A54CE5', fontSize: '30px', position: 'absolute', top: '-10px', right: '-10px' }}
                                     />
                                 )}
                             </Grid>
                         </Grid>
-                        {isImg && (
-                            <>
-                                {' '}
-                                <Grid item xs={12}>
-                                    <Typography
-                                        component='p'
-                                        sx={{ color: 'rgba(0,0,0,0.7)', fontSize: '14px', fontWeight: 'bold', my: 2 }}
-                                    >
-                                        Preview
-                                    </Typography>
-                                </Grid>
-                                <img src={valueInput} id='preview' alt='Game Cover' width='200px' height='auto' />
-                            </>
-                        )}
+                        <>
+                            {' '}
+                            <Grid item xs={12}>
+                                <Typography component='p' sx={{ color: 'rgba(0,0,0,0.7)', fontSize: '14px', fontWeight: 'bold', my: 2 }}>
+                                    Preview
+                                </Typography>
+                            </Grid>
+                            <img src={valueInput} id='preview' alt='Game Cover' width='200px' height='auto' />
+                        </>
                     </Grid>
-                    {/* {!isImg && isImage && <Typography sx={{ textAlign: 'center', color: 'red' }}>File must be an image!</Typography>} */}
+                    {/* { isImage && <Typography sx={{ textAlign: 'center', color: 'red' }}>File must be an image!</Typography>} */}
                 </Box>
             ) : (
                 <>
