@@ -9,7 +9,7 @@ interface DialogConfirmationProps {
     setOpen: any;
     textConfirmButton: string;
     textCancelButton: string;
-    loading: boolean;
+    loading?: any;
 }
 
 const DialogConfirmation: React.FC<DialogConfirmationProps> = ({
