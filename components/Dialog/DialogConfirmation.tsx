@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, ButtonBase, Box, Typography } from '@mui/material';
+import { Dialog, ButtonBase, Box, Typography, CircularProgress } from '@mui/material';
 
 interface DialogConfirmationProps {
     title: string;
@@ -9,6 +9,7 @@ interface DialogConfirmationProps {
     setOpen: any;
     textConfirmButton: string;
     textCancelButton: string;
+    loading: boolean;
 }
 
 const DialogConfirmation: React.FC<DialogConfirmationProps> = ({
@@ -18,7 +19,8 @@ const DialogConfirmation: React.FC<DialogConfirmationProps> = ({
     open,
     setOpen,
     textCancelButton,
-    textConfirmButton
+    textConfirmButton,
+    loading
 }) => {
     const handleCancel = () => {
         setOpen(false);
@@ -33,19 +35,31 @@ const DialogConfirmation: React.FC<DialogConfirmationProps> = ({
                 <Typography component='p' fontSize='16px' fontWeight={400} sx={{ color: '#949494', pt: '27px', pb: '46px' }}>
                     {subTitle}
                 </Typography>
-                <Box display='flex' justifyContent='space-between' gap='27px'>
-                    <ButtonBase
-                        onClick={handleConfirm}
-                        sx={{ bgcolor: '#A54CE5', borderRadius: '4px', width: '201px', color: '#fff', padding: '11.5px' }}
-                    >
-                        {textConfirmButton}
-                    </ButtonBase>
-                    <ButtonBase
-                        onClick={handleCancel}
-                        sx={{ border: '1px solid #A54CE5', borderRadius: '4px', width: '201px', color: '#A54CE5', padding: '11.5px' }}
-                    >
-                        {textCancelButton}
-                    </ButtonBase>
+                <Box display='flex' justifyContent={loading ? 'center' : 'space-between'} gap='27px'>
+                    {loading ? (
+                        <CircularProgress color='secondary' />
+                    ) : (
+                        <>
+                            <ButtonBase
+                                onClick={handleConfirm}
+                                sx={{ bgcolor: '#A54CE5', borderRadius: '4px', width: '201px', color: '#fff', padding: '11.5px' }}
+                            >
+                                {textConfirmButton}
+                            </ButtonBase>
+                            <ButtonBase
+                                onClick={handleCancel}
+                                sx={{
+                                    border: '1px solid #A54CE5',
+                                    borderRadius: '4px',
+                                    width: '201px',
+                                    color: '#A54CE5',
+                                    padding: '11.5px'
+                                }}
+                            >
+                                {textCancelButton}
+                            </ButtonBase>
+                        </>
+                    )}
                 </Box>
             </Box>
         </Dialog>

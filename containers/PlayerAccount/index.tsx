@@ -52,8 +52,10 @@ const PlayerAccount = () => {
     const [dialogSuccessDel, setDialogSuccessDel] = React.useState<boolean>(false);
     const [dialogBanAccount, setDialogBanAccount] = React.useState<boolean>(false);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
+    const [idPlayer, setIdPlayer] = React.useState<any>([]);
     const [listTable, setListTable] = React.useState<any>([]);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [loadingBan, setLoadingBan] = React.useState(false);
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
 
@@ -92,8 +94,24 @@ const PlayerAccount = () => {
 
     // Event Remove Item
     const handleBanAccount = async () => {
-        setDialogBanAccount(false);
-        setDialogSuccessDel(true);
+        // setIsLoading(true);
+        setLoadingBan(true);
+        try {
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `accounts/${idPlayer}/ban`
+            });
+
+            if (response.status === 200) {
+                setDialogSuccessDel(true);
+                setDialogBanAccount(false);
+                notify(response.data.message, 'success');
+                setLoadingBan(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setLoadingBan(false);
+        }
     };
 
     // Event Next page
@@ -194,7 +212,6 @@ const PlayerAccount = () => {
             form.setValue('dataTable', listTable);
         }
     }, [form.watch('search')]);
-
     return (
         <Box>
             <HeaderChildren title='Player Account' subTitle='Additional description if required'>
@@ -229,7 +246,13 @@ const PlayerAccount = () => {
                 </Box>
             ) : null}
             <Box mt='30px'>
-                <TablePlayerAccount form={form} name='dataTable' nameIdxAppears='idxAppears' />
+                <TablePlayerAccount
+                    idPlayer={idPlayer}
+                    setIdPlayer={setIdPlayer}
+                    form={form}
+                    name='dataTable'
+                    nameIdxAppears='idxAppears'
+                />
                 <PaginationCard
                     totalItem={formDataTable.length}
                     handlePrev={handlePrev}
@@ -247,6 +270,7 @@ const PlayerAccount = () => {
                 setOpen={setDialogBanAccount}
                 textConfirmButton='REMOVE'
                 textCancelButton='CANCEL'
+                loading={loadingBan}
             />
             <DialogSuccess title='Success Remove Account' open={dialogSuccessDel} setOpen={setDialogSuccessDel} />
         </Box>
