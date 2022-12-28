@@ -99,16 +99,13 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 method: 'POST',
                 endpoint: '/tournaments',
                 data: {
-                    game_id: 4,
+                    game_id: form.watch('games'),
                     name: form.watch('title'),
-                    start_time: `${form.watch('startDate')} ${form.watch('startTime')}`,
-                    end_time: '',
+                    start_time: new Date(form.watch('startDate')),
+                    end_time: new Date(form.watch('endDate')),
                     entry_coin: form.watch('fee'),
                     total_points: form.watch('pool'),
-                    game: {
-                        id: game,
-                        name: ''
-                    }
+                    tournament_image: form.watch('image')
                 }
             });
 
@@ -164,7 +161,8 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
 
         setPrizeData(filter);
     };
-
+    // console.log('fee : ', form.watch('image'));
+    // console.log('pool : ', form.watch('pool'));
     return (
         <Box sx={{}}>
             <Box sx={{ padding: '40px 25px' }}>
