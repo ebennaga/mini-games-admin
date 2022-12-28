@@ -417,6 +417,7 @@ const TournamentContainer = () => {
         }
     }, [remove, input, search, currentPage]);
     // console.log(getPaginatedData());
+    // console.log('routeid', routeId);
     return (
         <Box sx={{ width: '100%' }}>
             {createTournament ? (
