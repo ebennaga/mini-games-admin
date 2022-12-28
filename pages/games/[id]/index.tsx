@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Layout from 'components/Layout';
 
-const GameDetailContainer = dynamic(() => import('containers/GameDetail'));
+const GameDetailContainer = dynamic(() => import('containers/GameDetail'), { ssr: false });
 
 const Page = () => {
     return (

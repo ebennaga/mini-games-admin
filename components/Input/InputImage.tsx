@@ -91,7 +91,7 @@ const InputImage: React.FC<InputImageProps> = ({
                         }}
                     >
                         <Grid container item xs={12} alignItems='center'>
-                            <Grid item xs={8} display='flex' alignItems='center' justifyContent='space-between' gap='10px'>
+                            <Grid item xs={10} display='flex' alignItems='center' justifyContent='space-between' gap='10px'>
                                 <Box
                                     width='41px'
                                     height='41px'
@@ -106,7 +106,11 @@ const InputImage: React.FC<InputImageProps> = ({
                                     <UploadFileIcon sx={{ color: '#A54CE5' }} />
                                 </Box>
                                 <Box sx={{ display: !isImg && isImage ? 'flex' : '', alignItems: 'center', width: '100%' }}>
-                                    <Typography component='p' fontSize='15px' sx={{ color: !isImg && isImage ? 'red' : 'rgba(0,0,0,0.8)' }}>
+                                    <Typography
+                                        component='p'
+                                        fontSize='15px'
+                                        sx={{ color: !isImg && isImage ? 'red' : 'rgba(0,0,0,0.8)', wordBreak: 'break-all' }}
+                                    >
                                         {!isImg && isImage ? 'File must be an image ' : valueInput.name || valueInput}
                                     </Typography>
                                     <Typography component='p' fontSize='16px' sx={{ color: 'rgba(0,0,0,0.5)' }}>
@@ -118,7 +122,7 @@ const InputImage: React.FC<InputImageProps> = ({
                             </Grid>
                             <Grid
                                 item
-                                xs={4}
+                                xs={2}
                                 sx={{
                                     width: '40px',
                                     height: '40px',

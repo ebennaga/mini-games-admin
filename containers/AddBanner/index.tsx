@@ -10,6 +10,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import InputImage from 'components/Input/InputImage';
 import RadioButton from 'components/Radio/RadioV2';
+import convertBase64 from 'helpers/convertBase64';
 
 const AddBanner = () => {
     const rules = { required: true };
@@ -56,31 +57,29 @@ const AddBanner = () => {
     const handleSubmit = async (data: any) => {
         // const { isActive, title, img, link, desc: description } = data;
         const { isActive, title, img, link } = data;
-        const { type }: any = form.watch('img');
-        if (type.split('/')[0] === 'image') {
-            setIsLoading(true);
-            try {
-                const response = await fetchAPI({
-                    method: 'POST',
-                    endpoint: '/banners',
-                    data: {
-                        title,
-                        link,
-                        image_url: img,
-                        // description,
-                        is_active: isActive
-                    }
-                });
-                if (response?.status === 200) {
-                    setIsLoading(false);
-                    notify('Banner added successfully', 'success');
-                    form.reset();
+        setIsLoading(true);
+        try {
+            const imgToBase64 = await convertBase64(img);
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: '/banners',
+                data: {
+                    title,
+                    link,
+                    image_url: imgToBase64,
+                    // description,
+                    is_active: isActive
                 }
+            });
+            if (response?.status === 200) {
                 setIsLoading(false);
-            } catch (error: any) {
-                notify(error.message, 'error');
-                setIsLoading(false);
+                notify('Banner added successfully', 'success');
+                form.reset();
             }
+            setIsLoading(false);
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
         }
     };
     // console.log(form.watch('isActive'));

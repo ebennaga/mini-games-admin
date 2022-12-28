@@ -36,7 +36,7 @@ const EditBanner = () => {
                 method: 'GET',
                 endpoint: `banners/${router.query.id}`
             });
-            console.log('result', result);
+
             if (result.status === 200) {
                 form.setValue('title', result.data.data.title);
                 // form.setValue('img', result.data.data.image_url);
@@ -121,7 +121,7 @@ const EditBanner = () => {
                          */}
                         <Box sx={{ width: '28.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
-                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Banner Image</Typography>
                                 <Typography
                                     sx={{
                                         fontWeight: '400',
