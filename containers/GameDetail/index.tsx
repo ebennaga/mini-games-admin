@@ -82,7 +82,6 @@ const AddGame = () => {
             resData = description && description !== descriptionGame ? { ...resData, description } : { ...resData };
             resData = url && url !== game_url ? { ...resData, game_url: url } : { ...resData };
             resData = image && image !== banner_url ? { ...resData, banner_url: toBase64 } : { ...resData };
-            console.log('name', name);
             // resData = { ...resData, version: 1 };
             // resData = { ...resData, genre };
 
@@ -92,7 +91,7 @@ const AddGame = () => {
                     endpoint: `games/${router.query.id}`,
                     data: resData
                 });
-                console.log('dataresponse', data);
+
                 if (response.status === 200) {
                     notify('Successfully Edit Game!');
                     fetchDetailGame();
@@ -289,7 +288,7 @@ const AddGame = () => {
                                 <Grid item xs={6}>
                                     <CustomButton
                                         title='CANCEL'
-                                        onClick={undefined}
+                                        onClick={() => router.push('/games')}
                                         backgroundColor='#fff'
                                         border='1px solid #A54CE5'
                                         color='#A54CE5'
