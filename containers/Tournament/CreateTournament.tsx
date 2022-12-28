@@ -465,7 +465,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                         sx={{
                                             mt: '20px',
                                             display: 'flex',
-                                            width: '27%',
+                                            width: '35%',
                                             gap: '15px',
                                             alignSelf: 'flex-end',
                                             fontWeight: 700
