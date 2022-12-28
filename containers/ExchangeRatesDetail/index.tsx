@@ -86,8 +86,6 @@ const ExchangeRatesAdd = () => {
                 } else {
                     notify(response.message, 'error');
                 }
-            } else {
-                notify('No data has changed!', 'err');
             }
         } catch (err: any) {
             notify(err.message);

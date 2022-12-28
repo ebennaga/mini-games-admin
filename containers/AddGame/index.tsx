@@ -10,6 +10,7 @@ import CustomButton from 'components/Button';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import convertBase64 from 'helpers/convertBase64';
+import { useRouter } from 'next/router';
 
 const AddGame = () => {
     const dataGenre = [
@@ -22,6 +23,7 @@ const AddGame = () => {
 
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+    const router = useRouter();
     const rules = { required: true };
 
     const form = useForm({
@@ -40,7 +42,7 @@ const AddGame = () => {
         try {
             const { description, genre, image, title, url } = data;
 
-            const imgBase64 = image ? await convertBase64(image) : null;
+            const imgBase64 = await convertBase64(image);
 
             const response = await fetchAPI({
                 method: 'POST',
@@ -223,8 +225,8 @@ const AddGame = () => {
                                     </Grid>
                                     <Grid item xs={6}>
                                         <CustomButton
-                                            title='CANCEL'
-                                            onClick={undefined}
+                                            title='BACK'
+                                            onClick={() => router.push('/games')}
                                             backgroundColor='#fff'
                                             border='1px solid #A54CE5'
                                             color='#A54CE5'

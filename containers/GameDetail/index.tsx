@@ -72,18 +72,18 @@ const AddGame = () => {
         setIsLoadingEdit(true);
         try {
             const { description, genre, image, title, url } = data;
-            const { description: descriptionGame, banner_url, name, game_url } = detailGame;
+            const { description: descriptionGame, banner_url, name, game_url, genre: genre_detail } = detailGame;
 
             const toBase64 = image && image !== banner_url ? await convertBase64(image) : null;
 
             let resData: any = {};
 
-            resData = title && title !== name ? { ...resData, name: title } : { ...resData };
-            resData = description && description !== descriptionGame ? { ...resData, description } : { ...resData };
-            resData = url && url !== game_url ? { ...resData, game_url: url } : { ...resData };
-            resData = image && image !== banner_url ? { ...resData, banner_url: toBase64 } : { ...resData };
+            resData = title && title !== name ? { ...resData, name: title } : resData;
+            resData = description && description !== descriptionGame ? { ...resData, description } : resData;
+            resData = url && url !== game_url ? { ...resData, game_url: url } : resData;
+            resData = image && image !== banner_url ? { ...resData, banner_url: toBase64 } : resData;
+            resData = genre && genre !== genre_detail ? { ...resData, genre } : resData;
             // resData = { ...resData, version: 1 };
-            // resData = { ...resData, genre };
 
             if (Object.keys(resData).length > 0) {
                 const response = await fetchAPI({
@@ -98,8 +98,6 @@ const AddGame = () => {
                 } else {
                     notify(response.message, 'error');
                 }
-            } else {
-                notify('No data has changed!', 'err');
             }
         } catch (err: any) {
             notify(err.message, 'error');
