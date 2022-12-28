@@ -12,6 +12,7 @@ import useNotify from 'hooks/useNotify';
 import InputPrizingTable from 'components/Input/InputPrizingTable';
 import useAPICaller from 'hooks/useAPICaller';
 import InputSelect from 'components/Input/InputSelect';
+import convertBase64 from 'helpers/convertBase64';
 import dataTable from './dataSelect';
 import TableAddTournament from './Table';
 
@@ -66,6 +67,7 @@ const dummyData = [
 const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, createTour, form }) => {
     const [game, setGame] = React.useState('0');
     const [table, setTable] = React.useState('0');
+    const [isLoading, setIsLoading] = React.useState(false);
     const [prizeData, setPrizeData] = React.useState<any>(dataTable);
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -89,31 +91,49 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         setTable(event.target.value as string);
     };
 
-    const handlePOSTSubmit = async () => {
+    // const fetchPrizesInfos = async () => {
+    //     try {
+    //         const result = await fetchAPI({
+    //             endpoint: '/tournaments/prize-infos'
+    //         });
+    //         if (result?.status === 200) {
+    //             console.log(result);
+    //         }
+    //     } catch (error: any) {
+    //         console.log(error);
+    //     }
+    // };
+
+    const handlePOSTSubmit = async (data: any) => {
+        // console.log(data);
         // console.log(`checking${categoryList[parseInt(form.watch('category'), 10) - 1].label}`);
         // form.watch('name');
         // console.log('masuk');
         // console.log(`${form.watch('startDate')} ${form.watch('startTime')}`);
+        setIsLoading(true);
         try {
+            const fee = Number(data.fee);
+            const imgBase64 = await convertBase64(data.image);
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: '/tournaments',
                 data: {
-                    game_id: form.watch('games'),
-                    name: form.watch('title'),
-                    start_time: new Date(form.watch('startDate')),
-                    end_time: new Date(form.watch('endDate')),
-                    entry_coin: form.watch('fee'),
-                    total_points: form.watch('pool'),
-                    tournament_image: form.watch('image')
+                    game_id: data.games,
+                    name: data.title,
+                    start_time: `${data.startDate} ${data.startTime}`,
+                    end_time: `${data.endDate} ${data.endTime}`,
+                    entry_coin: fee,
+                    tournament_image: imgBase64
+                    // total_points: data.pool
                 }
             });
-
             if (response?.status === 200) {
                 // console.log(response);
+                setIsLoading(false);
             }
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
     };
 
@@ -161,6 +181,10 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
 
         setPrizeData(filter);
     };
+
+    // React.useEffect(() => {
+    //     fetchPrizesInfos();
+    // }, []);
     // console.log('fee : ', form.watch('image'));
     // console.log('pool : ', form.watch('pool'));
     return (
@@ -174,7 +198,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 </Paper>
                 <form onSubmit={form.handleSubmit(handlePOSTSubmit)}>
                     <Grid container mt='37px' color='rgba(0, 0, 0, 0.6)'>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
@@ -205,7 +229,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
@@ -237,8 +261,8 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' direction='column'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
+                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Duration
@@ -276,7 +300,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 <InputDate isCreate rules={{ required: true }} form={form} name='endDate' label='End Date' type='date' />
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={3}>
                                 <InputDate
@@ -292,7 +316,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 <InputDate isCreate rules={{ required: true }} form={form} name='endTime' label='End Time' type='time' />
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
@@ -323,7 +347,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
@@ -354,7 +378,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
@@ -388,7 +412,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
 
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
@@ -434,12 +458,16 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                             Select Table
                                         </MenuItem>
                                         {dataTable.length > 0 &&
-                                            dataTable.map((item: any) => <MenuItem value={item.id}>{item.label}</MenuItem>)}
+                                            dataTable.map((item: any) => (
+                                                <MenuItem key={item.id} value={item.id}>
+                                                    {item.label}
+                                                </MenuItem>
+                                            ))}
                                     </Select>
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={6}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -448,7 +476,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                         sx={{
                                             mt: '20px',
                                             display: 'flex',
-                                            width: '27%',
+                                            width: '35%',
                                             gap: '15px',
                                             alignSelf: 'flex-end',
                                             fontWeight: 700
@@ -489,7 +517,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 </Box>
                             </Grid>
                         </Grid>
-                        <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
+                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                     Total Pool Prizes

@@ -54,8 +54,8 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
                             top: '-9px',
                             zIndex: 1,
                             left: 14,
-                            px: 1,
-                            color: 'rgba(0, 0, 0, 1)'
+                            px: 1
+                            // color: 'rgba(0, 0, 0, 1)'
                         }}
                     >
                         {title}
@@ -87,12 +87,12 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
                                             borderColor: '#A54CE5'
                                         },
                                         '& .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input': {
-                                            color: form.watch(name) ? 'rgba(0, 0, 0,1)' : 'rgba(0, 0, 0, 0.38)'
+                                            color: form.watch(name) ? '' : 'rgba(0, 0, 0, 0.38)'
                                         }
                                     }}
                                 >
                                     <MenuItem
-                                        sx={{ fontSize: '16px', color: form.watch(name) ? 'rgba(0, 0, 0,1)' : 'rgba(0, 0, 0, 0.38)' }}
+                                        // sx={{ fontSize: '16px', color: form.watch(name) ? 'rgba(0, 0, 0,1)' : 'rgba(0, 0, 0, 0.38)' }}
                                         disabled
                                         value='0'
                                     >
