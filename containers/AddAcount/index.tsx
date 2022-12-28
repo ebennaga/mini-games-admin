@@ -41,11 +41,29 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+
     const [isLoading, setIsLoading] = React.useState(false);
     const [isFilled, setIsFilled] = React.useState(false);
     const [isFilled1, setIsFilled1] = React.useState(false);
     const [isRequired, setIsRequired] = React.useState(false);
     const [isValue, setIsValue] = React.useState(false);
+    const [dataRoles, setDataRoles] = React.useState<Array<any>>([]);
+
+    const fetchRoles = async () => {
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'roles'
+            });
+            if (response.status === 200) {
+                setDataRoles(response.data.data);
+            } else {
+                notify(response.data.message, 'error');
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+    };
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
@@ -131,6 +149,10 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             setIsRequired(true);
         }
     };
+
+    React.useEffect(() => {
+        fetchRoles();
+    }, []);
 
     React.useEffect(() => {
         if (roles.length > 0) {
@@ -228,9 +250,10 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                     <MenuItem value='0' disabled>
                                         Select Roles
                                     </MenuItem>
-                                    <MenuItem value='1'>Admin</MenuItem>
-                                    <MenuItem value='2'>Marketing</MenuItem>
-                                    <MenuItem value='3'>Content Writer</MenuItem>
+                                    {dataRoles.length > 0 &&
+                                        dataRoles.map((item: any) => {
+                                            return <MenuItem value={item.id}>{item.name}</MenuItem>;
+                                        })}
                                 </Select>
                                 {!isFilled && isRequired && <FormHelperText sx={{ color: 'red' }}>Role is Required</FormHelperText>}
                             </FormControl>
