@@ -20,13 +20,23 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
     const {
         formState: { errors }
     } = form;
-
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
     const error = errors[name] || null;
     const errType = !form.watch(name) && error?.type;
     const errText = errType === 'required' ? 'Must be filled' : '';
 
     const handleChange = (e: any) => {
         form.setValue(name, e.target.value);
+    };
+
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250
+            }
+        }
     };
 
     return (
@@ -57,6 +67,7 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
                         render={() => {
                             return (
                                 <Select
+                                    MenuProps={MenuProps}
                                     fullWidth
                                     displayEmpty
                                     error={!!errType}
@@ -68,6 +79,7 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
                                     id='demo-simple-select'
                                     label='Role Code'
                                     sx={{
+                                        color: form.watch(name) === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black',
                                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                                             borderColor: '#A54CE5'
                                         },
@@ -79,7 +91,11 @@ const InputSelect: React.FC<InputSelectProps> = ({ form, name, dataSelect, title
                                         }
                                     }}
                                 >
-                                    <MenuItem sx={{ fontSize: '16px' }} disabled value=''>
+                                    <MenuItem
+                                        sx={{ fontSize: '16px', color: form.watch(name) ? 'rgba(0, 0, 0,1)' : 'rgba(0, 0, 0, 0.38)' }}
+                                        disabled
+                                        value='0'
+                                    >
                                         {placeholder}
                                     </MenuItem>
                                     {dataSelect.map((item: any) => {

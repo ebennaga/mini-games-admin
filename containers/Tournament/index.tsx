@@ -43,7 +43,9 @@ const TournamentContainer = () => {
             endTime: '',
             image: '',
             fee: 0,
-            pool: 0
+            pool: 0,
+            games: '0',
+            tournamentType: '0'
         }
     });
 
