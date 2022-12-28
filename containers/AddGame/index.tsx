@@ -42,7 +42,7 @@ const AddGame = () => {
         try {
             const { description, genre, image, title, url } = data;
 
-            const imgBase64 = image ? await convertBase64(image) : null;
+            const imgBase64 = await convertBase64(image);
 
             const response = await fetchAPI({
                 method: 'POST',
