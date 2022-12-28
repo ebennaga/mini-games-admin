@@ -98,6 +98,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
         setLoadingSubmit(true);
         try {
             const { title, endTime, fee, startTime, game: gameId } = form.watch();
+            // const imgBase64 = await convertBase64(image);
             const result = await fetchAPI({
                 endpoint: `tournaments/${router.query.id}`,
                 method: 'PUT',

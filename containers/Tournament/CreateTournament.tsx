@@ -12,6 +12,7 @@ import useNotify from 'hooks/useNotify';
 import InputPrizingTable from 'components/Input/InputPrizingTable';
 import useAPICaller from 'hooks/useAPICaller';
 import InputSelect from 'components/Input/InputSelect';
+import convertBase64 from 'helpers/convertBase64';
 import dataTable from './dataSelect';
 import TableAddTournament from './Table';
 
@@ -66,6 +67,7 @@ const dummyData = [
 const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, createTour, form }) => {
     const [game, setGame] = React.useState('0');
     const [table, setTable] = React.useState('0');
+    const [isLoading, setIsLoading] = React.useState(false);
     const [prizeData, setPrizeData] = React.useState<any>(dataTable);
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -102,31 +104,36 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     //     }
     // };
 
-    const handlePOSTSubmit = async () => {
+    const handlePOSTSubmit = async (data: any) => {
+        // console.log(data);
         // console.log(`checking${categoryList[parseInt(form.watch('category'), 10) - 1].label}`);
         // form.watch('name');
         // console.log('masuk');
         // console.log(`${form.watch('startDate')} ${form.watch('startTime')}`);
+        setIsLoading(true);
         try {
+            const fee = Number(data.fee);
+            const imgBase64 = await convertBase64(data.image);
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: '/tournaments',
                 data: {
-                    game_id: form.watch('games'),
-                    name: form.watch('title'),
-                    start_time: new Date(form.watch('startDate')),
-                    end_time: new Date(form.watch('endDate')),
-                    entry_coin: form.watch('fee'),
-                    total_points: form.watch('pool'),
-                    tournament_image: form.watch('image')
+                    game_id: data.games,
+                    name: data.title,
+                    start_time: `${data.startDate} ${data.startTime}`,
+                    end_time: `${data.endDate} ${data.endTime}`,
+                    entry_coin: fee,
+                    tournament_image: imgBase64
+                    // total_points: data.pool
                 }
             });
-
             if (response?.status === 200) {
                 // console.log(response);
+                setIsLoading(false);
             }
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
     };
 

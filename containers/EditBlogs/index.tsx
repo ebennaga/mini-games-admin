@@ -10,6 +10,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import dateFormats from 'helpers/dateFormat';
+import convertBase64 from 'helpers/convertBase64';
 
 interface EditBlogsProps {}
 
@@ -62,12 +63,13 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
         // console.log('response', body);
         setIsLoadingPut(true);
         try {
+            const imgBase64 = await convertBase64(body.image);
             const response = await fetchAPI({
                 method: 'PUT',
                 endpoint: `/blogs/${router.query.id}`,
                 data: {
                     title: body.title,
-                    image_url: body.image,
+                    image_url: imgBase64,
                     description: body.description
                 }
             });

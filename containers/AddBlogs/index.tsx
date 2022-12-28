@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import convertBase64 from 'helpers/convertBase64';
 
 interface CreateBlogsProps {}
 
@@ -31,12 +32,14 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
     const handleSubmit = async (data: any) => {
         setIsLoading(true);
         try {
+            const imgBase64 = await convertBase64(data.image);
+
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: '/blogs',
                 data: {
                     title: data.blogsTitle,
-                    image_url: data.image,
+                    image_url: imgBase64,
                     description: data.description
                 }
             });

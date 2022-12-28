@@ -10,6 +10,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
 import RadioButton from 'components/Radio/RadioV2';
+import convertBase64 from 'helpers/convertBase64';
 
 const EditBanner = () => {
     const rules = { required: true };
@@ -77,13 +78,14 @@ const EditBanner = () => {
     const handleSubmit = async (d: any) => {
         setLoadingSubmit(true);
         try {
+            const imgBase64 = await convertBase64(d.image_url);
             const result = await fetchAPI({
                 endpoint: `banners/${router.query.id}`,
                 method: 'PUT',
                 data: {
                     title: d.title,
                     is_active: d.is_active,
-                    img: d.image_url
+                    img: imgBase64
                 }
             });
 
