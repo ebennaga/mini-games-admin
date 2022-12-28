@@ -97,13 +97,13 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
     const handleSubmit = async (data: any) => {
         setLoadingSubmit(true);
         try {
-            const { title, endTime, fee, startTime } = form.watch();
+            const { title, endTime, fee, startTime, game: gameId } = form.watch();
             const result = await fetchAPI({
                 endpoint: `tournaments/${router.query.id}`,
                 method: 'PUT',
                 data: {
                     name: title,
-                    game_id: router.query.id,
+                    game_id: gameId,
                     end_time: endTime,
                     entry_coin: fee,
                     start_time: startTime
