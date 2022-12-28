@@ -89,6 +89,19 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         setTable(event.target.value as string);
     };
 
+    // const fetchPrizesInfos = async () => {
+    //     try {
+    //         const result = await fetchAPI({
+    //             endpoint: '/tournaments/prize-infos'
+    //         });
+    //         if (result?.status === 200) {
+    //             console.log(result);
+    //         }
+    //     } catch (error: any) {
+    //         console.log(error);
+    //     }
+    // };
+
     const handlePOSTSubmit = async () => {
         // console.log(`checking${categoryList[parseInt(form.watch('category'), 10) - 1].label}`);
         // form.watch('name');
@@ -161,6 +174,10 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
 
         setPrizeData(filter);
     };
+
+    // React.useEffect(() => {
+    //     fetchPrizesInfos();
+    // }, []);
     // console.log('fee : ', form.watch('image'));
     // console.log('pool : ', form.watch('pool'));
     return (
