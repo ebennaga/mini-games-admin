@@ -161,7 +161,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
 
         setPrizeData(filter);
     };
-    console.log('fee : ', form.watch('image'));
+    // console.log('fee : ', form.watch('image'));
     // console.log('pool : ', form.watch('pool'));
     return (
         <Box sx={{}}>
