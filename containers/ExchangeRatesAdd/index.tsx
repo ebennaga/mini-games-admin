@@ -47,7 +47,7 @@ const ExchangeRatesAdd = () => {
             });
 
             if (response.status === 200) {
-                notify('Add Exchange Rates Successfull!');
+                notify(response.data.message, 'success');
                 router.push('/exchange-rates');
             }
         } catch (err: any) {
