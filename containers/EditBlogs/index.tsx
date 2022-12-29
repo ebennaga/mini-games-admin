@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Typography, Paper, Grid, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, Grid, CircularProgress, ButtonBase } from '@mui/material';
 import { CheckCircle, Circle, Close, UploadFile } from '@mui/icons-material';
 import Image from 'next/image';
 import InputImage from 'components/Input/InputImage';
@@ -44,6 +45,7 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
             const response = await fetchAPI({
                 endpoint: `/blogs/${router.query.id}`
             });
+
             if (response?.status === 200) {
                 // console.log(response.data.title);
                 form.setValue('title', response.data.data.title);
@@ -64,6 +66,7 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
         setIsLoadingPut(true);
         try {
             const imgBase64 = await convertBase64(body.image);
+
             const response = await fetchAPI({
                 method: 'PUT',
                 endpoint: `/blogs/${router.query.id}`,
@@ -73,9 +76,9 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                     description: body.description
                 }
             });
+
             if (response?.status === 200) {
-                console.log(response);
-                notify('Blog Edited Successfully', 'success');
+                notify(response.data.message, 'success');
                 setIsLoadingPut(false);
             }
         } catch (error: any) {
@@ -258,7 +261,7 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                     width: '100%'
                 }}
             >
-                <CustomButton
+                {/* <CustomButton
                     type='submit'
                     isLoading={isLoadingPut}
                     padding='10px'
@@ -266,7 +269,10 @@ const EditBlogs: React.FC<EditBlogsProps> = () => {
                     height='59px'
                     title='Submit'
                     backgroundColor='#A54CE5'
-                />
+                /> */}
+                <ButtonBase onClick={handleSubmit} sx={{ backgroundColor: '#A54CE6', width: '193px', padding: '10px', height: '59px' }}>
+                    UPDATE
+                </ButtonBase>
                 <CustomButton
                     onClick={() => {
                         form.reset();

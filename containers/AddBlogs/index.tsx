@@ -46,7 +46,7 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
 
             if (response?.status === 200) {
                 setIsLoading(false);
-                notify('Blog added successfully', 'success');
+                notify(response.data.message, 'success');
                 form.reset();
             }
             setIsLoading(false);
@@ -55,7 +55,7 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
             setIsLoading(false);
         }
     };
-
+    console.log('title', form.watch('blogsTitle'));
     return (
         <form onSubmit={form.handleSubmit(handleSubmit)}>
             <Box sx={{ padding: '40px 25px' }}>
@@ -78,7 +78,7 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
                         </Grid>
                         <Grid item xs={4}>
                             <Input
-                                name='title'
+                                name='blogsTitle'
                                 isColor
                                 label='Title'
                                 rules={{ required: true }}
