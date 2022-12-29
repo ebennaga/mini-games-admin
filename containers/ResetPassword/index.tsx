@@ -14,6 +14,7 @@ const SignIn = () => {
     const [isDisable, setIsDisable] = useState<boolean>(true);
     const [isSend, setIsSend] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
     const { fetchAPI } = useAPICaller();
     // const { setUser } = useAuthReducer();
     const notify = useNotify();
@@ -47,6 +48,7 @@ const SignIn = () => {
             });
             if (response?.status === 200) {
                 // setUser(response?.data.data.api_token);
+
                 notify('Check your email for get OTP Code', 'success');
                 setIsSend(true);
             }
@@ -66,7 +68,7 @@ const SignIn = () => {
                         Check your email
                     </Typography>
                     <Typography component='p' fontSize='12px' fontWeight={400} my='14px'>
-                        We have sent an email with instructions to reset your password to <b>john@gmail.com</b>
+                        We have sent an email with instructions to reset your password to <b>{form.watch('email')}</b>
                     </Typography>
                     <ButtonBase onClick={() => router.push('/sign-in')} sx={{ color: '#A54CE5' }}>
                         Sign in

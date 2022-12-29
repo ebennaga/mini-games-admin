@@ -281,7 +281,7 @@ const AddGame = () => {
                         ) : (
                             <Grid item container xs={6}>
                                 <Grid item xs={6} display='flex' alignItems='center' justifyContent='space-between'>
-                                    <CustomButton type='submit' title='Edit' onClick={handleSubmit} />
+                                    <CustomButton type='submit' title='Update' onClick={handleSubmit} />
                                 </Grid>
                                 <Grid item xs={6}>
                                     <CustomButton
