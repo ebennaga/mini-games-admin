@@ -404,7 +404,7 @@ const TournamentContainer = () => {
                 if (input) {
                     if (
                         item.name.toLowerCase().includes(input.toLowerCase()) ||
-                        item.game.name.toLowerCase().includes(input.toLowerCase())
+                        item.game.name?.toLowerCase().includes(input.toLowerCase())
                     ) {
                         return item;
                     }
