@@ -69,7 +69,7 @@ const Home = () => {
                 method: 'GET',
                 endpoint: `dashboard/lines/most-redeemed-prizes`
             });
-            console.log('response1', response);
+
             if (response.status === 200) {
                 notify(response.data.message, 'success');
             }
