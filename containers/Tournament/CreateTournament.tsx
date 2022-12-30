@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase } from '@mui/material';
+import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase, TextField } from '@mui/material';
 import InputDate from 'components/Input/InputDate';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputImage from 'components/Input/InputImage';
@@ -13,6 +13,7 @@ import InputPrizingTable from 'components/Input/InputPrizingTable';
 import useAPICaller from 'hooks/useAPICaller';
 import InputSelect from 'components/Input/InputSelect';
 import convertBase64 from 'helpers/convertBase64';
+import { useFieldArray, useForm } from 'react-hook-form';
 import dataTable from './dataSelect';
 import TableAddTournament from './Table';
 
@@ -69,11 +70,34 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     const [table, setTable] = React.useState('0');
     const [isLoading, setIsLoading] = React.useState(false);
     const [prizeData, setPrizeData] = React.useState<any>(dataTable);
+    const [prizePool, setPrizePool] = React.useState(0);
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const notify = useNotify();
 
     const { fetchAPI } = useAPICaller();
+    const formTable = useForm({
+        mode: 'all'
+        // defaultValues: {
+        //     tableData: [
+        //         {
+        //             positionStart: '',
+        //             positionEnd: '',
+        //             countPlayer: '',
+        //             pointPrizes: '',
+        //             playerPointPrizes: '',
+        //             cointPrizes: '',
+        //             playerCointPrizes: ''
+        //         }
+        //     ]
+        // }
+    });
+
+    const fieldArray = useFieldArray({
+        control: formTable.control,
+        name: 'tableData'
+    });
+
     const dataType = [
         { id: 1, title: 'Accumulation' },
         { id: 2, title: 'High Score' }
@@ -94,10 +118,11 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     // const fetchPrizesInfos = async () => {
     //     try {
     //         const result = await fetchAPI({
-    //             endpoint: '/tournaments/prize-infos'
+    //             endpoint: '/tournaments/prize-infos',
+    //             method: 'GET'
     //         });
     //         if (result?.status === 200) {
-    //             console.log(result);
+    //             console.log(`hi ${result}`);
     //         }
     //     } catch (error: any) {
     //         console.log(error);
@@ -181,12 +206,40 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
 
         setPrizeData(filter);
     };
+    React.useEffect(() => {
+        let ttl: number = 0;
+        formTable.watch('tableData').forEach((item: any) => {
+            // console.log(`ini ${item.pointPrizes}`);
+            ttl += parseInt(item.pointPrizes, 10);
+        });
+        setPrizePool(ttl);
+    }, [fieldArray, formTable.watch('tableData')]);
 
-    // React.useEffect(() => {
-    //     fetchPrizesInfos();
-    // }, []);
-    // console.log('fee : ', form.watch('image'));
-    // console.log('pool : ', form.watch('pool'));
+    React.useEffect(() => {
+        let arrTemp: any[];
+
+        if (table !== '0') {
+            arrTemp = prizeData.filter((item: any) => {
+                return item.id === parseInt(table, 10);
+            });
+        } else {
+            arrTemp = prizeData;
+        }
+        formTable.reset();
+        arrTemp.forEach((item: any, index: number) => {
+            item.data.forEach((el: any, idx: number) => {
+                fieldArray.append({
+                    positionStart: el.positionStart,
+                    positionEnd: el.positionEnd,
+                    countPlayer: el.countPlayer,
+                    pointPrizes: el.pointPrizes,
+                    playerPointPrizes: el.playerPointPrizes,
+                    cointPrizes: el.cointPrizes,
+                    playerCointPrizes: el.playerCointPrizes
+                });
+            });
+        });
+    }, [table, prizeData]);
     return (
         <Box sx={{}}>
             <Box sx={{ padding: '40px 25px' }}>
@@ -469,51 +522,53 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
-                            <Grid item xs={6}>
+                            <Grid item xs={8}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <TableAddTournament value={table} data={prizeData} />
-                                    <Box
-                                        sx={{
-                                            mt: '20px',
-                                            display: 'flex',
-                                            width: '35%',
-                                            gap: '15px',
-                                            alignSelf: 'flex-end',
-                                            fontWeight: 700
-                                        }}
-                                    >
-                                        <ButtonBase
-                                            onClick={handleDeleteRow}
+                                    <TableAddTournament valueTable={table} data={prizeData} formTable={formTable} fieldArray={fieldArray} />
+                                    {table !== '0' && (
+                                        <Box
                                             sx={{
-                                                backgroundColor: 'white',
-                                                padding: '20px',
+                                                mt: '20px',
                                                 display: 'flex',
-                                                justifyContent: 'space-between',
-                                                color: '#A54CE5',
-                                                borderRadius: '5px',
-                                                border: '1px solid #A54CE5',
-                                                gap: '10px'
+                                                width: '35%',
+                                                gap: '15px',
+                                                alignSelf: 'flex-end',
+                                                fontWeight: 700
                                             }}
                                         >
-                                            <Remove />
-                                            <Typography sx={{ fontWeight: 600 }}>DELETE</Typography>
-                                        </ButtonBase>
-                                        <ButtonBase
-                                            onClick={handleAddRow}
-                                            sx={{
-                                                backgroundColor: '#A54CE5',
-                                                padding: '20px',
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                color: 'white',
-                                                borderRadius: '5px',
-                                                gap: '10px'
-                                            }}
-                                        >
-                                            <Add />
-                                            <Typography sx={{ fontWeight: 600 }}>ADD</Typography>
-                                        </ButtonBase>
-                                    </Box>
+                                            <ButtonBase
+                                                onClick={handleDeleteRow}
+                                                sx={{
+                                                    backgroundColor: 'white',
+                                                    padding: '20px',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    color: '#A54CE5',
+                                                    borderRadius: '5px',
+                                                    border: '1px solid #A54CE5',
+                                                    gap: '10px'
+                                                }}
+                                            >
+                                                <Remove />
+                                                <Typography sx={{ fontWeight: 600 }}>DELETE</Typography>
+                                            </ButtonBase>
+                                            <ButtonBase
+                                                onClick={handleAddRow}
+                                                sx={{
+                                                    backgroundColor: '#A54CE5',
+                                                    padding: '20px',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    color: 'white',
+                                                    borderRadius: '5px',
+                                                    gap: '10px'
+                                                }}
+                                            >
+                                                <Add />
+                                                <Typography sx={{ fontWeight: 600 }}>ADD</Typography>
+                                            </ButtonBase>
+                                        </Box>
+                                    )}
                                 </Box>
                             </Grid>
                         </Grid>
@@ -527,7 +582,10 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
-                                <Input isColor name='pool' label='Prize Pool' rules={{ required: true }} placeholder='30.000' form={form} />
+                                <Box sx={{ width: '100%' }}>
+                                    <TextField fullWidth label='Prize Pool' value={prizePool || 0} />
+                                </Box>
+                                {/* <Input isColor name='pool' label='Prize Pool' rules={{ required: true }} form={form} placeholder='30000' /> */}
                             </Grid>
                         </Grid>
                     </Grid>

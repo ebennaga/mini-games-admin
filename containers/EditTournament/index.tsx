@@ -7,7 +7,7 @@ import InputImage from 'components/Input/InputImage';
 import Input from 'components/Input/Input';
 import { Remove, Add } from '@mui/icons-material';
 import CustomButton from 'components/Button';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { getCurrentDate, getCurrentTime, getSplitDate } from 'utils/date';
 import { useRouter } from 'next/router';
 import TableAddTournament from 'containers/Tournament/Table';
@@ -291,7 +291,12 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={6}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <TableAddTournament value={table} data={dataTable} />
+                                    <TableAddTournament
+                                        valueTable={table}
+                                        data={dataTable}
+                                        formTable={useForm({})}
+                                        fieldArray={useFieldArray({ name: 'tableData' })}
+                                    />
                                     <Box
                                         sx={{
                                             mt: '20px',
