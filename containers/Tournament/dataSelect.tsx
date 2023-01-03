@@ -12,16 +12,6 @@ const dataTable: any[] = [
                 playerPointPrizes: 10000,
                 cointPrizes: 20000,
                 playerCointPrizes: 20000
-            },
-            {
-                id: 2,
-                positionStart: 2,
-                positionEnd: 4,
-                countPlayer: 2,
-                pointPrizes: 15000,
-                playerPointPrizes: 15000,
-                cointPrizes: 20000,
-                playerCointPrizes: 20000
             }
         ]
     },
