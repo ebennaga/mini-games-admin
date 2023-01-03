@@ -57,6 +57,7 @@ const BlogsContainer = () => {
             const response = await fetchAPI({
                 endpoint: `/blogs?search=${form.watch('search')}`
             });
+
             if (response?.status === 200) {
                 setRemove(response.data.data);
                 setIsLoading(false);
@@ -112,11 +113,22 @@ const BlogsContainer = () => {
         if (e.target.checked) {
             setCheckedObj(checkBoxKeys);
             const checkBox: any = { ...form.watch() };
-            [...Array(dummy.length)].forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            // [...Array(dummy.length)].forEach((item: any, idx: number) => {
+            //     const datas: any = `checkbox${idx + 1}`;
+            //     form.setValue(datas, e.target.checked);
+            //     arr.push(idx + 1);
+            //     if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
+            //         form.setValue(datas, true);
+            //     } else {
+            //         form.setValue(datas, false);
+            //     }
+            // });
+            remove.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, e.target.checked);
-                arr.push(idx + 1);
-                if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
+
+                arr.push(item.id);
+                if (checkBox[item.id] === undefined || checkBox[item.id] === false) {
                     form.setValue(datas, true);
                 } else {
                     form.setValue(datas, false);
@@ -125,9 +137,14 @@ const BlogsContainer = () => {
             setDeleted(arr);
         } else if (!e.target.checked) {
             setCheckedObj([]);
+
             // const checkBox: any = { ...form.watch() };
-            [...Array(dummy.length)].forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            // [...Array(dummy.length)].forEach((item: any, idx: number) => {
+            //     const datas: any = `checkbox${idx + 1}`;
+            //     form.setValue(datas, false);
+            // });
+            remove.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
             });
             setDeleted([]);
@@ -171,9 +188,10 @@ const BlogsContainer = () => {
     }, [pages, row]);
 
     React.useEffect(() => {
-        [...Array(dummy.length)].forEach((item: any, idx: number) => {
-            checkBoxKeys.push(`checkbox${idx + 1}`);
-        });
+        // [...Array(dummy.length)].forEach((item: any, idx: number) => {
+        //     checkBoxKeys.push(`checkbox${idx + 1}`);
+        // });
+        remove.forEach((item: any) => checkBoxKeys.push(`checkbox${item.id}`));
         if (checkedObj.length > 0 || form.watch('checkAll')) {
             setIsChecked(true);
         } else {

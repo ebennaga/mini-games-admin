@@ -81,10 +81,11 @@ const ExchangeRatesAdd = () => {
                 });
 
                 if (response.status === 200) {
-                    notify('Edit Exchange Rates Successfully!');
+                    notify(response.data.message, 'success');
+
                     fetchDataDetail();
                 } else {
-                    notify(response.message, 'error');
+                    notify(response.data.message, 'error');
                 }
             }
         } catch (err: any) {
