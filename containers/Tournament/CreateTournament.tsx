@@ -558,10 +558,8 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={8}>
-
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                     <TableAddTournament valueTable={table} data={prizeData} formTable={formTable} fieldArray={fieldArray} />
                                     <Box
@@ -608,21 +606,22 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                     </Box>
                                 </Box>
                             </Grid>
-                        </Grid>
-                        <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    Total Pool Prizes
-                                </Typography>
-                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
-                                    :
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Box sx={{ width: '100%' }}>
-                                    <TextField fullWidth label='Prize Pool' value={prizePool || 0} />
-                                </Box>
-                                {/* <Input isColor name='pool' label='Prize Pool' rules={{ required: true }} form={form} placeholder='30000' /> */}
+
+                            <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
+                                <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        Total Pool Prizes
+                                    </Typography>
+                                    <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                        :
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <Box sx={{ width: '100%' }}>
+                                        <TextField fullWidth label='Prize Pool' value={prizePool || 0} />
+                                    </Box>
+                                    {/* <Input isColor name='pool' label='Prize Pool' rules={{ required: true }} form={form} placeholder='30000' /> */}
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>

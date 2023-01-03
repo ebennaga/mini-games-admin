@@ -169,6 +169,8 @@ const ClientTournament = () => {
             if (response.status === 200) {
                 // console.log(response);
                 const tournaments = response.data.data;
+                console.log('lala');
+                console.log(tournaments);
                 setFilteredData(tournaments);
                 // setRemove(tournaments);
                 // setRow(tournaments.length.toString());

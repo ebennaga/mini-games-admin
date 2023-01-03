@@ -29,22 +29,25 @@ import CustomButton from 'components/Button';
 import CheckboxController from 'components/Checkbox';
 import { useRouter } from 'next/router';
 // import useAPICaller from 'hooks/useAPICaller';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
+import { useSelector } from 'react-redux';
 import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
-    const dummy = [
-        { id: 1, name: 'Owi-kun', email: 'owi@abc.com', roles: 'Admin, Content Writer', is_active: true },
-        { id: 2, name: 'Arya', email: 'arya@abc.com', roles: 'Content Writer', is_active: false },
-        { id: 3, name: 'Eben', email: 'eben@abc.com', roles: 'Super Admin', is_active: true },
-        { id: 4, name: 'Amang', email: 'amang@abc.com', roles: 'Admin, Content Writer', is_active: false },
-        { id: 5, name: 'Suwardi', email: 'wardi@abc.com', roles: 'Admin, Content Writer', is_active: false },
-        { id: 6, name: 'Saitama', email: 'sai@abc.com', roles: 'Super Admin', is_active: true },
-        { id: 7, name: 'Sasukekyun', email: 'kyun@abc.com', roles: 'Admin, Content Writer', is_active: true },
-        { id: 8, name: 'Narto', email: 'arto@abc.com', roles: 'Content Writer', is_active: false },
-        { id: 9, name: 'Ed Sheeran', email: 'sheer@abc.com', roles: 'Admin, Content Writer', is_active: true },
-        { id: 10, name: 'Tulus', email: 'luhut@abc.com', roles: 'Admin, Content Writer, Super Admin', is_active: false },
-        { id: 11, name: 'Tidak Tulus', email: 'tilus@abc.com', roles: 'Content Writer', is_active: false }
-    ];
+    // const dummy = [
+    //     { id: 1, name: 'Owi-kun', email: 'owi@abc.com', roles: 'Admin, Content Writer', is_active: true },
+    //     { id: 2, name: 'Arya', email: 'arya@abc.com', roles: 'Content Writer', is_active: false },
+    //     { id: 3, name: 'Eben', email: 'eben@abc.com', roles: 'Super Admin', is_active: true },
+    //     { id: 4, name: 'Amang', email: 'amang@abc.com', roles: 'Admin, Content Writer', is_active: false },
+    //     { id: 5, name: 'Suwardi', email: 'wardi@abc.com', roles: 'Admin, Content Writer', is_active: false },
+    //     { id: 6, name: 'Saitama', email: 'sai@abc.com', roles: 'Super Admin', is_active: true },
+    //     { id: 7, name: 'Sasukekyun', email: 'kyun@abc.com', roles: 'Admin, Content Writer', is_active: true },
+    //     { id: 8, name: 'Narto', email: 'arto@abc.com', roles: 'Content Writer', is_active: false },
+    //     { id: 9, name: 'Ed Sheeran', email: 'sheer@abc.com', roles: 'Admin, Content Writer', is_active: true },
+    //     { id: 10, name: 'Tulus', email: 'luhut@abc.com', roles: 'Admin, Content Writer, Super Admin', is_active: false },
+    //     { id: 11, name: 'Tidak Tulus', email: 'tilus@abc.com', roles: 'Content Writer', is_active: false }
+    // ];
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -55,9 +58,9 @@ const AccountContainer = () => {
             checkAll: false
         }
     });
-    // const { fetchAPI } = useAPICaller();
+    const { fetchAPI } = useAPICaller();
     const router = useRouter();
-    // const notify = useNotify();
+    const notify = useNotify();
     const [openDialog, setOpenDialog] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
@@ -77,28 +80,28 @@ const AccountContainer = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
-
-    // const fetchAccountData = async () => {
-    //     setIsLoading(true);
-    //     try {
-    //         const result = await fetchAPI({
-    //             endpoint: `accounts?search=${form.watch('search')}`,
-    //             method: 'GET'
-    //         });
-    //         // console.log(result?.data.data);
-    //         if (result.status === 200) {
-    //             const totalFilter = result.data.data;
-    //             const filter = totalFilter.filter((item: any) => item.name !== null);
-    //             // console.log('totalfilter', filter);
-    //             setRemove(filter);
-    //         }
-    //         setIsLoading(false);
-    //     } catch (error: any) {
-    //         notify(error.message, 'error');
-    //         setIsLoading(false);
-    //     }
-    //     setIsLoading(false);
-    // };
+    const userState = useSelector((state: any) => state.webpage?.user?.user);
+    const fetchAccountData = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                endpoint: `accounts?is_client=${userState.email}search=${form.watch('search')}`,
+                method: 'GET'
+            });
+            // console.log(result?.data.data);
+            if (result.status === 200) {
+                const totalFilter = result.data.data;
+                const filter = totalFilter.filter((item: any) => item.name !== null);
+                // console.log('totalfilter', filter);
+                setRemove(filter);
+            }
+            setIsLoading(false);
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
 
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
@@ -134,9 +137,17 @@ const AccountContainer = () => {
                 checkTrue.push(item);
             }
         });
+        if (checkTrue.length === deleted.length) {
+            form.setValue('checkAll', true);
+        } else {
+            form.setValue('checkAll', false);
+        }
         setCheckedObj(checkTrue);
         if (e.target.checked) {
-            setDeleted([...deleted, id]);
+            const found = remove.find((element: any) => {
+                return element.id === id;
+            });
+            setDeleted([...deleted, found]);
         }
         if (!e.target.checked) {
             if (deleted.length > 0) {
@@ -155,25 +166,34 @@ const AccountContainer = () => {
         form.setValue('checkAll', e.target.checked);
         const arr: any = [];
         if (e.target.checked) {
-            setCheckedObj(checkBoxKeys);
-            const checkBox: any = { ...form.watch() };
-            [...Array(dummy.length)].forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            remove.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, e.target.checked);
-                arr.push(idx + 1);
-                if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
-                    form.setValue(datas, true);
-                } else {
-                    form.setValue(datas, false);
-                }
+                arr.push(item);
             });
+            setCheckedObj(checkBoxKeys);
+            // const checkBox: any = { ...form.watch() };
+            // [...Array(remove.length)].forEach((item: any, idx: number) => {
+            //     const datas: any = `checkbox${idx + 1}`;
+            //     form.setValue(datas, e.target.checked);
+            //     arr.push(idx + 1);
+            //     if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
+            //         form.setValue(datas, true);
+            //     } else {
+            //         form.setValue(datas, false);
+            //     }
+            // });
             setDeleted(arr);
         } else if (!e.target.checked) {
             setCheckedObj([]);
-            [...Array(dummy.length)].forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            remove.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
             });
+            // [...Array(remove.length)].forEach((item: any) => {
+            //     const datas: any = `checkbox${item.id}`;
+            //     form.setValue(datas, false);
+            // });
             setDeleted([]);
         }
     };
@@ -223,23 +243,20 @@ const AccountContainer = () => {
     };
 
     useEffect(() => {
-        setRemove(dummy);
+        // setRemove(dummy);
         setIsLoading(true);
+        fetchAccountData();
         setTimeout(() => {
             setIsLoading(false);
         }, 2000);
     }, []);
-
-    // useEffect(() => {
-    //     fetchAccountData();
-    // }, []);
 
     useEffect(() => {
         setPages(Math.ceil(remove.length / Number(row)));
     }, [pages, row]);
 
     useEffect(() => {
-        [...Array(dummy.length)].forEach((item: any, idx: number) => {
+        [...Array(remove.length)].forEach((item: any, idx: number) => {
             checkBoxKeys.push(`checkbox${idx + 1}`);
         });
         if (checkedObj.length > 0 || form.watch('checkAll')) {
