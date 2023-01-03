@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Typography, FormGroup, FormControlLabel, Checkbox, Divider } from '@mui/material';
 import InputWithLabel from 'components/Input/InputWithLabel';
@@ -34,9 +35,10 @@ const categoryList = [
 interface AddPrizeProps {
     statusEdit?: boolean;
 }
-const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
+const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
     const rules = { required: true };
     const { fetchAPI } = useAPICaller();
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const notify = useNotify();
     const router = useRouter();
     const form = useForm({
@@ -64,12 +66,14 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
         setChecked([false, event.target.checked]);
     };
     const getDataPrize = async () => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
                 method: 'GET',
-                endpoint: `product-prizes/${router.query.id}`
+                endpoint: `tournament-gifts/${router.query.id}`
             });
-            console.log('responseaddprize', response);
+            console.log('response', response);
+
             if (response.status === 200) {
                 form.setValue('name', response.data.data.name);
                 form.setValue('code', response.data.data.code);
@@ -79,9 +83,12 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                 // form.setValue('img2', response.data.data.image_url_2);
                 // form.setValue('img3', response.data.data.image_url_3);
                 form.setValue('is_active', response.data.data.is_active);
+                setIsLoading(false);
             }
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
+            console.log(2);
         }
     };
 
@@ -89,7 +96,7 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
         try {
             const response = await fetchAPI({
                 method: 'PUT',
-                endpoint: `/product-prizes/${router.query.id}`,
+                endpoint: `/tournament-gifts/${router.query.id}`,
                 data: {
                     code: form.watch('code'),
                     name: form.watch('name'),
@@ -142,9 +149,12 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
             getDataPrize();
         }
     }, []);
+
+    console.log('getdataprizes', statusEdit);
+
     return (
         <Box component='section'>
-            <TitleCard title='Add Prize' subtitle='Addtional description if required' isSearchExist={false} />
+            <TitleCard title='Edit Set Prize' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(statusEdit ? handlePUTSubmit : handlePOSTSubmit)}>
                 <Box sx={{ my: 3, mx: 2, width: '40%' }}>
                     <Box sx={{ my: '30px' }}>
@@ -290,4 +300,4 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
     );
 };
 
-export default AddPrize;
+export default EditSetPrizeContainer;

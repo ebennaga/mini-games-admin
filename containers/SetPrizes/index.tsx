@@ -208,7 +208,7 @@ const SetPrizes = () => {
 
     const handleEditData = () => {
         // router.push(`/settings/product-prizes/${removeData[0].id}/`);
-        router.push(`/client-tournament/${removeData[0].id}/set-prizes`);
+        router.push(`/tournament/client-tournament/${removeData[0].id}/set-prizes/edit-set-prizes`);
     };
     const handleFetchData = async () => {
         setIsLoading(true);
@@ -242,7 +242,7 @@ const SetPrizes = () => {
             await Promise.all(
                 removeData.map(async (x: any) => {
                     const response = await fetchAPI({
-                        endpoint: `/product-prizes/${x.id}`,
+                        endpoint: `/tournament-gifts/${x.id}`,
                         method: 'DELETE'
                     });
 
@@ -522,7 +522,7 @@ const SetPrizes = () => {
                 subtitle='Addtional description if required'
                 isSearchExist
                 placeholderSeacrhText='Search by name, category, etc'
-                href='/add-prize'
+                href=''
             />
             {checked && (
                 <Box sx={{ mx: 1, my: 3, padding: 2, background: '#F4F1FF' }}>
