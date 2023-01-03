@@ -861,7 +861,7 @@ const ClientTournament = () => {
                                                         >
                                                             <Box sx={{ p: 1 }}>
                                                                 <CustomButton
-                                                                    onClick={() => router.push('/settings/product-prizes')}
+                                                                    onClick={() => router.push(`${id}/set-prizes`)}
                                                                     width='121px'
                                                                     height='30px'
                                                                     title='SET PRIZE'
