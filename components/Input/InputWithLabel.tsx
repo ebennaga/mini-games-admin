@@ -59,7 +59,9 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     } else {
         helperText = error;
     }
-
+    React.useEffect(() => {
+        console.log(form.watch('name'));
+    });
     return (
         <Controller
             control={form.control}
