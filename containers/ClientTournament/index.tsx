@@ -4,6 +4,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import {
     Box,
     Typography,
@@ -40,6 +42,7 @@ import InputDate from 'components/Input/InputDate';
 import { getCurrentDate } from 'utils/date';
 import Input from 'components/Input/Input';
 import InputSelect from 'components/Input/InputSelect';
+import { useSelector } from 'react-redux';
 
 const valueList = [
     {
@@ -137,6 +140,7 @@ const ClientTournament = () => {
             keySearch: ''
         }
     });
+    const userState = useSelector((state: any) => state.webpage?.user?.user);
     const [openFilter, setOpenFilter] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [row, setRow] = React.useState(dummyData.length.toString());
@@ -146,14 +150,40 @@ const ClientTournament = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [checked, setIsChecked] = React.useState(false);
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
-    const checkBoxKeys: string[] = [];
+    let checkBoxKeys: string[] = [];
     const [openRemove, setOpenRemove] = React.useState(false);
     const [val, setVal] = React.useState<string>('All');
     const [removeData, setRemoveData] = React.useState<any>([]);
     const router = useRouter();
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
+
+    const fetchData = async () => {
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                // endpoint: `/tournaments?search=14`
+                endpoint: `/tournaments?search=${userState.company_id}`
+            });
+            // console.log(response);
+            if (response.status === 200) {
+                // console.log(response);
+                const tournaments = response.data.data;
+                setFilteredData(tournaments);
+                // setRemove(tournaments);
+                // setRow(tournaments.length.toString());
+                // setIsLoading(false);
+                // notify(response?.data.message, 'success');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+    };
 
     React.useEffect(() => {
-        setFilteredData(dummyData);
+        fetchData();
+        // setFilteredData(dummyData);
     }, []);
 
     React.useEffect(() => {
@@ -161,9 +191,12 @@ const ClientTournament = () => {
     }, [pages, row]);
 
     React.useEffect(() => {
-        [...Array(dummyData.length)].forEach((item: any, idx: number) => {
-            checkBoxKeys.push(`checkbox${idx + 1}`);
-        });
+        // [...Array(filteredData.length)].forEach((item: any, idx: number) => {
+        //     checkBoxKeys.push(`checkbox${idx + 1}`);
+        // });
+        const ObjForm = { ...form.watch() };
+        const makeArr = Object.keys(ObjForm).filter((item: any) => item.includes('checkbox'));
+        checkBoxKeys = [...makeArr];
         if (checkedObj.length > 0 || form.watch('checkedAll')) {
             setIsChecked(true);
         } else {
@@ -212,7 +245,7 @@ const ClientTournament = () => {
         const temp: any[] = [];
         form.setValue('checkedAll', e.target.checked);
         if (e.target.checked) {
-            dummyData.forEach((item: any, idx: number) => {
+            filteredData.forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, e.target.checked);
                 temp.push(item);
@@ -222,7 +255,7 @@ const ClientTournament = () => {
         } else if (!e.target.checked) {
             setCheckedObj([]);
             setRemoveData([]);
-            dummyData.forEach((item: any, idx: number) => {
+            filteredData.forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, false);
             });
@@ -231,8 +264,10 @@ const ClientTournament = () => {
 
     const checkTrue: string[] = [];
     const handleSingleCheckBox = (e: any, name: any, id: number) => {
+        // console.log('name : ', name);
         form.setValue(name, e.target.checked);
         const checkBox: any = { ...form.watch() };
+        // console.log(checkBoxKeys);
         checkBoxKeys.forEach((item: any) => {
             if (checkBox[item] === true) {
                 checkTrue.push(item);
@@ -254,6 +289,10 @@ const ClientTournament = () => {
         }
     };
 
+    // console.log(checkBoxKeys);
+    // console.log(checkTrue);
+    console.log(form.watch());
+
     const handleRemoveData = () => {
         const res = filteredData.filter((item: any) => !removeData.includes(item));
         setCheckedObj([]);
@@ -268,14 +307,14 @@ const ClientTournament = () => {
     };
 
     const handleEdit = () => {
-        const { id } = dummyData[removeData];
+        const { id } = filteredData[removeData];
         router.push(`/tournament/client-tournament/${id}`);
     };
 
     // Component Update for Search Event
     const keySearch = form.watch('keySearch');
     React.useEffect(() => {
-        const result = dummyData.filter((item: any) => {
+        const result = filteredData.filter((item: any) => {
             if (keySearch) {
                 return item?.title?.toLowerCase()?.includes(keySearch.toLowerCase());
             }
@@ -287,7 +326,7 @@ const ClientTournament = () => {
     // Event Handler Filter
     const handleFilter = () => {
         let result: Array<any> = [];
-        const data = dummyData;
+        const data = filteredData;
         const { title, mode, prizeType: prize, games, startDate, startTime, endDate, endTime } = form.watch();
 
         if (title) {
@@ -409,6 +448,8 @@ const ClientTournament = () => {
             setIsLoading(false);
         }, 2000);
     }, []);
+
+    // console.log(userState.company_id);
     return (
         <Box>
             <Dialog
@@ -729,60 +770,60 @@ const ClientTournament = () => {
                                 </TableHead>
                                 <TableBody>
                                     {getPaginatedData().length > 0 &&
-                                        getPaginatedData().map((item: any) => {
+                                        getPaginatedData().map((item: any, idx: number) => {
                                             const check: any = `checkbox${item.id}`;
                                             return (
                                                 <TableRow key={item.id}>
                                                     <TableCell align='center' sx={{ width: '5%' }}>
-                                                        {item.id}
+                                                        {currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.title}
+                                                        {item.name}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {new Date(item.start).toLocaleString('id', dateOption)}
+                                                        {new Date(item.start_time).toLocaleString('id', dateOption)}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {new Date(item.start).toLocaleString(undefined, timeOption)}
+                                                        {new Date(item.start_time).toLocaleString(undefined, timeOption)}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {new Date(item.end).toLocaleString('id', dateOption)}
+                                                        {new Date(item.end_time).toLocaleString('id', dateOption)}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {new Date(item.end).toLocaleString(undefined, timeOption)}
+                                                        {new Date(item.end_time).toLocaleString(undefined, timeOption)}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.games}
+                                                        {item?.game?.name}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.mode}
+                                                        {item.entry_coin > 0 ? 'Grand Tournaments' : 'Casual Tournaments'}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.fee}
+                                                        {item.entry_coin}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -794,7 +835,7 @@ const ClientTournament = () => {
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.prize}
+                                                        {item.total_point}
                                                     </TableCell>
                                                     <TableCell align='center' sx={{ width: '6%', fontWeight: 'bold' }}>
                                                         <CheckboxController
@@ -851,7 +892,7 @@ const ClientTournament = () => {
                                 defaultValue={dummyData.length.toString()}
                                 onChange={handleViewRow}
                             >
-                                {[...Array(dummyData.length)].map((item: any, idx: number) => (
+                                {[...Array(filteredData.length)].map((item: any, idx: number) => (
                                     <MenuItem key={idx} value={idx + 1}>
                                         {idx + 1}
                                     </MenuItem>

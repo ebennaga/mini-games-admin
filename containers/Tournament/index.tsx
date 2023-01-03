@@ -84,8 +84,9 @@ const TournamentContainer = () => {
         try {
             const response = await fetchAPI({
                 method: 'GET',
-                endpoint: '/tournaments'
+                endpoint: '/tournaments?search='
             });
+            // console.log(response);
             if (response.status === 200) {
                 const tournaments = response.data.data;
                 setRemove(tournaments);
