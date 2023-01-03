@@ -289,7 +289,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 <form onSubmit={form.handleSubmit(handlePOSTSubmit)}>
                     <Grid container mt='37px' color='rgba(0, 0, 0, 0.6)'>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Tournament Title
@@ -320,7 +320,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Tournament Image
@@ -352,7 +352,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Duration
@@ -391,7 +391,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={3}>
                                 <InputDate
                                     isCreate
@@ -407,7 +407,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Games
@@ -438,7 +438,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Tournament Type
@@ -469,7 +469,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Tournament Fee
@@ -503,7 +503,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                         </Grid>
 
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Box sx={{ mr: '70%' }}>
                                     <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                         Prize Table
@@ -558,8 +558,10 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
+
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
                             <Grid item xs={8}>
+
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                     <TableAddTournament valueTable={table} data={prizeData} formTable={formTable} fieldArray={fieldArray} />
                                     <Box
@@ -608,7 +610,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             </Grid>
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
-                            <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
+                            <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
                                     Total Pool Prizes
                                 </Typography>

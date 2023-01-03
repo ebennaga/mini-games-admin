@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Box, ButtonBase, Grid, Tab, Tabs } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import React, { useEffect } from 'react';
@@ -7,6 +8,8 @@ import { useForm } from 'react-hook-form';
 import { getEndDdate, getStartDate } from 'utils/date';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import ChartBar from './ChartBar';
 import ChartDoughnut from './ChartDoughnut';
 import ChartSpline from './ChartSpline';
@@ -47,6 +50,9 @@ const Home = () => {
     const [tabChartDoughnut, setTabChartDoughnut] = React.useState<string>('0');
     const [tabChartBar, setTabChartBar] = React.useState<string>('0');
     const [tabChartDoughnut2, setTabChartDoughnut2] = React.useState<string>('0');
+    const [isLoading, setIsLoading] = React.useState(false);
+    const { fetchAPI } = useAPICaller();
+    const notify = useNotify();
 
     const form = useForm({
         mode: 'all',
@@ -56,6 +62,22 @@ const Home = () => {
         }
     });
 
+    const handleFetchData = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: `dashboard/lines/most-redeemed-prizes`
+            });
+
+            if (response.status === 200) {
+                notify(response.data.message, 'success');
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+    };
     const handleChangeTabSpline = (e: React.SyntheticEvent, newValue: string) => {
         setTabChartSpline(newValue);
     };
@@ -72,6 +94,9 @@ const Home = () => {
         setTabChartDoughnut2(newValue);
     };
 
+    React.useEffect(() => {
+        handleFetchData();
+    }, []);
     useEffect(() => {
         if (!userState) {
             router.push('/sign-in');
