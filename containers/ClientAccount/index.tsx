@@ -89,6 +89,7 @@ const AccountContainer = () => {
             if (result.status === 200) {
                 const totalFilter = result.data.data;
                 const filter = totalFilter.filter((item: any) => item.name !== null);
+                console.log(filter);
                 setRemove(filter);
             }
             setIsLoading(false);
