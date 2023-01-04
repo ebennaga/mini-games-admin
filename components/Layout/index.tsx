@@ -118,7 +118,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
         handleMenus();
     }, []);
 
-    // console.log(menus);
+    // console.log(userState);
 
     return (
         <Box sx={{ bgcolor: '#fff', minHeight: '100vh', display: 'flex' }}>
@@ -210,7 +210,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                             </Box>
                         </Box>
                         <Typography component='span' fontSize='16px' sx={{ color: 'rgba(0, 0, 0, 0.87)', px: 3 }}>
-                            BangLorem
+                            {userState?.email}
                         </Typography>
                         <Avatar
                             onClick={() => setIsDrop(!isDrop)}
@@ -235,7 +235,7 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                                     zIndex: 99
                                 }}
                             >
-                                <Typography>owikun@mail.com</Typography>
+                                <Typography>{userState?.email}</Typography>
                                 <Box sx={{ width: '80%', height: '1px', backgroundColor: '#A54CE5', my: '5px' }} />
                                 <ButtonBase onClick={handleLogout}>
                                     {isLoading ? <CircularProgress color='secondary' size={25} /> : <Typography>Logout</Typography>}
