@@ -47,7 +47,9 @@ const SignIn = () => {
                 }
             });
             if (response?.status === 200) {
-                setUser(response?.data.data);
+                const dataUser = { ...response?.data.data, email: data.email };
+                setUser(dataUser);
+
                 notify(response?.data.message, 'success');
                 router.push('/');
             } else {
