@@ -153,7 +153,7 @@ const ClientTournament = () => {
     let checkBoxKeys: string[] = [];
     const [openRemove, setOpenRemove] = React.useState(false);
     const [val, setVal] = React.useState<string>('All');
-    const [removeData, setRemoveData] = React.useState<any>([]);
+    const [existingData, setExistingData] = React.useState<any>([]);
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
@@ -252,11 +252,11 @@ const ClientTournament = () => {
                 form.setValue(datas, e.target.checked);
                 temp.push(item);
             });
-            setRemoveData(temp);
+            setExistingData(temp);
             setCheckedObj(checkBoxKeys);
         } else if (!e.target.checked) {
             setCheckedObj([]);
-            setRemoveData([]);
+            setExistingData([]);
             filteredData.forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${idx + 1}`;
                 form.setValue(datas, false);
@@ -277,16 +277,16 @@ const ClientTournament = () => {
         });
         setCheckedObj(checkTrue);
         if (e.target.checked) {
-            setRemoveData([...removeData, id]);
+            setExistingData([...existingData, id]);
         }
         if (!e.target.checked) {
-            if (removeData.length > 0) {
-                const filter = removeData.filter((item: any) => {
+            if (existingData.length > 0) {
+                const filter = existingData.filter((item: any) => {
                     return id !== item;
                 });
-                setRemoveData(filter);
+                setExistingData(filter);
             } else {
-                setRemoveData([]);
+                setExistingData([]);
             }
         }
     };
@@ -295,11 +295,11 @@ const ClientTournament = () => {
     // console.log(checkTrue);
     console.log(form.watch());
 
-    const handleRemoveData = () => {
-        const res = filteredData.filter((item: any) => !removeData.includes(item));
+    const handleexistingData = () => {
+        const res = filteredData.filter((item: any) => !existingData.includes(item));
         setCheckedObj([]);
         setFilteredData(res);
-        setRemoveData([]);
+        setExistingData([]);
         setOpenRemove(false);
         setRow(res.length);
         filteredData.forEach((item: any, idx: number) => {
@@ -309,7 +309,7 @@ const ClientTournament = () => {
     };
 
     const handleEdit = () => {
-        const { id } = filteredData[removeData];
+        const { id } = filteredData[existingData];
         router.push(`/tournament/client-tournament/${id}`);
     };
 
@@ -605,7 +605,7 @@ const ClientTournament = () => {
                     <DialogContentText id='alert-dialog-description'>{checkedObj.length} items selected</DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ m: 1 }}>
-                    <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
+                    <CustomButton title='REMOVE' height='47px' onClick={handleexistingData} />
                     <CustomButton
                         title='CANCEL'
                         backgroundColor='white'
