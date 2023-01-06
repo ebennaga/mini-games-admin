@@ -94,7 +94,7 @@ const SetPrizes = () => {
     const [checked, setIsChecked] = React.useState(false);
     const [checkedObj, setCheckedObj] = React.useState<string[]>([]);
     const checkBoxKeys: string[] = [];
-    const [removeData, setRemoveData] = React.useState<any>([]);
+    const [existingData, setExistingData] = React.useState<any>([]);
     const [categoryList, setCategoryList] = React.useState<any>([]);
     const [filteredShow, setFilteredShow] = React.useState<any>({});
     const [value, setValue] = React.useState('all');
@@ -155,11 +155,11 @@ const SetPrizes = () => {
                 form.setValue(datas, e.target.checked);
                 temp.push(item);
             });
-            setRemoveData(temp);
+            setExistingData(temp);
             setCheckedObj(checkBoxKeys);
         } else if (!e.target.checked) {
             setCheckedObj([]);
-            setRemoveData([]);
+            setExistingData([]);
             filteredData.forEach((item: any, idx: number) => {
                 const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
@@ -191,24 +191,24 @@ const SetPrizes = () => {
             const found = filteredData.find((element: any) => {
                 return element.id === id;
             });
-            setRemoveData([...removeData, found]);
+            setExistingData([...existingData, found]);
         }
 
         if (!e.target.checked) {
-            if (removeData.length > 0) {
-                const filter = removeData.filter((item: any) => {
+            if (existingData.length > 0) {
+                const filter = existingData.filter((item: any) => {
                     return id !== item.id;
                 });
-                setRemoveData(filter);
+                setExistingData(filter);
             } else {
-                setRemoveData([]);
+                setExistingData([]);
             }
         }
     };
 
     const handleEditData = () => {
-        // router.push(`/settings/product-prizes/${removeData[0].id}/`);
-        router.push(`/tournament/client-tournament/${removeData[0].id}/set-prizes/edit-set-prizes`);
+        // router.push(`/settings/product-prizes/${existingData[0].id}/`);
+        router.push(`/tournament/client-tournament/${existingData[0].id}/set-prizes/edit-set-prizes`);
     };
     const handleFetchData = async () => {
         setIsLoading(true);
@@ -235,12 +235,12 @@ const SetPrizes = () => {
         setIsLoading(false);
     };
 
-    const handleRemoveData = async () => {
+    const handleexistingData = async () => {
         setIsLoadingRemove(true);
         try {
             let errMessage = '';
             await Promise.all(
-                removeData.map(async (x: any) => {
+                existingData.map(async (x: any) => {
                     const response = await fetchAPI({
                         endpoint: `/tournament-gifts/${x.id}`,
                         method: 'DELETE'
@@ -256,7 +256,7 @@ const SetPrizes = () => {
                 notify(errMessage, 'error');
             } else {
                 await handleFetchData();
-                setRemoveData([]);
+                setExistingData([]);
                 setCheckedObj([]);
                 form.setValue('checkedAll', false);
                 filteredData.forEach((item: any, idx: number) => {
@@ -347,7 +347,7 @@ const SetPrizes = () => {
                     <CircularProgress sx={{ margin: 'auto', color: '#a54ce5' }} />
                 ) : (
                     <DialogActions sx={{ m: 1 }}>
-                        <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
+                        <CustomButton title='REMOVE' height='47px' onClick={handleexistingData} />
                         <CustomButton
                             title='CANCEL'
                             backgroundColor='white'
