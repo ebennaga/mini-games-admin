@@ -9,6 +9,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import RadioButton from 'components/Radio/RadioV2';
+import { useSelector } from 'react-redux';
 
 interface CreateClientAccountProps {}
 
@@ -18,10 +19,9 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         defaultValues: {
             name: '',
             email: '',
-            role: '0',
-            dataAccess: '',
+            roles: '0',
             company: '0',
-            activeRole: true
+            is_active: true
         }
     });
     const [accessArr, setAccessArr] = React.useState<string[]>([]);
@@ -67,7 +67,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                         email: form.watch('email'),
                         name: form.watch('name'),
                         // roles: form.watch('roles'),
-                        roles: form.watch('role'),
+                        roles: form.watch('roles'),
                         company: form.watch('company')
                         // is_active: form.watch('is_active')
                     }
@@ -83,10 +83,10 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         }
     };
 
+    const userState = useSelector((state: any) => state.webpage?.user?.user);
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
-        form.setValue('role', event.target.value);
-
+        form.setValue('roles', event.target.value);
         if (!isDuplicate) {
             setRoles([...roles, event.target.value as string]);
         }
@@ -120,7 +120,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
 
     const handleSelectAccess = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
-        form.setValue('dataAccess', event.target.value);
+        // form.setValue('dataAccess', event.target.value);
         if (!isDuplicate) {
             setAccessArr([...accessArr, event.target.value as string]);
         }
@@ -136,18 +136,18 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     };
 
     const handleAddSetActive = (event: any) => {
-        form.setValue('activeRole', event.target.checked);
+        form.setValue('is_active', event.target.checked);
     };
 
     const handleAddSetNotActive = (event: any) => {
-        form.setValue('activeRole', !form.watch('activeRole'));
+        form.setValue('is_active', !form.watch('is_active'));
     };
     React.useEffect(() => {
         getDataCompany();
     }, []);
     React.useEffect(() => {
         if (companies.length <= 0 && roles.length <= 0) {
-            form.setValue('role', '0');
+            form.setValue('roles', '0');
             form.setValue('company', '0');
             setIsCompFilled(false);
             return setIsRolesFilled(false);
@@ -165,16 +165,42 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     // console.log({ isCompFilled });
     // console.log({ isRolesFilled });
 
+    const handlePOSTSubmit = async () => {
+        if (isCompFilled && isRolesFilled) {
+            setIsError(false);
+            try {
+                const response = await fetchAPI({
+                    method: 'POST',
+                    endpoint: `/accounts`,
+                    data: {
+                        id: Math.floor(Math.random() * 300 + 1),
+                        email: form.watch('email'),
+                        name: form.watch('name'),
+                        roles: form.watch('roles'),
+                        company: form.watch('company'),
+                        is_active: form.watch('is_active')
+                    }
+                });
+                if (response.status === 200) {
+                    notify('Successfully create client account', 'success');
+                }
+            } catch (error: any) {
+                notify(error.message, 'error');
+            }
+        } else {
+            setIsError(true);
+        }
+    };
     return (
         <Box sx={{ position: 'relative' }}>
-            <Box sx={{ padding: '40px 25px', height: '100vh' }}>
+            <Box sx={{ padding: '40px 25px' }}>
                 <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
                     <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Add Client Account</Typography>
                     <Typography sx={{ fontSize: '14px', fontWeight: 400, color: 'rgba(0, 0, 0, 0.6)' }}>
                         Additional description if required
                     </Typography>
                 </Paper>
-                <form>
+                <form onSubmit={form.handleSubmit(handlePOSTSubmit)}>
                     <Box sx={{ mt: '45px', width: '40%' }}>
                         <InputWithLabel
                             isRequired
@@ -313,11 +339,11 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     Role Code
                                 </InputLabel>
                                 <Select
-                                    sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                    sx={{ color: form.watch('roles') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
                                     placeholder='Select Roles'
                                     labelId='demo-simple-select-label'
                                     id='demo-simple-select'
-                                    value={form.watch('role')}
+                                    value={form.watch('roles')}
                                     label='Role Code'
                                     onChange={handleAddRole}
                                     color='secondary'
@@ -398,51 +424,62 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                         <Box sx={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <RadioButton
                                 form={form}
-                                name='activeRole'
+                                name='is_active'
                                 handleChange={handleAddSetActive}
                                 rules={{ required: true }}
-                                checked={form.watch('activeRole')}
+                                checked={form.watch('is_active')}
                                 label='Yes'
                             />
                             <RadioButton
                                 form={form}
-                                name='activeRole'
+                                name='is_active'
                                 handleChange={handleAddSetNotActive}
                                 rules={{ required: true }}
-                                checked={!form.watch('activeRole')}
+                                checked={!form.watch('is_active')}
                                 label='No'
                             />
                         </Box>
                     </Box>
+                    <Box
+                        sx={{
+                            borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+                            display: 'flex',
+                            gap: '20px',
+                            alignItems: 'center',
+                            mt: '20px',
+                            // position: 'absolute',
+                            bottom: '0px',
+                            paddingTop: '20px',
+                            paddingBottom: '20px',
+                            // padding: '40px',
+                            width: '100%'
+                        }}
+                    >
+                        <CustomButton
+                            // type='submit'
+                            type='submit'
+                            // onClick={submitHandler}
+                            padding='10px'
+                            width='193px'
+                            height='59px'
+                            title='Submit'
+                            backgroundColor='#A54CE5'
+                        />
+                        <CustomButton
+                            onClick={() => {
+                                // setCreateAcc(!createAcc);
+                                router.push('/client-account');
+                            }}
+                            padding='10px'
+                            width='193px'
+                            height='59px'
+                            title='cancel'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            border='1px solid #A54CE5'
+                        />
+                    </Box>
                 </form>
-            </Box>
-            <Box
-                sx={{
-                    borderTop: '1px solid rgba(0, 0, 0, 0.12)',
-                    display: 'flex',
-                    gap: '20px',
-                    alignItems: 'center',
-                    mt: '20px',
-                    position: 'absolute',
-                    bottom: '0px',
-                    padding: '40px',
-                    width: '100%'
-                }}
-            >
-                <CustomButton onClick={submitHandler} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
-                <CustomButton
-                    onClick={() => {
-                        // setCreateAcc(!createAcc);
-                        router.push('/client-account');
-                    }}
-                    padding='10px'
-                    width='193px'
-                    height='59px'
-                    title='cancel'
-                    backgroundColor='white'
-                    color='#A54CE5'
-                    border='1px solid #A54CE5'
-                />
             </Box>
         </Box>
     );
