@@ -82,13 +82,15 @@ const AccountContainer = () => {
         setIsLoading(true);
         try {
             const result = await fetchAPI({
-                endpoint: `accounts?is_client=${true}search=${form.watch('search')}`,
+                endpoint: `accounts?is_client=${true}&search=${form.watch('search')}`,
                 method: 'GET'
             });
 
             if (result.status === 200) {
                 const totalFilter = result.data.data;
                 const filter = totalFilter.filter((item: any) => item.name !== null);
+                console.log(filter);
+                setIsLoading(false);
                 setRemove(filter);
             }
             setIsLoading(false);

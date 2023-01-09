@@ -9,6 +9,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import RadioButton from 'components/Radio/RadioV2';
+import { useSelector } from 'react-redux';
 
 interface CreateClientAccountProps {}
 
@@ -18,33 +19,84 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         defaultValues: {
             name: '',
             email: '',
-            role: '0',
-            dataAccess: '',
+            roles: '0',
             company: '0',
-            activeRole: true
+            is_active: true
         }
     });
     const [accessArr, setAccessArr] = React.useState<string[]>([]);
     const [roles, setRoles] = React.useState<any>([]);
     const [companies, setCompanies] = React.useState<any>([]);
+    const [selectCompanies, setSelectCompanies] = React.useState<any>([]);
+    const [selectRoles, setSelectRoles] = React.useState<any>([]);
     const [isCompFilled, setIsCompFilled] = React.useState<boolean>(false);
     const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
     const [isError, setIsError] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+    const userState = useSelector((state: any) => state.webpage?.user?.user);
 
-    const submitHandler = async (data: any) => {
+    const getDataCompany = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: `companies/`
+            });
+
+            if (result.status === 200) {
+                const dataCompanies = result.data.data;
+                setSelectCompanies(dataCompanies);
+                setIsLoading(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
+
+    const getDataRoles = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: `roles/`
+            });
+
+            if (result.status === 200) {
+                const dataResults = result.data.data;
+
+                setSelectRoles(dataResults);
+                setIsLoading(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
+
+    const handlePOSTSubmit = async () => {
         if (isCompFilled && isRolesFilled) {
             setIsError(false);
             try {
                 const response = await fetchAPI({
                     method: 'POST',
-                    endpoint: 'client-account',
-                    data: {}
+                    endpoint: `/accounts`,
+                    data: {
+                        id: Math.floor(Math.random() * 300 + 1),
+                        email: form.watch('email'),
+                        name: form.watch('name'),
+                        role_ids: form.watch('roles'),
+                        company: form.watch('company'),
+                        is_active: form.watch('is_active')
+                    }
                 });
                 if (response.status === 200) {
-                    notify('Successfully create client account', 'success');
+                    notify(response.data.message, 'success');
                 }
             } catch (error: any) {
                 notify(error.message, 'error');
@@ -56,8 +108,10 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
-        form.setValue('role', event.target.value);
+        form.setValue('roles', event.target.value);
         if (!isDuplicate) {
+            const dataRoles = selectRoles.filter((item: any) => event.target.value === item.id);
+            // setRoles([...roles, ...dataRoles]);
             setRoles([...roles, event.target.value as string]);
         }
     };
@@ -66,7 +120,9 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         const isDuplicate: any = companies.includes(event.target.value);
         form.setValue('company', event.target.value);
         if (!isDuplicate) {
-            setCompanies([...companies, event.target.value as string]);
+            const dataCompanies = selectCompanies.filter((item: any) => event.target.value === item.id);
+            setCompanies([...companies, ...dataCompanies]);
+            // setCompanies([...companies, event.target.value as string]);
         }
     };
 
@@ -82,7 +138,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const handleDeletedCompanies = (item: any) => {
         if (companies.length > 0) {
             const deleted = companies.filter((i: any) => {
-                return item !== i;
+                return item !== i.id;
             });
             setCompanies(deleted);
         }
@@ -90,7 +146,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
 
     const handleSelectAccess = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
-        form.setValue('dataAccess', event.target.value);
+        // form.setValue('dataAccess', event.target.value);
         if (!isDuplicate) {
             setAccessArr([...accessArr, event.target.value as string]);
         }
@@ -106,16 +162,19 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     };
 
     const handleAddSetActive = (event: any) => {
-        form.setValue('activeRole', event.target.checked);
+        form.setValue('is_active', event.target.checked);
     };
 
     const handleAddSetNotActive = (event: any) => {
-        form.setValue('activeRole', !form.watch('activeRole'));
+        form.setValue('is_active', !form.watch('is_active'));
     };
-
+    React.useEffect(() => {
+        getDataCompany();
+        getDataRoles();
+    }, []);
     React.useEffect(() => {
         if (companies.length <= 0 && roles.length <= 0) {
-            form.setValue('role', '0');
+            form.setValue('roles', '0');
             form.setValue('company', '0');
             setIsCompFilled(false);
             return setIsRolesFilled(false);
@@ -130,19 +189,18 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
             setIsError(false);
         }
     }, [isCompFilled, isRolesFilled]);
-    // console.log({ isCompFilled });
-    // console.log({ isRolesFilled });
+    // console.log('roles', roles);
 
     return (
         <Box sx={{ position: 'relative' }}>
-            <Box sx={{ padding: '40px 25px', height: '100vh' }}>
+            <Box sx={{ padding: '40px 25px' }}>
                 <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
                     <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Add Client Account</Typography>
                     <Typography sx={{ fontSize: '14px', fontWeight: 400, color: 'rgba(0, 0, 0, 0.6)' }}>
                         Additional description if required
                     </Typography>
                 </Paper>
-                <form>
+                <form onSubmit={form.handleSubmit(handlePOSTSubmit)}>
                     <Box sx={{ mt: '45px', width: '40%' }}>
                         <InputWithLabel
                             isRequired
@@ -206,9 +264,16 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     <MenuItem value='0' disabled>
                                         Select Company
                                     </MenuItem>
-                                    <MenuItem value='Starduck'>Starduck</MenuItem>
+                                    {/* <MenuItem value='Starduck'>Starduck</MenuItem>
                                     <MenuItem value='J.OC'>J.OC</MenuItem>
-                                    <MenuItem value='Mc Dono'>Mc Dono</MenuItem>
+                                    <MenuItem value='Mc Dono'>Mc Dono</MenuItem> */}
+                                    {selectCompanies.map((item: any, index: any) => {
+                                        return (
+                                            <MenuItem value={item.id} key={index}>
+                                                {item.code} {item.name}
+                                            </MenuItem>
+                                        );
+                                    })}
                                 </Select>
                             </FormControl>
                         </Box>
@@ -241,12 +306,12 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                                 gap: '5px'
                                             }}
                                         >
-                                            <Typography>{item}</Typography>
+                                            <Typography>{item.name}</Typography>
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close
                                                     fontSize='small'
                                                     sx={{ color: 'white', cursor: 'pointer' }}
-                                                    onClick={() => handleDeletedCompanies(item)}
+                                                    onClick={() => handleDeletedCompanies(item.id)}
                                                 />
                                             </Box>
                                         </Box>
@@ -281,11 +346,11 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     Role Code
                                 </InputLabel>
                                 <Select
-                                    sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                    sx={{ color: form.watch('roles') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
                                     placeholder='Select Roles'
                                     labelId='demo-simple-select-label'
                                     id='demo-simple-select'
-                                    value={form.watch('role')}
+                                    value={form.watch('roles')}
                                     label='Role Code'
                                     onChange={handleAddRole}
                                     color='secondary'
@@ -294,9 +359,16 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     <MenuItem value='0' disabled>
                                         Select Roles
                                     </MenuItem>
-                                    <MenuItem value='Admin'>Admin</MenuItem>
+                                    {/* <MenuItem value='Admin'>Admin</MenuItem>
                                     <MenuItem value='Marketing'>Marketing</MenuItem>
-                                    <MenuItem value='Content Writer'>Content Writer</MenuItem>
+                                    <MenuItem value='Content Writer'>Content Writer</MenuItem> */}
+                                    {selectRoles.map((item: any, index: any) => {
+                                        return (
+                                            <MenuItem value={item.code} key={index}>
+                                                {item.name}
+                                            </MenuItem>
+                                        );
+                                    })}
                                 </Select>
                             </FormControl>
                         </Box>
@@ -366,51 +438,62 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                         <Box sx={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <RadioButton
                                 form={form}
-                                name='activeRole'
+                                name='is_active'
                                 handleChange={handleAddSetActive}
                                 rules={{ required: true }}
-                                checked={form.watch('activeRole')}
+                                checked={form.watch('is_active')}
                                 label='Yes'
                             />
                             <RadioButton
                                 form={form}
-                                name='activeRole'
+                                name='is_active'
                                 handleChange={handleAddSetNotActive}
                                 rules={{ required: true }}
-                                checked={!form.watch('activeRole')}
+                                checked={!form.watch('is_active')}
                                 label='No'
                             />
                         </Box>
                     </Box>
+                    <Box
+                        sx={{
+                            borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+                            display: 'flex',
+                            gap: '20px',
+                            alignItems: 'center',
+                            mt: '20px',
+                            // position: 'absolute',
+                            bottom: '0px',
+                            paddingTop: '20px',
+                            paddingBottom: '20px',
+                            // padding: '40px',
+                            width: '100%'
+                        }}
+                    >
+                        <CustomButton
+                            // type='submit'
+                            type='submit'
+                            // onClick={submitHandler}
+                            padding='10px'
+                            width='193px'
+                            height='59px'
+                            title='Submit'
+                            backgroundColor='#A54CE5'
+                        />
+                        <CustomButton
+                            onClick={() => {
+                                // setCreateAcc(!createAcc);
+                                router.push('/client-account');
+                            }}
+                            padding='10px'
+                            width='193px'
+                            height='59px'
+                            title='cancel'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            border='1px solid #A54CE5'
+                        />
+                    </Box>
                 </form>
-            </Box>
-            <Box
-                sx={{
-                    borderTop: '1px solid rgba(0, 0, 0, 0.12)',
-                    display: 'flex',
-                    gap: '20px',
-                    alignItems: 'center',
-                    mt: '20px',
-                    position: 'absolute',
-                    bottom: '0px',
-                    padding: '40px',
-                    width: '100%'
-                }}
-            >
-                <CustomButton onClick={submitHandler} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
-                <CustomButton
-                    onClick={() => {
-                        // setCreateAcc(!createAcc);
-                        router.push('/client-account');
-                    }}
-                    padding='10px'
-                    width='193px'
-                    height='59px'
-                    title='cancel'
-                    backgroundColor='white'
-                    color='#A54CE5'
-                    border='1px solid #A54CE5'
-                />
             </Box>
         </Box>
     );
