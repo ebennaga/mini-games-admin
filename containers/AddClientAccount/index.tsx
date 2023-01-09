@@ -27,6 +27,8 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const [accessArr, setAccessArr] = React.useState<string[]>([]);
     const [roles, setRoles] = React.useState<any>([]);
     const [companies, setCompanies] = React.useState<any>([]);
+    const [selectCompanies, setSelectCompanies] = React.useState<any>([]);
+    const [selectRoles, setSelectRoles] = React.useState<any>([]);
     const [isCompFilled, setIsCompFilled] = React.useState<boolean>(false);
     const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
     const [isError, setIsError] = React.useState<boolean>(false);
@@ -34,18 +36,19 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+    const userState = useSelector((state: any) => state.webpage?.user?.user);
 
     const getDataCompany = async () => {
         setIsLoading(true);
         try {
             const result = await fetchAPI({
                 method: 'GET',
-                endpoint: `companies`
+                endpoint: `companies/`
             });
-            console.log('getcompanies', result);
+
             if (result.status === 200) {
                 const dataCompanies = result.data.data;
-                setCompanies(dataCompanies);
+                setSelectCompanies(dataCompanies);
                 setIsLoading(false);
             }
         } catch (err: any) {
@@ -55,7 +58,28 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         setIsLoading(false);
     };
 
-    const submitHandler = async (data: any) => {
+    const getDataRoles = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: `roles/`
+            });
+
+            if (result.status === 200) {
+                const dataResults = result.data.data;
+
+                setSelectRoles(dataResults);
+                setIsLoading(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
+
+    const handlePOSTSubmit = async () => {
         if (isCompFilled && isRolesFilled) {
             setIsError(false);
             try {
@@ -66,14 +90,13 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                         id: Math.floor(Math.random() * 300 + 1),
                         email: form.watch('email'),
                         name: form.watch('name'),
-                        // roles: form.watch('roles'),
-                        roles: form.watch('roles'),
-                        company: form.watch('company')
-                        // is_active: form.watch('is_active')
+                        role_ids: form.watch('roles'),
+                        company: form.watch('company'),
+                        is_active: form.watch('is_active')
                     }
                 });
                 if (response.status === 200) {
-                    notify('Successfully create client account', 'success');
+                    notify(response.data.message, 'success');
                 }
             } catch (error: any) {
                 notify(error.message, 'error');
@@ -83,11 +106,12 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         }
     };
 
-    const userState = useSelector((state: any) => state.webpage?.user?.user);
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
         form.setValue('roles', event.target.value);
         if (!isDuplicate) {
+            const dataRoles = selectRoles.filter((item: any) => event.target.value === item.id);
+            // setRoles([...roles, ...dataRoles]);
             setRoles([...roles, event.target.value as string]);
         }
     };
@@ -96,7 +120,9 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         const isDuplicate: any = companies.includes(event.target.value);
         form.setValue('company', event.target.value);
         if (!isDuplicate) {
-            setCompanies([...companies, event.target.value as string]);
+            const dataCompanies = selectCompanies.filter((item: any) => event.target.value === item.id);
+            setCompanies([...companies, ...dataCompanies]);
+            // setCompanies([...companies, event.target.value as string]);
         }
     };
 
@@ -112,7 +138,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const handleDeletedCompanies = (item: any) => {
         if (companies.length > 0) {
             const deleted = companies.filter((i: any) => {
-                return item !== i;
+                return item !== i.id;
             });
             setCompanies(deleted);
         }
@@ -144,6 +170,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     };
     React.useEffect(() => {
         getDataCompany();
+        getDataRoles();
     }, []);
     React.useEffect(() => {
         if (companies.length <= 0 && roles.length <= 0) {
@@ -162,35 +189,8 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
             setIsError(false);
         }
     }, [isCompFilled, isRolesFilled]);
-    // console.log({ isCompFilled });
-    // console.log({ isRolesFilled });
+    // console.log('roles', roles);
 
-    const handlePOSTSubmit = async () => {
-        if (isCompFilled && isRolesFilled) {
-            setIsError(false);
-            try {
-                const response = await fetchAPI({
-                    method: 'POST',
-                    endpoint: `/accounts`,
-                    data: {
-                        id: Math.floor(Math.random() * 300 + 1),
-                        email: form.watch('email'),
-                        name: form.watch('name'),
-                        roles: form.watch('roles'),
-                        company: form.watch('company'),
-                        is_active: form.watch('is_active')
-                    }
-                });
-                if (response.status === 200) {
-                    notify('Successfully create client account', 'success');
-                }
-            } catch (error: any) {
-                notify(error.message, 'error');
-            }
-        } else {
-            setIsError(true);
-        }
-    };
     return (
         <Box sx={{ position: 'relative' }}>
             <Box sx={{ padding: '40px 25px' }}>
@@ -264,9 +264,16 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     <MenuItem value='0' disabled>
                                         Select Company
                                     </MenuItem>
-                                    <MenuItem value='Starduck'>Starduck</MenuItem>
+                                    {/* <MenuItem value='Starduck'>Starduck</MenuItem>
                                     <MenuItem value='J.OC'>J.OC</MenuItem>
-                                    <MenuItem value='Mc Dono'>Mc Dono</MenuItem>
+                                    <MenuItem value='Mc Dono'>Mc Dono</MenuItem> */}
+                                    {selectCompanies.map((item: any, index: any) => {
+                                        return (
+                                            <MenuItem value={item.id} key={index}>
+                                                {item.code} {item.name}
+                                            </MenuItem>
+                                        );
+                                    })}
                                 </Select>
                             </FormControl>
                         </Box>
@@ -299,12 +306,12 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                                 gap: '5px'
                                             }}
                                         >
-                                            <Typography>{item}</Typography>
+                                            <Typography>{item.name}</Typography>
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close
                                                     fontSize='small'
                                                     sx={{ color: 'white', cursor: 'pointer' }}
-                                                    onClick={() => handleDeletedCompanies(item)}
+                                                    onClick={() => handleDeletedCompanies(item.id)}
                                                 />
                                             </Box>
                                         </Box>
@@ -352,9 +359,16 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     <MenuItem value='0' disabled>
                                         Select Roles
                                     </MenuItem>
-                                    <MenuItem value='Admin'>Admin</MenuItem>
+                                    {/* <MenuItem value='Admin'>Admin</MenuItem>
                                     <MenuItem value='Marketing'>Marketing</MenuItem>
-                                    <MenuItem value='Content Writer'>Content Writer</MenuItem>
+                                    <MenuItem value='Content Writer'>Content Writer</MenuItem> */}
+                                    {selectRoles.map((item: any, index: any) => {
+                                        return (
+                                            <MenuItem value={item.code} key={index}>
+                                                {item.name}
+                                            </MenuItem>
+                                        );
+                                    })}
                                 </Select>
                             </FormControl>
                         </Box>
