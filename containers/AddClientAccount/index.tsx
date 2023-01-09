@@ -30,9 +30,30 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const [isCompFilled, setIsCompFilled] = React.useState<boolean>(false);
     const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
     const [isError, setIsError] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+
+    const getDataCompany = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: `companies`
+            });
+            console.log('getcompanies', result);
+            if (result.status === 200) {
+                const dataCompanies = result.data.data;
+                setCompanies(dataCompanies);
+                setIsLoading(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
 
     const submitHandler = async (data: any) => {
         if (isCompFilled && isRolesFilled) {
@@ -40,8 +61,16 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
             try {
                 const response = await fetchAPI({
                     method: 'POST',
-                    endpoint: 'client-account',
-                    data: {}
+                    endpoint: `/accounts`,
+                    data: {
+                        id: Math.floor(Math.random() * 300 + 1),
+                        email: form.watch('email'),
+                        name: form.watch('name'),
+                        // roles: form.watch('roles'),
+                        roles: form.watch('role'),
+                        company: form.watch('company')
+                        // is_active: form.watch('is_active')
+                    }
                 });
                 if (response.status === 200) {
                     notify('Successfully create client account', 'success');
@@ -57,6 +86,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
         form.setValue('role', event.target.value);
+
         if (!isDuplicate) {
             setRoles([...roles, event.target.value as string]);
         }
@@ -112,7 +142,9 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const handleAddSetNotActive = (event: any) => {
         form.setValue('activeRole', !form.watch('activeRole'));
     };
-
+    React.useEffect(() => {
+        getDataCompany();
+    }, []);
     React.useEffect(() => {
         if (companies.length <= 0 && roles.length <= 0) {
             form.setValue('role', '0');
