@@ -91,7 +91,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                         email: form.watch('email'),
                         name: form.watch('name'),
                         role_ids: form.watch('roles'),
-                        company: form.watch('company'),
+                        company_id: form.watch('company'),
                         is_active: form.watch('is_active')
                     }
                 });
