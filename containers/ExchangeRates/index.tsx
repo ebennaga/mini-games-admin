@@ -127,7 +127,7 @@ const ExchangeRates = () => {
     // }
     return (
         <Container sx={{ mt: 12 }}>
-            <Box sx={{ ml: -25, height: 120 }} component={Paper}>
+            <Box sx={{ ml: -15, height: 120 }} component={Paper}>
                 <Box>
                     <Box sx={{ ml: 2 }}>
                         <Typography sx={{ fontSize: '24px' }}>Exchange Rates</Typography>
@@ -167,7 +167,7 @@ const ExchangeRates = () => {
                     />
                 </Box>
             )}
-            <Box sx={{ ml: -25, mt: 3 }}>
+            <Box sx={{ ml: -15, mt: 3 }}>
                 {/* <TableExchange /> */}
                 {isLoading ? (
                     <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
