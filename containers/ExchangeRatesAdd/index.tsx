@@ -68,7 +68,7 @@ const ExchangeRatesAdd = () => {
 
     return (
         <Container sx={{ mt: 5 }}>
-            <Box sx={{ ml: -25, height: 80 }} component={Paper}>
+            <Box sx={{ ml: -15, height: 80 }} component={Paper}>
                 <Box>
                     <Box sx={{ ml: 2 }}>
                         <Typography sx={{ fontSize: '24px' }}>Add Exchange Rates</Typography>
@@ -76,7 +76,7 @@ const ExchangeRatesAdd = () => {
                     </Box>
                 </Box>
             </Box>
-            <Box sx={{ ml: -25, mt: 4 }}>
+            <Box sx={{ ml: -15, mt: 4 }}>
                 <InputExchangeRates
                     handleAddSetActive={handleAddSetActive}
                     handleAddSetNotActive={handleAddSetNotActive}
