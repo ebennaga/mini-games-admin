@@ -295,7 +295,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                         valueTable={table}
                                         data={dataTable}
                                         formTable={useForm({})}
-                                        fieldArray={useFieldArray({ name: 'tableData' })}
+                                        fieldArray={useFieldArray({ name: 'tableData', control: useForm().control })}
                                     />
                                     <Box
                                         sx={{
