@@ -41,15 +41,17 @@ const TableParticipant: React.FC<TableParticipantProps> = ({ name, form, nameIdx
         setDataTable([...resArr]);
         form.setValue(name, [...resArr]);
     };
+
     React.useEffect(() => {
         setDataTable(form.watch(name));
     }, [form.watch(name)]);
+
     const handleCheck = async (e: React.ChangeEvent<HTMLInputElement>, data: any) => {
         const isChecked = e.target.checked;
 
         let newArr: any = [...dataTable];
         dataTable.forEach((item: any, index: number) => {
-            if (item.id === data.id) {
+            if (item?.id === data.id) {
                 const filter = newArr.filter((itm: any) => itm.id !== data.id);
                 if (isChecked) {
                     newArr = [...filter, { ...data, isAction: true }];
@@ -115,7 +117,7 @@ const TableParticipant: React.FC<TableParticipantProps> = ({ name, form, nameIdx
                         return (
                             index >= idxAppears.startIndex &&
                             index <= idxAppears.endIndex && (
-                                <TableRow key={item.id}>
+                                <TableRow key={item?.id}>
                                     <TableCell
                                         align='center'
                                         sx={{
@@ -131,22 +133,22 @@ const TableParticipant: React.FC<TableParticipantProps> = ({ name, form, nameIdx
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '25%' }}
                                     >
-                                        <Typography component='span'>{item.title}</Typography>
+                                        <Typography component='span'>{item?.tornament?.name}</Typography>
                                     </TableCell>
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '15%' }}
                                     >
-                                        <Typography component='span'>{item.game}</Typography>
+                                        <Typography component='span'>{item?.game?.name}</Typography>
                                     </TableCell>
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '20%' }}
                                     >
-                                        <Typography component='span'>{item.username}</Typography>
+                                        <Typography component='span'>{item?.user?.username}</Typography>
                                     </TableCell>
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '25%' }}
                                     >
-                                        <Typography component='span'> {item.start_register}</Typography>
+                                        <Typography component='span'> {item?.created_at}</Typography>
                                     </TableCell>
                                     <TableCell
                                         align='center'
@@ -157,7 +159,7 @@ const TableParticipant: React.FC<TableParticipantProps> = ({ name, form, nameIdx
                                                 '& .css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root.Mui-checked': { color: '#A54CE5' }
                                             }}
                                         >
-                                            <Checkbox checked={!!item.isAction} onChange={(e) => handleCheck(e, item)} />
+                                            <Checkbox checked={!!item?.isAction} onChange={(e) => handleCheck(e, item)} />
                                         </FormControl>
                                     </TableCell>
                                 </TableRow>

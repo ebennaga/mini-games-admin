@@ -135,6 +135,7 @@ const ParticipantTournament = () => {
                 setDataComing(response.data.data);
                 setFilteredData(response.data.data);
                 setIsLoading(false);
+                form.setValue('dataTable', response.data.data);
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -319,14 +320,14 @@ const ParticipantTournament = () => {
 
     React.useEffect(() => {
         // eslint-disable-next-line consistent-return, array-callback-return
-        const temp = filteredData.filter((post: any) => {
+        const temp = dataComing.filter((post: any) => {
             if (query === '') {
                 return post;
             }
             if (
-                post.username.toString().toLowerCase().includes(query.toLowerCase()) ||
-                post.title.toLowerCase().includes(query.toLowerCase()) ||
-                post.game.toLowerCase().includes(query.toLowerCase())
+                post.user.username?.toString()?.toLowerCase()?.includes(query.toLowerCase()) ||
+                post?.tornament?.name?.toLowerCase()?.includes(query.toLowerCase()) ||
+                post.game.name?.toLowerCase()?.includes(query.toLowerCase())
             ) {
                 return post;
             }
