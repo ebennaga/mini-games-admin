@@ -13,13 +13,18 @@ interface PaginationCardProps {
 }
 
 const PaginationCard: React.FC<PaginationCardProps> = ({ totalItem, handlePrev, handleNext, form, nameRow, namePage }) => {
-    const [row, setRow] = React.useState<any>(form.watch(nameRow) || 5);
+    const rowValue = form.watch(nameRow);
+    const [row, setRow] = React.useState<any>(rowValue || 5);
 
     const handleRow = (e: SelectChangeEvent) => {
         setRow(e.target.value);
         form.setValue(nameRow, e.target.value);
         form.setValue(namePage, 1);
     };
+
+    React.useEffect(() => {
+        setRow(rowValue);
+    }, [rowValue]);
 
     const totalPage = Math.ceil(totalItem / row);
 
