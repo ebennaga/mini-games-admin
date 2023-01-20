@@ -26,7 +26,7 @@ interface CreateTournamentProps {
 const dummyData = [
     {
         id: 0,
-        positionStart: 2,
+        positionStart: 3,
         positionEnd: 4,
         countPlayer: 2,
         pointPrizes: 15000,
@@ -67,9 +67,11 @@ const dummyData = [
 ];
 const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, createTour, form }) => {
     const [game, setGame] = React.useState('0');
-    const [table, setTable] = React.useState('0');
+    const [table, setTable] = React.useState<any>([]);
+    const [tournaments, setTournaments] = React.useState<any>([]);
+    const [selectTournament, setSelectTournament] = React.useState<any>([]);
     const [isLoading, setIsLoading] = React.useState(false);
-    const [prizeData, setPrizeData] = React.useState<any>(dataTable);
+    const [prizeData, setPrizeData] = React.useState<any>([]);
     const [prizePool, setPrizePool] = React.useState(0);
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -77,20 +79,30 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
 
     const { fetchAPI } = useAPICaller();
     const formTable = useForm({
-        mode: 'all'
-        // defaultValues: {
-        //     tableData: [
-        //         {
-        //             positionStart: '',
-        //             positionEnd: '',
-        //             countPlayer: '',
-        //             pointPrizes: '',
-        //             playerPointPrizes: '',
-        //             cointPrizes: '',
-        //             playerCointPrizes: ''
-        //         }
-        //     ]
-        // }
+        mode: 'all',
+        defaultValues: {
+            title: '',
+            image: '',
+            startDate: '',
+            startTime: '',
+            endDate: '',
+            endTime: '',
+            games: '',
+            tornamentType: '',
+            fee: '',
+
+            tableData: [
+                {
+                    positionStart: '',
+                    positionEnd: '',
+                    countPlayer: '',
+                    pointPrizes: '',
+                    playerPointPrizes: '',
+                    cointPrizes: '',
+                    playerCointPrizes: ''
+                }
+            ]
+        }
     });
 
     const fieldArray = useFieldArray({
@@ -111,24 +123,38 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         setGame(event.target.value as string);
     };
 
-    const handleTable = (event: SelectChangeEvent) => {
+    const handleTable = (event: any) => {
+        // const isDuplicate: any = tournaments.includes(event.target.value);
+        // form.setValue('tournament', event.target.value);
+        // if (!isDuplicate) {
+        //     const dataTournament = selectTournament.filter((item: any) => event.target.value === item.id);
+        //     setTable([...tournaments, ...dataTournament]);
+        // }
         setTable(event.target.value as string);
     };
 
-    // const fetchPrizesInfos = async () => {
-    //     try {
-    //         const result = await fetchAPI({
-    //             endpoint: '/tournaments/prize-infos',
-    //             method: 'GET'
-    //         });
-    //         if (result?.status === 200) {
-    //             console.log(`hi ${result}`);
-    //         }
-    //     } catch (error: any) {
-    //         console.log(error);
-    //     }
-    // };
+    const fetchPrizesInfos = async () => {
+        try {
+            const result = await fetchAPI({
+                endpoint: '/tournaments/prize-infos',
+                method: 'GET'
+            });
+            console.log('response', result);
+            if (result?.status === 200) {
+                const dataPrize = result?.data.data;
+                setSelectTournament(dataPrize);
 
+                setPrizeData(dataPrize);
+                // console.log(`hi ${result}`);
+            }
+        } catch (error: any) {
+            console.log(error);
+        }
+    };
+    React.useEffect(() => {
+        fetchPrizesInfos();
+    }, []);
+    console.log('datearray', fieldArray.fields);
     const handlePOSTSubmit = async (data: any) => {
         // console.log(data);
         // console.log(`checking${categoryList[parseInt(form.watch('category'), 10) - 1].label}`);
@@ -139,21 +165,39 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         try {
             const fee = Number(data.fee);
             const imgBase64 = await convertBase64(data.image);
+
+            const res = fieldArray.fields.map((item: any) => {
+                const { positionStart, pointPrizes, cointPrizes } = item;
+                return { max_pos: positionStart, point: pointPrizes, coin: cointPrizes };
+            });
+            console.log('filter', res);
+            const body = {
+                game_id: data.games,
+                name: data.title,
+                tournament_image: imgBase64,
+                start_time: `${data.startDate} ${data.startTime}`,
+                end_time: `${data.endDate} ${data.endTime}`,
+                entry_coin: data.fee,
+                prize_infos: res
+            };
+            console.log(body);
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: '/tournaments',
                 data: {
-                    game_id: data.games,
-                    name: data.title,
-                    start_time: `${data.startDate} ${data.startTime}`,
-                    end_time: `${data.endDate} ${data.endTime}`,
-                    entry_coin: fee,
-                    tournament_image: imgBase64
+                    // game_id: data.games,
+                    // name: data.title,
+                    // start_time: `${data.startDate} ${data.startTime}`,
+                    // end_time: `${data.endDate} ${data.endTime}`,
+                    // entry_coin: fee,
+                    // tournament_image: imgBase64,
+                    // prize_infos: 1
                     // total_points: data.pool
+                    body
                 }
             });
             if (response?.status === 200) {
-                // console.log(response);
+                console.log('response2', response);
                 setIsLoading(false);
             }
         } catch (error: any) {
@@ -176,36 +220,24 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
             setPrizeData([
                 ...prizeData,
                 {
-                    id: 4,
-                    label: '',
-                    data: [
-                        {
-                            id: 4,
-                            positionStart: 5,
-                            positionEnd: 5,
-                            countPlayer: 5,
-                            pointPrizes: 15000,
-                            playerPointPrizes: 15000,
-                            cointPrizes: 20000,
-                            playerCointPrizes: 20000
-                        }
-                    ]
+                    positionStart: 1,
+                    pointPrizes: 1,
+                    cointPrizes: 1
                 }
             ]);
         } else {
             const filter = prizeData.map((item: any) => {
                 if (item.id === table) {
-                    item.data = [
-                        ...item.data,
+                    item.prize_infos = [
+                        ...item.prize_infos,
                         {
-                            id: 4,
-                            positionStart: 5,
-                            positionEnd: 5,
-                            countPlayer: 5,
-                            pointPrizes: 15000,
-                            playerPointPrizes: 15000,
-                            cointPrizes: 20000,
-                            playerCointPrizes: 20000
+                            positionStart: item.max_pos,
+                            // positionEnd: 5,
+                            // countPlayer: 5,
+                            pointPrizes: item.point,
+                            // playerPointPrizes: 15000,
+                            cointPrizes: item.coin
+                            // playerCointPrizes: 20000
                         }
                     ];
                     return item;
@@ -233,7 +265,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         } else {
             const filter = prizeData.map((item: any) => {
                 if (item.id === table) {
-                    item.data.pop();
+                    item.prize_infos.pop();
                     return item;
                 }
                 return item;
@@ -255,7 +287,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
 
         if (table !== '0') {
             arrTemp = prizeData.filter((item: any) => {
-                return item.id === parseInt(table, 10);
+                return item.id === table;
             });
         } else {
             arrTemp = prizeData;
@@ -264,19 +296,20 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         formTable.reset();
 
         arrTemp.forEach((item: any, index: number) => {
-            item.data.forEach((el: any, idx: number) => {
+            item.prize_infos.forEach((el: any, idx: number) => {
                 fieldArray.append({
-                    positionStart: el.positionStart,
+                    positionStart: el.max_pos,
                     positionEnd: el.positionEnd,
                     countPlayer: el.countPlayer,
-                    pointPrizes: el.pointPrizes,
+                    pointPrizes: el.point,
                     playerPointPrizes: el.playerPointPrizes,
-                    cointPrizes: el.cointPrizes,
+                    cointPrizes: el.coin,
                     playerCointPrizes: el.playerCointPrizes
                 });
             });
         });
     }, [table, prizeData]);
+
     return (
         <Box sx={{}}>
             <Box sx={{ padding: '40px 25px' }}>
@@ -545,14 +578,23 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                         onChange={handleTable}
                                     >
                                         <MenuItem value='0' disabled>
-                                            Select Table
+                                            Select Tournament
                                         </MenuItem>
-                                        {dataTable.length > 0 &&
+                                        {/* {dataTable.length > 0 &&
                                             dataTable.map((item: any) => (
                                                 <MenuItem key={item.id} value={item.id}>
                                                     {item.label}
                                                 </MenuItem>
-                                            ))}
+                                            ))} */}
+                                        {selectTournament.map((item: any, index: any) => {
+                                            return (
+                                                index < 4 && (
+                                                    <MenuItem key={item.id} value={item.id}>
+                                                        {item.name}
+                                                    </MenuItem>
+                                                )
+                                            );
+                                        })}
                                     </Select>
                                 </FormControl>
                             </Grid>
