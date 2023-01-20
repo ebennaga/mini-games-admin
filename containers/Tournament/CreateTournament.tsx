@@ -14,6 +14,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import InputSelect from 'components/Input/InputSelect';
 import convertBase64 from 'helpers/convertBase64';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
 import dataTable from './dataSelect';
 import TableAddTournament from './Table';
 
@@ -68,6 +69,7 @@ const dummyData = [
 const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, createTour, form }) => {
     const [game, setGame] = React.useState('0');
     const [table, setTable] = React.useState<any>([]);
+    const [defaultTable, setDefaultTable] = React.useState<Array<any>>([]);
     const [tournaments, setTournaments] = React.useState<any>([]);
     const [selectTournament, setSelectTournament] = React.useState<any>([]);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -78,6 +80,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     const notify = useNotify();
 
     const { fetchAPI } = useAPICaller();
+    const router = useRouter();
     const formTable = useForm({
         mode: 'all',
         defaultValues: {
@@ -90,7 +93,6 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
             games: '',
             tornamentType: '',
             fee: '',
-
             tableData: [
                 {
                     positionStart: '',
@@ -139,13 +141,12 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 endpoint: '/tournaments/prize-infos',
                 method: 'GET'
             });
-            console.log('response', result);
+
             if (result?.status === 200) {
                 const dataPrize = result?.data.data;
                 setSelectTournament(dataPrize);
 
                 setPrizeData(dataPrize);
-                // console.log(`hi ${result}`);
             }
         } catch (error: any) {
             console.log(error);
@@ -154,23 +155,18 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     React.useEffect(() => {
         fetchPrizesInfos();
     }, []);
-    console.log('datearray', fieldArray.fields);
+
     const handlePOSTSubmit = async (data: any) => {
-        // console.log(data);
-        // console.log(`checking${categoryList[parseInt(form.watch('category'), 10) - 1].label}`);
-        // form.watch('name');
-        // console.log('masuk');
-        // console.log(`${form.watch('startDate')} ${form.watch('startTime')}`);
         setIsLoading(true);
         try {
             const fee = Number(data.fee);
             const imgBase64 = await convertBase64(data.image);
 
-            const res = fieldArray.fields.map((item: any) => {
+            const res = formTable.watch('tableData').map((item: any) => {
                 const { positionStart, pointPrizes, cointPrizes } = item;
-                return { max_pos: positionStart, point: pointPrizes, coin: cointPrizes };
+                return { max_pos: Number(positionStart), point: Number(pointPrizes), coin: Number(cointPrizes) };
             });
-            console.log('filter', res);
+
             const body = {
                 game_id: data.games,
                 name: data.title,
@@ -180,25 +176,19 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 entry_coin: data.fee,
                 prize_infos: res
             };
-            console.log(body);
+
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: '/tournaments',
-                data: {
-                    // game_id: data.games,
-                    // name: data.title,
-                    // start_time: `${data.startDate} ${data.startTime}`,
-                    // end_time: `${data.endDate} ${data.endTime}`,
-                    // entry_coin: fee,
-                    // tournament_image: imgBase64,
-                    // prize_infos: 1
-                    // total_points: data.pool
-                    body
-                }
+                data: body
             });
+
             if (response?.status === 200) {
-                console.log('response2', response);
                 setIsLoading(false);
+                notify('Create tournament success!');
+                router.push('/tournament');
+            } else {
+                notify(response.data.message, 'error');
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -216,7 +206,9 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     };
 
     const handleAddRow = () => {
-        if (table === '0') {
+        if (Array.isArray(table)) {
+            setDefaultTable([...defaultTable, { positionStart: '', pointPrizes: '', cointPrizes: '' }]);
+        } else if (table === '0') {
             setPrizeData([
                 ...prizeData,
                 {
@@ -249,7 +241,10 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     };
 
     const handleDeleteRow = () => {
-        if (table === '0') {
+        if (Array.isArray(table) && defaultTable.length > 1) {
+            const result = defaultTable.filter((_item: any, index: number) => index !== defaultTable.length - 1);
+            setDefaultTable(result);
+        } else if (table === '0') {
             const removeThis = prizeData.pop();
             // console.log(removeThis);
 
@@ -296,19 +291,39 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         formTable.reset();
 
         arrTemp.forEach((item: any, index: number) => {
-            item.prize_infos.forEach((el: any, idx: number) => {
-                fieldArray.append({
-                    positionStart: el.max_pos,
-                    positionEnd: el.positionEnd,
-                    countPlayer: el.countPlayer,
-                    pointPrizes: el.point,
-                    playerPointPrizes: el.playerPointPrizes,
-                    cointPrizes: el.coin,
-                    playerCointPrizes: el.playerCointPrizes
+            if (item.prize_infos) {
+                item.prize_infos.forEach((el: any, idx: number) => {
+                    fieldArray.append({
+                        positionStart: el.max_pos,
+                        positionEnd: el.positionEnd,
+                        countPlayer: el.countPlayer,
+                        pointPrizes: el.point,
+                        playerPointPrizes: el.playerPointPrizes,
+                        cointPrizes: el.coin,
+                        playerCointPrizes: el.playerCointPrizes
+                    });
                 });
-            });
+            }
         });
     }, [table, prizeData]);
+
+    React.useEffect(() => {
+        formTable.reset();
+        if (Array.isArray(table)) {
+            defaultTable.forEach((item) => {
+                const { positionStart, pointPrizes, cointPrizes } = item;
+                fieldArray.append({
+                    positionStart: String(positionStart),
+                    pointPrizes: String(pointPrizes),
+                    cointPrizes: String(cointPrizes),
+                    positionEnd: '',
+                    countPlayer: '',
+                    playerCointPrizes: '',
+                    playerPointPrizes: ''
+                });
+            });
+        }
+    }, [defaultTable]);
 
     return (
         <Box sx={{}}>
