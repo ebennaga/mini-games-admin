@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Box, Skeleton } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -9,7 +8,6 @@ import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import DialogSuccess from 'components/Dialog/DialogSuccess';
 import PaginationCard from 'components/PaginationCard';
 import TitleCard from 'components/Layout/TitleCard';
-import dataTable from 'containers/AddTournament/dataSelect';
 import DialogFilter from './DialogFilter';
 import TableParticipant from './TableParticipant';
 
@@ -22,79 +20,13 @@ import TableParticipant from './TableParticipant';
 //         username: 'Lesty',
 //         start_register: '2022-12-19T08:19:52.310Z',
 //         end_register: '2022-12-29T08:19:52.310Z'
-//     },
-//     {
-//         id: 2,
-//         title: 'Tourney Pre Launch Rose Dart',
-//         game: 'Rose Dart',
-//         username: 'Eko',
-//         start_register: '2022-12-09T08:19:52.310Z',
-//         end_register: '2022-12-12T08:19:52.310Z'
-//     },
-//     {
-//         id: 3,
-//         title: 'Pre Launch Tower Stack',
-//         game: 'Tower Stack',
-//         username: 'Yanto',
-//         start_register: '2022-12-21T08:19:52.310Z',
-//         end_register: '2022-12-25T08:19:52.310Z'
-//     },
-//     {
-//         id: 4,
-//         title: ' Launch Hop up',
-//         game: 'Hop Up',
-//         username: 'Asep',
-//         start_register: '2022-12-10T08:19:52.310Z',
-//         end_register: '2022-12-19T08:19:52.310Z'
-//     },
-//     {
-//         id: 5,
-//         title: 'Open Tourney Pre Launch Tower Stack',
-//         game: 'Tower Stack',
-//         username: 'Warto',
-//         start_register: '2022-12-11T08:19:52.310Z',
-//         end_register: '2022-12-15T08:19:52.310Z'
-//     },
-//     {
-//         id: 6,
-//         title: 'Open Tourney Pre Launch Tower Stack',
-//         game: 'Tower Stack',
-//         username: 'Butet',
-//         start_register: '2022-12-19T08:19:52.310Z',
-//         end_register: '2022-12-29T08:19:52.310Z'
-//     },
-//     {
-//         id: 7,
-//         title: 'Open Tourney Pre Launch Rose Dart',
-//         game: 'Rose Dart',
-//         username: 'Ucok',
-//         start_register: '2022-12-30T08:19:52.310Z',
-//         end_register: '2023-01-03T08:19:52.310Z'
-//     },
-//     {
-//         id: 8,
-//         title: 'Open Tourney Pre Launch Hop up',
-//         game: 'Hop Up',
-//         username: 'Uda',
-//         start_register: '2022-12-15T08:19:52.310Z',
-//         end_register: '2022-12-19T08:19:52.310Z'
-//     },
-//     {
-//         id: 9,
-//         title: 'Open Tourney Pre Launch Tower Stack',
-//         game: 'Tower Stack',
-//         username: 'Umi',
-//         start_register: '2022-12-19T08:19:52.310Z',
-//         end_register: '2022-12-20T08:19:52.310Z'
 //     }
 // ];
 const ParticipantTournament = () => {
-    // List for games filter
-    const listGames = [
-        { id: 1, title: 'Hop Up' },
-        { id: 2, title: 'Rose Dart' },
-        { id: 3, title: 'Tower Stack' }
-    ];
+    interface listGamesI {
+        id: number | string;
+        title: string;
+    }
 
     const [isDialogFilter, setIsDialogFilter] = React.useState<boolean>(false);
     const [openDialogConfirm, setOpenDialogConfirm] = React.useState<boolean>(false);
@@ -104,6 +36,8 @@ const ParticipantTournament = () => {
     const [dataComing, setDataComing] = React.useState<any>([]);
     const [query, setQuery] = React.useState('');
     const [filteredData, setFilteredData] = React.useState<any>([]);
+    const [listGames, setListGames] = React.useState<Array<listGamesI>>([]);
+
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     // react-hook-form default value initiation
@@ -116,13 +50,14 @@ const ParticipantTournament = () => {
             startDateFilter: '',
             endDateFilter: '',
             dataTable: filteredData,
-            idxAppears: { startIndex: 0, endIndex: 5 },
+            idxAppears: { startIndex: 0, endIndex: 4 },
             row: 5,
             page: 1,
             tabFilter: 'all'
         }
     });
 
+    // Fetch data table
     const handleFetchData = async () => {
         setIsLoading(true);
         try {
@@ -141,6 +76,29 @@ const ParticipantTournament = () => {
             notify(err.message, 'error');
         }
     };
+
+    // Fetch data games
+    const handleFetchGames = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'games'
+            });
+
+            if (response.status === 200) {
+                const { data } = response.data;
+                const resData = data.map((item: any) => {
+                    return { id: item.id, title: item.name };
+                });
+                setListGames(resData);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsLoading(false);
+    };
+
     // Remove item
     const handleRemove = () => {
         setOpenDialogConfirm(false);
@@ -170,16 +128,21 @@ const ParticipantTournament = () => {
         const { titleFilter, gamesFilter, startDateFilter, endDateFilter } = data;
 
         const gamefilt = gamesFilter ? listGames.filter((item: any) => item.id === gamesFilter)[0].title : '';
-        const table = filteredData;
+        const table = dataComing;
 
         const resFilter = table.filter((item: any) => {
-            const { title, game, start_register: startRegister, end_register: endRegister } = item;
+            const {
+                tornament: { name: title },
+                game: { name: gameName },
+                created_at: startRegister,
+                end_register: endRegister
+            } = item;
 
             if (titleFilter && !gamefilt && !startDateFilter && !endDateFilter) {
                 return title?.toLowerCase()?.includes(titleFilter.toLowerCase());
             }
             if (titleFilter && gamefilt && !startDateFilter && !endDateFilter) {
-                return title?.toLowerCase()?.includes(titleFilter.toLowerCase()) && game.toLowerCase() === gamefilt.toLowerCase();
+                return title?.toLowerCase()?.includes(titleFilter.toLowerCase()) && gameName.toLowerCase() === gamefilt.toLowerCase();
             }
             if (titleFilter && !gamefilt && startDateFilter && !endDateFilter) {
                 return (
@@ -192,14 +155,14 @@ const ParticipantTournament = () => {
             if (titleFilter && gamefilt && startDateFilter && !endDateFilter) {
                 return (
                     title?.toLowerCase()?.includes(titleFilter.toLowerCase()) &&
-                    game.toLowerCase() === gamefilt.toLowerCase() &&
+                    gameName.toLowerCase() === gamefilt.toLowerCase() &&
                     dateFormat(startRegister) === dateFormat(startDateFilter)
                 );
             }
             if (titleFilter && gamefilt && !startDateFilter && endDateFilter) {
                 return (
                     title?.toLowerCase()?.includes(titleFilter.toLowerCase()) &&
-                    game.toLowerCase() === gamefilt.toLowerCase() &&
+                    gameName.toLowerCase() === gamefilt.toLowerCase() &&
                     dateFormat(endRegister) === dateFormat(endDateFilter)
                 );
             }
@@ -212,17 +175,17 @@ const ParticipantTournament = () => {
             }
 
             if (gamefilt && !titleFilter && !startDateFilter && !endDateFilter) {
-                return game.toLowerCase() === gamefilt.toLowerCase();
+                return gameName.toLowerCase() === gamefilt.toLowerCase();
             }
             if (gamefilt && startDateFilter && !titleFilter && !endDateFilter) {
-                return game.toLowerCase() === gamefilt.toLowerCase() && dateFormat(startRegister) === dateFormat(startDateFilter);
+                return gameName.toLowerCase() === gamefilt.toLowerCase() && dateFormat(startRegister) === dateFormat(startDateFilter);
             }
             if (gamefilt && !startDateFilter && !titleFilter && endDateFilter) {
-                return game.toLowerCase() === gamefilt.toLowerCase() && dateFormat(endRegister) === dateFormat(endDateFilter);
+                return gameName.toLowerCase() === gamefilt.toLowerCase() && dateFormat(endRegister) === dateFormat(endDateFilter);
             }
             if (gamefilt && startDateFilter && !titleFilter && endDateFilter) {
                 return (
-                    game.toLowerCase() === gamefilt.toLowerCase() &&
+                    gameName.toLowerCase() === gamefilt.toLowerCase() &&
                     dateFormat(startRegister) === dateFormat(startDateFilter) &&
                     dateFormat(endRegister) === dateFormat(endDateFilter)
                 );
@@ -241,7 +204,7 @@ const ParticipantTournament = () => {
 
             if (gamefilt && titleFilter && startDateFilter && endDateFilter) {
                 return (
-                    game.toLowerCase() === gamefilt.toLowerCase() &&
+                    gameName.toLowerCase() === gamefilt.toLowerCase() &&
                     title?.toLowerCase()?.includes(titleFilter.toLowerCase()) &&
                     dateFormat(startRegister) === dateFormat(startDateFilter) &&
                     dateFormat(endRegister) === dateFormat(endDateFilter)
@@ -271,28 +234,30 @@ const ParticipantTournament = () => {
         }
 
         form.setValue('page', 1);
-        form.setValue('idxAppears', { startIndex: 0, endIndex: 5 });
+        form.setValue('idxAppears', { startIndex: 0, endIndex: 4 });
         form.setValue('row', 5);
         setIsDialogFilter(false);
     };
 
     // Event Reset Filter
     const handleResetFilter = () => {
-        form.setValue('dataTable', filteredData);
+        form.setValue('dataTable', dataComing);
         form.setValue('page', 1);
-        form.setValue('idxAppears', { startIndex: 0, endIndex: 5 });
+        form.setValue('idxAppears', { startIndex: 0, endIndex: 4 });
         form.setValue('row', 5);
         form.setValue('tabFilter', 'all');
         form.setValue('titleFilter', '');
         form.setValue('gamesFilter', '');
         form.setValue('endDateFilter', '');
         form.setValue('startDateFilter', '');
-        setFilteredData(filteredData);
+        setFilteredData(dataComing);
         setIsDialogFilter(false);
     };
 
+    // Fetch data component did mount
     React.useEffect(() => {
         handleFetchData();
+        handleFetchGames();
     }, []);
 
     // Update useForm idxAppears value, while doing pagination events
@@ -313,10 +278,6 @@ const ParticipantTournament = () => {
         const countItems = data.filter((item: any) => item.isAction).length;
         setTotalChecked(countItems);
     }, [form.watch('dataTable')]);
-
-    // React.useEffect(() => {
-    //     setFilteredData(dataComing);
-    // }, []);
 
     React.useEffect(() => {
         // eslint-disable-next-line consistent-return, array-callback-return

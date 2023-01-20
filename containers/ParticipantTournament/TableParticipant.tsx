@@ -10,6 +10,7 @@ import {
     TableRow,
     Typography
 } from '@mui/material';
+import convertDate from 'helpers/dateFormat';
 import React from 'react';
 
 interface TableParticipantProps {
@@ -114,6 +115,7 @@ const TableParticipant: React.FC<TableParticipantProps> = ({ name, form, nameIdx
                 <TableBody>
                     {dataTable.map((item: any, index: number) => {
                         const idxAppears = form.watch(nameIdxAppears);
+
                         return (
                             index >= idxAppears.startIndex &&
                             index <= idxAppears.endIndex && (
@@ -148,7 +150,7 @@ const TableParticipant: React.FC<TableParticipantProps> = ({ name, form, nameIdx
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '25%' }}
                                     >
-                                        <Typography component='span'> {item?.created_at}</Typography>
+                                        <Typography component='span'> {convertDate(new Date(item?.created_at))}</Typography>
                                     </TableCell>
                                     <TableCell
                                         align='center'
