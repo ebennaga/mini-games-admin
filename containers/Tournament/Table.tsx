@@ -34,13 +34,13 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
             <Table sx={{ width: '100%' }} aria-label='simple table'>
                 <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
                     <TableRow>
-                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Position Start</TableCell>
-                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Position End</TableCell>
-                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Count Player</TableCell>
+                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Position</TableCell>
+                        {/* <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Position End</TableCell>
+                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Count Player</TableCell> */}
                         <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Point Prizes</TableCell>
-                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Point Prizes / Player</TableCell>
-                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Coint Prizes</TableCell>
-                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Coint Prizes / Player</TableCell>
+                        {/* <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Point Prizes / Player</TableCell> */}
+                        <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Coin Prizes</TableCell>
+                        {/* <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>Coint Prizes / Player</TableCell> */}
                     </TableRow>
                 </TableHead>
                 <TableBody sx={{ backgroundColor: 'white' }}>
@@ -64,7 +64,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                         {...formTable.register(`tableData[${index}].positionStart`)}
                                     />
                                 </TableCell>
-                                <TableCell
+                                {/* <TableCell
                                     sx={{
                                         width: '5%',
                                         fontWeight: 'bold',
@@ -79,8 +79,8 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                         defaultValue={formTable.watch(`tableData[${index}].positionEnd`)}
                                         {...formTable.register(`tableData[${index}].positionEnd`)}
                                     />
-                                </TableCell>
-                                <TableCell
+                                </TableCell> */}
+                                {/* <TableCell
                                     sx={{
                                         width: '5%',
                                         fontWeight: 'bold',
@@ -95,7 +95,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                         defaultValue={formTable.watch(`tableData[${index}].countPlayer`)}
                                         {...formTable.register(`tableData[${index}].countPlayer`)}
                                     />
-                                </TableCell>
+                                </TableCell> */}
                                 <TableCell
                                     sx={{
                                         width: '5%',
@@ -119,7 +119,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                         {...formTable.register(`tableData[${index}].pointPrizes`)}
                                     />
                                 </TableCell>
-                                <TableCell
+                                {/* <TableCell
                                     sx={{
                                         width: '5%',
                                         fontWeight: 'bold',
@@ -134,7 +134,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                         defaultValue={formTable.watch(`tableData[${index}].playerPointPrizes`)}
                                         {...formTable.register(`tableData[${index}].playerPointPrizes`)}
                                     />
-                                </TableCell>
+                                </TableCell> */}
                                 <TableCell
                                     sx={{
                                         width: '5%',
@@ -151,7 +151,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                         {...formTable.register(`tableData[${index}].cointPrizes`)}
                                     />
                                 </TableCell>
-                                <TableCell
+                                {/* <TableCell
                                     sx={{
                                         width: '5%',
                                         fontWeight: 'bold',
@@ -166,7 +166,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                         defaultValue={formTable.watch(`tableData[${index}].playerCointPrizes`)}
                                         {...formTable.register(`tableData[${index}].playerCointPrizes`)}
                                     />
-                                </TableCell>
+                                </TableCell> */}
                                 {/* <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>{item.playerPointPrizes}</TableCell> */}
                             </TableRow>
                         );
