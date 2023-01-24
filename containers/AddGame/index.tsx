@@ -57,7 +57,8 @@ const AddGame = () => {
             });
 
             if (response.status === 200) {
-                notify('Add Game Successfully!');
+                notify(response.data.message, 'success');
+                router.push('/games');
                 form.reset();
             } else {
                 notify(response.message, 'error');

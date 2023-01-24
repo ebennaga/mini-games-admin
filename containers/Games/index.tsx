@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
 import { useForm } from 'react-hook-form';
@@ -8,6 +9,7 @@ import { useRouter } from 'next/router';
 import TitleCard from 'components/Layout/TitleCard';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import dataTable from 'containers/AddTournament/dataSelect';
 import TableGames from './TableGames';
 import DialogFilter from './DialogFilter';
 
@@ -26,7 +28,7 @@ const Games = () => {
     const [query, setQuery] = React.useState('');
     const [data, setData] = React.useState<Array<any>>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
-
+    const [deleted, setDeleted] = React.useState<number[]>([]);
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
@@ -63,7 +65,30 @@ const Games = () => {
         }
         setIsLoading(false);
     };
-
+    // console.log('datatable', form.watch('dataTable'));
+    const handleRemove = async (id: number) => {
+        try {
+            const table = form.watch('dataTable');
+            console.log('table', table);
+            table.map(async (item: any) => {
+                if (item.isAction) {
+                    const response = await fetchAPI({
+                        endpoint: `games/${item.id}`,
+                        method: 'DELETE'
+                    });
+                    if (response.status === 200) {
+                        console.log(4);
+                        notify(response.data.message, 'success');
+                        await fetchData();
+                        setOpendDeleteDialog(false);
+                        setOpenDialogSuccess(true);
+                    }
+                }
+            });
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+    };
     const handleEdit = (id: number) => {
         router.push(`/games/${id}`);
     };
@@ -73,6 +98,16 @@ const Games = () => {
     };
 
     const handleRemoveGame = () => {
+        console.log(1);
+        deleted.forEach((item: any) => {
+            handleRemove(item);
+        });
+        console.log('data', data);
+        const filter = data.filter((item: any) => {
+            return !deleted.includes(item.id);
+        });
+        console.log('filter', filter);
+        setData(filter);
         setOpendDeleteDialog(false);
         setOpenDialogSuccess(true);
     };
@@ -222,7 +257,7 @@ const Games = () => {
             <DialogConfirmation
                 title='Are you sure remove this games?'
                 subTitle={`${form.watch('dataTable').filter((item: any) => item.isAction).length} Selected`}
-                handleConfirm={handleRemoveGame}
+                handleConfirm={handleRemove}
                 open={openDeleteDialog}
                 setOpen={setOpendDeleteDialog}
                 textConfirmButton='REMOVE'
