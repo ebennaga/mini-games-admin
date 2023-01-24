@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Box, Skeleton } from '@mui/material';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -98,7 +99,30 @@ const ParticipantTournament = () => {
         }
         setIsLoading(false);
     };
+    console.log('datatable', form.watch('dataTable'));
+    const handleRemoveParticipant = async () => {
+        try {
+            const table = form.watch('dataTable');
 
+            table.map(async (item: any) => {
+                if (item.isAction) {
+                    const response = await fetchAPI({
+                        endpoint: `tournament-participants/remove`,
+                        method: 'DELETE'
+                    });
+                    if (response?.status === 200) {
+                        console.log(2);
+                        notify(response.data.message, 'success');
+                        await handleFetchData();
+                        setOpenDialogConfirm(false);
+                        setOpenDialogSuccess(true);
+                    }
+                }
+            });
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+    };
     // Remove item
     const handleRemove = () => {
         setOpenDialogConfirm(false);
@@ -367,7 +391,7 @@ const ParticipantTournament = () => {
             <DialogConfirmation
                 title='Are you sure remove this participant ?'
                 subTitle={`${totalChecked} Selected`}
-                handleConfirm={handleRemove}
+                handleConfirm={handleRemoveParticipant}
                 open={openDialogConfirm}
                 setOpen={setOpenDialogConfirm}
                 textConfirmButton='REMOVE'
