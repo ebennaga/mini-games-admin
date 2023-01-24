@@ -28,7 +28,7 @@ const BadgeSelected: React.FC<BadgeSelectedProps> = ({ total, onEdit, handleOpen
             </Typography>
             {handleOpenBan ? (
                 <IconButton onClick={handleOpenBan} sx={{ fontSize: '13px', color: '#A54CE5' }}>
-                    <DeleteIcon sx={{ mr: '10.24px' }} /> Ban Account
+                    <DeleteIcon sx={{ mr: '10.24px' }} /> Suspend Account
                 </IconButton>
             ) : (
                 <Box>
