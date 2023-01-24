@@ -69,7 +69,7 @@ const Games = () => {
     const handleRemove = async (id: number) => {
         try {
             const table = form.watch('dataTable');
-            console.log('table', table);
+
             table.map(async (item: any) => {
                 if (item.isAction) {
                     const response = await fetchAPI({
@@ -77,7 +77,6 @@ const Games = () => {
                         method: 'DELETE'
                     });
                     if (response.status === 200) {
-                        console.log(4);
                         notify(response.data.message, 'success');
                         await fetchData();
                         setOpendDeleteDialog(false);
@@ -98,15 +97,14 @@ const Games = () => {
     };
 
     const handleRemoveGame = () => {
-        console.log(1);
         deleted.forEach((item: any) => {
             handleRemove(item);
         });
-        console.log('data', data);
+
         const filter = data.filter((item: any) => {
             return !deleted.includes(item.id);
         });
-        console.log('filter', filter);
+
         setData(filter);
         setOpendDeleteDialog(false);
         setOpenDialogSuccess(true);
