@@ -41,6 +41,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LoadingExchangeRates from 'containers/ExchangeRates/LoadingExchangeRates';
 import { useRouter } from 'next/router';
+import DialogFilter from './DialogFilter';
 
 const dummyData = [
     {
@@ -121,7 +122,7 @@ const Banner = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [dataBanner, setDatabanner] = React.useState<any>([]);
     const [routeId, setRouteId] = React.useState<any>(null);
-
+    const [listLink, setListLink] = React.useState<any>([]);
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const router = useRouter();
@@ -135,7 +136,7 @@ const Banner = () => {
             desc: '',
             dummyData: dataBanner,
             showTo: '',
-            isActive: 'Yes',
+            isActive: false,
             checkedAll: false
         }
     });
@@ -240,8 +241,12 @@ const Banner = () => {
                 endpoint: 'banners?search='
             });
             if (response.status === 200) {
-                const resData = response.data.data;
-                setDatabanner(resData);
+                // const resData = response.data.data;
+                // setDatabanner(resData);
+                const { data } = response.data;
+                const resData = data.map((item: any) => {
+                    return item.link;
+                });
                 console.log('databanner', dataBanner);
             }
         } catch (err: any) {
@@ -278,6 +283,13 @@ const Banner = () => {
     // if (isLoading) {
     //     return <LoadingExchangeRates />;
     // }
+    const handleReset = () => {
+        console.log(13);
+    };
+
+    const handleFilter = (value: 'all' | 'latest' | 'oldest') => {
+        console.log(12);
+    };
 
     return (
         <Box component='section'>
@@ -535,7 +547,7 @@ const Banner = () => {
                     </Box>
                 </Box>
             </Box>
-            <Dialog
+            {/* <Dialog
                 open={openFilter}
                 onClose={() => setOpenFilter(false)}
                 PaperProps={{ sx: { width: '100%', maxWidth: '375px', borderRadius: '4px', margin: 0 } }}
@@ -655,7 +667,18 @@ const Banner = () => {
                         </ButtonBase>
                     </Box>
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
+            <Box position='absolute' top='236px' left='601px'>
+                <DialogFilter
+                    open={openFilter}
+                    setOpen={setOpenRemove}
+                    form={form}
+                    nameSelect='select'
+                    dataSelect={undefined}
+                    handleFilter={(value) => handleFilter(value)}
+                    handleReset={handleReset}
+                />
+            </Box>
         </Box>
     );
 };
