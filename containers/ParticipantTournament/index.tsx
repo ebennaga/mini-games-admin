@@ -35,6 +35,7 @@ const ParticipantTournament = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [dataComing, setDataComing] = React.useState<any>([]);
+    const [listGameTournament, setListGameTournament] = React.useState<any>([]);
     const [query, setQuery] = React.useState('');
     const [filteredData, setFilteredData] = React.useState<any>([]);
     const [listGames, setListGames] = React.useState<Array<listGamesI>>([]);
@@ -57,7 +58,20 @@ const ParticipantTournament = () => {
             tabFilter: 'all'
         }
     });
-
+    const dataGames = [
+        {
+            id: '1',
+            title: 'Hop Up'
+        },
+        {
+            id: '2',
+            title: 'Rose Dart'
+        },
+        {
+            id: '3',
+            title: 'Tower Stack'
+        }
+    ];
     // Fetch data table
     const handleFetchData = async () => {
         setIsLoading(true);
@@ -72,6 +86,12 @@ const ParticipantTournament = () => {
                 setFilteredData(response.data.data);
                 setIsLoading(false);
                 form.setValue('dataTable', response.data.data);
+                const { data } = response.data;
+                const resData = data.map((item: any) => {
+                    return { id: item.id, title: item.game.name };
+                });
+
+                setListGameTournament(resData);
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -99,7 +119,8 @@ const ParticipantTournament = () => {
         }
         setIsLoading(false);
     };
-    console.log('datatable', form.watch('dataTable'));
+
+    // console.log('datatable', form.watch('dataTable'));
     const handleRemoveParticipant = async () => {
         try {
             const table = form.watch('dataTable');
@@ -111,7 +132,6 @@ const ParticipantTournament = () => {
                         method: 'DELETE'
                     });
                     if (response?.status === 200) {
-                        console.log(2);
                         notify(response.data.message, 'success');
                         await handleFetchData();
                         setOpenDialogConfirm(false);
@@ -151,7 +171,7 @@ const ParticipantTournament = () => {
     const handleFilter = (data: any) => {
         const { titleFilter, gamesFilter, startDateFilter, endDateFilter } = data;
 
-        const gamefilt = gamesFilter ? listGames.filter((item: any) => item.id === gamesFilter)[0].title : '';
+        const gamefilt = gamesFilter ? dataGames.filter((item: any) => item.id === gamesFilter)[0].title : '';
         const table = dataComing;
 
         const resFilter = table.filter((item: any) => {
@@ -234,6 +254,7 @@ const ParticipantTournament = () => {
                     dateFormat(endRegister) === dateFormat(endDateFilter)
                 );
             }
+
             return item;
         });
 
@@ -350,7 +371,7 @@ const ParticipantTournament = () => {
             />
             <Box position='absolute' top='55px' left='325px' zIndex={1}>
                 <DialogFilter
-                    listGames={listGames}
+                    listGames={dataGames}
                     onReset={handleResetFilter}
                     onFilter={(data: any) => handleFilter(data)}
                     open={isDialogFilter}

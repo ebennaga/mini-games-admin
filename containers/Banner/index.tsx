@@ -242,6 +242,7 @@ const Banner = () => {
             if (response.status === 200) {
                 const resData = response.data.data;
                 setDatabanner(resData);
+                console.log('databanner', dataBanner);
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -615,9 +616,9 @@ const Banner = () => {
                         }}
                     >
                         <TextField id='outlined-select-currency' select label='Show to' value={menu} onChange={handleChange}>
-                            {menuList.map((option: any) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
+                            {dataBanner.map((option: any) => (
+                                <MenuItem key={option.id} value={option.id}>
+                                    {option.link}
                                 </MenuItem>
                             ))}
                         </TextField>
