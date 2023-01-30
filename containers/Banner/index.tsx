@@ -256,7 +256,6 @@ const Banner = () => {
                     return item.link;
                 });
                 setListLink(resData);
-                console.log('databanner', dataBanner);
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -310,7 +309,7 @@ const Banner = () => {
 
     const handleFilter = (value: 'all' | 'latest' | 'oldest') => {
         const selectId = form.watch('select');
-        console.log('selectId :', selectId);
+
         if (selectId === '') {
             if (value === 'latest') {
                 const res = sorting(dataBanner, 'asc');
@@ -324,10 +323,11 @@ const Banner = () => {
             form.setValue('page', 1);
         } else {
             const valueSelect: string = dataBanner.filter((item: any) => item.id === selectId)[0]?.link;
-            console.log('lisTable', listTable);
-            const filterData = listTable.filter((item: any) => item?.link?.toLowerCase()?.includes(valueSelect.toLocaleLowerCase()));
 
-            console.log('filteredData', filterData);
+            const filterData = listTable.filter(
+                (item: any) => item.link !== '' && item?.link?.toLowerCase()?.includes(valueSelect.toLocaleLowerCase())
+            );
+
             if (value === 'latest') {
                 const res = sorting(filterData, 'asc');
                 form.setValue('dummyData', res);
