@@ -120,10 +120,10 @@ const DialogFilter: React.FC<DialogFilterProps> = ({ open, setOpen, form, nameSe
                         <MenuItem sx={{ fontSize: '16px' }} disabled value=''>
                             Select Genre
                         </MenuItem>
-                        {dataSelect.map((item: any) => {
+                        {dataSelect?.map((item: any) => {
                             return (
                                 <MenuItem key={item.id} sx={{ fontSize: '16px' }} value={item.id}>
-                                    {item.title}
+                                    {item.link}
                                 </MenuItem>
                             );
                         })}

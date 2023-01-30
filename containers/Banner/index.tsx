@@ -121,8 +121,11 @@ const Banner = () => {
     const [query, setQuery] = React.useState('');
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [dataBanner, setDatabanner] = React.useState<any>([]);
+
     const [routeId, setRouteId] = React.useState<any>(null);
     const [listLink, setListLink] = React.useState<any>([]);
+    const [data, setData] = React.useState<Array<any>>([]);
+    const [listTable, setListTable] = React.useState<any>([]);
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const router = useRouter();
@@ -137,7 +140,9 @@ const Banner = () => {
             dummyData: dataBanner,
             showTo: '',
             isActive: false,
-            checkedAll: false
+            checkedAll: false,
+            page: 1,
+            select: ''
         }
     });
 
@@ -152,6 +157,7 @@ const Banner = () => {
         const endIndex = startIndex + Number(row);
         return filteredData.slice(startIndex, endIndex);
     };
+
     const goToNextPage = () => {
         if (currentPage !== pages) {
             setCurrentPage((page) => page + 1);
@@ -241,12 +247,15 @@ const Banner = () => {
                 endpoint: 'banners?search='
             });
             if (response.status === 200) {
-                // const resData = response.data.data;
-                // setDatabanner(resData);
-                const { data } = response.data;
+                const resTotalData = response.data.data;
+                setDatabanner(resTotalData);
+                setData(resTotalData);
+                setListTable(resTotalData);
+                const { dataLink } = response.data;
                 const resData = data.map((item: any) => {
                     return item.link;
                 });
+                setListLink(resData);
                 console.log('databanner', dataBanner);
             }
         } catch (err: any) {
@@ -287,8 +296,54 @@ const Banner = () => {
         console.log(13);
     };
 
+    const sorting = (arr: any[], type: 'asc' | 'desc') => {
+        const res = arr.sort((a: any, b: any) => {
+            const first: any = new Date(a.created_at);
+            const second: any = new Date(b.created_at);
+            if (type === 'asc') {
+                return first - second;
+            }
+            return second - first;
+        });
+        return res;
+    };
+
     const handleFilter = (value: 'all' | 'latest' | 'oldest') => {
-        console.log(12);
+        const selectId = form.watch('select');
+        console.log('selectId :', selectId);
+        if (selectId === '') {
+            if (value === 'latest') {
+                const res = sorting(dataBanner, 'asc');
+                form.setValue('dummyData', res);
+            } else if (value === 'oldest') {
+                const res = sorting(dataBanner, 'desc');
+                form.setValue('dummyData', res);
+            } else {
+                form.setValue('dummyData', data);
+            }
+            form.setValue('page', 1);
+        } else {
+            const valueSelect: string = dataBanner.filter((item: any) => item.id === selectId)[0]?.link;
+            console.log('lisTable', listTable);
+            const filterData = listTable.filter((item: any) => item?.link?.toLowerCase()?.includes(valueSelect.toLocaleLowerCase()));
+
+            console.log('filteredData', filterData);
+            if (value === 'latest') {
+                const res = sorting(filterData, 'asc');
+                form.setValue('dummyData', res);
+                setDatabanner(res);
+            } else if (value === 'oldest') {
+                const res = sorting(filterData, 'desc');
+                form.setValue('dummyData', res);
+                setDatabanner(res);
+            } else {
+                form.setValue('dummyData', filterData);
+                setDatabanner(filterData);
+            }
+            form.setValue('page', 1);
+        }
+        setFilteredData(filteredData);
+        setOpenFilter(false);
     };
 
     return (
@@ -674,7 +729,7 @@ const Banner = () => {
                     setOpen={setOpenRemove}
                     form={form}
                     nameSelect='select'
-                    dataSelect={undefined}
+                    dataSelect={data.filter((item: any) => item.link !== '')}
                     handleFilter={(value) => handleFilter(value)}
                     handleReset={handleReset}
                 />
