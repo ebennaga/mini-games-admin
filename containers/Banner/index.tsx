@@ -41,6 +41,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LoadingExchangeRates from 'containers/ExchangeRates/LoadingExchangeRates';
 import { useRouter } from 'next/router';
+import DialogFilter from './DialogFilter';
 
 const dummyData = [
     {
@@ -120,8 +121,11 @@ const Banner = () => {
     const [query, setQuery] = React.useState('');
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [dataBanner, setDatabanner] = React.useState<any>([]);
-    const [routeId, setRouteId] = React.useState<any>(null);
 
+    const [routeId, setRouteId] = React.useState<any>(null);
+    const [listLink, setListLink] = React.useState<any>([]);
+    const [data, setData] = React.useState<Array<any>>([]);
+    const [listTable, setListTable] = React.useState<any>([]);
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
     const router = useRouter();
@@ -135,8 +139,10 @@ const Banner = () => {
             desc: '',
             dummyData: dataBanner,
             showTo: '',
-            isActive: 'Yes',
-            checkedAll: false
+            isActive: false,
+            checkedAll: false,
+            page: 1,
+            select: ''
         }
     });
 
@@ -151,6 +157,7 @@ const Banner = () => {
         const endIndex = startIndex + Number(row);
         return filteredData.slice(startIndex, endIndex);
     };
+
     const goToNextPage = () => {
         if (currentPage !== pages) {
             setCurrentPage((page) => page + 1);
@@ -240,9 +247,15 @@ const Banner = () => {
                 endpoint: 'banners?search='
             });
             if (response.status === 200) {
-                const resData = response.data.data;
-                setDatabanner(resData);
-                console.log('databanner', dataBanner);
+                const resTotalData = response.data.data;
+                setDatabanner(resTotalData);
+                setData(resTotalData);
+                setListTable(resTotalData);
+                const { dataLink } = response.data;
+                const resData = data.map((item: any) => {
+                    return item.link;
+                });
+                setListLink(resData);
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -278,6 +291,60 @@ const Banner = () => {
     // if (isLoading) {
     //     return <LoadingExchangeRates />;
     // }
+    const handleReset = () => {
+        console.log(13);
+    };
+
+    const sorting = (arr: any[], type: 'asc' | 'desc') => {
+        const res = arr.sort((a: any, b: any) => {
+            const first: any = new Date(a.created_at);
+            const second: any = new Date(b.created_at);
+            if (type === 'asc') {
+                return first - second;
+            }
+            return second - first;
+        });
+        return res;
+    };
+
+    const handleFilter = (value: 'all' | 'latest' | 'oldest') => {
+        const selectId = form.watch('select');
+
+        if (selectId === '') {
+            if (value === 'latest') {
+                const res = sorting(dataBanner, 'asc');
+                form.setValue('dummyData', res);
+            } else if (value === 'oldest') {
+                const res = sorting(dataBanner, 'desc');
+                form.setValue('dummyData', res);
+            } else {
+                form.setValue('dummyData', data);
+            }
+            form.setValue('page', 1);
+        } else {
+            const valueSelect: string = dataBanner.filter((item: any) => item.id === selectId)[0]?.link;
+
+            const filterData = listTable.filter(
+                (item: any) => item.link !== '' && item?.link?.toLowerCase()?.includes(valueSelect.toLocaleLowerCase())
+            );
+
+            if (value === 'latest') {
+                const res = sorting(filterData, 'asc');
+                form.setValue('dummyData', res);
+                setDatabanner(res);
+            } else if (value === 'oldest') {
+                const res = sorting(filterData, 'desc');
+                form.setValue('dummyData', res);
+                setDatabanner(res);
+            } else {
+                form.setValue('dummyData', filterData);
+                setDatabanner(filterData);
+            }
+            form.setValue('page', 1);
+        }
+        setFilteredData(filteredData);
+        setOpenFilter(false);
+    };
 
     return (
         <Box component='section'>
@@ -535,7 +602,7 @@ const Banner = () => {
                     </Box>
                 </Box>
             </Box>
-            <Dialog
+            {/* <Dialog
                 open={openFilter}
                 onClose={() => setOpenFilter(false)}
                 PaperProps={{ sx: { width: '100%', maxWidth: '375px', borderRadius: '4px', margin: 0 } }}
@@ -655,7 +722,18 @@ const Banner = () => {
                         </ButtonBase>
                     </Box>
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
+            <Box position='absolute' top='236px' left='601px'>
+                <DialogFilter
+                    open={openFilter}
+                    setOpen={setOpenRemove}
+                    form={form}
+                    nameSelect='select'
+                    dataSelect={data.filter((item: any) => item.link !== '')}
+                    handleFilter={(value) => handleFilter(value)}
+                    handleReset={handleReset}
+                />
+            </Box>
         </Box>
     );
 };
