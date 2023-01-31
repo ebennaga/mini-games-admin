@@ -15,6 +15,7 @@ import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DialogSuccess from 'components/Dialog/DialogSuccess';
 import Tables from './TournamentTable';
 import DeleteAccDialog from '../Account/DeleteAccDialog';
 import FilterDrop from './FilterDrop';
@@ -72,6 +73,7 @@ const TournamentContainer = () => {
     const [isGame, setIsGame] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isFilter, setIsFilter] = useState(false);
+    const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(false);
     const [routeId, setRouteId] = useState<any>(null);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
@@ -102,16 +104,19 @@ const TournamentContainer = () => {
     const handleRemoveData = async () => {
         try {
             const response = await fetchAPI({
-                endpoint: `/product-prizes/${router.query.id}`,
+                endpoint: `/tournaments/${routeId}`,
                 method: 'DELETE'
             });
             if (response.status === 200) {
                 notify(response.data.message, 'success');
                 const res = remove.filter((item: any) => !deleted.includes(item));
-                setDeleted([]);
-                setCheckedObj([]);
-                setRow(res.length);
-                form.setValue('checkAll', false);
+                // setDeleted([]);
+                // setCheckedObj([]);
+                // setRow(res.length);
+                await handleFetchData();
+                setOpenDialog(false);
+                setOpenDialogSuccess(true);
+                // form.setValue('checkAll', false);
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -419,6 +424,7 @@ const TournamentContainer = () => {
     }, [remove, input, search, currentPage]);
     // console.log(getPaginatedData());
     // console.log('routeid', routeId);
+
     return (
         <Box sx={{ width: '100%' }}>
             {createTournament ? (
@@ -627,6 +633,7 @@ const TournamentContainer = () => {
                     }}
                 />
             )}
+            <DialogSuccess title='Sucess Remove Account' open={openDialogSuccess} setOpen={setOpenDialogSuccess} />
         </Box>
     );
 };
