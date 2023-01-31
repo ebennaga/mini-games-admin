@@ -281,12 +281,12 @@ const AccountContainer = () => {
                     item?.name?.toLowerCase()?.includes(keywords.toLowerCase()) ||
                     item?.email?.toLowerCase()?.includes(keywords.toLowerCase())
             );
-            console.log('filtersearch', filter);
+
             setRemove(filter);
         }
     }, [search, form.watch()]);
     // console.log('removedata', remove);
-    console.log('search', search);
+    // console.log('search', search);
 
     return (
         <Box sx={{ width: '100%' }}>

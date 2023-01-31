@@ -52,7 +52,8 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
             unit: '',
             qty: '',
             expiredDate: '',
-            is_active: false
+            is_active: false,
+            poin: ''
         }
     });
     const [checked, setChecked] = React.useState([true, false]);
@@ -69,7 +70,7 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                 method: 'GET',
                 endpoint: `product-prizes/${router.query.id}`
             });
-            console.log('responseaddprize', response);
+
             if (response.status === 200) {
                 form.setValue('name', response.data.data.name);
                 form.setValue('code', response.data.data.code);
@@ -247,6 +248,20 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                     <InputUpload isRequired label='Product Image 1' name='img' form={form} rules={rules} />
                     <InputUpload label='Product Image 2 -(Optional)' name='img2' form={form} />
                     <InputUpload label='Product Image 3 -(Optional)' name='img3' form={form} />
+                    <Box sx={{ my: '30px' }}>
+                        <InputWithLabel
+                            label='Poin'
+                            name='qty'
+                            type='number'
+                            rules={rules}
+                            form={form}
+                            labelField='Poin'
+                            placeHolder='Poin'
+                            isSelectType={false}
+                            isMultiline={false}
+                            isRequired
+                        />
+                    </Box>
 
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
