@@ -57,6 +57,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             });
             if (response.status === 200) {
                 setDataRoles(response.data.data);
+                console.log('dataroles', dataRoles);
             } else {
                 notify(response.data.message, 'error');
             }
@@ -67,12 +68,13 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
+        console.log('isduplicate', isDuplicate, roles, event.target.value);
         form.setValue('role', event.target.value);
         if (!isDuplicate) {
             setRoles([...roles, event.target.value as string]);
         }
     };
-
+    console.log('role', roles);
     const handleDeletedRoles = (item: any) => {
         if (roles.length > 0) {
             const deleted = roles.filter((i: any) => {
@@ -273,6 +275,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {roles.length > 0 &&
                                 roles.map((item: any, idx: number) => {
+                                    const value = dataRoles.filter((i: any) => i.id === item)[0].name;
+
                                     return (
                                         <Box
                                             key={idx}
@@ -288,7 +292,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                             }}
                                         >
                                             <Typography>
-                                                {item === '1' ? 'Admin' : item === '2' ? 'Marketing' : 'Content Writer'}
+                                                {/* {item === '1' ? 'Admin' : item === '2' ? 'Marketing' : 'Content Writer'} */}
+                                                {value}
                                             </Typography>
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close

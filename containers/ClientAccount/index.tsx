@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable array-callback-return */
 /* eslint-disable consistent-return */
 import {
@@ -75,6 +76,8 @@ const AccountContainer = () => {
     const [isFilter, setIsFilter] = useState(false);
     const [routeId, setRouteId] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isSearch, setIsSearch] = useState(false);
+    const [dataAccount, setDataAccount] = React.useState<Array<any>>([]);
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
 
@@ -89,9 +92,10 @@ const AccountContainer = () => {
             if (result.status === 200) {
                 const totalFilter = result.data.data;
                 const filter = totalFilter.filter((item: any) => item.name !== null);
-                console.log(filter);
+                // console.log(filter);
                 setIsLoading(false);
                 setRemove(filter);
+                setDataAccount(filter);
             }
             setIsLoading(false);
         } catch (error: any) {
@@ -227,6 +231,7 @@ const AccountContainer = () => {
             return toArr.includes(role);
         });
         setFilterData(filter);
+        setRemove(filter);
         setIsFilter(true);
         setOpenFilter(false);
     };
@@ -235,6 +240,7 @@ const AccountContainer = () => {
         setRole('0');
         setIsFilter(false);
         setOpenFilter(false);
+        setRemove(dataAccount);
         // form.reset();
         // setCheckedObj([]);
         // setIsChecked(false);
@@ -266,10 +272,21 @@ const AccountContainer = () => {
 
     useEffect(() => {
         if (form.watch('search') === '') {
-            // setIsSearch(false);
+            setIsSearch(false);
             setSearch(remove);
+        } else {
+            const keywords = form.watch('search');
+            const filter = remove.filter(
+                (item: any) =>
+                    item?.name?.toLowerCase()?.includes(keywords.toLowerCase()) ||
+                    item?.email?.toLowerCase()?.includes(keywords.toLowerCase())
+            );
+            console.log('filtersearch', filter);
+            setRemove(filter);
         }
     }, [search, form.watch()]);
+    // console.log('removedata', remove);
+    console.log('search', search);
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -518,8 +535,8 @@ const AccountContainer = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {getPaginatedData().length > 0 &&
-                                        getPaginatedData().map((item: any, idx: number) => {
+                                    {remove.length > 0 &&
+                                        remove.map((item: any, idx: number) => {
                                             const check: any = `checkbox${item.id}`;
                                             return (
                                                 <TableRow key={item.id}>
