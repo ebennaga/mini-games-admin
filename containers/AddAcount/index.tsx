@@ -57,7 +57,6 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             });
             if (response.status === 200) {
                 setDataRoles(response.data.data);
-                console.log('dataroles', dataRoles);
             } else {
                 notify(response.data.message, 'error');
             }
@@ -68,13 +67,13 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
-        console.log('isduplicate', isDuplicate, roles, event.target.value);
+
         form.setValue('role', event.target.value);
         if (!isDuplicate) {
             setRoles([...roles, event.target.value as string]);
         }
     };
-    console.log('role', roles);
+
     const handleDeletedRoles = (item: any) => {
         if (roles.length > 0) {
             const deleted = roles.filter((i: any) => {
