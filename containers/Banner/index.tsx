@@ -292,7 +292,9 @@ const Banner = () => {
     //     return <LoadingExchangeRates />;
     // }
     const handleReset = () => {
-        console.log(13);
+        form.setValue('dummyData', data);
+        form.setValue('page', 1);
+        setDatabanner(data);
     };
 
     const sorting = (arr: any[], type: 'asc' | 'desc') => {
@@ -314,18 +316,21 @@ const Banner = () => {
             if (value === 'latest') {
                 const res = sorting(dataBanner, 'asc');
                 form.setValue('dummyData', res);
+                setDatabanner(res);
             } else if (value === 'oldest') {
                 const res = sorting(dataBanner, 'desc');
                 form.setValue('dummyData', res);
+                setDatabanner(res);
             } else {
                 form.setValue('dummyData', data);
+                setDatabanner(data);
             }
             form.setValue('page', 1);
         } else {
-            const valueSelect: string = dataBanner.filter((item: any) => item.id === selectId)[0]?.link;
+            const valueSelect: string = data.filter((item: any) => item.id === selectId)[0]?.link;
 
             const filterData = listTable.filter(
-                (item: any) => item.link !== '' && item?.link?.toLowerCase()?.includes(valueSelect.toLocaleLowerCase())
+                (item: any) => item.link !== '' && item?.link?.toLowerCase()?.includes(valueSelect?.toLocaleLowerCase())
             );
 
             if (value === 'latest') {
@@ -726,7 +731,7 @@ const Banner = () => {
             <Box position='absolute' top='236px' left='601px'>
                 <DialogFilter
                     open={openFilter}
-                    setOpen={setOpenRemove}
+                    setOpen={setOpenFilter}
                     form={form}
                     nameSelect='select'
                     dataSelect={data.filter((item: any) => item.link !== '')}
