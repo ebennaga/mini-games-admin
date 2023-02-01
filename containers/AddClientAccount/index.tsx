@@ -189,7 +189,6 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
             setIsError(false);
         }
     }, [isCompFilled, isRolesFilled]);
-    // console.log('roles', roles);
 
     return (
         <Box sx={{ position: 'relative' }}>
@@ -270,7 +269,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     {selectCompanies.map((item: any, index: any) => {
                                         return (
                                             <MenuItem value={item.id} key={index}>
-                                                {item.code} {item.name}
+                                                {item.name}
                                             </MenuItem>
                                         );
                                     })}
@@ -387,6 +386,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                         <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {roles.length > 0 &&
                                 roles.map((item: any, idx: number) => {
+                                    const value = selectRoles.filter((i: any) => i.code === item);
                                     return (
                                         <Box
                                             key={idx}
@@ -401,7 +401,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                                 gap: '5px'
                                             }}
                                         >
-                                            <Typography>{item}</Typography>
+                                            <Typography>{value[0].name}</Typography>
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close
                                                     fontSize='small'
