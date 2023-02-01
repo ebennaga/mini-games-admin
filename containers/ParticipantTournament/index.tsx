@@ -129,7 +129,11 @@ const ParticipantTournament = () => {
                 if (item.isAction) {
                     const response = await fetchAPI({
                         endpoint: `tournament-participants/remove`,
-                        method: 'DELETE'
+                        method: 'DELETE',
+                        data: {
+                            tournament_id: 1,
+                            participant_ids: '1,2,3'
+                        }
                     });
                     if (response?.status === 200) {
                         notify(response.data.message, 'success');
@@ -173,6 +177,8 @@ const ParticipantTournament = () => {
 
         const gamefilt = gamesFilter ? dataGames.filter((item: any) => item.id === gamesFilter)[0].title : '';
         const table = dataComing;
+
+        console.log('datafilter', startDateFilter, endDateFilter);
 
         const resFilter = table.filter((item: any) => {
             const {
