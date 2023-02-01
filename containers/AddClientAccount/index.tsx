@@ -90,11 +90,12 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                         id: Math.floor(Math.random() * 300 + 1),
                         email: form.watch('email'),
                         name: form.watch('name'),
-                        role_ids: form.watch('roles'),
+                        role_ids: roles.join(),
                         company_id: form.watch('company'),
                         is_active: form.watch('is_active')
                     }
                 });
+
                 if (response.status === 200) {
                     notify(response.data.message, 'success');
                 }
@@ -108,6 +109,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
 
     const handleAddRole = (event: any) => {
         const isDuplicate: any = roles.includes(event.target.value);
+
         form.setValue('roles', event.target.value);
         if (!isDuplicate) {
             const dataRoles = selectRoles.filter((item: any) => event.target.value === item.id);
