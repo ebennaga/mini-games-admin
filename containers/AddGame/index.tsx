@@ -14,9 +14,10 @@ import { useRouter } from 'next/router';
 
 const AddGame = () => {
     const dataGenre = [
-        { id: 1, title: 'Arcade' },
-        { id: 2, title: 'RPG' },
-        { id: 3, title: 'Racing' }
+        { id: 1, title: 'Real Time Strategy (RTS)' },
+        { id: 2, title: 'First Persan Shooter (FPS)' },
+        { id: 3, title: 'Simulation' },
+        { id: 4, title: 'Arcade' }
     ];
 
     const [isLoading, setisLoading] = React.useState<boolean>(false);
@@ -44,6 +45,7 @@ const AddGame = () => {
 
             const imgBase64 = await convertBase64(image);
 
+            const resultGenre = dataGenre.filter((i: any) => i.id === genre);
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: 'games',
@@ -52,7 +54,8 @@ const AddGame = () => {
                     description,
                     game_url: url,
                     version: 1,
-                    banner_url: imgBase64
+                    banner_url: imgBase64,
+                    genre: resultGenre[0].title
                 }
             });
 
