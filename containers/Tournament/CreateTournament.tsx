@@ -211,6 +211,8 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 setIsLoading(false);
                 notify('Create tournament success!');
                 router.push('/tournament');
+                setTable([]);
+                formTable.reset();
             } else {
                 notify(response.data.message, 'error');
             }
