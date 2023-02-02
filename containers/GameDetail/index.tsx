@@ -15,9 +15,10 @@ import convertBase64 from 'helpers/convertBase64';
 
 const AddGame = () => {
     const dataGenre = [
-        { id: 1, title: 'Arcade' },
-        { id: 2, title: 'RPG' },
-        { id: 3, title: 'Racing' }
+        { id: 'Real Time Strategy (RTS)', title: 'Real Time Strategy (RTS)' },
+        { id: 'First Persan Shooter (FPS)', title: 'First Persan Shooter (FPS)' },
+        { id: 'Simulation', title: 'Simulation' },
+        { id: 'Arcade', title: 'Arcade' }
     ];
 
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -49,13 +50,13 @@ const AddGame = () => {
                 method: 'GET',
                 endpoint: `games/${id}`
             });
-
+            console.log('getgames', response);
             if (response.status === 200) {
-                const { banner_url, name, description, game_url } = response.data.data;
+                const { banner_url, name, description, game_url, genre } = response.data.data;
                 form.setValue('title', name);
                 form.setValue('url', game_url);
                 form.setValue('description', description);
-
+                form.setValue('genre', genre);
                 form.setValue('imageInput', banner_url);
                 form.setValue('image', banner_url);
                 setDetailGame(response.data.data);
@@ -84,7 +85,7 @@ const AddGame = () => {
             resData = image && image !== banner_url ? { ...resData, banner_url: toBase64 } : resData;
             resData = genre && genre !== genre_detail ? { ...resData, genre } : resData;
             // resData = { ...resData, version: 1 };
-
+            console.log('resdata', resData);
             if (Object.keys(resData).length > 0) {
                 const response = await fetchAPI({
                     method: 'PUT',
