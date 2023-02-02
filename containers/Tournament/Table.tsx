@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Input, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Input, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import numberFormat from 'helpers/numberFormat';
 import { Controller, useFieldArray } from 'react-hook-form';
 
@@ -9,25 +9,38 @@ interface TableAddTournamentProps {
     data: any;
     formTable: any;
     fieldArray: any;
+    table: any;
+    setTable: any;
 }
 
-const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, data, formTable, fieldArray }) => {
-    const [dataTable, setDataTable] = React.useState<any>(null);
+const TableAddTournament: React.FC<TableAddTournamentProps> = ({ setTable, table, valueTable, data, formTable, fieldArray }) => {
+    const [dataTable, setDataTable] = React.useState<any>([]);
     const [isChange, setIsChange] = React.useState(false);
+
     // React.useEffect(() => {
     //     if (data) {
     //         setDataTable(data[0].data);
     //     }
     // }, [data]);
 
+    // React.useEffect(() => {
+    // formTable.setValue('tableData', [{ max_pos: '', pointPrizes: '', coinPrizes: '' }]);
+    // }, []);
+
     React.useEffect(() => {
-        if (valueTable === 1 || valueTable === 2 || valueTable === 3) {
-            const filterData = data.filter((item: any) => {
+        if (valueTable !== '0') {
+            const temp = [...data];
+            const filterData = temp.filter((item: any) => {
                 return item.id === valueTable;
             });
-            setDataTable(filterData[0]?.data);
+            setTable(filterData[0]?.prize_infos);
+            table?.forEach((item: any, idx: number) => {
+                formTable.setValue(`tableData[${idx + 1}].max_pos`, item.max_pos);
+                formTable.setValue(`tableData[${idx + 1}].pointPrizes`, item.point);
+                formTable.setValue(`tableData[${idx + 1}].coinPrizes`, item.coin);
+            });
         }
-    }, [valueTable, dataTable]);
+    }, [valueTable]);
 
     return (
         <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
@@ -57,11 +70,11 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                         /> */}
 
                                     <Input
-                                        onChange={(e: any) => formTable.setValue(`tableData[${index}].positionStart`, e.target.value)}
+                                        onChange={(e: any) => formTable.setValue(`tableData[${index}].max_pos`, e.target.value)}
                                         disableUnderline
                                         type='number'
-                                        defaultValue={formTable.watch(`tableData[${index}].positionStart`)}
-                                        {...formTable.register(`tableData[${index}].positionStart`)}
+                                        defaultValue={formTable.watch(`tableData[${index}].max_pos`)}
+                                        {...formTable.register(`tableData[${index}].max_pos`)}
                                     />
                                 </TableCell>
                                 {/* <TableCell
@@ -111,12 +124,13 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                                 <Input onChange={onChange} value={value} disableUnderline type='text' />
                                             )}
                                         /> */}
+
                                     <Input
                                         onChange={(e: any) => formTable.setValue(`tableData[${index}].pointPrizes`, e.target.value)}
                                         disableUnderline
                                         type='number'
-                                        defaultValue={formTable.watch(`tableData[${index}].pointPrizes`)}
-                                        {...formTable.register(`tableData[${index}].pointPrizes`)}
+                                        defaultValue={formTable.watch(`tableData[${index}].point`)}
+                                        {...formTable.register(`tableData[${index}].point`)}
                                     />
                                 </TableCell>
                                 {/* <TableCell
@@ -144,11 +158,11 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                     }}
                                 >
                                     <Input
-                                        onChange={(e: any) => formTable.setValue(`tableData[${index}].cointPrizes`, e.target.value)}
+                                        onChange={(e: any) => formTable.setValue(`tableData[${index}].coin`, e.target.value)}
                                         disableUnderline
                                         type='number'
-                                        defaultValue={formTable.watch(`tableData[${index}].cointPrizes`)}
-                                        {...formTable.register(`tableData[${index}].cointPrizes`)}
+                                        defaultValue={formTable.watch(`tableData[${index}].coin`)}
+                                        {...formTable.register(`tableData[${index}].coin`)}
                                     />
                                 </TableCell>
                                 {/* <TableCell
@@ -168,6 +182,35 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ valueTable, dat
                                     />
                                 </TableCell> */}
                                 {/* <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>{item.playerPointPrizes}</TableCell> */}
+                            </TableRow>
+                        );
+                    })}
+                    {table?.map((item: any, index: number) => {
+                        return (
+                            <TableRow key={index + 1}>
+                                <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>
+                                    <Typography>{item.max_pos}</Typography>
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        width: '5%',
+                                        fontWeight: 'bold',
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0'
+                                    }}
+                                >
+                                    <Typography>{item.point}</Typography>
+                                </TableCell>
+                                <TableCell
+                                    sx={{
+                                        width: '5%',
+                                        fontWeight: 'bold',
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0'
+                                    }}
+                                >
+                                    <Typography> {item.coin}</Typography>
+                                </TableCell>
                             </TableRow>
                         );
                     })}
