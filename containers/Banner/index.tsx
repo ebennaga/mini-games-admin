@@ -110,7 +110,7 @@ const Banner = () => {
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
     const [menu, setMenu] = React.useState('1');
-    const [row, setRow] = React.useState(dummyData.length.toString());
+    const [row, setRow] = React.useState('0');
     const [filteredData, setFilteredData] = React.useState<any>([]);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [pages, setPages] = React.useState(1);
@@ -181,10 +181,11 @@ const Banner = () => {
     const handleCheckBoxAll = (e: any) => {
         const temp: any[] = [];
         form.setValue('checkedAll', e.target.checked);
+
         if (e.target.checked) {
-            dummyData.forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
-                form.setValue(datas, e.target.checked);
+            dataBanner.forEach((item: any, idx: number) => {
+                const datas: any = `checkbox${item.id}`;
+                form.setValue(datas, true);
                 temp.push(item);
             });
             setExistingData(temp);
@@ -192,8 +193,8 @@ const Banner = () => {
         } else if (!e.target.checked) {
             setCheckedObj([]);
             setExistingData([]);
-            dummyData.forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            dataBanner.forEach((item: any, idx: number) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
             });
         }
@@ -247,15 +248,17 @@ const Banner = () => {
                 endpoint: 'banners?search='
             });
             if (response.status === 200) {
-                const resTotalData = response.data.data;
-                setDatabanner(resTotalData);
-                setData(resTotalData);
-                setListTable(resTotalData);
+                const dataFetch = response.data.data;
+                setDatabanner(dataFetch);
+                setData(dataFetch);
+                setListTable(dataFetch);
                 const { dataLink } = response.data;
                 const resData = data.map((item: any) => {
                     return item.link;
                 });
                 setListLink(resData);
+                setFilteredData(dataFetch);
+                setRow('5');
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -265,7 +268,6 @@ const Banner = () => {
 
     React.useEffect(() => {
         getBanner();
-        setFilteredData(dummyData);
     }, []);
 
     React.useEffect(() => {
@@ -273,8 +275,8 @@ const Banner = () => {
     }, [pages, row]);
 
     React.useEffect(() => {
-        [...Array(dummyData.length)].forEach((item: any, idx: number) => {
-            const name: any = `checkbox${idx + 1}`;
+        dataBanner.forEach((item: any, idx: number) => {
+            const name: any = `checkbox${item.id}`;
             checkBoxKeys.push(name);
         });
         if (checkedObj.length > 0 || form.watch('checkedAll')) {
@@ -497,74 +499,81 @@ const Banner = () => {
                                                 return post;
                                             }
                                         })
-                                        .map((item: any) => {
+                                        .map((item: any, index: number) => {
                                             const check: any = `checkbox${item.id}`;
-
+                                            const startIndex = currentPage * Number(row) - Number(row);
+                                            const endIndex = startIndex + Number(row);
+                                            // return filteredData.slice(startIndex, endIndex);
                                             return (
-                                                <TableRow key={item.id}>
-                                                    <TableCell align='center' sx={{ width: '5%' }}>
-                                                        {item.id}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.title}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.image_url}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.desc}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.link}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        <Box sx={{ color: 'white', display: 'flex', justifyContent: 'center' }}>
-                                                            <Box
-                                                                sx={
-                                                                    item.is_active === 'Yes'
-                                                                        ? {
-                                                                              backgroundColor: '#A54CE5',
-                                                                              borderRadius: '64px',
-                                                                              width: '33px',
-                                                                              height: '20px'
-                                                                          }
-                                                                        : {
-                                                                              backgroundColor: '#D32F2F',
-                                                                              borderRadius: '64px',
-                                                                              width: '33px',
-                                                                              height: '20px'
-                                                                          }
-                                                                }
-                                                            >
-                                                                {item.is_active ? 'Yes' : 'No'}
+                                                index >= startIndex &&
+                                                index < endIndex && (
+                                                    <TableRow key={item.id}>
+                                                        <TableCell align='center' sx={{ width: '5%' }}>
+                                                            {index + 1}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                            align='center'
+                                                        >
+                                                            {item.title}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                            align='center'
+                                                        >
+                                                            {item.image_url}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                            align='center'
+                                                        >
+                                                            {item.desc}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                            align='center'
+                                                        >
+                                                            {item.link}
+                                                        </TableCell>
+                                                        <TableCell
+                                                            sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                            align='center'
+                                                        >
+                                                            <Box sx={{ color: 'white', display: 'flex', justifyContent: 'center' }}>
+                                                                <Box
+                                                                    sx={
+                                                                        item.is_active === 'Yes'
+                                                                            ? {
+                                                                                  backgroundColor: '#A54CE5',
+                                                                                  borderRadius: '64px',
+                                                                                  width: '33px',
+                                                                                  height: '20px'
+                                                                              }
+                                                                            : {
+                                                                                  backgroundColor: '#D32F2F',
+                                                                                  borderRadius: '64px',
+                                                                                  width: '33px',
+                                                                                  height: '20px'
+                                                                              }
+                                                                    }
+                                                                >
+                                                                    {item.is_active ? 'Yes' : 'No'}
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
-                                                    </TableCell>
+                                                        </TableCell>
 
-                                                    <TableCell align='center' sx={{ width: '10%', fontWeight: 'bold' }}>
-                                                        <CheckboxController
-                                                            form={form}
-                                                            name={`checkbox${item.id}`}
-                                                            checked={!!form.watch(check)}
-                                                            onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item.id)}
-                                                        />
-                                                    </TableCell>
-                                                </TableRow>
+                                                        <TableCell align='center' sx={{ width: '10%', fontWeight: 'bold' }}>
+                                                            <CheckboxController
+                                                                form={form}
+                                                                name={`checkbox${item.id}`}
+                                                                checked={!!form.watch(check)}
+                                                                onChange={(e: any) =>
+                                                                    handleSingleCheckBox(e, `checkbox${item.id}`, item.id)
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
                                             );
                                         })}
                             </TableBody>
@@ -584,10 +593,10 @@ const Banner = () => {
                             labelId='demo-simple-select-label'
                             id='demo-simple-select'
                             value={row}
-                            defaultValue={dummyData.length.toString()}
+                            defaultValue={dataBanner?.length.toString()}
                             onChange={handleViewRow}
                         >
-                            {[...Array(dummyData.length)].map((item: any, idx: number) => (
+                            {[...Array(dataBanner?.length)].map((item: any, idx: number) => (
                                 <MenuItem key={idx} value={idx + 1}>
                                     {idx + 1}
                                 </MenuItem>
@@ -595,7 +604,7 @@ const Banner = () => {
                         </Select>
                     </FormControl>
                     <Typography>
-                        1-{row} of {dummyData.length}
+                        1-{row} of {dataBanner?.length}
                     </Typography>
                     <Box sx={{ display: 'flex' }}>
                         <IconButton onClick={goToPreviousPage}>
