@@ -200,7 +200,7 @@ const Games = () => {
         form.setValue('dataTable', temp);
         form.setValue('page', 1);
     }, [query, data]);
-
+    console.log('listable', listTable);
     return (
         <Box>
             <TitleCard
