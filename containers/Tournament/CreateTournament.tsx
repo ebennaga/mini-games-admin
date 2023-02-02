@@ -198,7 +198,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 start_time: `${data.startDate} ${data.startTime}`,
                 end_time: `${data.endDate} ${data.endTime}`,
                 entry_coin: data.fee,
-                prize_infos: res
+                prize_infos: table
             };
 
             const response = await fetchAPI({
