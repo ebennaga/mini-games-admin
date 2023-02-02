@@ -9,8 +9,8 @@ interface TableAddTournamentProps {
     data: any;
     formTable: any;
     fieldArray: any;
-    table: any;
-    setTable: any;
+    table?: any;
+    setTable?: any;
 }
 
 const TableAddTournament: React.FC<TableAddTournamentProps> = ({ setTable, table, valueTable, data, formTable, fieldArray }) => {
