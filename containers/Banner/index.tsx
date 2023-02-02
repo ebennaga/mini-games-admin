@@ -41,6 +41,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LoadingExchangeRates from 'containers/ExchangeRates/LoadingExchangeRates';
 import { useRouter } from 'next/router';
+import DialogSuccess from 'components/Dialog/DialogSuccess';
 import DialogFilter from './DialogFilter';
 
 const dummyData = [
@@ -109,6 +110,7 @@ const PurpleSwitch = styled(Switch)(({ theme }) => ({
 const Banner = () => {
     const [openRemove, setOpenRemove] = React.useState(false);
     const [openFilter, setOpenFilter] = React.useState(false);
+    const [openDialogSucces, setOpenDialogSuccess] = React.useState(false);
     const [menu, setMenu] = React.useState('1');
     const [row, setRow] = React.useState('0');
     const [filteredData, setFilteredData] = React.useState<any>([]);
@@ -232,6 +234,7 @@ const Banner = () => {
         setFilteredData(res);
         setExistingData([]);
         setOpenRemove(false);
+        setOpenDialogSuccess(true);
         setRow(res.length);
         form.setValue('checkedAll', false);
         filteredData.forEach((item: any, idx: number) => {
@@ -748,6 +751,7 @@ const Banner = () => {
                     handleReset={handleReset}
                 />
             </Box>
+            <DialogSuccess title='Successfully Banner' open={openDialogSucces} setOpen={setOpenDialogSuccess} />
         </Box>
     );
 };
