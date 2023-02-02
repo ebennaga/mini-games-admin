@@ -16,13 +16,13 @@ import FilterRoles from './FilterRoles';
 import DialogMenuAccess from './DialogMenuAccess';
 
 const Roles = () => {
-    const dataSelect = [
-        { id: 'user', title: 'User' },
-        { id: 'content writer', title: 'Content Writer' },
-        { id: 'digital marketing', title: 'Digital Marketing' },
-        { id: 'admin', title: 'Admin' },
-        { id: 'super admin', title: 'Super Admin' }
-    ];
+    // const dataSelect = [
+    //     { id: 'user', title: 'User' },
+    //     { id: 'content writer', title: 'Content Writer' },
+    //     { id: 'digital marketing', title: 'Digital Marketing' },
+    //     { id: 'admin', title: 'Admin' },
+    //     { id: 'super admin', title: 'Super Admin' }
+    // ];
 
     const dataAccesss = [
         { isChecked: true, name: 'Dashboard', id: 1 },
@@ -47,6 +47,7 @@ const Roles = () => {
     const [openMenuAccess, setOpenMenuAccess] = React.useState<boolean>(false);
     const [openDialogFailed, setOpenDialogFailed] = React.useState<boolean>(false);
     const [dataRoles, setDataRoles] = React.useState<Array<any>>([]);
+    const [dataSelect, setDataSelect] = React.useState<Array<any>>([]);
     const [isLoading, setIsloading] = React.useState<boolean>(true);
 
     const { fetchAPI } = useAPICaller();
@@ -84,6 +85,12 @@ const Roles = () => {
 
                 setDataRoles(resData);
                 form.setValue('dataTable', resData);
+
+                const resultDataSelect = resData.map((i: any) => {
+                    const dataItem = { id: i.name, title: i.name };
+                    return dataItem;
+                });
+                setDataSelect(resultDataSelect);
             }
         } catch (err: any) {
             notify(err.message, 'error');
@@ -107,7 +114,7 @@ const Roles = () => {
             form.setValue('page', input.page - 1);
         }
     };
-    console.log('datatable', form.watch('dataTable'));
+
     // Event Remove Item
     const handleRemove = async () => {
         try {
@@ -150,6 +157,7 @@ const Roles = () => {
     // Event Filter data
     const handleFilter = () => {
         const dataTable = dataRoles;
+
         const { filterActive, filterSelect } = form.watch();
         let result: Array<any> = [];
 
@@ -158,6 +166,7 @@ const Roles = () => {
         }
 
         const arr: Array<any> = result.length > 0 ? result : dataTable;
+
         result = [...arr.filter((item: any) => item.is_active === filterActive)];
 
         form.setValue('dataTable', result);
@@ -226,6 +235,7 @@ const Roles = () => {
     // if (isLoading) {
     //     return <LoadingExchangeRates />;
     // }
+
     return (
         <Box>
             <TitleCard
