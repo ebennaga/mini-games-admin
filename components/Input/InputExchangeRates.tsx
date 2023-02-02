@@ -132,7 +132,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     <Box sx={{ width: '30%' }}>
                         <Input
                             type='number'
-                            rules={{ required: true }}
+                            rules={rules}
                             form={form}
                             name={idrName}
                             label='IDR'
