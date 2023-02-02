@@ -50,7 +50,7 @@ const AddGame = () => {
                 method: 'GET',
                 endpoint: `games/${id}`
             });
-            console.log('getgames', response);
+
             if (response.status === 200) {
                 const { banner_url, name, description, game_url, genre } = response.data.data;
                 form.setValue('title', name);
@@ -85,7 +85,7 @@ const AddGame = () => {
             resData = image && image !== banner_url ? { ...resData, banner_url: toBase64 } : resData;
             resData = genre && genre !== genre_detail ? { ...resData, genre } : resData;
             // resData = { ...resData, version: 1 };
-            console.log('resdata', resData);
+
             if (Object.keys(resData).length > 0) {
                 const response = await fetchAPI({
                     method: 'PUT',
