@@ -162,7 +162,7 @@ const Roles = () => {
         let result: Array<any> = [];
 
         if (filterSelect) {
-            result = [...dataTable.filter((item: any) => item.code.toLowerCase() === filterSelect.toLowerCase())];
+            result = [...dataTable.filter((item: any) => item.name.toLowerCase() === filterSelect.toLowerCase())];
         }
 
         const arr: Array<any> = result.length > 0 ? result : dataTable;
