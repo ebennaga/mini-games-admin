@@ -75,7 +75,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     const [selectTournament, setSelectTournament] = React.useState<any>([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [prizeData, setPrizeData] = React.useState<any>([]);
-    const [prizePool, setPrizePool] = React.useState(0);
+    const [prizePool, setPrizePool] = React.useState('');
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
     const notify = useNotify();
@@ -168,6 +168,18 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     React.useEffect(() => {
         fetchPrizesInfos();
     }, []);
+
+    React.useEffect(() => {
+        const point = table.map((item: any) => {
+            return item.point;
+        });
+        if (table.length > 0) {
+            const totalPrizes = point?.reduce((total: any, num: any) => {
+                return total + num;
+            });
+            setPrizePool(totalPrizes);
+        }
+    }, [table]);
 
     const handlePOSTSubmit = async (data: any) => {
         setIsLoading(true);
@@ -722,7 +734,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Box sx={{ width: '100%' }}>
-                                        <TextField fullWidth label='Prize Pool' value={prizePool || 0} />
+                                        <TextField disabled fullWidth label='Prize Pool' value={prizePool || 0} />
                                     </Box>
                                     {/* <Input isColor name='pool' label='Prize Pool' rules={{ required: true }} form={form} placeholder='30000' /> */}
                                 </Grid>
