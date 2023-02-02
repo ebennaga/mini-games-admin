@@ -128,12 +128,8 @@ const ParticipantTournament = () => {
             table.map(async (item: any) => {
                 if (item.isAction) {
                     const response = await fetchAPI({
-                        endpoint: `tournament-participants/remove`,
-                        method: 'DELETE',
-                        data: {
-                            tournament_id: 1,
-                            participant_ids: '1,2,3'
-                        }
+                        endpoint: `tournament-participants/remove/${item.id}`,
+                        method: 'DELETE'
                     });
                     if (response?.status === 200) {
                         notify(response.data.message, 'success');
