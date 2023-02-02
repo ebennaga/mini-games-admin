@@ -260,8 +260,11 @@ const AccountContainer = () => {
     }, [pages, row]);
 
     useEffect(() => {
-        [...Array(remove.length)].forEach((item: any, idx: number) => {
-            checkBoxKeys.push(`checkbox${idx + 1}`);
+        // [...Array(remove.length)].forEach((item: any, idx: number) => {
+        //     checkBoxKeys.push(`checkbox${idx + 1}`);
+        // });
+        remove.forEach((item: any, idx: number) => {
+            checkBoxKeys.push(`checkbox${item.id}`);
         });
         if (checkedObj.length > 0 || form.watch('checkAll')) {
             setIsChecked(true);
@@ -285,8 +288,6 @@ const AccountContainer = () => {
             setRemove(filter);
         }
     }, [search, form.watch()]);
-    // console.log('removedata', remove);
-    // console.log('search', search);
 
     return (
         <Box sx={{ width: '100%' }}>
