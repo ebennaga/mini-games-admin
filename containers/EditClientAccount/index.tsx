@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable array-callback-return */
 import { Close } from '@mui/icons-material';
-import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, FormControlLabel, Checkbox } from '@mui/material';
+import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, Skeleton } from '@mui/material';
 import CustomButton from 'components/Button';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import { useRouter } from 'next/router';
@@ -13,47 +13,132 @@ import RadioButton from 'components/Radio/RadioV2';
 interface EditClientAccountProps {}
 
 const EditClientAccount: React.FC<EditClientAccountProps> = () => {
-    const data = {
-        id: 1,
-        name: 'Owi-kun',
-        email: 'test@abc.com',
-        access: ['Admin', 'Content Creator'],
-        companies: ['J.OC', 'Starduck'],
-        isActive: true
-    };
-
     const form = useForm({
         mode: 'all',
         defaultValues: {
-            name: data.name,
-            email: data.email,
+            name: '',
+            email: '',
             role: '0',
-            roles: data.access,
-            activeRole: data.isActive,
-            company: '0',
-            companies: data.companies
+            roles: [],
+            activeRole: false,
+            company: '',
+            companies: []
         }
     });
     const router = useRouter();
+
     const [roles, setRoles] = React.useState<any>([...form.watch('roles')]);
-    const [companies, setCompanies] = React.useState<any>([...form.watch('companies')]);
+    const [companies, setCompanies] = React.useState<any>([]);
     const [isCompFilled, setIsCompFilled] = React.useState<boolean>(false);
     const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
     const [isError, setIsError] = React.useState<boolean>(false);
+    const [dataRoles, setDataRoles] = React.useState<Array<any>>([]);
+    const [dataCompanies, setDataCompanies] = React.useState<Array<any>>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [loadingUpdate, setLoadingUpdate] = React.useState<boolean>(false);
+
+    const valueCompany = dataCompanies.filter((item: any) => item.id === form.watch('company'))[0]?.id;
+    // console.log('response', dataCompanies, valueCompany);
+
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
 
-    const submitHandler = async (datas: any) => {
+    // FETCH COMPANIES
+    const fetchDataCompanies = async () => {
+        const response = await fetchAPI({
+            method: 'GET',
+            endpoint: 'companies'
+        });
+        if (response.status === 200) {
+            const result = response.data.data;
+            setDataCompanies(result);
+        }
+    };
+
+    // FETCH ROLES
+    const fetchDataRoles = async () => {
+        const response = await fetchAPI({
+            method: 'GET',
+            endpoint: 'roles'
+        });
+        if (response.status === 200) {
+            setDataRoles(response.data.data);
+            return response.data.data;
+        }
+        return false;
+    };
+
+    // START FETCH DETAIL ACCOUNT
+    const fetchDataClient = async () => {
+        setIsLoading(true);
+        try {
+            await fetchDataCompanies();
+            const resultRoles = await fetchDataRoles();
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: `accounts/${router.query.id}`
+            });
+
+            if (response.status === 200) {
+                const { name, company, email, is_active: isActive, role_id: roleId } = response.data.data;
+                const resCompanies: any = [company.name];
+
+                // filling form & state value
+                form.setValue('name', name);
+                form.setValue('email', email);
+                form.setValue('activeRole', isActive);
+                form.setValue('companies', resCompanies);
+                form.setValue('company', company.id as string);
+                setCompanies(resCompanies);
+
+                if (resultRoles) {
+                    // change roleId to array
+                    const arrRoleId = roleId.split(',');
+
+                    arrRoleId.map((item: string) => {
+                        resultRoles.map((itm: any) => {
+                            if (item === itm.id) {
+                                const itmId = itm.id;
+                                setRoles([...roles, itm.name]);
+
+                                // filling form roles value
+                                const formRoles: any = form.watch('roles');
+                                const isDuplicate = formRoles.includes(itmId);
+                                if (!isDuplicate) {
+                                    const formRolesResult: any = [...formRoles, itm.id];
+                                    form.setValue('roles', formRolesResult);
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsLoading(false);
+    };
+
+    React.useEffect(() => {
+        fetchDataClient();
+    }, []);
+    // END FETCH DETAIL ACCOUNT
+
+    // Event update account
+    const submitHandler = async () => {
+        setLoadingUpdate(true);
+        const { name, email, roles: rolesBody, company } = form.watch();
         if (isCompFilled && isRolesFilled) {
             setIsError(false);
             try {
                 const response = await fetchAPI({
                     method: 'PUT',
-                    endpoint: `client-account/${router.query.id}`,
-                    data: {}
+                    endpoint: `accounts/${router.query.id}`,
+                    data: { name, email, role_ids: rolesBody.join(), company_id: company }
                 });
                 if (response.status === 200) {
                     notify('Successfully create client account', 'success');
+                    router.push('/client-account');
                 }
             } catch (error: any) {
                 notify(error.message, 'error');
@@ -61,29 +146,57 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
         } else {
             setIsError(true);
         }
+        setLoadingUpdate(false);
     };
+
+    // Event Select Role
     const handleAddRole = (event: any) => {
-        const isDuplicate: any = roles.includes(event.target.value);
-        form.setValue('role', event.target.value);
-        if (!isDuplicate) {
-            setRoles([...roles, event.target.value as string]);
+        const { value } = event.target;
+        form.setValue('role', value);
+        // filter dataRoles to obtain name
+        const valueFiltered = dataRoles.filter((item: any) => item.id === value)[0].name;
+
+        // checking value already exist in state roles
+        const isDuplicateState: any = roles.includes(valueFiltered);
+        // conditional value doesnt exist
+        if (!isDuplicateState) {
+            setRoles([...roles, valueFiltered]);
+        }
+
+        // checking valueFiltered already exist
+        const isDuplicateForm: any = roles.includes(valueFiltered);
+        // conditional valueFiltered dosnt exist
+        if (!isDuplicateForm) {
+            const formRoles = form.watch('roles');
+            const resultValueForm: any = [...formRoles, value];
+            form.setValue('roles', resultValueForm);
         }
     };
 
+    // Event Select Company
     const handleAddCompany = (event: any) => {
-        const isDuplicate: any = companies.includes(event.target.value);
         form.setValue('company', event.target.value);
-        if (!isDuplicate) {
-            setCompanies([...companies, event.target.value as string]);
-        }
+        // filter dataCompanies to obtain name
+        const valueBadge = dataCompanies.filter((item: any) => item.id === event.target.value)[0].name;
+        setCompanies([valueBadge]);
     };
 
+    // Event Delete Roles
     const handleDeletedRoles = (item: any) => {
+        // Delete role in state roles
         if (roles.length > 0) {
             const deleted = roles.filter((i: any) => {
                 return item !== i;
             });
             setRoles(deleted);
+        }
+
+        // Delete role in form
+        const formValue = form.watch('roles');
+        if (formValue.length > 1) {
+            const getId = dataRoles.filter((value: any) => value.name === item)[0].id;
+            const resultValue = formValue.filter((value: any) => value !== getId);
+            form.setValue('roles', resultValue);
         }
     };
 
@@ -100,7 +213,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
         form.setValue('activeRole', event.target.checked);
     };
 
-    const handleAddSetNotActive = (event: any) => {
+    const handleAddSetNotActive = () => {
         form.setValue('activeRole', !form.watch('activeRole'));
     };
 
@@ -126,7 +239,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
         <Box sx={{ position: 'relative' }}>
             <Box sx={{ padding: '40px 25px', height: '100vh' }}>
                 <Paper sx={{ width: '100%', height: '85px', borderRadius: '4px', padding: '16px', position: 'relative' }}>
-                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Add Account</Typography>
+                    <Typography sx={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.87)', fontWeight: 400 }}>Edit Client Account</Typography>
                     <Typography sx={{ fontSize: '14px', fontWeight: 400, color: 'rgba(0, 0, 0, 0.6)' }}>
                         Additional description if required
                     </Typography>
@@ -143,6 +256,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                             label='Name'
                             type='text'
                             rules={{ required: true, maxLength: 100 }}
+                            isLoading={isLoading}
                         />
                     </Box>
                     <Box sx={{ mt: '45px', width: '40%' }}>
@@ -156,6 +270,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                             label='Email'
                             type='email'
                             rules={{ required: true, maxLength: 100 }}
+                            isLoading={isLoading}
                         />
                     </Box>
                     <Box sx={{ mt: '45px', width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -177,29 +292,37 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
                         <Box sx={{ width: '70%' }}>
-                            <FormControl fullWidth>
-                                <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='simple-select-company'>
-                                    Company
-                                </InputLabel>
-                                <Select
-                                    sx={{ color: form.watch('company') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                    placeholder='Select Company'
-                                    labelId='simple-select-company'
-                                    id='simple-select'
-                                    value={form.watch('company')}
-                                    label='Company'
-                                    onChange={handleAddCompany}
-                                    color='secondary'
-                                    error={isError}
-                                >
-                                    <MenuItem value='0' disabled>
-                                        Select Company
-                                    </MenuItem>
-                                    <MenuItem value='Starduck'>Starduck</MenuItem>
-                                    <MenuItem value='J.OC'>J.OC</MenuItem>
-                                    <MenuItem value='Mc Dono'>Mc Dono</MenuItem>
-                                </Select>
-                            </FormControl>
+                            {isLoading ? (
+                                <Skeleton sx={{ height: '90px' }} />
+                            ) : (
+                                <FormControl fullWidth>
+                                    <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='simple-select-company'>
+                                        Company
+                                    </InputLabel>
+                                    <Select
+                                        sx={{ color: form.watch('company') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                        placeholder='Select Company'
+                                        labelId='simple-select-company'
+                                        id='simple-select'
+                                        // value={form.watch('company')}
+                                        value={valueCompany}
+                                        label='Company'
+                                        onChange={handleAddCompany}
+                                        color='secondary'
+                                        error={isError}
+                                    >
+                                        <MenuItem value='0' disabled>
+                                            Select Company
+                                        </MenuItem>
+                                        {dataCompanies.length > 0 &&
+                                            dataCompanies.map((item: any) => (
+                                                <MenuItem value={item.id} key={item.name}>
+                                                    {item.name}
+                                                </MenuItem>
+                                            ))}
+                                    </Select>
+                                </FormControl>
+                            )}
                         </Box>
                     </Box>
                     <Box
@@ -234,7 +357,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close
                                                     fontSize='small'
-                                                    sx={{ color: 'white', cursor: 'pointer' }}
+                                                    sx={{ color: 'white', cursor: 'pointer', display: 'none' }}
                                                     onClick={() => handleDeletedCompanies(item)}
                                                 />
                                             </Box>
@@ -269,24 +392,31 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                 <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
                                     Role Code
                                 </InputLabel>
-                                <Select
-                                    sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                    placeholder='Select Roles'
-                                    labelId='demo-simple-select-label'
-                                    id='demo-simple-select'
-                                    value={form.watch('role')}
-                                    label='Role Code'
-                                    onChange={handleAddRole}
-                                    color='secondary'
-                                    error={isError}
-                                >
-                                    <MenuItem value='0' disabled>
-                                        Select Roles
-                                    </MenuItem>
-                                    <MenuItem value='Admin'>Admin</MenuItem>
-                                    <MenuItem value='Marketing'>Marketing</MenuItem>
-                                    <MenuItem value='Content Writer'>Content Writer</MenuItem>
-                                </Select>
+                                {isLoading ? (
+                                    <Skeleton sx={{ height: '90px' }} />
+                                ) : (
+                                    <Select
+                                        sx={{ color: form.watch('role') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                        placeholder='Select Roles'
+                                        labelId='demo-simple-select-label'
+                                        id='demo-simple-select'
+                                        value={form.watch('role')}
+                                        label='Role Code'
+                                        onChange={handleAddRole}
+                                        color='secondary'
+                                        error={isError}
+                                    >
+                                        <MenuItem value='0' disabled>
+                                            Select Roles
+                                        </MenuItem>
+                                        {dataRoles.length > 0 &&
+                                            dataRoles.map((item: any) => (
+                                                <MenuItem value={item.id} key={item.name}>
+                                                    {item.name}
+                                                </MenuItem>
+                                            ))}
+                                    </Select>
+                                )}
                             </FormControl>
                         </Box>
                     </Box>
@@ -386,19 +516,30 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                     width: '100%'
                 }}
             >
-                <CustomButton onClick={submitHandler} padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' />
                 <CustomButton
-                    onClick={() => {
-                        router.push('/client-account');
-                    }}
+                    type='submit'
+                    onClick={submitHandler}
                     padding='10px'
                     width='193px'
                     height='59px'
-                    title='cancel'
-                    backgroundColor='white'
-                    color='#A54CE5'
-                    border='1px solid #A54CE5'
+                    title='Submit'
+                    backgroundColor='#A54CE5'
+                    isLoading={loadingUpdate}
                 />
+                {!loadingUpdate && (
+                    <CustomButton
+                        onClick={() => {
+                            router.push('/client-account');
+                        }}
+                        padding='10px'
+                        width='193px'
+                        height='59px'
+                        title='cancel'
+                        backgroundColor='white'
+                        color='#A54CE5'
+                        border='1px solid #A54CE5'
+                    />
+                )}
             </Box>
         </Box>
     );
