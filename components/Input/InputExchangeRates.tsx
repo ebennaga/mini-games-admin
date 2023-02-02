@@ -18,6 +18,7 @@ interface InputExchangeRatesProps {
     loading?: boolean;
     handleAddSetActive?: any;
     handleAddSetNotActive?: any;
+    rules?: any;
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
@@ -31,7 +32,8 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
     form,
     handleSubmit,
     loadingSubmit,
-    loading
+    loading,
+    rules
     // bonusName
 }) => {
     const router = useRouter();
@@ -86,7 +88,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     <Box sx={{ width: '30%' }}>
                         <Input
                             type='number'
-                            rules={{ required: true }}
+                            rules={rules}
                             form={form}
                             name={coinsName}
                             label='Amount'
@@ -108,7 +110,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                     <Box sx={{ width: '30%' }}>
                         <Input
                             type='number'
-                            rules={{ required: true }}
+                            rules={rules}
                             form={form}
                             name='bonus'
                             label='Amount'
@@ -216,6 +218,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         <>
                             <ButtonBase
                                 disabled={loadingSubmit}
+                                onClick={() => handleSubmit(form.watch())}
                                 type='submit'
                                 sx={{ background: '#A54CE5', borderRadius: '4px', width: '150px', height: '60px' }}
                             >
