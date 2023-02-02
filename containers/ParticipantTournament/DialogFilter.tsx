@@ -12,7 +12,7 @@ interface DialogFilterProps {
     titleName: string;
     gameName: string;
     startDateName: string;
-    endDateName: string;
+    // endDateName: string;
     tabName: string;
     // eslint-disable-next-line no-unused-vars
     onFilter: (data: any) => void;
@@ -27,7 +27,7 @@ const DialogFilter: React.FC<DialogFilterProps> = ({
     titleName,
     gameName,
     startDateName,
-    endDateName,
+    // endDateName,
     tabName,
     onFilter,
     onReset,
@@ -86,11 +86,11 @@ const DialogFilter: React.FC<DialogFilterProps> = ({
                     <InputSelect form={form} name={gameName} dataSelect={listGames} title='Games' placeholder='Select Game' />
                 </Box>
                 <Box>
-                    <InputDate label='Start Register Date' type='date' form={form} name={startDateName} />
+                    <InputDate label='Register Date' type='date' form={form} name={startDateName} />
                 </Box>
-                <Box>
+                {/* <Box>
                     <InputDate label='End Register Date' type='date' form={form} name={endDateName} />
-                </Box>
+                </Box> */}
 
                 <Grid container spacing={2} mt={0.3}>
                     <Grid item xs={6}>
