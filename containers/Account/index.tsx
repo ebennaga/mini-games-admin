@@ -206,6 +206,7 @@ const AccountContainer = () => {
                 method: 'DELETE'
             });
             notify(result?.data.message);
+            await fetchAccountData();
         } catch (err: any) {
             notify(err.message);
         }
