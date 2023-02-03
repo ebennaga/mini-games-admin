@@ -7,10 +7,12 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
 import RadioButton from 'components/Radio/RadioV2';
+import CustomButton from 'components/Button';
 
 const AddRole = () => {
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+    const [isLoading, setIsLoading] = React.useState(false);
     const router = useRouter();
     const form = useForm({
         mode: 'all',
@@ -33,8 +35,8 @@ const AddRole = () => {
     };
 
     const handleSubmit = async (data: any) => {
+        setIsLoading(true);
         try {
-            console.log(data);
             const { name, code, description, isActive } = data;
             const response = await fetchAPI({
                 method: 'POST',
@@ -46,12 +48,15 @@ const AddRole = () => {
                     is_active: isActive
                 }
             });
-            console.log('responsepostdata', response);
+
             if (response?.status === 200) {
                 notify(response.data.message, 'success');
+                setIsLoading(false);
+                router.push('/settings/roles');
             }
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
     };
 
@@ -206,7 +211,7 @@ const AddRole = () => {
                     </Grid>
                     <Grid container item xs={12} spacing={3} mt={15} mb={5} borderTop='1px solid rgba(0,0,0,0.2)'>
                         <Grid item xs={4} display='flex' gap='40px'>
-                            <ButtonBase
+                            {/* <ButtonBase
                                 type='submit'
                                 sx={{
                                     width: '-webkit-fill-available',
@@ -217,7 +222,15 @@ const AddRole = () => {
                                 }}
                             >
                                 SUBMIT
-                            </ButtonBase>
+                            </ButtonBase> */}
+                            <CustomButton
+                                isLoading={isLoading}
+                                type='submit'
+                                padding='10px'
+                                width='-webkit-fill-available'
+                                title='Submit'
+                                backgroundColor='#A54CE5'
+                            />
                             <ButtonBase
                                 onClick={() => {
                                     router.push('/settings/roles');
