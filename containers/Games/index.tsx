@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
@@ -14,17 +15,18 @@ import TableGames from './TableGames';
 import DialogFilter from './DialogFilter';
 
 const Games = () => {
-    const dataSelect = [
-        { id: 1, title: 'Arcade' },
-        { id: 2, title: 'Adventure' },
-        { id: 3, title: 'RPG' },
-        { id: 4, title: 'Racing' }
-    ];
+    // const dataSelect = [
+    //     { id: 1, title: 'Arcade' },
+    //     { id: 2, title: 'Adventure' },
+    //     { id: 3, title: 'RPG' },
+    //     { id: 4, title: 'Racing' }
+    // ];
 
     const [openDialog, setOpenDialog] = React.useState<boolean>(false);
     const [openDeleteDialog, setOpendDeleteDialog] = React.useState<boolean>(false);
     const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(false);
     const [listTable, setListTable] = React.useState<any>([]);
+    const [dataSelect, setDataSelect] = React.useState<Array<any>>([]);
     const [query, setQuery] = React.useState('');
     const [data, setData] = React.useState<Array<any>>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -53,9 +55,28 @@ const Games = () => {
             });
 
             if (response.status === 200) {
-                setData(response.data.data);
-                setListTable(response.data.data);
+                const resData = response.data.data;
+                setData(resData);
+                setListTable(resData);
+                form.setValue('dataTable', resData);
                 setIsLoading(false);
+
+                let dataGenre: any = [];
+                resData.map((item: any) => {
+                    if (item.genre) {
+                        const toArr = item.genre.split(',');
+                        toArr.map((genre: any) => {
+                            const isExist = dataGenre.includes(genre);
+                            if (!isExist) {
+                                dataGenre = [...dataGenre, genre];
+                            }
+                        });
+                    }
+                });
+                const resultDataGenre = dataGenre.map((i: any) => {
+                    return { id: i, title: i };
+                });
+                setDataSelect(resultDataGenre);
             } else {
                 notify(response.message, 'error');
                 setIsLoading(false);
@@ -200,7 +221,7 @@ const Games = () => {
         form.setValue('dataTable', temp);
         form.setValue('page', 1);
     }, [query, data]);
-    console.log('listable', listTable);
+
     return (
         <Box>
             <TitleCard
