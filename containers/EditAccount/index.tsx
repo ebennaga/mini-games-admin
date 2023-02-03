@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-unused-vars */
 import { Close } from '@mui/icons-material';
@@ -53,6 +54,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
     const [isLoading1, setIsLoading1] = React.useState(false);
     const [isFilled, setIsFilled] = React.useState(false);
     const [isRequired, setIsRequired] = React.useState(false);
+    const [dataAccount, setDataAccount] = React.useState<any>({});
 
     const fetchRoles = async () => {
         try {
@@ -84,7 +86,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 const dataFetch = result.data.data;
                 form.setValue('name', result.data.data.name);
                 form.setValue('email', result.data.data.email);
-
+                setDataAccount(dataFetch);
                 form.setValue('activeRole', result.data.data.is_active);
 
                 if (dataFetch.role_id && dataFetch.role_id.length === 1) {
@@ -137,24 +139,34 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
         const d = form.watch();
         if (isFilled) {
             setIsLoading1(true);
+            const { email, name, role_id } = dataAccount;
+            const { name: nameInput, email: emailInput, roles: rolesInput, role } = d;
+            const resRoles = roles.join(',');
+
+            let resData: any = {};
+
+            resData = emailInput && email !== emailInput ? { ...resData, email: emailInput } : resData;
+            resData = name && name !== nameInput ? { ...resData, name: nameInput } : resData;
+            resData = roles && resRoles !== role_id ? { ...resData, role_ids: rolesInput } : resData;
+
             try {
-                const result = await fetchAPI({
-                    endpoint: `accounts/${router.query.id}`,
-                    method: 'PUT',
-                    data: {
-                        name: d.name,
-                        email: d.email,
-                        role_ids: roles.join(',')
+                if (Object.keys(resData).length > 0) {
+                    const result = await fetchAPI({
+                        endpoint: `accounts/${router.query.id}`,
+                        method: 'PUT',
+                        data: resData
+                    });
+
+                    if (result.status === 200) {
+                        notify(result.data.message, 'success');
+
+                        setIsLoading1(false);
+                        setRoles([]);
+                        setIsFilled(false);
+                        setIsRequired(false);
                     }
-                });
-
-                if (result.status === 200) {
-                    notify(result.data.message, 'success');
-
-                    setIsLoading1(false);
-                    setRoles([]);
-                    setIsFilled(false);
-                    setIsRequired(false);
+                } else {
+                    notify(`data doesn't changed`);
                 }
             } catch (error: any) {
                 notify(error.message, 'error');
@@ -377,7 +389,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         padding='10px'
                         width='193px'
                         height='59px'
-                        title='Submit'
+                        title='UPDATE'
                         backgroundColor='#A54CE5'
                     />
                     <CustomButton
