@@ -17,9 +17,10 @@ import LoadingMenus from './LoadingMenus';
 interface LayoutProps {
     children: any;
     isUserInfo?: boolean;
+    withOuthMenu?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
+const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true, withOuthMenu = false }) => {
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -137,43 +138,47 @@ const Layout: React.FC<LayoutProps> = ({ children, isUserInfo = true }) => {
                 }}
             >
                 <img src='/images/logo.png' alt='Prize Play' width='99.89px' height='46.56px' style={{ marginBottom: '32.22px' }} />
-                {path === '/sign-in' ||
-                path === '/sign-up' ||
-                path === '/reset-password' ||
-                path === '/reset-password/confirmation' ? null : (
-                    <>
-                        <Box mb='17px'>
-                            <Search name='search' form={form} placeholder='Search...' onSubmit={handleSearch} />
-                        </Box>
-                        {isLoadingMenus ? (
-                            <LoadingMenus />
-                        ) : (
-                            <List sx={{ maxWidth: '240px' }}>
-                                {menus?.map((item: any) => {
-                                    const isActive = router.asPath === item.href;
-                                    return item.dropdownList ? (
-                                        <DropdownCard
-                                            menuAccess={menuAccess}
-                                            key={item.title}
-                                            title={item.title}
-                                            listDropdown={item.dropdownList}
-                                            icon={item.icon}
-                                            isActive={isActive}
-                                        />
-                                    ) : (
-                                        <NavbarCard
-                                            active={item.active}
-                                            key={item.title}
-                                            icon={item.icon}
-                                            title={item.title}
-                                            isActive={isActive}
-                                            onClick={() => router.push(item.href)}
-                                        />
-                                    );
-                                })}
-                            </List>
+                {!withOuthMenu && (
+                    <Box>
+                        {path === '/sign-in' ||
+                        path === '/sign-up' ||
+                        path === '/reset-password' ||
+                        path === '/reset-password/confirmation' ? null : (
+                            <>
+                                <Box mb='17px'>
+                                    <Search name='search' form={form} placeholder='Search...' onSubmit={handleSearch} />
+                                </Box>
+                                {isLoadingMenus ? (
+                                    <LoadingMenus />
+                                ) : (
+                                    <List sx={{ maxWidth: '240px' }}>
+                                        {menus?.map((item: any) => {
+                                            const isActive = router.asPath === item.href;
+                                            return item.dropdownList ? (
+                                                <DropdownCard
+                                                    menuAccess={menuAccess}
+                                                    key={item.title}
+                                                    title={item.title}
+                                                    listDropdown={item.dropdownList}
+                                                    icon={item.icon}
+                                                    isActive={isActive}
+                                                />
+                                            ) : (
+                                                <NavbarCard
+                                                    active={item.active}
+                                                    key={item.title}
+                                                    icon={item.icon}
+                                                    title={item.title}
+                                                    isActive={isActive}
+                                                    onClick={() => router.push(item.href)}
+                                                />
+                                            );
+                                        })}
+                                    </List>
+                                )}
+                            </>
                         )}
-                    </>
+                    </Box>
                 )}
             </Box>
             <Box width='100%' padding='33.5px 33px'>

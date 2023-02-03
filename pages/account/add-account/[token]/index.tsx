@@ -13,7 +13,7 @@ const Page = () => {
                 <meta name='description' content='Sign In as admin' />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
-            <Layout isUserInfo={false}>
+            <Layout isUserInfo={false} withOuthMenu>
                 <ActiveAccountContainer />
             </Layout>
         </>
