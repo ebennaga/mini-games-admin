@@ -130,6 +130,8 @@ const Roles = () => {
                         await getRoles();
                         setOpenDialogConfirm(false);
                         setTotalChecked(0);
+                    } else {
+                        notify(response.data.message, 'error');
                     }
                 }
             });
