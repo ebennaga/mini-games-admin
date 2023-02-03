@@ -1,11 +1,11 @@
 import React from 'react';
 import Head from 'next/head';
 import Layout from 'components/Layout';
-import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
+
+const ActiveAccountContainer = dynamic(() => import('containers/ActiveAccount'));
 
 const Page = () => {
-    const router = useRouter();
-    const { activedToken } = router.query;
     return (
         <>
             <Head>
@@ -13,7 +13,9 @@ const Page = () => {
                 <meta name='description' content='Sign In as admin' />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
-            <Layout isUserInfo={false}>{activedToken}</Layout>
+            <Layout isUserInfo={false}>
+                <ActiveAccountContainer />
+            </Layout>
         </>
     );
 };
