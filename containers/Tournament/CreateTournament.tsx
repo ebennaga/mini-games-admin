@@ -234,7 +234,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
     const handleAddRow = () => {
         let tempTable: any = [];
         const formValue: any = [...formTable.watch('tableData')];
-        if (formTable.watch('tableData')[0].max_pos && formTable.watch('tableData')[0].point && formTable.watch('tableData')[0].coin) {
+        if (formTable.watch('tableData')[0].max_pos) {
             tempTable = [...table, ...formValue];
             setTable(tempTable);
             formTable.reset();
