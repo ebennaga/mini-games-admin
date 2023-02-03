@@ -470,6 +470,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 >
                     <CustomButton
                         isLoading={isLoading}
+                        onClick={() => handleSubmitData(form.watch())}
                         type='submit'
                         padding='10px'
                         width='193px'

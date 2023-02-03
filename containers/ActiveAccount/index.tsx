@@ -7,11 +7,9 @@ import { useForm } from 'react-hook-form';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
-import DialogSuccess from './DialogSuccess';
 
-const ResetPasswordConfirmation = () => {
+const ActiveAccount = () => {
     const [isDisable, setIsDisable] = useState<boolean>(true);
-    const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { fetchAPI } = useAPICaller();
@@ -22,7 +20,7 @@ const ResetPasswordConfirmation = () => {
         mode: 'all',
         defaultValues: {
             password: '',
-            confirm_password: ''
+            confirmPassword: ''
         }
     });
 
@@ -45,27 +43,34 @@ const ResetPasswordConfirmation = () => {
     const handleSubmit = async (data: any) => {
         setIsLoading(true);
         try {
+            const { token } = router.query;
+
             const response = await fetchAPI({
                 method: 'POST',
-                endpoint: 'auths/change-password',
+                endpoint: '/auths/activate',
                 data: {
                     password: data.password,
-                    password_confirmation: data.confirm_password,
-                    change_password_token: router.query.token
+                    password_confirmation: data.confirmPassword,
+                    activate_token: token
                 }
             });
             if (response?.status === 200) {
-                setOpen(true);
+                notify('Successfully actived account');
+                router.push('/');
+            } else {
+                notify(response?.data?.message, 'error');
             }
+            setIsLoading(false);
         } catch (error: any) {
             notify(error.message, 'error');
+            setIsLoading(false);
         }
         setIsLoading(false);
     };
 
     const handleCancel = () => {
         form.setValue('password', '');
-        form.setValue('confirm_password', '');
+        form.setValue('confirmPassword', '');
     };
 
     useEffect(() => {
@@ -80,7 +85,7 @@ const ResetPasswordConfirmation = () => {
         <Box component='main'>
             <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <Box padding='95px 40px'>
-                    <HeaderAuth title='Forgot Password' subTitle='Additional description if required' />
+                    <HeaderAuth title='Set Password' subTitle='Additional description if required' />
                     <Grid container mt='27px'>
                         <Grid item container xs={12} mb='37px'>
                             <Grid item xs={12} xl={7}>
@@ -88,7 +93,7 @@ const ResetPasswordConfirmation = () => {
                                     isMultiline={false}
                                     name='password'
                                     form={form}
-                                    label='New Password'
+                                    label='Password'
                                     type='password'
                                     rules={{ required: true, validate: rulePassword }}
                                 />
@@ -98,9 +103,9 @@ const ResetPasswordConfirmation = () => {
                             <Grid item xs={12} xl={7}>
                                 <InputWithLabel
                                     isMultiline={false}
-                                    name='confirm_password'
+                                    name='confirmPassword'
                                     form={form}
-                                    label='Confirmation New Password'
+                                    label='Confirmation Password'
                                     type='password'
                                     rules={{ required: true, validate: ruleConfirmPassword }}
                                 />
@@ -119,7 +124,7 @@ const ResetPasswordConfirmation = () => {
                     }}
                 >
                     <Box>
-                        <CustomButton title='SUBMIT' type='submit' isDisable={isDisable} isLoading={isLoading} />
+                        <CustomButton isDisable={isDisable} isLoading={isLoading} title='SUBMIT' type='submit' />
                     </Box>
                     {!isLoading && (
                         <Box ml='40px'>
@@ -134,9 +139,8 @@ const ResetPasswordConfirmation = () => {
                     )}
                 </Box>
             </form>
-            <DialogSuccess open={open} setOpen={setOpen} />
         </Box>
     );
 };
 
-export default ResetPasswordConfirmation;
+export default ActiveAccount;

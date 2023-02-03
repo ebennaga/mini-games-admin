@@ -82,7 +82,7 @@ const AccountContainer = () => {
             if (result.status === 200) {
                 const totalFilter = result.data.data;
                 const filter = totalFilter.filter((item: any) => item.name !== null);
-                // console.log('totalfilter', filter);
+
                 setRemove(filter);
             }
             // setIsLoading(false);
@@ -206,6 +206,7 @@ const AccountContainer = () => {
                 method: 'DELETE'
             });
             notify(result?.data.message);
+            await fetchAccountData();
         } catch (err: any) {
             notify(err.message);
         }

@@ -120,7 +120,7 @@ const ParticipantTournament = () => {
         setIsLoading(false);
     };
 
-    // console.log('datatable', form.watch('dataTable'));
+    // Remove item
     const handleRemoveParticipant = async () => {
         try {
             const table = form.watch('dataTable');
@@ -128,12 +128,8 @@ const ParticipantTournament = () => {
             table.map(async (item: any) => {
                 if (item.isAction) {
                     const response = await fetchAPI({
-                        endpoint: `tournament-participants/remove`,
-                        method: 'DELETE',
-                        data: {
-                            tournament_id: 1,
-                            participant_ids: '1,2,3'
-                        }
+                        endpoint: `tournament-participants/remove/${item.id}`,
+                        method: 'DELETE'
                     });
                     if (response?.status === 200) {
                         notify(response.data.message, 'success');
@@ -146,11 +142,6 @@ const ParticipantTournament = () => {
         } catch (err: any) {
             notify(err.message, 'error');
         }
-    };
-    // Remove item
-    const handleRemove = () => {
-        setOpenDialogConfirm(false);
-        setOpenDialogSuccess(true);
     };
 
     // Event Next page
@@ -173,91 +164,73 @@ const ParticipantTournament = () => {
     const dateFormat = (date: string) => new Date(date).toLocaleString('id-id').slice(0, 10);
     // Event Filter
     const handleFilter = (data: any) => {
-        const { titleFilter, gamesFilter, startDateFilter, endDateFilter } = data;
+        const { titleFilter, gamesFilter, startDateFilter } = data;
 
         const gamefilt = gamesFilter ? dataGames.filter((item: any) => item.id === gamesFilter)[0].title : '';
         const table = dataComing;
-
-        console.log('datafilter', startDateFilter, endDateFilter);
 
         const resFilter = table.filter((item: any) => {
             const {
                 tornament: { name: title },
                 game: { name: gameName },
-                created_at: startRegister,
-                end_register: endRegister
+                created_at: startRegister
             } = item;
 
-            if (titleFilter && !gamefilt && !startDateFilter && !endDateFilter) {
+            if (titleFilter && !gamefilt && !startDateFilter) {
                 return title?.toLowerCase()?.includes(titleFilter.toLowerCase());
             }
-            if (titleFilter && gamefilt && !startDateFilter && !endDateFilter) {
+            if (titleFilter && gamefilt && !startDateFilter) {
                 return title?.toLowerCase()?.includes(titleFilter.toLowerCase()) && gameName.toLowerCase() === gamefilt.toLowerCase();
             }
-            if (titleFilter && !gamefilt && startDateFilter && !endDateFilter) {
+            if (titleFilter && !gamefilt && startDateFilter) {
                 return (
                     title?.toLowerCase()?.includes(titleFilter.toLowerCase()) && dateFormat(startRegister) === dateFormat(startDateFilter)
                 );
             }
-            if (titleFilter && !gamefilt && !startDateFilter && endDateFilter) {
-                return title?.toLowerCase()?.includes(titleFilter.toLowerCase()) && dateFormat(endRegister) === dateFormat(endDateFilter);
+            if (titleFilter && !gamefilt && !startDateFilter) {
+                return title?.toLowerCase()?.includes(titleFilter.toLowerCase());
             }
-            if (titleFilter && gamefilt && startDateFilter && !endDateFilter) {
+            if (titleFilter && gamefilt && startDateFilter) {
                 return (
                     title?.toLowerCase()?.includes(titleFilter.toLowerCase()) &&
                     gameName.toLowerCase() === gamefilt.toLowerCase() &&
                     dateFormat(startRegister) === dateFormat(startDateFilter)
                 );
             }
-            if (titleFilter && gamefilt && !startDateFilter && endDateFilter) {
-                return (
-                    title?.toLowerCase()?.includes(titleFilter.toLowerCase()) &&
-                    gameName.toLowerCase() === gamefilt.toLowerCase() &&
-                    dateFormat(endRegister) === dateFormat(endDateFilter)
-                );
+            if (titleFilter && gamefilt && !startDateFilter) {
+                return title?.toLowerCase()?.includes(titleFilter.toLowerCase()) && gameName.toLowerCase() === gamefilt.toLowerCase();
             }
-            if (titleFilter && !gamefilt && startDateFilter && endDateFilter) {
+            if (titleFilter && !gamefilt && startDateFilter) {
                 return (
-                    title?.toLowerCase()?.includes(titleFilter.toLowerCase()) &&
-                    dateFormat(endRegister) === dateFormat(endDateFilter) &&
-                    dateFormat(startRegister) === dateFormat(startDateFilter)
+                    title?.toLowerCase()?.includes(titleFilter.toLowerCase()) && dateFormat(startRegister) === dateFormat(startDateFilter)
                 );
             }
 
-            if (gamefilt && !titleFilter && !startDateFilter && !endDateFilter) {
+            if (gamefilt && !titleFilter && !startDateFilter) {
                 return gameName.toLowerCase() === gamefilt.toLowerCase();
             }
-            if (gamefilt && startDateFilter && !titleFilter && !endDateFilter) {
+            if (gamefilt && startDateFilter && !titleFilter) {
                 return gameName.toLowerCase() === gamefilt.toLowerCase() && dateFormat(startRegister) === dateFormat(startDateFilter);
             }
-            if (gamefilt && !startDateFilter && !titleFilter && endDateFilter) {
-                return gameName.toLowerCase() === gamefilt.toLowerCase() && dateFormat(endRegister) === dateFormat(endDateFilter);
+            if (gamefilt && !startDateFilter && !titleFilter) {
+                return gameName.toLowerCase() === gamefilt.toLowerCase();
             }
-            if (gamefilt && startDateFilter && !titleFilter && endDateFilter) {
-                return (
-                    gameName.toLowerCase() === gamefilt.toLowerCase() &&
-                    dateFormat(startRegister) === dateFormat(startDateFilter) &&
-                    dateFormat(endRegister) === dateFormat(endDateFilter)
-                );
+            if (gamefilt && startDateFilter && !titleFilter) {
+                return gameName.toLowerCase() === gamefilt.toLowerCase() && dateFormat(startRegister) === dateFormat(startDateFilter);
             }
 
-            if (startDateFilter && !gamefilt && !titleFilter && !endDateFilter) {
+            if (startDateFilter && !gamefilt && !titleFilter) {
                 return dateFormat(startRegister) === dateFormat(startDateFilter);
             }
-            if (startDateFilter && !gamefilt && !titleFilter && endDateFilter) {
-                return dateFormat(startRegister) === dateFormat(startDateFilter) && dateFormat(endRegister) === dateFormat(endDateFilter);
+            if (startDateFilter && !gamefilt && !titleFilter) {
+                return dateFormat(startRegister) === dateFormat(startDateFilter);
             }
 
-            if (endDateFilter && !titleFilter && !gamesFilter && !startDateFilter) {
-                return dateFormat(endRegister) === dateFormat(endDateFilter);
-            }
-
-            if (gamefilt && titleFilter && startDateFilter && endDateFilter) {
+            if (gamefilt && titleFilter && startDateFilter) {
                 return (
                     gameName.toLowerCase() === gamefilt.toLowerCase() &&
                     title?.toLowerCase()?.includes(titleFilter.toLowerCase()) &&
-                    dateFormat(startRegister) === dateFormat(startDateFilter) &&
-                    dateFormat(endRegister) === dateFormat(endDateFilter)
+                    dateFormat(startRegister) === dateFormat(startDateFilter)
                 );
             }
 
@@ -386,7 +359,7 @@ const ParticipantTournament = () => {
                     titleName='titleFilter'
                     gameName='gamesFilter'
                     startDateName='startDateFilter'
-                    endDateName='endDateFilter'
+                    // endDateName='endDateFilter'
                     tabName='tabFilter'
                 />
             </Box>

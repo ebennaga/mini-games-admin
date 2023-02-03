@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable import/no-named-as-default */
 import React from 'react';
 import { Container, Box, Paper, Typography } from '@mui/material';
@@ -14,6 +15,7 @@ const ExchangeRatesAdd = () => {
     const router = useRouter();
 
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
+    const [isDisable, setIsDisable] = React.useState<boolean>(true);
     // const [isValue, setIsValue] = React.useState(false);
 
     const form = useForm({
@@ -65,6 +67,19 @@ const ExchangeRatesAdd = () => {
         // setIsValue(true);
         form.setValue('activeRole', !form.watch('activeRole'));
     };
+    const validateNumber = (key: any) => {
+        const toArr = String(key).split('');
+        const number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        const filter = toArr.filter((item) => !number.includes(item));
+
+        if (filter.length === 0) {
+            setIsDisable(false);
+            return true;
+        }
+
+        return 'this is not number';
+    };
 
     return (
         <Container sx={{ mt: 5 }}>
@@ -85,6 +100,7 @@ const ExchangeRatesAdd = () => {
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
+                    rules={{ validate: validateNumber }}
                     // descriptionName='description'
                     // effectiveName='effective'
                     // nameName='name'
