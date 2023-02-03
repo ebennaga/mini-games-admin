@@ -55,6 +55,7 @@ const ActiveAccount = () => {
                 }
             });
             if (response?.status === 200) {
+                notify('Successfully actived account');
                 router.push('/');
             } else {
                 notify(response?.data?.message, 'error');
