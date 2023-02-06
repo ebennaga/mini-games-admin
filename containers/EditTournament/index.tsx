@@ -366,7 +366,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                             placeholder='Games'
                                             labelId='demo-simple-select-label'
                                             id='demo-simple-select'
-                                            value={table}
+                                            value={value}
                                             label='Copy Table'
                                             onChange={handleTable}
                                         >
