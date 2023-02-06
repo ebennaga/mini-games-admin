@@ -29,7 +29,7 @@ const InputImage: React.FC<InputImageProps> = ({
     isLocation = false,
     rules,
     isLoading,
-    isImage = false
+    isImage = true
 }) => {
     const [errMessage, setErrMessage] = React.useState<string>('');
     const [isImg, setIsImg] = React.useState<boolean>(true);
@@ -64,7 +64,7 @@ const InputImage: React.FC<InputImageProps> = ({
             const reader = new FileReader();
             if (type.split('/')[0] === 'image') {
                 reader.onload = () => {
-                    const output: any = document.getElementById('preview');
+                    const output: any = document.getElementById(`preview${name}`);
                     // console.log(output);
                     output.src = reader.result;
                 };
@@ -153,7 +153,7 @@ const InputImage: React.FC<InputImageProps> = ({
                                         Preview
                                     </Typography>
                                 </Grid>
-                                <img src={valueInput} id='preview' alt='Game Cover' width='200px' height='auto' />
+                                <img src={valueInput} id={`preview${name}`} alt='Game Cover' width='200px' height='auto' />
                             </>
                         )}
                     </Grid>

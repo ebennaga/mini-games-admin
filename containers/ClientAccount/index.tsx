@@ -33,19 +33,6 @@ import useNotify from 'hooks/useNotify';
 import DeleteAccDialog from './DeleteAccDialog';
 
 const AccountContainer = () => {
-    // const dummy = [
-    //     { id: 1, name: 'Owi-kun', email: 'owi@abc.com', roles: 'Admin, Content Writer', is_active: true },
-    //     { id: 2, name: 'Arya', email: 'arya@abc.com', roles: 'Content Writer', is_active: false },
-    //     { id: 3, name: 'Eben', email: 'eben@abc.com', roles: 'Super Admin', is_active: true },
-    //     { id: 4, name: 'Amang', email: 'amang@abc.com', roles: 'Admin, Content Writer', is_active: false },
-    //     { id: 5, name: 'Suwardi', email: 'wardi@abc.com', roles: 'Admin, Content Writer', is_active: false },
-    //     { id: 6, name: 'Saitama', email: 'sai@abc.com', roles: 'Super Admin', is_active: true },
-    //     { id: 7, name: 'Sasukekyun', email: 'kyun@abc.com', roles: 'Admin, Content Writer', is_active: true },
-    //     { id: 8, name: 'Narto', email: 'arto@abc.com', roles: 'Content Writer', is_active: false },
-    //     { id: 9, name: 'Ed Sheeran', email: 'sheer@abc.com', roles: 'Admin, Content Writer', is_active: true },
-    //     { id: 10, name: 'Tulus', email: 'luhut@abc.com', roles: 'Admin, Content Writer, Super Admin', is_active: false },
-    //     { id: 11, name: 'Tidak Tulus', email: 'tilus@abc.com', roles: 'Content Writer', is_active: false }
-    // ];
     const form = useForm({
         mode: 'all',
         defaultValues: {
@@ -76,6 +63,7 @@ const AccountContainer = () => {
     const [isFilter, setIsFilter] = useState(false);
     const [routeId, setRouteId] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
     const [isSearch, setIsSearch] = useState(false);
     const [dataAccount, setDataAccount] = React.useState<Array<any>>([]);
     const checkTrue: string[] = [];
@@ -154,7 +142,7 @@ const AccountContainer = () => {
         if (!e.target.checked) {
             if (deleted.length > 0) {
                 const filter = deleted.filter((item: any) => {
-                    return id !== item;
+                    return id !== item.id;
                 });
                 setDeleted(filter);
             } else {
@@ -212,13 +200,32 @@ const AccountContainer = () => {
         }
     };
 
-    const handleDelete = () => {
-        const filter = remove.filter((item: any) => {
-            return !deleted.includes(item.id);
+    const onDeleteClientAccount = async (id: number) => {
+        try {
+            const response = await fetchAPI({
+                endpoint: `accounts/${id}`,
+                method: 'DELETE'
+            });
+            if (response.status === 200) {
+                notify(response?.data?.message);
+            } else {
+                notify(response?.data?.message, 'error');
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+    };
+
+    const handleDelete = async () => {
+        setLoadingDelete(true);
+        const deleteDatas = deleted.map(async (item: any) => {
+            await onDeleteClientAccount(item.id);
         });
-        setRemove(filter);
+        await Promise.all(deleteDatas);
+        await fetchAccountData();
         setOnDelete(!onDelete);
         setCheckedObj([]);
+        setLoadingDelete(false);
     };
 
     const handleFilterButton = () => {
@@ -600,7 +607,7 @@ const AccountContainer = () => {
                         </TableContainer>
                     )}
 
-                    {getPaginatedData().length === 0 && (
+                    {getPaginatedData().length === 0 && !isLoading && (
                         <Box sx={{ width: '100%', textAlign: 'center', mt: '100px' }}>
                             <Typography variant='h6' component='h6'>
                                 DATA NOT FOUND, PLEASE RESET THE FILTER
@@ -663,6 +670,7 @@ const AccountContainer = () => {
                 open={openDialog}
                 setOpen={setOpenDialog}
                 qty={checkedObj.length}
+                isLoading={loadingDelete}
                 titleDialog='Are you sure remove this account?'
             />
         </Box>

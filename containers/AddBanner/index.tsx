@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControlLabel, Typography, FormGroup, Checkbox, Divider } from '@mui/material';
+import { Box, FormControlLabel, Typography, Divider, Radio, RadioGroup } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
 // import InputUpload from 'components/Input/InputUpload';
@@ -22,7 +22,7 @@ const AddBanner = () => {
             img: '',
             desc: '',
             isActive: true,
-            link: ''
+            link: 'https://prizeplay.io/'
         }
     });
     const router = useRouter();
@@ -46,6 +46,9 @@ const AddBanner = () => {
         form.setValue('isActive', !form.watch('isActive'));
     };
 
+    const handleSetValue = (e: any) => {
+        form.setValue('link', e.target.value);
+    };
     // const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
     //     setChecked([event.target.checked, false]);
     // };
@@ -67,7 +70,6 @@ const AddBanner = () => {
                     title,
                     link,
                     image_url: imgToBase64,
-                    // description,
                     is_active: isActive
                 }
             });
@@ -82,7 +84,7 @@ const AddBanner = () => {
             setIsLoading(false);
         }
     };
-    // console.log(form.watch('isActive'));
+
     return (
         <Box component='section'>
             <TitleCard title='Add Banner' subtitle='Addtional description if required' isSearchExist={false} />
@@ -166,11 +168,13 @@ const AddBanner = () => {
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
                         <Box sx={{ width: '30%' }}>
-                            <FormGroup>
-                                <FormControlLabel control={<Checkbox color='secondary' defaultChecked />} label='Home' />
-                                <FormControlLabel control={<Checkbox color='secondary' />} label='Redeem Prizes' />
-                                <FormControlLabel control={<Checkbox color='secondary' />} label='Lucky Raffle' />
-                            </FormGroup>
+                            <RadioGroup value={form.watch('link')} defaultValue={form.watch('link')} onChange={handleSetValue}>
+                                <FormControlLabel control={<Radio color='secondary' value='https://prizeplay.io/' />} label='Home' />
+                                <FormControlLabel
+                                    control={<Radio color='secondary' value='https://prizeplay.io/shops' />}
+                                    label='Redeem Prizes'
+                                />
+                            </RadioGroup>
                         </Box>
                     </Box>
                     <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'baseline', alignItems: 'center' }}>

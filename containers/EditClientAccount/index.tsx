@@ -93,7 +93,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
 
                 if (resultRoles) {
                     // change roleId to array
-                    const arrRoleId = roleId.split(',');
+                    const arrRoleId = roleId ? roleId.split(',') : [];
 
                     arrRoleId.map((item: string) => {
                         resultRoles.map((itm: any) => {

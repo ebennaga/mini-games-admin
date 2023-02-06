@@ -35,14 +35,35 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
             image: '',
             game: '',
             fee: '',
-            pool: 0
+            pool: 0,
+            tableData: [
+                {
+                    // positionStart: '',
+                    // positionEnd: '',
+                    // countPlayer: '',
+                    // pointPrizes: '',
+                    // playerPointPrizes: '',
+                    // cointPrizes: '',
+                    // playerCointPrizes: ''
+                    max_pos: '',
+                    point: '',
+                    coin: ''
+                }
+            ]
         }
     });
     const router = useRouter();
     const [game, setGame] = React.useState('0');
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [table, setTable] = React.useState('0');
+    const [table, setTable] = React.useState([]);
     const [loadingSubmit, setLoadingSubmit] = React.useState(false);
+    const [selectTournament, setSelectTournament] = React.useState<any>([]);
+    const [prizeData, setPrizeData] = React.useState<any>([]);
+    const [value, setValue] = React.useState('0');
+    const fieldArray = useFieldArray({
+        control: form.control,
+        name: 'tableData'
+    });
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -83,16 +104,27 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
         setIsLoading(false);
     };
 
-    React.useEffect(() => {
-        fetchDetailTournaments();
-    }, []);
-    const handleFiter = (event: SelectChangeEvent) => {
-        setGame(event.target.value as string);
-    };
+    // const handleFiter = (event: SelectChangeEvent) => {
+    //     setGame(event.target.value as string);
+    // };
 
-    const handleTable = (event: SelectChangeEvent) => {
-        setTable(event.target.value as string);
-    };
+    // const handleTable = (event: SelectChangeEvent) => {
+    //     setTable(event.target.value as string);
+    // };
+
+    React.useEffect(() => {
+        const point = table.map((item: any) => {
+            return item.point;
+        });
+        if (table.length > 0) {
+            const totalPrizes = point?.reduce((total: any, num: any) => {
+                return Number(total) + Number(num);
+            });
+            form.setValue('pool', totalPrizes);
+        } else {
+            form.setValue('pool', 0);
+        }
+    }, [table]);
 
     const handleSubmit = async (data: any) => {
         setLoadingSubmit(true);
@@ -120,6 +152,29 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
             setLoadingSubmit(false);
         }
     };
+
+    const fetchPrizesInfos = async () => {
+        try {
+            const result = await fetchAPI({
+                endpoint: '/tournaments/prize-infos',
+                method: 'GET'
+            });
+
+            if (result?.status === 200) {
+                const dataPrize = result?.data.data;
+                const filterPrizesInfo = dataPrize.filter((item: any) => {
+                    return item.prize_infos.length > 0;
+                });
+
+                setSelectTournament(filterPrizesInfo);
+
+                setPrizeData(dataPrize);
+            }
+        } catch (error: any) {
+            console.log(error);
+            notify(error.message, 'error');
+        }
+    };
     // console.log('hasil', form.watch());
     const MenuProps = {
         PaperProps: {
@@ -127,6 +182,42 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                 maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
                 width: 250
             }
+        }
+    };
+
+    const handleTable = (event: any) => {
+        // const isDuplicate: any = tournaments.includes(event.target.value);
+        // form.setValue('tournament', event.target.value);
+        // if (!isDuplicate) {
+        //     const dataTournament = selectTournament.filter((item: any) => event.target.value === item.id);
+        //     setTable([...tournaments, ...dataTournament]);
+        // }
+        setValue(event.target.value as string);
+        setTable([]);
+    };
+
+    React.useEffect(() => {
+        fetchDetailTournaments();
+    }, []);
+
+    React.useEffect(() => {
+        fetchPrizesInfos();
+    }, []);
+
+    const handleAddRow = () => {
+        let tempTable: any = [];
+        const formValue: any = [...form.watch('tableData')];
+        if (form.watch('tableData')[0].max_pos) {
+            tempTable = [...table, ...formValue];
+            setTable(tempTable);
+            form.reset();
+        }
+    };
+
+    const handleDeleteRow = () => {
+        if (table.length > 0) {
+            const deleting = table.slice(0, table.length - 1);
+            setTable(deleting);
         }
     };
 
@@ -265,37 +356,67 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
-                                        Copy Table
-                                    </InputLabel>
-                                    <Select
-                                        sx={{ color: table === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                        placeholder='Games'
-                                        labelId='demo-simple-select-label'
-                                        id='demo-simple-select'
-                                        value={table}
-                                        label='Copy Table'
-                                        onChange={handleTable}
+                                <Box sx={{ display: 'flex', aligItem: 'center', gap: '10px' }}>
+                                    <FormControl fullWidth>
+                                        <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                            Copy Table
+                                        </InputLabel>
+                                        <Select
+                                            sx={{ color: value === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                            placeholder='Games'
+                                            labelId='demo-simple-select-label'
+                                            id='demo-simple-select'
+                                            value={table}
+                                            label='Copy Table'
+                                            onChange={handleTable}
+                                        >
+                                            <MenuItem value='0' disabled>
+                                                Select Table
+                                            </MenuItem>
+                                            {selectTournament.length > 0 &&
+                                                selectTournament.map((item: any) => (
+                                                    <MenuItem key={item.id} value={item.id}>
+                                                        {item.name}
+                                                    </MenuItem>
+                                                ))}
+                                        </Select>
+                                    </FormControl>
+                                    <ButtonBase
+                                        onClick={() => {
+                                            setTable([]);
+                                            setValue('0');
+                                        }}
+                                        sx={{
+                                            width: '20%',
+                                            borderRadius: '5px',
+                                            background: '#A54CE5',
+                                            padding: '10px',
+                                            color: 'white'
+                                            // fontWeight: 600
+                                        }}
                                     >
-                                        <MenuItem value='0' disabled>
-                                            Select Table
-                                        </MenuItem>
-                                        {dataTable.length > 0 &&
-                                            dataTable.map((item: any) => <MenuItem value={item.id}>{item.label}</MenuItem>)}
-                                    </Select>
-                                </FormControl>
+                                        <Typography sx={{ fontSize: '12px' }}>RESET</Typography>
+                                    </ButtonBase>
+                                </Box>
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
-                            <Grid item xs={6}>
+                            <Grid item xs={3}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <TableAddTournament
+                                    {/* <TableAddTournament
                                         valueTable={table}
                                         data={dataTable}
                                         formTable={useForm({})}
                                         fieldArray={useFieldArray({ name: 'tableData', control: useForm().control })}
+                                    /> */}
+                                    <TableAddTournament
+                                        table={table}
+                                        setTable={setTable}
+                                        valueTable={value}
+                                        data={prizeData}
+                                        formTable={form}
+                                        fieldArray={fieldArray}
                                     />
                                     <Box
                                         sx={{
@@ -308,6 +429,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                         }}
                                     >
                                         <ButtonBase
+                                            onClick={handleDeleteRow}
                                             sx={{
                                                 backgroundColor: 'white',
                                                 padding: '20px',
@@ -323,6 +445,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                             <Typography sx={{ fontWeight: 600 }}>DELETE</Typography>
                                         </ButtonBase>
                                         <ButtonBase
+                                            onClick={handleAddRow}
                                             sx={{
                                                 backgroundColor: '#A54CE5',
                                                 padding: '20px',
@@ -350,7 +473,15 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
-                                <Input isColor name='pool' label='Prize Pool' rules={{ required: true }} placeholder='30.000' form={form} />
+                                <Input
+                                    isColor
+                                    isDisabled
+                                    name='pool'
+                                    label='Prize Pool'
+                                    rules={{ required: true }}
+                                    placeholder='30.000'
+                                    form={form}
+                                />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -376,8 +507,11 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                     title='Update'
                     backgroundColor='#A54CE5'
                 /> */}
-                <ButtonBase onClick={handleSubmit} sx={{ padding: '10px', width: '193px', height: '59px', backgroundColor: '#A54CE5' }}>
-                    UPDATE
+                <ButtonBase
+                    onClick={handleSubmit}
+                    sx={{ borderRadius: '4px', padding: '10px', width: '193px', height: '59px', backgroundColor: '#A54CE5' }}
+                >
+                    <Typography sx={{ color: 'white' }}>UPDATE</Typography>
                 </ButtonBase>
                 <CustomButton
                     onClick={() => {

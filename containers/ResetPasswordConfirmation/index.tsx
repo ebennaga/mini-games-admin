@@ -51,7 +51,7 @@ const ResetPasswordConfirmation = () => {
                 data: {
                     password: data.password,
                     password_confirmation: data.confirm_password,
-                    change_password_token: router.query.token
+                    forgot_password_token: router.query.token
                 }
             });
             if (response?.status === 200) {
