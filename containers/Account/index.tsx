@@ -67,6 +67,7 @@ const AccountContainer = () => {
     const [routeId, setRouteId] = useState<any>(null);
     const [isSearch, setIsSearch] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
 
     const checkTrue: string[] = [];
     const checkBoxKeys: string[] = [];
@@ -78,14 +79,14 @@ const AccountContainer = () => {
                 endpoint: `accounts?search=${form.watch('search')}`,
                 method: 'GET'
             });
-            // console.log(result?.data.data);
+
             if (result.status === 200) {
                 const totalFilter = result.data.data;
                 const filter = totalFilter.filter((item: any) => item.name !== null);
-
                 setRemove(filter);
+            } else {
+                notify(result?.data?.message, 'error');
             }
-            // setIsLoading(false);
         } catch (error: any) {
             notify(error.message, 'error');
             setIsLoading(false);
@@ -152,16 +153,6 @@ const AccountContainer = () => {
         if (e.target.checked) {
             setCheckedObj(checkBoxKeys);
             const checkBox: any = { ...form.watch() };
-            // [...Array(remove.length)].forEach((item: any, idx: number) => {
-            //     const datas: any = `checkbox${idx + 1}`;
-            //     form.setValue(datas, e.target.checked);
-            //     arr.push(idx + 1);
-            //     if (checkBox[idx + 1] === undefined || checkBox[idx + 1] === false) {
-            //         form.setValue(datas, true);
-            //     } else {
-            //         form.setValue(datas, false);
-            //     }
-            // });
             remove.forEach((item: any) => {
                 const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, e.target.checked);
@@ -175,10 +166,6 @@ const AccountContainer = () => {
             setDeleted(arr);
         } else if (!e.target.checked) {
             setCheckedObj([]);
-            // [...Array(remove.length)].forEach((item: any, idx: number) => {
-            //     const datas: any = `checkbox${idx + 1}`;
-            //     form.setValue(datas, false);
-            // });
             remove.forEach((item: any) => {
                 const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
@@ -212,16 +199,15 @@ const AccountContainer = () => {
         }
     };
 
-    const handleDelete = () => {
-        deleted.forEach((item: any) => {
-            fetchDeleteData(item);
+    const handleDelete = async () => {
+        setLoadingDelete(true);
+        const deleteData = deleted.map(async (item: any) => {
+            await fetchDeleteData(item);
         });
-        const filter = remove.filter((item: any) => {
-            return !deleted.includes(item.id);
-        });
-        setRemove(filter);
+        await Promise.all(deleteData);
         setOnDelete(!onDelete);
         setCheckedObj([]);
+        setLoadingDelete(false);
     };
     const handleFilterButton = () => {
         const data = [...remove];
@@ -241,9 +227,6 @@ const AccountContainer = () => {
         setRole('0');
         setIsFilter(false);
         setOpenFilter(false);
-        // form.reset();
-        // setCheckedObj([]);
-        // setIsChecked(false);
     };
 
     useEffect(() => {
@@ -261,9 +244,6 @@ const AccountContainer = () => {
     }, [pages, row, currentPage, search, filterData]);
 
     useEffect(() => {
-        // [...Array(remove.length)].forEach((item: any, idx: number) => {
-        //     checkBoxKeys.push(`checkbox${idx + 1}`);
-        // });
         remove.forEach((item: any) => checkBoxKeys.push(`checkbox${item.id}`));
         if (checkedObj.length > 0 || form.watch('checkAll')) {
             setIsChecked(true);
@@ -671,6 +651,7 @@ const AccountContainer = () => {
                 setOpen={setOpenDialog}
                 qty={checkedObj.length}
                 titleDialog='Are you sure remove this account ?'
+                isLoading={loadingDelete}
             />
         </Box>
     );

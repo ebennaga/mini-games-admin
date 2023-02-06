@@ -147,7 +147,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
 
             resData = emailInput && email !== emailInput ? { ...resData, email: emailInput } : resData;
             resData = name && name !== nameInput ? { ...resData, name: nameInput } : resData;
-            resData = roles && resRoles !== role_id ? { ...resData, role_ids: rolesInput } : resData;
+            resData = roles && resRoles !== role_id ? { ...resData, role_ids: resRoles } : resData;
 
             try {
                 if (Object.keys(resData).length > 0) {
