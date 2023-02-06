@@ -129,7 +129,6 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         if (!isDuplicate) {
             const dataCompanies = selectCompanies.filter((item: any) => event.target.value === item.id);
             setCompanies([...companies, ...dataCompanies]);
-            // setCompanies([...companies, event.target.value as string]);
         }
     };
 

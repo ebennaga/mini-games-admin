@@ -195,8 +195,8 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 game_id: data.games,
                 name: data.title,
                 tournament_image: imgBase64,
-                start_time: `${data.startDate} ${data.startTime}`,
-                end_time: `${data.endDate} ${data.endTime}`,
+                start_time: new Date(`${data.startDate} ${data.startTime}`).toISOString(),
+                end_time: new Date(`${data.endDate} ${data.endTime}`).toISOString(),
                 entry_coin: data.fee,
                 prize_infos: table
             };
