@@ -317,7 +317,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                         >
                                             <Typography>
                                                 {/* {item === '1' ? 'Admin' : item === '2' ? 'Marketing' : 'Content Writer'} */}
-                                                {filter.name}
+                                                {filter?.name}
                                             </Typography>
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close

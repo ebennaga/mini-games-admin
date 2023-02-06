@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Dialog } from '@mui/material';
+import { Box, Typography, Dialog, CircularProgress } from '@mui/material';
 import CustomButton from 'components/Button';
 import { CheckCircle } from '@mui/icons-material';
 
@@ -13,6 +13,7 @@ interface DeleteAccDialogProps {
     setIsChecked: any;
     form: any;
     titleDialog?: any;
+    isLoading?: boolean;
 }
 
 const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({
@@ -24,7 +25,8 @@ const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({
     setOpen,
     qty,
     form,
-    titleDialog
+    titleDialog,
+    isLoading
 }) => {
     // const [onDelete, setOnDelete] = React.useState(false);
     return (
@@ -51,41 +53,45 @@ const DeleteAccDialog: React.FC<DeleteAccDialogProps> = ({
                 ) : (
                     <CheckCircle sx={{ width: '80px', height: '80px', color: '#A54CE5', my: '20px' }} />
                 )}
-                <Box
-                    sx={{
-                        gap: '10px',
-                        justifyContent: 'center',
-                        display: 'flex',
-                        alignItems: 'space-between',
-                        width: '100%'
-                    }}
-                >
-                    {onDelete ? (
-                        <CustomButton
-                            onClick={() => {
-                                setOpen(!open);
-                                setIsChecked(false);
-                                form.setValue('checkAll', false);
-                                setTimeout(() => {
-                                    setOnDelete(!onDelete);
-                                }, 2000);
-                            }}
-                            title='Back'
-                            width='100%'
-                        />
-                    ) : (
-                        <>
-                            <CustomButton title='Remove' onClick={handleDelete} />
+                {isLoading ? (
+                    <CircularProgress />
+                ) : (
+                    <Box
+                        sx={{
+                            gap: '10px',
+                            justifyContent: 'center',
+                            display: 'flex',
+                            alignItems: 'space-between',
+                            width: '100%'
+                        }}
+                    >
+                        {onDelete ? (
                             <CustomButton
-                                onClick={() => setOpen(!open)}
-                                title='Cancel'
-                                border='1px solid #A54CE5'
-                                backgroundColor='white'
-                                color='#A54CE5'
+                                onClick={() => {
+                                    setOpen(!open);
+                                    setIsChecked(false);
+                                    form.setValue('checkAll', false);
+                                    setTimeout(() => {
+                                        setOnDelete(!onDelete);
+                                    }, 2000);
+                                }}
+                                title='Back'
+                                width='100%'
                             />
-                        </>
-                    )}
-                </Box>
+                        ) : (
+                            <>
+                                <CustomButton title='Remove' onClick={handleDelete} />
+                                <CustomButton
+                                    onClick={() => setOpen(!open)}
+                                    title='Cancel'
+                                    border='1px solid #A54CE5'
+                                    backgroundColor='white'
+                                    color='#A54CE5'
+                                />
+                            </>
+                        )}
+                    </Box>
+                )}
             </Box>
         </Dialog>
     );
