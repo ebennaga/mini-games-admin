@@ -9,7 +9,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import RadioButton from 'components/Radio/RadioV2';
-import { useSelector } from 'react-redux';
 
 interface CreateClientAccountProps {}
 
@@ -33,10 +32,11 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
     const [isError, setIsError] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
+
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
-    const userState = useSelector((state: any) => state.webpage?.user?.user);
 
     const getDataCompany = async () => {
         setIsLoading(true);
@@ -80,6 +80,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
     };
 
     const handlePOSTSubmit = async () => {
+        setLoadingSubmit(true);
         if (isCompFilled && isRolesFilled) {
             setIsError(false);
             try {
@@ -97,6 +98,9 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                 });
 
                 if (response.status === 200) {
+                    form.reset();
+                    setRoles([]);
+                    setCompanies([]);
                     notify(response.data.message, 'success');
                 }
             } catch (error: any) {
@@ -105,6 +109,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
         } else {
             setIsError(true);
         }
+        setLoadingSubmit(false);
     };
 
     const handleAddRole = (event: any) => {
@@ -112,7 +117,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
 
         form.setValue('roles', event.target.value);
         if (!isDuplicate) {
-            const dataRoles = selectRoles.filter((item: any) => event.target.value === item.id);
+            // const dataRoles = selectRoles.filter((item: any) => event.target.value === item.id);
             // setRoles([...roles, ...dataRoles]);
             setRoles([...roles, event.target.value as string]);
         }
@@ -365,7 +370,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                                     <MenuItem value='Content Writer'>Content Writer</MenuItem> */}
                                     {selectRoles.map((item: any, index: any) => {
                                         return (
-                                            <MenuItem value={item.code} key={index}>
+                                            <MenuItem value={item.id} key={index}>
                                                 {item.name}
                                             </MenuItem>
                                         );
@@ -388,7 +393,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                         <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {roles.length > 0 &&
                                 roles.map((item: any, idx: number) => {
-                                    const value = selectRoles.filter((i: any) => i.code === item);
+                                    const value = selectRoles.filter((i: any) => i.id === item);
                                     return (
                                         <Box
                                             key={idx}
@@ -475,25 +480,28 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                             // type='submit'
                             type='submit'
                             // onClick={submitHandler}
+                            isLoading={loadingSubmit}
                             padding='10px'
                             width='193px'
                             height='59px'
                             title='Submit'
                             backgroundColor='#A54CE5'
                         />
-                        <CustomButton
-                            onClick={() => {
-                                // setCreateAcc(!createAcc);
-                                router.push('/client-account');
-                            }}
-                            padding='10px'
-                            width='193px'
-                            height='59px'
-                            title='cancel'
-                            backgroundColor='white'
-                            color='#A54CE5'
-                            border='1px solid #A54CE5'
-                        />
+                        {!loadingSubmit && (
+                            <CustomButton
+                                onClick={() => {
+                                    // setCreateAcc(!createAcc);
+                                    router.push('/client-account');
+                                }}
+                                padding='10px'
+                                width='193px'
+                                height='59px'
+                                title='cancel'
+                                backgroundColor='white'
+                                color='#A54CE5'
+                                border='1px solid #A54CE5'
+                            />
+                        )}
                     </Box>
                 </form>
             </Box>
