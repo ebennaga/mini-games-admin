@@ -356,35 +356,53 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
-                                        Copy Table
-                                    </InputLabel>
-                                    <Select
-                                        sx={{ color: value === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
-                                        placeholder='Games'
-                                        labelId='demo-simple-select-label'
-                                        id='demo-simple-select'
-                                        value={table}
-                                        label='Copy Table'
-                                        onChange={handleTable}
+                                <Box sx={{ display: 'flex', aligItem: 'center', gap: '10px' }}>
+                                    <FormControl fullWidth>
+                                        <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                            Copy Table
+                                        </InputLabel>
+                                        <Select
+                                            sx={{ color: value === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                            placeholder='Games'
+                                            labelId='demo-simple-select-label'
+                                            id='demo-simple-select'
+                                            value={table}
+                                            label='Copy Table'
+                                            onChange={handleTable}
+                                        >
+                                            <MenuItem value='0' disabled>
+                                                Select Table
+                                            </MenuItem>
+                                            {selectTournament.length > 0 &&
+                                                selectTournament.map((item: any) => (
+                                                    <MenuItem key={item.id} value={item.id}>
+                                                        {item.name}
+                                                    </MenuItem>
+                                                ))}
+                                        </Select>
+                                    </FormControl>
+                                    <ButtonBase
+                                        onClick={() => {
+                                            setTable([]);
+                                            setValue('0');
+                                        }}
+                                        sx={{
+                                            width: '20%',
+                                            borderRadius: '5px',
+                                            background: '#A54CE5',
+                                            padding: '10px',
+                                            color: 'white'
+                                            // fontWeight: 600
+                                        }}
                                     >
-                                        <MenuItem value='0' disabled>
-                                            Select Table
-                                        </MenuItem>
-                                        {selectTournament.length > 0 &&
-                                            selectTournament.map((item: any) => (
-                                                <MenuItem key={item.id} value={item.id}>
-                                                    {item.name}
-                                                </MenuItem>
-                                            ))}
-                                    </Select>
-                                </FormControl>
+                                        <Typography sx={{ fontSize: '12px' }}>RESET</Typography>
+                                    </ButtonBase>
+                                </Box>
                             </Grid>
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
-                            <Grid item xs={6}>
+                            <Grid item xs={3}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                     {/* <TableAddTournament
                                         valueTable={table}
