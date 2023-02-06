@@ -56,7 +56,7 @@ const TournamentContainer = () => {
     const [openFilter, setOpenFilter] = useState(false);
     const [row, setRow] = useState('7');
     const [game, setGame] = useState('0');
-    const [createTournament, setCreateTournament] = useState(false);
+    const [createTournament, setCreateTournament] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [pages, setPages] = useState(1);
     const [checked, setIsChecked] = useState(false);

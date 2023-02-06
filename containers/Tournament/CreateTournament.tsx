@@ -630,7 +630,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                     placeholder='Select Type'
                                     rules={{ required: true }}
                                 /> */}
-                                <Box sx={{}}>
+                                <Box sx={{ display: 'flex', aligItem: 'center', gap: '10px' }}>
                                     <FormControl fullWidth>
                                         <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
                                             Copy Table
@@ -664,6 +664,22 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                             })}
                                         </Select>
                                     </FormControl>
+                                    <ButtonBase
+                                        onClick={() => {
+                                            setTable([]);
+                                            setValue('0');
+                                        }}
+                                        sx={{
+                                            width: '20%',
+                                            borderRadius: '5px',
+                                            background: '#A54CE5',
+                                            padding: '10px',
+                                            color: 'white'
+                                            // fontWeight: 600
+                                        }}
+                                    >
+                                        <Typography sx={{ fontSize: '12px' }}>RESET</Typography>
+                                    </ButtonBase>
                                 </Box>
                             </Grid>
                         </Grid>
