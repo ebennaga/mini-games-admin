@@ -114,6 +114,7 @@ const InputUpload: React.FC<InputUploadProps> = ({ label, name, form, rules = fa
                                         if (files) {
                                             setUploadedImage(URL.createObjectURL(files[0]));
                                             setUploadedFile(files[0]);
+                                            form.setValue(name, files[0]);
                                         }
                                     }}
                                 />
