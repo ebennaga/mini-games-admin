@@ -112,6 +112,20 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
     //     setTable(event.target.value as string);
     // };
 
+    React.useEffect(() => {
+        const point = table.map((item: any) => {
+            return item.point;
+        });
+        if (table.length > 0) {
+            const totalPrizes = point?.reduce((total: any, num: any) => {
+                return Number(total) + Number(num);
+            });
+            form.setValue('pool', totalPrizes);
+        } else {
+            form.setValue('pool', 0);
+        }
+    }, [table]);
+
     const handleSubmit = async (data: any) => {
         setLoadingSubmit(true);
         try {
@@ -441,7 +455,15 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
-                                <Input isColor name='pool' label='Prize Pool' rules={{ required: true }} placeholder='30.000' form={form} />
+                                <Input
+                                    isColor
+                                    isDisabled
+                                    name='pool'
+                                    label='Prize Pool'
+                                    rules={{ required: true }}
+                                    placeholder='30.000'
+                                    form={form}
+                                />
                             </Grid>
                         </Grid>
                     </Grid>
