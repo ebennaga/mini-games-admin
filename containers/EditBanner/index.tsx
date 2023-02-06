@@ -40,7 +40,7 @@ const EditBanner = () => {
 
             if (result.status === 200) {
                 form.setValue('title', result.data.data.title);
-                // form.setValue('img', result.data.data.image_url);
+                form.setValue('img', result.data.data.image_url);
                 form.setValue('link', result.data.data.link);
                 form.setValue('isActive', result.data.data.is_active);
             }
@@ -121,7 +121,7 @@ const EditBanner = () => {
                     <Box width='40%' sx={{ display: 'flex', my: '20px' }}>
                         {/* <InputUpload isRequired label='Banner Image' name='img' form={form} rules={rules} />
                          */}
-                        <Box sx={{ width: '28.5%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                        <Box sx={{ width: '31%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Banner Image</Typography>
                                 <Typography
@@ -138,7 +138,7 @@ const EditBanner = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
                         </Box>
-                        <Box sx={{ px: '10px' }}>
+                        <Box sx={{ px: '10px', width: '72%' }}>
                             <InputImage
                                 isImage
                                 form={form}
