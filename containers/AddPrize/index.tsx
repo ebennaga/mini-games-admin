@@ -373,7 +373,7 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                     <Box sx={{ my: '30px' }}>
                         <InputWithLabel
                             label='Point'
-                            name='qty'
+                            name='poin'
                             type='number'
                             rules={rules}
                             form={form}
