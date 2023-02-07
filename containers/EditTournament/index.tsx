@@ -15,6 +15,7 @@ import dataTable from 'containers/Tournament/dataSelect';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import InputSelect from 'components/Input/InputSelect';
+import convertBase64 from 'helpers/convertBase64';
 
 interface EditTournamentProps {}
 
@@ -59,6 +60,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
     const [loadingSubmit, setLoadingSubmit] = React.useState(false);
     const [selectTournament, setSelectTournament] = React.useState<any>([]);
     const [prizeData, setPrizeData] = React.useState<any>([]);
+    const [dataDetail, setDataDetail] = React.useState<any>();
     const [value, setValue] = React.useState('0');
     const fieldArray = useFieldArray({
         control: form.control,
@@ -95,6 +97,9 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                 form.setValue('endDate', endDate.date);
                 form.setValue('endTime', endDate.time);
                 form.setValue('pool', result.data.data.total_point);
+                form.setValue('image', result.data.data.tournament_image);
+                setTable(result.data.data.prize_infos);
+                setDataDetail(result.data.data);
             }
             setIsLoading(false);
         } catch (err: any) {
@@ -129,17 +134,24 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
     const handleSubmit = async (data: any) => {
         setLoadingSubmit(true);
         try {
-            const { title, endDate, endTime, startTime, fee, startDate, game: gameId } = form.watch();
+            const { title, endDate, endTime, startTime, fee, startDate, game: gameId, image } = form.watch();
+
+            let payload: any = {
+                name: title,
+                game_id: gameId,
+                end_time: new Date(`${endDate} ${endTime}:00`).toISOString(),
+                entry_coin: fee,
+                start_time: new Date(`${startDate} ${startTime}:00`).toISOString(),
+                prize_infos: table
+            };
+
+            const isImageChange = image !== dataDetail.tournament_image ? await convertBase64(image) : null;
+            payload = isImageChange ? { ...payload, tournament_image: isImageChange } : payload;
+
             const result = await fetchAPI({
                 endpoint: `tournaments/${router.query.id}`,
                 method: 'PUT',
-                data: {
-                    name: title,
-                    game_id: gameId,
-                    end_time: new Date(`${endDate} ${endTime}:00`).toISOString(),
-                    entry_coin: fee,
-                    start_time: new Date(`${startDate} ${startTime}:00`).toISOString()
-                }
+                data: payload
             });
 
             if (result.status === 200) {
@@ -171,11 +183,10 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                 setPrizeData(dataPrize);
             }
         } catch (error: any) {
-            console.log(error);
             notify(error.message, 'error');
         }
     };
-    // console.log('hasil', form.watch());
+
     const MenuProps = {
         PaperProps: {
             style: {
@@ -211,6 +222,18 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
             tempTable = [...table, ...formValue];
             setTable(tempTable);
             form.reset();
+
+            form.setValue('title', dataDetail.name);
+            form.setValue('game', dataDetail.game.id);
+            form.setValue('fee', dataDetail.entry_coin);
+            const startDate = getSplitDate(dataDetail.start_time);
+            const endDate = getSplitDate(dataDetail.end_time);
+            form.setValue('startDate', startDate.date);
+            form.setValue('startTime', startDate.time);
+            form.setValue('endDate', endDate.date);
+            form.setValue('endTime', endDate.time);
+            form.setValue('pool', dataDetail.total_point);
+            form.setValue('image', dataDetail.tournament_image);
         }
     };
 
