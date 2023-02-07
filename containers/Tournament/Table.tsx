@@ -59,7 +59,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ setTable, table
                 <TableBody sx={{ backgroundColor: 'white' }}>
                     {fieldArray.fields?.map((item: any, index: number) => {
                         return (
-                            <TableRow key={index + 1}>
+                            <TableRow sx={{ '& .MuiTableCell-root': { padding: '8px !important', textAlign: 'center' } }} key={index + 1}>
                                 <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>
                                     {/* <Controller
                                             control={formTable.control}
@@ -70,6 +70,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ setTable, table
                                         /> */}
 
                                     <Input
+                                        placeholder='Input here'
                                         onChange={(e: any) => formTable.setValue(`tableData[${index}].max_pos`, e.target.value)}
                                         disableUnderline
                                         type='number'
@@ -126,6 +127,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ setTable, table
                                         /> */}
 
                                     <Input
+                                        placeholder='Input here'
                                         onChange={(e: any) => formTable.setValue(`tableData[${index}].pointPrizes`, e.target.value)}
                                         disableUnderline
                                         type='number'
@@ -158,6 +160,7 @@ const TableAddTournament: React.FC<TableAddTournamentProps> = ({ setTable, table
                                     }}
                                 >
                                     <Input
+                                        placeholder='Input here'
                                         onChange={(e: any) => formTable.setValue(`tableData[${index}].coin`, e.target.value)}
                                         disableUnderline
                                         type='number'
