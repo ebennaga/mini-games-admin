@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 import React from 'react';
 import { Box, Typography, FormGroup, FormControlLabel, Checkbox, Divider } from '@mui/material';
@@ -139,7 +140,7 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
             const image_url = await convertBase64(img);
             const image_url_2 = img2 ? await convertBase64(img2) : null;
             const image_url_3 = img3 ? await convertBase64(img3) : null;
-
+            // console.log('category', categoryList, unitList);
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: '/product-prizes',
@@ -147,8 +148,10 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                     id: 2,
                     code: form.watch('code'),
                     name: form.watch('name'),
-                    category: categoryList[parseInt(form.watch('category'), 10) - 1].label,
-                    uom: unitList[parseInt(form.watch('unit'), 10) - 1].label,
+                    // category: categoryList[parseInt(form.watch('category'), 10) - 1].label,
+                    category: form.watch('category'),
+                    uom: form.watch('unit'),
+                    // uom: unitList[parseInt(form.watch('unit'), 10) - 1].label,
                     image_url,
                     image_url_2,
                     image_url_3,
@@ -156,6 +159,7 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                     is_active: checked[0] ? checked[0] : checked[1]
                 }
             });
+
             if (response?.status === 200) {
                 notify(response.data.message);
                 form.reset();
