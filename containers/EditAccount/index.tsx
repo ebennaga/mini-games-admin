@@ -299,8 +299,8 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
                             {roles?.length > 0 &&
                                 roles?.map((item: any, idx: number) => {
-                                    const filter = selectRoles.length > 0 && selectRoles.filter((itm: any) => itm.id === item)[0];
-
+                                    // const filter = selectRoles.length > 0 && selectRoles.filter((itm: any) => itm.id === item)[0];
+                                    // console.log('filter', filter);
                                     return (
                                         <Box
                                             key={idx}
@@ -317,7 +317,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                                         >
                                             <Typography>
                                                 {/* {item === '1' ? 'Admin' : item === '2' ? 'Marketing' : 'Content Writer'} */}
-                                                {filter?.name}
+                                                {item}
                                             </Typography>
                                             <Box sx={{ borderRadius: '100%', backgroundColor: '#A54CE5', height: '20px' }}>
                                                 <Close
