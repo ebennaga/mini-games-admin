@@ -44,6 +44,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import { useRouter } from 'next/router';
 import { alpha, styled } from '@mui/material/styles';
+import dateFormat from 'helpers/dateFormat';
 // const dummyData = [
 //     {
 //         id: '1',
@@ -736,7 +737,7 @@ const ProductPrizes = () => {
                                                     sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                     align='center'
                                                 >
-                                                    {item.expired_at}
+                                                    {item?.expired_at ? dateFormat(item.expired_at) : ''}
                                                 </TableCell>
                                                 <TableCell
                                                     sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
