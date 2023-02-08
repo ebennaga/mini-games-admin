@@ -9,6 +9,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import BadgeSelected from 'components/BadgeSelected';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
+// import dataTable from 'containers/AddTournament/dataSelect';
 import TableExchange from './TableExchange';
 // import LoadingExchangeRates from './LoadingExchangeRates';
 
@@ -125,6 +126,7 @@ const ExchangeRates = () => {
     // if (isLoading) {
     //     return <LoadingExchangeRates />;
     // }
+
     return (
         <Container sx={{ mt: 12 }}>
             <Box sx={{ ml: -15, height: 120 }} component={Paper}>
