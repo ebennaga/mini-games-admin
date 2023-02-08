@@ -7,7 +7,7 @@ import RadioButton from 'components/Radio/RadioV2';
 import Input from './Input';
 
 interface InputExchangeRatesProps {
-    // nameName?: string;
+    nameName?: string;
     // effectiveName?: string;
     coinsName: string;
     idrName: string;
@@ -22,7 +22,7 @@ interface InputExchangeRatesProps {
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
-    // nameName,
+    nameName,
     // effectiveName,
     handleAddSetActive,
     handleAddSetNotActive,
@@ -59,7 +59,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         />
                     </Box>
                 </Stack> */}
-                {/* <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
+                <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <Typography component='h3' fontSize='16px' fontWeight={600}>
                             Name
@@ -77,7 +77,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             isLoading={loading}
                         />
                     </Box>
-                </Stack> */}
+                </Stack>
                 <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)' }} component='h3' fontSize='16px' fontWeight={600}>
