@@ -94,7 +94,6 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                 form.setValue('company', company.id as string);
                 setCompanies(resCompanies);
                 setDataAccount(response.data.data);
-                console.log('companies', companies);
 
                 if (resultRoles) {
                     // change roleId to array
@@ -128,7 +127,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
         fetchDataClient();
     }, []);
     // END FETCH DETAIL ACCOUNT
-    console.log('email', form.watch('email'));
+
     // Event update account
     const submitHandler = async () => {
         const d = form.watch();
