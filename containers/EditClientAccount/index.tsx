@@ -40,8 +40,10 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [loadingUpdate, setLoadingUpdate] = React.useState<boolean>(false);
     const [dataAccount, setDataAccount] = React.useState<any>({});
+    // const valueRoles = dataRoles.filter((item: any) => item.id === form.watch('role'))[0]?.id;
     const valueCompany = dataCompanies.filter((item: any) => item.id === form.watch('company'))[0]?.id;
-    // console.log('response', dataCompanies, valueCompany);
+    // console.log('response', roles, valueRoles);
+    // console.log('response2', dataCompanies, valueCompany);
 
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
@@ -421,7 +423,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                         placeholder='Select Roles'
                                         labelId='demo-simple-select-label'
                                         id='demo-simple-select'
-                                        value={form.watch('role')}
+                                        value={form.watch('roles')}
                                         label='Role Code'
                                         onChange={handleAddRole}
                                         color='secondary'
@@ -432,7 +434,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                         </MenuItem>
                                         {dataRoles.length > 0 &&
                                             dataRoles.map((item: any) => (
-                                                <MenuItem value={item.id} key={item.name}>
+                                                <MenuItem value={item.id} key={item.id}>
                                                     {item.name}
                                                 </MenuItem>
                                             ))}
