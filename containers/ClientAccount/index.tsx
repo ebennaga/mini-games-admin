@@ -78,12 +78,10 @@ const AccountContainer = () => {
             });
 
             if (result.status === 200) {
-                const totalFilter = result.data.data;
-                const filter = totalFilter.filter((item: any) => item.name !== null);
-                // console.log(filter);
+                const { data } = result.data;
                 setIsLoading(false);
-                setRemove(filter);
-                setDataAccount(filter);
+                setRemove(data);
+                setDataAccount(data);
             }
             setIsLoading(false);
         } catch (error: any) {

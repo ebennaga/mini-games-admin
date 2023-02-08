@@ -139,7 +139,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         setValue(event.target.value as string);
         setTable([]);
     };
-    // console.log(fieldArray);
+
     const fetchPrizesInfos = async () => {
         try {
             const result = await fetchAPI({
@@ -158,7 +158,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 setPrizeData(dataPrize);
             }
         } catch (error: any) {
-            console.log(error);
+            notify(error.message, 'error');
         }
     };
 
