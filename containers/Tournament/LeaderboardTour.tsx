@@ -24,7 +24,8 @@ interface LeaderboardDialogProps {
 }
 
 const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setOpenDialog, item }) => {
-    const data: any[] = item?.leaderboard;
+    const data: any[] = item;
+
     const [row, setRow] = useState('7');
     const [currentPage, setCurrentPage] = useState(1);
     const [pages, setPages] = useState<any>(1);

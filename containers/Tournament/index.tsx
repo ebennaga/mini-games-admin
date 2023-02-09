@@ -547,9 +547,9 @@ const TournamentContainer = () => {
                         ) : (
                             <Tables
                                 currentPage={currentPage}
-                                // setLeaderboards={setLeaderboards}
-                                // openDialogTour={openDialogTour}
-                                // setOpenDialogTour={setOpenDialogTour}
+                                setLeaderboards={setLeaderboards}
+                                openDialogTour={openDialogTour}
+                                setOpenDialogTour={setOpenDialogTour}
                                 data={getPaginatedData()}
                                 form={form}
                                 handleChangeCheckboxAll={handleChangeCheckboxAll}
