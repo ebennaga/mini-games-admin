@@ -40,7 +40,7 @@ const Pagination: React.FC<PaginationProps> = ({ isDialog = false, row, handleCh
                                 value={row}
                                 onChange={handleChange}
                             >
-                                {[...Array(remove.length)].map((item: any, idx: number) => (
+                                {[...Array(remove?.length)].map((item: any, idx: number) => (
                                     <MenuItem key={idx} value={idx + 1}>
                                         {idx + 1}
                                     </MenuItem>
@@ -52,7 +52,7 @@ const Pagination: React.FC<PaginationProps> = ({ isDialog = false, row, handleCh
 
                 <Box sx={{ display: 'flex' }}>
                     <Typography sx={{ fontSize: '11px' }}>
-                        1-{row} of {remove.length}
+                        1-{row} of {remove?.length}
                     </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', width: '15%', justifyContent: 'space-between' }}>

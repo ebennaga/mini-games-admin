@@ -1,3 +1,6 @@
+/* eslint-disable no-shadow */
+/* eslint-disable camelcase */
+/* eslint-disable no-unused-vars */
 /* eslint-disable array-callback-return */
 import { Close } from '@mui/icons-material';
 import { MenuItem, Box, Typography, Paper, FormControl, Select, InputLabel, Skeleton } from '@mui/material';
@@ -36,9 +39,11 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
     const [dataCompanies, setDataCompanies] = React.useState<Array<any>>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [loadingUpdate, setLoadingUpdate] = React.useState<boolean>(false);
-
+    const [dataAccount, setDataAccount] = React.useState<any>({});
+    // const valueRoles = dataRoles.filter((item: any) => item.id === form.watch('role'))[0]?.id;
     const valueCompany = dataCompanies.filter((item: any) => item.id === form.watch('company'))[0]?.id;
-    // console.log('response', dataCompanies, valueCompany);
+    // console.log('response', roles, valueRoles);
+    // console.log('response2', dataCompanies, valueCompany);
 
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
@@ -90,6 +95,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                 form.setValue('companies', resCompanies);
                 form.setValue('company', company.id as string);
                 setCompanies(resCompanies);
+                setDataAccount(response.data.data);
 
                 if (resultRoles) {
                     // change roleId to array
@@ -126,19 +132,36 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
 
     // Event update account
     const submitHandler = async () => {
+        const d = form.watch();
         setLoadingUpdate(true);
-        const { name, email, roles: rolesBody, company } = form.watch();
+        // const { name, email, roles: rolesBody, company } = form.watch();
         if (isCompFilled && isRolesFilled) {
+            const { name, email, role_id, company } = dataAccount;
+            const { name: nameInput, email: emailInput, roles: rolesInput, company: companyInput } = d;
+            const resRoles = rolesInput.join(',');
+
+            let resData: any = {};
+
+            resData = emailInput && email !== emailInput ? { ...resData, email: emailInput } : resData;
+            resData = name && name !== nameInput ? { ...resData, name: nameInput } : resData;
+            resData = rolesInput.length > 0 && resRoles !== role_id ? { ...resData, role_ids: resRoles } : resData;
+            resData = companyInput && company.id !== companyInput ? { ...resData, company_id: companyInput } : resData;
+
             setIsError(false);
             try {
-                const response = await fetchAPI({
-                    method: 'PUT',
-                    endpoint: `accounts/${router.query.id}`,
-                    data: { name, email, role_ids: rolesBody.join(), company_id: company }
-                });
-                if (response.status === 200) {
-                    notify('Successfully create client account', 'success');
-                    router.push('/client-account');
+                if (Object.keys(resData).length > 0) {
+                    const response = await fetchAPI({
+                        method: 'PUT',
+                        endpoint: `accounts/${router.query.id}`,
+                        data: resData
+                    });
+
+                    if (response.status === 200) {
+                        notify(response.data.message, 'success');
+                        // router.push('/client-account');
+                    }
+                } else {
+                    notify(`data doesn't changed`);
                 }
             } catch (error: any) {
                 notify(error.message, 'error');
@@ -400,7 +423,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                         placeholder='Select Roles'
                                         labelId='demo-simple-select-label'
                                         id='demo-simple-select'
-                                        value={form.watch('role')}
+                                        value={form.watch('roles')}
                                         label='Role Code'
                                         onChange={handleAddRole}
                                         color='secondary'
@@ -411,7 +434,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                         </MenuItem>
                                         {dataRoles.length > 0 &&
                                             dataRoles.map((item: any) => (
-                                                <MenuItem value={item.id} key={item.name}>
+                                                <MenuItem value={item.id} key={item.id}>
                                                     {item.name}
                                                 </MenuItem>
                                             ))}
@@ -432,8 +455,8 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                     >
                         <Box sx={{ width: '30%' }} />
                         <Box sx={{ width: '70%', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
-                            {roles.length > 0 &&
-                                roles.map((item: any, idx: number) => {
+                            {roles?.length > 0 &&
+                                roles?.map((item: any, idx: number) => {
                                     return (
                                         <Box
                                             key={idx}

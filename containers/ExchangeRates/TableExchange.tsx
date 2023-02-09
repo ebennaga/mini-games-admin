@@ -86,6 +86,9 @@ const TableExchange: React.FC<TableExchangeProps> = ({ name, form, nameIdxAppear
                         >
                             No.
                         </TableCell>
+                        <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '10%' }}>
+                            Name
+                        </TableCell>
                         <TableCell sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '23%' }}>
                             Coins
                         </TableCell>
@@ -129,6 +132,11 @@ const TableExchange: React.FC<TableExchangeProps> = ({ name, form, nameIdxAppear
                                         }}
                                     >
                                         <Typography component='span'>{index + 1}.</Typography>
+                                    </TableCell>
+                                    <TableCell
+                                        sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '23%' }}
+                                    >
+                                        <Typography component='span'>{item?.name}</Typography>
                                     </TableCell>
                                     <TableCell
                                         sx={{ fontWeight: 400, fontSize: '16px', borderRight: '1px solid rgba(0,0,0,0.2)', width: '23%' }}

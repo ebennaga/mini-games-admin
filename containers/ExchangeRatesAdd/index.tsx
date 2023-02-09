@@ -25,6 +25,7 @@ const ExchangeRatesAdd = () => {
             coins: '',
             idr: '',
             bonus: '',
+            name: '',
             activeRole: false
             // description: '',
         }
@@ -98,6 +99,7 @@ const ExchangeRatesAdd = () => {
                     loadingSubmit={loadingSubmit}
                     coinsName='coins'
                     idrName='idr'
+                    nameName='name'
                     form={form}
                     handleSubmit={handleSubmit}
                     rules={{ validate: validateNumber }}
