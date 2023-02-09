@@ -55,7 +55,7 @@ const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setO
     useEffect(() => {
         setPages(Math.ceil(data?.length / Number(row)));
     }, [pages, row]);
-    console.log('row', row);
+
     return (
         <Dialog fullWidth open={open} onClose={setOpenDialog}>
             <Box sx={{ padding: '20px' }}>
