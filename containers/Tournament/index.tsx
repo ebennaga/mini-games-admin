@@ -421,7 +421,7 @@ const TournamentContainer = () => {
         if (form.watch('search') === '') {
             setIsSearch(false);
         }
-    }, [remove, input, search, currentPage]);
+    }, [input]);
     // console.log(getPaginatedData());
     // console.log('routeid', routeId);
 

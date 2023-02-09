@@ -32,14 +32,14 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
 }) => {
     const { fetchAPI } = useAPICaller();
     const handleLeaderboard = async (id: number) => {
+        setOpenDialogTour(!openDialogTour);
         try {
             const response = await fetchAPI({
                 endpoint: `/tournaments/${id}/leaderboard`,
                 method: 'GET'
             });
-            console.log('dataleaderboard', response);
+
             if (response.status === 200) {
-                setOpenDialogTour(!openDialogTour);
                 setLeaderboards(response.data.data);
             }
         } catch (err: any) {
