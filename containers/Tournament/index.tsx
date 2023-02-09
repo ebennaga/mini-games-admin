@@ -54,7 +54,7 @@ const TournamentContainer = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogTour, setOpenDialogTour] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
-    const [row, setRow] = useState('7');
+    const [row, setRow] = useState('5');
     const [game, setGame] = useState('0');
     const [createTournament, setCreateTournament] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -92,7 +92,7 @@ const TournamentContainer = () => {
             if (response.status === 200) {
                 const tournaments = response.data.data;
                 setRemove(tournaments);
-                setRow(tournaments.length.toString());
+                // setRow(tournaments.length.toString());
                 setIsLoading(false);
                 // notify(response?.data.message, 'success');
             }
@@ -421,7 +421,7 @@ const TournamentContainer = () => {
         if (form.watch('search') === '') {
             setIsSearch(false);
         }
-    }, [remove, input, search, currentPage]);
+    }, [input]);
     // console.log(getPaginatedData());
     // console.log('routeid', routeId);
 

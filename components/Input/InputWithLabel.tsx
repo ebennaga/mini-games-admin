@@ -152,7 +152,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                                 {isSelectType ? (
                                     listSelect?.map((item: any) => (
                                         <MenuItem key={item.id} value={item.id}>
-                                            {item.name}
+                                            {item.label || item.name}
                                         </MenuItem>
                                     ))
                                 ) : (

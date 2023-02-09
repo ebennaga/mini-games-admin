@@ -57,8 +57,8 @@ const Home = () => {
     const form = useForm({
         mode: 'all',
         defaultValues: {
-            startDate: getStartDate() || '',
-            endDate: getEndDdate() || ''
+            startDate: '',
+            endDate: ''
         }
     });
 
