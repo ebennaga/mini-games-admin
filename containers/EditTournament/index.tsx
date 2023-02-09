@@ -57,6 +57,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
     const [game, setGame] = React.useState('0');
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [table, setTable] = React.useState([]);
+    const [prizesInfo, setPrizesInfo] = React.useState([]);
     const [loadingSubmit, setLoadingSubmit] = React.useState(false);
     const [selectTournament, setSelectTournament] = React.useState<any>([]);
     const [prizeData, setPrizeData] = React.useState<any>([]);
@@ -99,6 +100,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                 form.setValue('pool', result.data.data.total_point);
                 form.setValue('image', result.data.data.tournament_image);
                 setTable(result.data.data.prize_infos);
+                setPrizesInfo(result.data.data.prize_infos);
                 setDataDetail(result.data.data);
             }
             setIsLoading(false);
@@ -177,9 +179,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                 const filterPrizesInfo = dataPrize.filter((item: any) => {
                     return item.prize_infos.length > 0;
                 });
-
                 setSelectTournament(filterPrizesInfo);
-
                 setPrizeData(dataPrize);
             }
         } catch (error: any) {
@@ -406,7 +406,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                     </FormControl>
                                     <ButtonBase
                                         onClick={() => {
-                                            setTable([]);
+                                            setTable(prizesInfo);
                                             setValue('0');
                                         }}
                                         sx={{

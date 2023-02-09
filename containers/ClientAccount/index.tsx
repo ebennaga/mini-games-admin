@@ -79,9 +79,12 @@ const AccountContainer = () => {
 
             if (result.status === 200) {
                 const { data } = result.data;
+                const filter = data.filter((item: any) => {
+                    return Object.keys(item.company).length > 0;
+                });
                 setIsLoading(false);
-                setRemove(data);
-                setDataAccount(data);
+                setRemove(filter);
+                setDataAccount(filter);
             }
             setIsLoading(false);
         } catch (error: any) {
