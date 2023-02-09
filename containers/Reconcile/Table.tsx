@@ -55,42 +55,42 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage, isLoading
                             <Grid item xs={4} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
                                 User ID
                             </Grid>
-                            <Grid item xs={4} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
-                                Email
+                            <Grid item xs={8} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                                Code
                             </Grid>
-                            <Grid item xs={4} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                            {/* <Grid item xs={4} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
                                 Order ID
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Grid>
                 </Grid>
                 <Grid item container xs={4}>
-                    <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
-                        Order Time
+                    <Grid item xs={6} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                        Coin
                     </Grid>
-                    <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
-                        Order Amount
+                    <Grid item xs={6} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                        Type
                     </Grid>
-                    <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                    {/* <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
                         Transaction ID
                     </Grid>
                     <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
                         Bank
-                    </Grid>
+                    </Grid> */}
                 </Grid>
                 <Grid item container xs={4}>
-                    <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
-                        Transaction Time
+                    <Grid item xs={6} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                        Description
                     </Grid>
-                    <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
-                        Gross Amount
+                    <Grid item xs={6} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                        Status
                     </Grid>
-                    <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
+                    {/* <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
                         Transaction Status
                     </Grid>
                     <Grid item xs={3} padding='16px 12px' border='1px solid rgba(0,0,0,0.2)'>
                         Settlement Time
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </Grid>
             {isLoading ? (
@@ -129,14 +129,14 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage, isLoading
                                             </Grid>
                                             <Grid
                                                 item
-                                                xs={4}
+                                                xs={8}
                                                 padding='12px'
                                                 border='1px solid rgba(0,0,0,0.2)'
                                                 sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
                                             >
-                                                {item?.user?.email}
+                                                {item?.code}
                                             </Grid>
-                                            <Grid
+                                            {/* <Grid
                                                 item
                                                 xs={4}
                                                 padding='12px'
@@ -144,30 +144,31 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage, isLoading
                                                 sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
                                             >
                                                 {item.orderId}
-                                            </Grid>
+                                            </Grid> */}
                                         </Grid>
                                     </Grid>
                                 </Grid>
                                 <Grid item container xs={4}>
                                     <Grid
                                         item
-                                        xs={3}
+                                        xs={6}
                                         padding='12px'
                                         border='1px solid rgba(0,0,0,0.2)'
                                         sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
                                     >
-                                        {new Date(item.orderTime).toLocaleString('id')}
+                                        {/* {new Date(item.orderTime).toLocaleString('id')} */}
+                                        {item?.coin}
                                     </Grid>
                                     <Grid
                                         item
-                                        xs={3}
+                                        xs={6}
                                         padding='12px'
                                         border='1px solid rgba(0,0,0,0.2)'
                                         sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
                                     >
-                                        {item.orderAmount}
+                                        {item?.type}
                                     </Grid>
-                                    <Grid
+                                    {/* <Grid
                                         item
                                         xs={3}
                                         padding='12px'
@@ -184,28 +185,30 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage, isLoading
                                         sx={{ wordBreak: 'break-word', display: 'flex', alignItems: 'center' }}
                                     >
                                         {item.bank}
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                                 <Grid item container xs={4}>
                                     <Grid
                                         item
-                                        xs={3}
+                                        xs={6}
                                         padding='12px'
                                         border='1px solid rgba(0,0,0,0.2)'
                                         sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
                                     >
-                                        {new Date(item.transactionTime).toLocaleString('id')}
+                                        {/* {new Date(item.transactionTime).toLocaleString('id')} */}
+                                        {item?.description}
                                     </Grid>
                                     <Grid
                                         item
-                                        xs={3}
+                                        xs={6}
                                         padding='12px'
                                         border='1px solid rgba(0,0,0,0.2)'
                                         sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
                                     >
-                                        {item.grossAmount}
+                                        {/* {item.grossAmount} */}
+                                        {item?.status}
                                     </Grid>
-                                    <Grid
+                                    {/* <Grid
                                         item
                                         xs={3}
                                         padding='12px'
@@ -222,7 +225,7 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage, isLoading
                                         sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
                                     >
                                         {new Date(item.settlementTime).toLocaleString('id')}
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
                         )
