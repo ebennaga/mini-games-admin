@@ -42,7 +42,6 @@ import InputDate from 'components/Input/InputDate';
 import { getCurrentDate } from 'utils/date';
 import Input from 'components/Input/Input';
 import InputSelect from 'components/Input/InputSelect';
-import { useSelector } from 'react-redux';
 
 const valueList = [
     {
@@ -68,52 +67,52 @@ const gamesSelect = [
 
 const tabList = ['All', 'Latest', 'Oldest'];
 
-const dummyData = [
-    {
-        id: 1,
-        title: 'Touney Starling CP lt Ground',
-        start: '2022-12-20T04:45:18.000Z',
-        end: '2022-12-25T04:45:18.000Z',
-        games: 'Hop Up',
-        mode: 'Closed',
-        fee: 0,
-        prize: 10000,
-        prize_type: 'Coins'
-    },
-    {
-        id: 2,
-        title: 'Open Tourney Texxas Chicken 2022',
-        start: '2022-12-22T17:45:18.000Z',
-        end: '2022-12-24T17:45:18.000Z',
-        games: 'Block Stack',
-        mode: 'Open',
-        fee: 20,
-        prize: 20000,
-        prize_type: 'Point'
-    },
-    {
-        id: 3,
-        title: 'Tourney Starbuck Cp lt 2',
-        start: '2022-12-28T23:00:18.000Z',
-        end: '2022-12-31T16:59:18.000Z',
-        games: 'Rose Dart',
-        mode: 'Closed',
-        fee: 20,
-        prize: 20000,
-        prize_type: 'Point'
-    },
-    {
-        id: 4,
-        title: 'Tourney Starbuck Cp lt 2',
-        start: '2023-01-04T17:00:00.000Z',
-        end: '2023-01-08T17:00:00.000Z',
-        games: 'Rose Dart',
-        mode: 'Closed',
-        fee: 20,
-        prize: 20000,
-        prize_type: 'Point'
-    }
-];
+// const dummyData = [
+//     {
+//         id: 1,
+//         title: 'Touney Starling CP lt Ground',
+//         start: '2022-12-20T04:45:18.000Z',
+//         end: '2022-12-25T04:45:18.000Z',
+//         games: 'Hop Up',
+//         mode: 'Closed',
+//         fee: 0,
+//         prize: 10000,
+//         prize_type: 'Coins'
+//     },
+//     {
+//         id: 2,
+//         title: 'Open Tourney Texxas Chicken 2022',
+//         start: '2022-12-22T17:45:18.000Z',
+//         end: '2022-12-24T17:45:18.000Z',
+//         games: 'Block Stack',
+//         mode: 'Open',
+//         fee: 20,
+//         prize: 20000,
+//         prize_type: 'Point'
+//     },
+//     {
+//         id: 3,
+//         title: 'Tourney Starbuck Cp lt 2',
+//         start: '2022-12-28T23:00:18.000Z',
+//         end: '2022-12-31T16:59:18.000Z',
+//         games: 'Rose Dart',
+//         mode: 'Closed',
+//         fee: 20,
+//         prize: 20000,
+//         prize_type: 'Point'
+//     },
+//     {
+//         id: 4,
+//         title: 'Tourney Starbuck Cp lt 2',
+//         start: '2023-01-04T17:00:00.000Z',
+//         end: '2023-01-08T17:00:00.000Z',
+//         games: 'Rose Dart',
+//         mode: 'Closed',
+//         fee: 20,
+//         prize: 20000,
+//         prize_type: 'Point'
+//     }
+// ];
 
 const ClientTournament = () => {
     const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -140,10 +139,10 @@ const ClientTournament = () => {
             keySearch: ''
         }
     });
-    const userState = useSelector((state: any) => state.webpage?.user?.user);
+
     const [openFilter, setOpenFilter] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const [row, setRow] = React.useState(dummyData.length.toString());
+    const [row, setRow] = React.useState('');
     const [filteredData, setFilteredData] = React.useState<any>([]);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [pages, setPages] = React.useState(1);
@@ -154,32 +153,52 @@ const ClientTournament = () => {
     const [openRemove, setOpenRemove] = React.useState(false);
     const [val, setVal] = React.useState<string>('All');
     const [existingData, setExistingData] = React.useState<any>([]);
+    const [defaultData, setDefaultData] = React.useState<Array<any>>([]);
+
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
 
+    // Fetch data client Tournament
     const fetchData = async () => {
         try {
-            const response = await fetchAPI({
+            // fetch data companies
+            const getCompanies = await fetchAPI({
                 method: 'GET',
-                // endpoint: `/tournaments?search=14`
-                endpoint: `/tournaments?search=${userState.company_id}`
+                endpoint: `companies`
             });
-            // console.log(response);
-            if (response.status === 200) {
-                // console.log(response);
-                const tournaments = response.data.data;
 
-                setFilteredData(tournaments);
-                // setRemove(tournaments);
-                // setRow(tournaments.length.toString());
-                // setIsLoading(false);
-                // notify(response?.data.message, 'success');
+            if (getCompanies.status === 200) {
+                const companies = getCompanies.data.data;
+                let result: any = [];
+
+                // Looping through companies to fetch data client tournaments with the company id
+                const getClientTournaments = companies.map(async (item: any) => {
+                    const response = await fetchAPI({
+                        method: 'GET',
+                        endpoint: `tournaments?company_id=${item.id}`
+                    });
+
+                    if (response.status === 200) {
+                        // saving data response into result
+                        result = [...result, ...response.data.data];
+                    }
+                });
+
+                // waiting for looping client tournaments
+                await Promise.all(getClientTournaments);
+
+                setFilteredData(result);
+                setDefaultData(result);
+                setRow(result.length.toString());
+            } else {
+                notify(getCompanies?.data?.message);
             }
         } catch (error: any) {
             notify(error.message, 'error');
             setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     React.useEffect(() => {
@@ -290,10 +309,6 @@ const ClientTournament = () => {
         }
     };
 
-    // console.log(checkBoxKeys);
-    // console.log(checkTrue);
-    console.log(form.watch());
-
     const handleexistingData = () => {
         const res = filteredData.filter((item: any) => !existingData.includes(item));
         setCheckedObj([]);
@@ -395,7 +410,7 @@ const ClientTournament = () => {
             ];
         }
         if (!title && !mode && !prize && !games && !startDate && !startTime && !endDate && !endTime) {
-            result = [...dummyData];
+            result = [...defaultData];
         }
 
         if (val === 'Latest') {
@@ -433,8 +448,8 @@ const ClientTournament = () => {
         form.setValue('startTime', '');
         form.setValue('endDate', '');
         form.setValue('endTime', '');
-        setFilteredData(dummyData);
-        setRow(dummyData.length.toString());
+        setFilteredData(defaultData);
+        setRow(defaultData.length.toString());
         setPages(1);
         setCurrentPage(1);
         setOpenFilter(false);
@@ -890,7 +905,7 @@ const ClientTournament = () => {
                                 labelId='demo-simple-select-label'
                                 id='demo-simple-select'
                                 value={row}
-                                defaultValue={dummyData.length.toString()}
+                                defaultValue='5'
                                 onChange={handleViewRow}
                             >
                                 {[...Array(filteredData.length)].map((item: any, idx: number) => (
@@ -901,7 +916,7 @@ const ClientTournament = () => {
                             </Select>
                         </FormControl>
                         <Typography>
-                            1-{row} of {dummyData.length}
+                            1-{row} of {defaultData?.length}
                         </Typography>
                         <Box sx={{ display: 'flex' }}>
                             <IconButton onClick={goToPreviousPage}>
