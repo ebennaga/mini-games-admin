@@ -165,7 +165,10 @@ const ParticipantTournament = () => {
         }
     };
 
-    const dateFormat = (date: string) => new Date(date).toLocaleString('id-id').slice(0, 10);
+    const dateFormat = (date: string) => {
+        const dateString = new Date(date).toLocaleString('id-id').split(' ')[0];
+        return dateString;
+    };
     // Event Filter
     const handleFilter = (data: any) => {
         const { titleFilter, gamesFilter, startDateFilter } = data;
