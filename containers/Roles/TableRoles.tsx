@@ -22,9 +22,10 @@ interface TableRolesProps {
     nameIdxAppears: string;
     nameMenuAccess: string;
     setOpenMenuAccess: any;
+    setIdRole: any;
 }
 
-const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears, nameMenuAccess, setOpenMenuAccess }) => {
+const TableRoles: React.FC<TableRolesProps> = ({ setIdRole, form, name, nameIdxAppears, nameMenuAccess, setOpenMenuAccess }) => {
     const [dataTable, setDataTable] = React.useState<Array<any>>(form.watch(name));
     const [isAllChecked, setIsAllChecked] = React.useState<boolean>(false);
     const [showMore, setShowMore] = React.useState<any>({ isOpen: false, id: null });
@@ -194,7 +195,12 @@ const TableRoles: React.FC<TableRolesProps> = ({ form, name, nameIdxAppears, nam
                                             width: '8%'
                                         }}
                                     >
-                                        <IconButton onClick={() => handleMore(item)}>
+                                        <IconButton
+                                            onClick={() => {
+                                                handleMore(item);
+                                                setIdRole(item);
+                                            }}
+                                        >
                                             <MoreVertIcon />
                                         </IconButton>
                                         {showMore.isOpen && showMore.id === item.id && (
