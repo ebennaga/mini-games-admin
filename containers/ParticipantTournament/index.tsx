@@ -243,17 +243,17 @@ const ParticipantTournament = () => {
 
         const tab = form.watch('tabFilter');
 
-        if (tab === 'latest') {
+        if (tab === 'oldest') {
             const sorting = resFilter.sort((a: any, b: any) => {
-                const first: any = new Date(a.start_register);
-                const second: any = new Date(b.start_register);
+                const first: any = new Date(a.created_at);
+                const second: any = new Date(b.created_at);
                 return first - second;
             });
             form.setValue('dataTable', sorting);
-        } else if (tab === 'oldest') {
+        } else if (tab === 'latest') {
             const sorting = resFilter.sort((a: any, b: any) => {
-                const first: any = new Date(a.start_register);
-                const second: any = new Date(b.start_register);
+                const first: any = new Date(a.created_at);
+                const second: any = new Date(b.created_at);
                 return second - first;
             });
             form.setValue('dataTable', sorting);
