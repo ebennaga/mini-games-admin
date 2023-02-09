@@ -25,8 +25,8 @@ const Roles = () => {
     // ];
 
     const dataAccesss = [
-        { isChecked: true, name: 'Dashboard', id: 1 },
-        { isChecked: true, name: 'Blogs', id: 2 },
+        { isChecked: false, name: 'Dashboard', id: 1 },
+        { isChecked: false, name: 'Blogs', id: 2 },
         { isChecked: false, name: 'Account', id: 3 },
         { isChecked: false, name: 'Ecxchanges Rates', id: 4 },
         { isChecked: false, name: 'Tournament', id: 5 },
@@ -49,6 +49,8 @@ const Roles = () => {
     const [dataRoles, setDataRoles] = React.useState<Array<any>>([]);
     const [dataSelect, setDataSelect] = React.useState<Array<any>>([]);
     const [isLoading, setIsloading] = React.useState<boolean>(true);
+    const [dataChanges, setDataChanges] = React.useState<Array<any>>([]);
+    const [idRole, setIdRole] = React.useState<any>(null);
 
     const { fetchAPI } = useAPICaller();
     const [query, setQuery] = React.useState('');
@@ -150,10 +152,30 @@ const Roles = () => {
     };
 
     // Event update access
-    const handleUpdateAccess = () => {
-        const currentAccess = form.watch('accessUpdated');
-        setOpenMenuAccess(false);
-        setOpenDialogFailed(true);
+    const handleUpdateAccess = async (data: any) => {
+        try {
+            // const currentAccess = form.watch('accessUpdated');
+
+            const id = dataChanges.map((item) => {
+                return item.id;
+            });
+
+            idRole.menus = id.join(',');
+            const body = idRole;
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `roles/${idRole.id}`,
+                data: body
+            });
+            if (response.data.status === 200) {
+                notify(response.data.message, 'success');
+                setOpenMenuAccess(false);
+                setDataChanges([]);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setOpenDialogFailed(true);
+        }
     };
 
     // Event Filter data
@@ -281,6 +303,7 @@ const Roles = () => {
                     </Box>
                 ) : (
                     <TableRoles
+                        setIdRole={setIdRole}
                         form={form}
                         name='dataTable'
                         nameIdxAppears='idxAppears'
@@ -308,6 +331,8 @@ const Roles = () => {
                 textCancelButton='CANCEL'
             />
             <DialogMenuAccess
+                setDataChanges={setDataChanges}
+                dataChanges={dataChanges}
                 onUpdate={handleUpdateAccess}
                 open={openMenuAccess}
                 setOpen={setOpenMenuAccess}
