@@ -21,6 +21,7 @@ interface InputWithLabelProps {
     foucused?: boolean;
     isRequired?: boolean;
     isLoading?: boolean;
+    // setTable?: any;
 }
 
 const InputWithLabel: React.FC<InputWithLabelProps> = ({
@@ -38,6 +39,7 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
     foucused,
     isRequired = false,
     isLoading
+    // setTable
 }) => {
     const {
         formState: { errors }
@@ -149,8 +151,8 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({
                             >
                                 {isSelectType ? (
                                     listSelect?.map((item: any) => (
-                                        <MenuItem key={item.value} value={item.value}>
-                                            {item.label}
+                                        <MenuItem key={item.id} value={item.id}>
+                                            {item.name}
                                         </MenuItem>
                                     ))
                                 ) : (

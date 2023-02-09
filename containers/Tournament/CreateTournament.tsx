@@ -96,13 +96,6 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
             fee: '',
             tableData: [
                 {
-                    // positionStart: '',
-                    // positionEnd: '',
-                    // countPlayer: '',
-                    // pointPrizes: '',
-                    // playerPointPrizes: '',
-                    // cointPrizes: '',
-                    // playerCointPrizes: ''
                     max_pos: '',
                     point: '',
                     coin: ''
@@ -208,9 +201,10 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
             });
 
             if (response?.status === 200) {
+                console.log(response);
                 setIsLoading(false);
                 notify('Create tournament success!');
-                router.push('/tournament');
+                // router.push('/tournament');
                 setTable([]);
                 formTable.reset();
             } else {
