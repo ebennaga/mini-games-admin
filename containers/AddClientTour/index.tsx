@@ -80,6 +80,7 @@ const AddClientTour = () => {
     const [companies, setCompanies] = React.useState<any>([]);
     const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
     const [value, setValue] = React.useState('0');
     const [tableObj, setTableObj] = React.useState<any>({
         max_pos: '',
@@ -182,6 +183,7 @@ const AddClientTour = () => {
     }, [table]);
 
     const handleSubmitData = async (data: any) => {
+        setLoadingSubmit(true);
         try {
             const imgBase64 = await convertBase64(data.image);
             const body = {
@@ -194,8 +196,7 @@ const AddClientTour = () => {
                 prize_infos: table,
                 company_id: data.company
             };
-            // console.log({ data });
-            // console.log({ body });
+
             const response = await fetchAPI({
                 method: 'POST',
                 endpoint: '/tournaments',
@@ -213,6 +214,7 @@ const AddClientTour = () => {
         } catch (error: any) {
             notify(error.message, 'error');
         }
+        setLoadingSubmit(false);
     };
 
     React.useEffect(() => {
@@ -713,14 +715,16 @@ const AddClientTour = () => {
                 </Box>
                 <Divider />
                 <Box sx={{ display: 'flex', my: 3, mx: 5, gap: 3 }}>
-                    <CustomButton type='submit' />
-                    <CustomButton
-                        onClick={() => router.back()}
-                        title='Cancel'
-                        border='1px solid #A54CE5'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                    />
+                    <CustomButton type='submit' isLoading={loadingSubmit} />
+                    {!loadingSubmit && (
+                        <CustomButton
+                            onClick={() => router.back()}
+                            title='Cancel'
+                            border='1px solid #A54CE5'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                        />
+                    )}
                 </Box>
             </form>
             <DialogMap open={openDialogMap} setOpen={setOpenDialogMap} form={form} nameAddress='address' nameLat='lat' nameLong='long' />

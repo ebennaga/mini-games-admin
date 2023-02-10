@@ -201,12 +201,12 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
             });
 
             if (response?.status === 200) {
-                console.log(response);
                 setIsLoading(false);
                 notify('Create tournament success!');
-                // router.push('/tournament');
                 setTable([]);
                 formTable.reset();
+                form.reset();
+                setCreateTour(!createTour);
             } else {
                 notify(response.data.message, 'error');
             }
@@ -214,6 +214,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
             notify(error.message, 'error');
             setIsLoading(false);
         }
+        setIsLoading(false);
     };
 
     // const MenuProps = {
@@ -766,20 +767,22 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             width: '100%'
                         }}
                     >
-                        <CustomButton type='submit' />
+                        <CustomButton type='submit' isLoading={isLoading} />
                         {/* <CustomButton type='submit' padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' /> */}
-                        <CustomButton
-                            onClick={() => {
-                                setCreateTour(!createTour);
-                            }}
-                            padding='10px'
-                            width='193px'
-                            height='59px'
-                            title='cancel'
-                            backgroundColor='white'
-                            color='#A54CE5'
-                            border='1px solid #A54CE5'
-                        />
+                        {!isLoading && (
+                            <CustomButton
+                                onClick={() => {
+                                    setCreateTour(!createTour);
+                                }}
+                                padding='10px'
+                                width='193px'
+                                height='59px'
+                                title='cancel'
+                                backgroundColor='white'
+                                color='#A54CE5'
+                                border='1px solid #A54CE5'
+                            />
+                        )}
                     </Box>
                 </form>
             </Box>

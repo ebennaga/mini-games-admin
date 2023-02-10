@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase } from '@mui/material';
+import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase, CircularProgress } from '@mui/material';
 import InputDate from 'components/Input/InputDate';
 import { SelectChangeEvent } from '@mui/material/Select';
 import InputImage from 'components/Input/InputImage';
@@ -158,7 +158,7 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
 
             if (result.status === 200) {
                 notify(result.data.message, 'success');
-
+                router.push('/tournament');
                 setLoadingSubmit(false);
             }
         } catch (err: any) {
@@ -530,24 +530,42 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                     title='Update'
                     backgroundColor='#A54CE5'
                 /> */}
-                <ButtonBase
-                    onClick={handleSubmit}
-                    sx={{ borderRadius: '4px', padding: '10px', width: '193px', height: '59px', backgroundColor: '#A54CE5' }}
-                >
-                    <Typography sx={{ color: 'white' }}>UPDATE</Typography>
-                </ButtonBase>
-                <CustomButton
-                    onClick={() => {
-                        router.push('/tournament');
-                    }}
-                    padding='10px'
-                    width='193px'
-                    height='59px'
-                    title='cancel'
-                    backgroundColor='white'
-                    color='#A54CE5'
-                    border='1px solid #A54CE5'
-                />
+                {loadingSubmit ? (
+                    <Box
+                        sx={{
+                            bgcolor: 'rgba(0, 0, 0, 0.3)',
+                            borderRadius: '4px',
+                            padding: '10px',
+                            width: '193px',
+                            height: '59px',
+                            display: 'flex',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    <>
+                        <ButtonBase
+                            onClick={handleSubmit}
+                            sx={{ borderRadius: '4px', padding: '10px', width: '193px', height: '59px', backgroundColor: '#A54CE5' }}
+                        >
+                            <Typography sx={{ color: 'white' }}>UPDATE</Typography>
+                        </ButtonBase>
+                        <CustomButton
+                            onClick={() => {
+                                router.push('/tournament');
+                            }}
+                            padding='10px'
+                            width='193px'
+                            height='59px'
+                            title='cancel'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            border='1px solid #A54CE5'
+                        />{' '}
+                    </>
+                )}
             </Box>
         </Box>
     );

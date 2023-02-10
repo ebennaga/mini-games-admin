@@ -138,6 +138,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                     setIsFilled(false);
                     setIsFilled1(false);
                     setIsRequired(false);
+                    router.push('/account');
                 } else if (result.status === 422) {
                     notify(`${result.data.message}`, 'error');
                 }
@@ -170,8 +171,6 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             setIsFilled1(false);
         }
     }, [accessArr, isFilled]);
-
-    // console.log(form.watch('activeRole'));
 
     return (
         <form onSubmit={form.handleSubmit(handleSubmitData)}>
@@ -470,7 +469,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 >
                     <CustomButton
                         isLoading={isLoading}
-                        onClick={() => handleSubmitData(form.watch())}
+                        // onClick={() => handleSubmitData(form.watch())}
                         type='submit'
                         padding='10px'
                         width='193px'
@@ -478,19 +477,20 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         title='Submit'
                         backgroundColor='#A54CE5'
                     />
-                    <CustomButton
-                        onClick={() => {
-                            // setCreateAcc(!createAcc);
-                            router.push('/account');
-                        }}
-                        padding='10px'
-                        width='193px'
-                        height='59px'
-                        title='cancel'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                        border='1px solid #A54CE5'
-                    />
+                    {!isLoading && (
+                        <CustomButton
+                            onClick={() => {
+                                router.push('/account');
+                            }}
+                            padding='10px'
+                            width='193px'
+                            height='59px'
+                            title='cancel'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            border='1px solid #A54CE5'
+                        />
+                    )}
                 </Box>
             </Box>
         </form>

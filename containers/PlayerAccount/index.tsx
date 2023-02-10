@@ -80,7 +80,6 @@ const PlayerAccount = () => {
             });
 
             if (response.status === 200) {
-                notify(response.data.message, 'success');
                 form.setValue('dataTable', response.data.data);
                 setListTable(response.data.data);
                 setIsLoading(false);

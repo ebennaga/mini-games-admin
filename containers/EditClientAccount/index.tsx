@@ -158,7 +158,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
 
                     if (response.status === 200) {
                         notify(response.data.message, 'success');
-                        // router.push('/client-account');
+                        router.push('/client-account');
                     }
                 } else {
                     notify(`data doesn't changed`);
