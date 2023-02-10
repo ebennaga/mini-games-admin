@@ -323,8 +323,8 @@ const ClientTournament = () => {
     };
 
     const handleEdit = () => {
-        const { id } = filteredData[existingData];
-        router.push(`/tournament/client-tournament/${id}`);
+        // const { id } = filteredData[existingData];
+        router.push(`/tournament/client-tournament/${existingData}`);
     };
 
     // Component Update for Search Event
@@ -791,7 +791,7 @@ const ClientTournament = () => {
                                             return (
                                                 <TableRow key={item.id}>
                                                     <TableCell align='center' sx={{ width: '5%' }}>
-                                                        {currentPage === 1 ? idx + 1 : currentPage > 1 && idx + 1 + (currentPage - 1) * 10}
+                                                        {currentPage === 1 ? idx + 1 : idx + 1 + Number(row) * (currentPage - 1)}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -877,7 +877,9 @@ const ClientTournament = () => {
                                                         >
                                                             <Box sx={{ p: 1 }}>
                                                                 <CustomButton
-                                                                    onClick={() => router.push(`${id}/set-prizes`)}
+                                                                    onClick={() =>
+                                                                        router.push(`/tournament/client-tournament/${item.id}/set-prizes`)
+                                                                    }
                                                                     width='121px'
                                                                     height='30px'
                                                                     title='SET PRIZE'

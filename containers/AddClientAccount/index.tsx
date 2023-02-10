@@ -102,6 +102,7 @@ const CreateClientAccount: React.FC<CreateClientAccountProps> = () => {
                     setRoles([]);
                     setCompanies([]);
                     notify(response.data.message, 'success');
+                    router.push('/client-account');
                 }
             } catch (error: any) {
                 notify(error.message, 'error');

@@ -73,7 +73,7 @@ const TablePlayerAccount: React.FC<TablePlayerAccountProps> = ({ form, name, nam
     React.useEffect(() => {
         setDataTable(form.watch(name));
     }, [form.watch(name)]);
-    // console.log(dataTable);
+
     return (
         <TableContainer>
             <Table aria-label='table player account'>
