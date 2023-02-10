@@ -97,6 +97,16 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage, isLoading
                 <LoadingTable />
             ) : (
                 dataTable.map((item: any, index: number) => {
+                    let styles: any = {};
+                    if (item.status === 'pending-payment') {
+                        styles = { backgroundColor: '#A54CE5', borderRadius: '64px', px: 1, color: '#ffffff' };
+                    } else if (item.status === 'paid') {
+                        styles = { backgroundColor: '#1BA95D', borderRadius: '64px', px: 1, color: '#ffffff' };
+                    } else if (item.status === 'deny') {
+                        styles = { backgroundColor: '#D32F2F', borderRadius: '64px', px: 1, color: '#ffffff' };
+                    } else if (item.status === 'expire') {
+                        styles = { backgroundColor: '#CBCBCB', borderRadius: '64px', px: 1, color: '#ffffff' };
+                    }
                     return (
                         index >= showTable.startIndex &&
                         index <= showTable.endIndex && (
@@ -206,7 +216,7 @@ const Table: React.FC<ITable> = ({ dataTable, form, nameRow, namePage, isLoading
                                         sx={{ wordWrap: 'break-word', display: 'flex', alignItems: 'center' }}
                                     >
                                         {/* {item.grossAmount} */}
-                                        {item?.status}
+                                        <Box sx={styles}>{item?.status}</Box>
                                     </Grid>
                                     {/* <Grid
                                         item
