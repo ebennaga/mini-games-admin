@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 import React from 'react';
 import { Container, Box, Paper, Typography } from '@mui/material';
@@ -130,7 +131,7 @@ const ExchangeRatesAdd = () => {
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
-                    // nameName='name'
+                    nameName='name'
                     // descriptionName='description'
                 />
             </Box>
