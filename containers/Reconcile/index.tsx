@@ -136,18 +136,14 @@ const Reconcile = () => {
             const {
                 id,
                 user: { id: userId, email },
-                orderId,
-                orderTime,
-                orderAmount,
-                transactionId,
-                bank,
-                transactionTime,
-                grossAmount,
-                transactionStatus,
-                settlementTime
+                code,
+                coin,
+                type,
+                description,
+                status
             } = element;
 
-            csvStr += `${id},${userId},${email},${orderId},${orderTime},${orderAmount},${transactionId},${bank},${transactionTime},${grossAmount},${transactionStatus},${settlementTime}\n`;
+            csvStr += `${id},${userId},${email},${code},${coin},${type},${description},${status}\n`;
         });
 
         const hiddenElement = document.createElement('a');
