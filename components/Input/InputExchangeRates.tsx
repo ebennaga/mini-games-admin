@@ -175,7 +175,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         alignItems: 'center'
                     }}
                 >
-                    <Box sx={{ width: '35%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ width: { lg: '40%', xl: '35%' }, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
                             <Typography
@@ -190,7 +190,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                                 *Field Required
                             </Typography>
                         </Box>
-                        <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        {/* <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography> */}
                     </Box>
                     <Box sx={{ width: '15%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <RadioButton

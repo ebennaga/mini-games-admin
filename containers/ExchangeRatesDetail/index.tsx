@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 import React from 'react';
-import { Container, Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import InputExchangeRates from 'components/Input/InputExchangeRates';
 import { useForm } from 'react-hook-form';
 import useNotify from 'hooks/useNotify';
@@ -110,8 +111,8 @@ const ExchangeRatesAdd = () => {
     }, []);
 
     return (
-        <Container sx={{ mt: 5 }}>
-            <Box sx={{ ml: -25, height: 80 }} component={Paper}>
+        <Box sx={{ mt: 5 }}>
+            <Box sx={{ height: 80 }} component={Paper}>
                 <Box>
                     <Box sx={{ ml: 2 }}>
                         <Typography sx={{ fontSize: '24px' }}>Exchange Rates Detail</Typography>
@@ -119,7 +120,7 @@ const ExchangeRatesAdd = () => {
                     </Box>
                 </Box>
             </Box>
-            <Box sx={{ ml: -25, mt: 4 }}>
+            <Box sx={{ mt: 4 }}>
                 <InputExchangeRates
                     handleAddSetActive={handleAddSetActive}
                     handleAddSetNotActive={handleAddSetNotActive}
@@ -130,11 +131,11 @@ const ExchangeRatesAdd = () => {
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
-                    // nameName='name'
+                    nameName='name'
                     // descriptionName='description'
                 />
             </Box>
-        </Container>
+        </Box>
     );
 };
 
