@@ -137,7 +137,6 @@ const Roles = () => {
                     }
                 }
             });
-
             // console.log('responseDelte', response);
         } catch (error: any) {
             notify(error.message, 'error');
