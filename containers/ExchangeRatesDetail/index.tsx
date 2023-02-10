@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 import React from 'react';
-import { Container, Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import InputExchangeRates from 'components/Input/InputExchangeRates';
 import { useForm } from 'react-hook-form';
 import useNotify from 'hooks/useNotify';
