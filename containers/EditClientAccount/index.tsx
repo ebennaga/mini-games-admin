@@ -21,7 +21,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
         defaultValues: {
             name: '',
             email: '',
-            role: '0',
+            role: '',
             roles: [],
             activeRole: false,
             company: '',
@@ -40,9 +40,9 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [loadingUpdate, setLoadingUpdate] = React.useState<boolean>(false);
     const [dataAccount, setDataAccount] = React.useState<any>({});
-    // const valueRoles = dataRoles.filter((item: any) => item.id === form.watch('role'))[0]?.id;
+    // const valueRoles = dataRoles.filter((item: any) => item.id === item.name);
     const valueCompany = dataCompanies.filter((item: any) => item.id === form.watch('company'))[0]?.id;
-    // console.log('response', roles, valueRoles);
+
     // console.log('response2', dataCompanies, valueCompany);
 
     const { fetchAPI } = useAPICaller();
@@ -100,12 +100,14 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                 if (resultRoles) {
                     // change roleId to array
                     const arrRoleId = roleId ? roleId.split(',') : [];
+                    let resRoles: any = [];
 
                     arrRoleId.map((item: string) => {
                         resultRoles.map((itm: any) => {
                             if (item === itm.id) {
+                                resRoles = [...resRoles, itm.name];
                                 const itmId = itm.id;
-                                setRoles([...roles, itm.name]);
+                                // setRoles([...roles, itm.name]);
 
                                 // filling form roles value
                                 const formRoles: any = form.watch('roles');
@@ -117,6 +119,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                             }
                         });
                     });
+                    setRoles(resRoles);
                 }
             }
         } catch (err: any) {
@@ -158,7 +161,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
 
                     if (response.status === 200) {
                         notify(response.data.message, 'success');
-                        router.push('/client-account');
+                        // router.push('/client-account');
                     }
                 } else {
                     notify(`data doesn't changed`);
@@ -423,7 +426,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                         placeholder='Select Roles'
                                         labelId='demo-simple-select-label'
                                         id='demo-simple-select'
-                                        value={form.watch('roles')}
+                                        value={form.watch('role')}
                                         label='Role Code'
                                         onChange={handleAddRole}
                                         color='secondary'
@@ -434,7 +437,7 @@ const EditClientAccount: React.FC<EditClientAccountProps> = () => {
                                         </MenuItem>
                                         {dataRoles.length > 0 &&
                                             dataRoles.map((item: any) => (
-                                                <MenuItem value={item.id} key={item.id}>
+                                                <MenuItem value={item.id} key={item.value}>
                                                     {item.name}
                                                 </MenuItem>
                                             ))}
