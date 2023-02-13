@@ -38,8 +38,8 @@ const ParentTabs: React.FC<ParentTabsProps> = ({ value, handleChange }) => {
                 >
                     <Tab sx={{ fontWeight: 'bold' }} label='PROVINCE' {...a11yProps(0)} />
                     <Tab sx={{ fontWeight: 'bold' }} label='CITY' {...a11yProps(1)} />
-                    <Tab sx={{ fontWeight: 'bold' }} label='DISTRICT' {...a11yProps(2)} />
-                    <Tab sx={{ fontWeight: 'bold' }} label='SUB DISTRICT' {...a11yProps(3)} />
+                    {/* <Tab sx={{ fontWeight: 'bold' }} label='DISTRICT' {...a11yProps(2)} />
+                    <Tab sx={{ fontWeight: 'bold' }} label='SUB DISTRICT' {...a11yProps(3)} /> */}
                 </Tabs>
             </Box>
         </Box>
