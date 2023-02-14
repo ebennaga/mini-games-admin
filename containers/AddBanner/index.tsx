@@ -77,6 +77,7 @@ const AddBanner = () => {
                 setIsLoading(false);
                 notify('Banner added successfully', 'success');
                 form.reset();
+                router.push('/banner');
             }
             setIsLoading(false);
         } catch (error: any) {
@@ -240,13 +241,15 @@ const AddBanner = () => {
                 <Divider />
                 <Box sx={{ display: 'flex', my: 3, mx: 5, gap: 3 }}>
                     <CustomButton type='submit' isLoading={isLoading} />
-                    <CustomButton
-                        title='Cancel'
-                        border='1px solid #A54CE5'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                        onClick={() => router.back()}
-                    />
+                    {!isLoading && (
+                        <CustomButton
+                            title='Cancel'
+                            border='1px solid #A54CE5'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            onClick={() => router.back()}
+                        />
+                    )}
                 </Box>
             </form>
         </Box>
