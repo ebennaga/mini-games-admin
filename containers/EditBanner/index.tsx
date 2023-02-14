@@ -30,6 +30,7 @@ const EditBanner = () => {
     const [checked, setChecked] = React.useState([true, false]);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [loadingSubmit, setLoadingSubmit] = React.useState(false);
+    const [defaultData, setDefaultData] = React.useState<any>();
 
     const fetchDetailBanners = async () => {
         try {
@@ -43,6 +44,7 @@ const EditBanner = () => {
                 form.setValue('img', result.data.data.image_url);
                 form.setValue('link', result.data.data.link);
                 form.setValue('isActive', result.data.data.is_active);
+                setDefaultData(result.data.data);
             }
             setIsLoading(false);
         } catch (err: any) {
@@ -78,25 +80,34 @@ const EditBanner = () => {
     const handleSubmit = async (d: any) => {
         setLoadingSubmit(true);
         try {
-            const imgBase64 = await convertBase64(d.image_url);
+            const { image_url: imageUrl } = defaultData;
+            const { img, link, title, isActive } = d;
+            let body: any = {
+                title,
+                is_active: isActive,
+                link
+            };
+            const imgBase64 = imageUrl !== img ? await convertBase64(img) : null;
+            body = imgBase64 ? { ...body, image_url: imgBase64 } : body;
+
             const result = await fetchAPI({
                 endpoint: `banners/${router.query.id}`,
                 method: 'PUT',
-                data: {
-                    title: d.title,
-                    is_active: d.is_active,
-                    img: imgBase64
-                }
+                data: body
             });
 
             if (result.status === 200) {
+                router.push('/banner');
                 notify('update banner successfully', 'success');
                 setLoadingSubmit(false);
+            } else {
+                notify(result.data.message, 'error');
             }
         } catch (err: any) {
             notify(err.message, 'error');
             setLoadingSubmit(false);
         }
+        setLoadingSubmit(false);
     };
 
     return (
@@ -251,14 +262,16 @@ const EditBanner = () => {
                 </Box>
                 <Divider />
                 <Box sx={{ display: 'flex', my: 3, mx: 5, gap: 3 }}>
-                    <CustomButton type='submit' isLoading={isLoading} />
-                    <CustomButton
-                        title='Cancel'
-                        border='1px solid #A54CE5'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                        onClick={() => router.back()}
-                    />
+                    <CustomButton type='submit' isLoading={loadingSubmit} />
+                    {!loadingSubmit && (
+                        <CustomButton
+                            title='Cancel'
+                            border='1px solid #A54CE5'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            onClick={() => router.back()}
+                        />
+                    )}
                 </Box>
             </form>
         </Box>
