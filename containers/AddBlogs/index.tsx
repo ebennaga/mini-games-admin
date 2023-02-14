@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import convertBase64 from 'helpers/convertBase64';
+import { useSelector } from 'react-redux';
 
 interface CreateBlogsProps {}
 
@@ -27,7 +28,15 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
+    const userState = useSelector((state: any) => state.webpage?.user?.user);
+
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+    // Set value posted by, from state global
+    React.useEffect(() => {
+        const value = userState?.username || userState?.email;
+        form.setValue('acc', value);
+    }, [userState]);
 
     const handleSubmit = async (data: any) => {
         setIsLoading(true);
@@ -48,6 +57,7 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
                 setIsLoading(false);
                 notify(response.data.message, 'success');
                 form.reset();
+                router.push('/blogs');
             }
             setIsLoading(false);
         } catch (error: any) {
@@ -55,7 +65,7 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
             setIsLoading(false);
         }
     };
-    console.log('title', form.watch('blogsTitle'));
+
     return (
         <form onSubmit={form.handleSubmit(handleSubmit)}>
             <Box sx={{ padding: '40px 25px' }}>
@@ -166,18 +176,20 @@ const CreateBlogs: React.FC<CreateBlogsProps> = () => {
                     title='Submit'
                     backgroundColor='#A54CE5'
                 />
-                <CustomButton
-                    onClick={() => {
-                        router.push('/blogs');
-                    }}
-                    padding='10px'
-                    width='193px'
-                    height='59px'
-                    title='cancel'
-                    backgroundColor='white'
-                    color='#A54CE5'
-                    border='1px solid #A54CE5'
-                />
+                {!isLoading && (
+                    <CustomButton
+                        onClick={() => {
+                            router.push('/blogs');
+                        }}
+                        padding='10px'
+                        width='193px'
+                        height='59px'
+                        title='cancel'
+                        backgroundColor='white'
+                        color='#A54CE5'
+                        border='1px solid #A54CE5'
+                    />
+                )}
             </Box>
         </form>
     );
