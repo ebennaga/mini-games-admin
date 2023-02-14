@@ -25,7 +25,8 @@ import {
     TableBody,
     Select,
     SelectChangeEvent,
-    Skeleton
+    Skeleton,
+    CircularProgress
 } from '@mui/material';
 import TitleCard from 'components/Layout/TitleCard';
 import CustomButton from 'components/Button';
@@ -43,58 +44,6 @@ import LoadingExchangeRates from 'containers/ExchangeRates/LoadingExchangeRates'
 import { useRouter } from 'next/router';
 import DialogSuccess from 'components/Dialog/DialogSuccess';
 import DialogFilter from './DialogFilter';
-
-const dummyData = [
-    {
-        id: '1',
-        title: 'Info Pre Launch Bonus',
-        img: 'banner_info.jpg',
-        desc: 'Info Mengenai Top up Bonus Prize Play Sebelum Launch',
-        showTo: 'Home',
-        isActive: 'Yes',
-        action: false,
-        checkedAll: false
-    },
-    {
-        id: '2',
-        title: 'Info Pre Launch Bonus',
-        img: 'banner_info.jpg',
-        desc: 'Info Mengenai Top up Bonus Prize Play Sebelum Launch',
-        showTo: 'Home',
-        isActive: 'No',
-        action: false,
-        checkedAll: false
-    },
-    {
-        id: '3',
-        title: 'Info Pre Launch Bonus',
-        img: 'banner1_info.jpg',
-        desc: 'Info Mengenai Top up Bonus Prize Play Sebelum Launch',
-        showTo: 'Home',
-        isActive: 'No',
-        action: false,
-        checkedAll: false
-    }
-];
-
-const menuList = [
-    {
-        value: '1',
-        label: 'Menu 1'
-    },
-    {
-        value: '2',
-        label: 'Menu 2'
-    },
-    {
-        value: '3',
-        label: 'Menu 3'
-    },
-    {
-        value: '4',
-        label: 'Menu 4'
-    }
-];
 
 const PurpleSwitch = styled(Switch)(({ theme }) => ({
     '& .MuiSwitch-switchBase.Mui-checked': {
@@ -122,8 +71,8 @@ const Banner = () => {
     const [existingData, setExistingData] = React.useState<any>([]);
     const [query, setQuery] = React.useState('');
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const [loadingRemove, setLoadingRemove] = React.useState<boolean>(false);
     const [dataBanner, setDatabanner] = React.useState<any>([]);
-
     const [routeId, setRouteId] = React.useState<any>(null);
     const [listLink, setListLink] = React.useState<any>([]);
     const [data, setData] = React.useState<Array<any>>([]);
@@ -203,7 +152,7 @@ const Banner = () => {
     };
 
     const checkTrue: string[] = [];
-    const handleSingleCheckBox = (e: any, name: any, id: number) => {
+    const handleSingleCheckBox = (e: any, name: any, value: any) => {
         form.setValue(name, e.target.checked);
         const checkBox: any = { ...form.watch() };
         checkBoxKeys.forEach((item: any) => {
@@ -213,34 +162,20 @@ const Banner = () => {
         });
         setCheckedObj(checkTrue);
         if (e.target.checked) {
-            setExistingData([...existingData, id]);
+            setExistingData([...existingData, value]);
         }
         if (!e.target.checked) {
+            form.setValue('checkedAll', false);
             if (existingData.length > 0) {
                 const filter = existingData.filter((item: any) => {
-                    return id !== item;
+                    return value.id !== item.id;
                 });
                 setExistingData(filter);
             } else {
                 setExistingData([]);
             }
         }
-        setRouteId(id);
-    };
-
-    const handleexistingData = () => {
-        const res = filteredData.filter((item: any) => !existingData.includes(item));
-        setCheckedObj([]);
-        setFilteredData(res);
-        setExistingData([]);
-        setOpenRemove(false);
-        setOpenDialogSuccess(true);
-        setRow(res.length);
-        form.setValue('checkedAll', false);
-        filteredData.forEach((item: any, idx: number) => {
-            const datas: any = `checkbox${idx + 1}`;
-            form.setValue(datas, false);
-        });
+        setRouteId(value.id);
     };
 
     const getBanner = async () => {
@@ -267,6 +202,46 @@ const Banner = () => {
             notify(err.message, 'error');
         }
         setIsLoading(false);
+    };
+
+    const handleRemoveData = async () => {
+        setLoadingRemove(true);
+        try {
+            let idsError: any = [];
+            const deleteDatas = existingData.map(async (item: any) => {
+                const response = await fetchAPI({
+                    endpoint: `banners/${item.id}`,
+                    method: 'DELETE'
+                });
+
+                if (response.status !== 200) {
+                    idsError = [...idsError, item.id];
+                }
+            });
+
+            await Promise.all(deleteDatas);
+
+            if (idsError.length > 0) {
+                setLoadingRemove(false);
+                return notify(`Delete banner with id: ${idsError.join()} Failed!`, 'error');
+            }
+
+            setCheckedObj([]);
+            setExistingData([]);
+            form.setValue('checkedAll', false);
+            await getBanner();
+            setOpenRemove(false);
+            setOpenDialogSuccess(true);
+            filteredData.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
+                form.setValue(datas, false);
+            });
+            setLoadingRemove(false);
+            return notify('Successfully deleted banner');
+        } catch (err: any) {
+            setLoadingRemove(false);
+            return notify(err.message, 'error');
+        }
     };
 
     React.useEffect(() => {
@@ -370,16 +345,22 @@ const Banner = () => {
                 <DialogContent sx={{ m: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <DialogContentText id='alert-dialog-description'>{checkedObj.length} items selected</DialogContentText>
                 </DialogContent>
-                <DialogActions sx={{ m: 1 }}>
-                    <CustomButton title='REMOVE' height='47px' onClick={handleexistingData} />
-                    <CustomButton
-                        title='CANCEL'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                        border='1px solid #A54CE5'
-                        height='47px'
-                        onClick={() => setOpenRemove(false)}
-                    />
+                <DialogActions sx={{ m: 1, justifyContent: 'center' }}>
+                    {loadingRemove ? (
+                        <CircularProgress />
+                    ) : (
+                        <>
+                            <CustomButton title='REMOVE' height='47px' onClick={handleRemoveData} />
+                            <CustomButton
+                                title='CANCEL'
+                                backgroundColor='white'
+                                color='#A54CE5'
+                                border='1px solid #A54CE5'
+                                height='47px'
+                                onClick={() => setOpenRemove(false)}
+                            />
+                        </>
+                    )}
                 </DialogActions>
             </Dialog>
             <TitleCard
@@ -570,9 +551,7 @@ const Banner = () => {
                                                                 form={form}
                                                                 name={`checkbox${item.id}`}
                                                                 checked={!!form.watch(check)}
-                                                                onChange={(e: any) =>
-                                                                    handleSingleCheckBox(e, `checkbox${item.id}`, item.id)
-                                                                }
+                                                                onChange={(e: any) => handleSingleCheckBox(e, `checkbox${item.id}`, item)}
                                                             />
                                                         </TableCell>
                                                     </TableRow>
