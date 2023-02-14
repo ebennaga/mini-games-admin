@@ -95,7 +95,7 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                                         {item.title}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
-                                        {item.created_by.username}
+                                        {item.created_by.name}
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='left'>
                                         {dateFormat(new Date(item.created_at))}
