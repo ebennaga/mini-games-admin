@@ -135,7 +135,7 @@ const ParticipantTournament = () => {
                         method: 'POST',
                         data: {
                             tournament_id: item.tornament.id,
-                            participant_ids: item.id
+                            participant_ids: item.user.id
                         }
                     });
                     if (response?.status !== 200) {
