@@ -417,7 +417,7 @@ const ParticipantTournament = () => {
                 textCancelButton='CANCEL'
                 loading={loadingDelete}
             />
-            <DialogSuccess title='Sucess Remove Games' open={openDialogSuccess} setOpen={setOpenDialogSuccess} />
+            <DialogSuccess title='Sucess Remove Participant Tournament' open={openDialogSuccess} setOpen={setOpenDialogSuccess} />
         </Box>
     );
 };
