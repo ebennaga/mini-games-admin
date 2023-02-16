@@ -96,9 +96,9 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
             fee: '',
             tableData: [
                 {
-                    max_pos: '',
-                    point: '',
-                    coin: ''
+                    max_pos: 0,
+                    point: 0,
+                    coin: 0
                 }
             ]
         }
@@ -199,7 +199,6 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 endpoint: '/tournaments',
                 data: body
             });
-
             if (response?.status === 200) {
                 setIsLoading(false);
                 notify('Create tournament success!');
@@ -213,9 +212,12 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         } catch (error: any) {
             notify(error.message, 'error');
             setIsLoading(false);
+            // console.log(error);
         }
         setIsLoading(false);
     };
+
+    // console.log(form.watch());
 
     // const MenuProps = {
     //     PaperProps: {
