@@ -135,7 +135,7 @@ const ParticipantTournament = () => {
                         method: 'POST',
                         data: {
                             tournament_id: item.tornament.id,
-                            participant_ids: item.id
+                            participant_ids: item.user.id
                         }
                     });
                     if (response?.status !== 200) {
@@ -417,7 +417,7 @@ const ParticipantTournament = () => {
                 textCancelButton='CANCEL'
                 loading={loadingDelete}
             />
-            <DialogSuccess title='Sucess Remove Games' open={openDialogSuccess} setOpen={setOpenDialogSuccess} />
+            <DialogSuccess title='Sucess Remove Participant Tournament' open={openDialogSuccess} setOpen={setOpenDialogSuccess} />
         </Box>
     );
 };
