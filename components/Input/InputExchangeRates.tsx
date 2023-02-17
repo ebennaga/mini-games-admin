@@ -10,6 +10,7 @@ interface InputExchangeRatesProps {
     nameName?: string;
     // effectiveName?: string;
     coinsName: string;
+    bonusName: string;
     idrName: string;
     // descriptionName?: string;
     form: any;
@@ -33,8 +34,8 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
     handleSubmit,
     loadingSubmit,
     loading,
-    rules
-    // bonusName
+    rules,
+    bonusName
 }) => {
     const router = useRouter();
 
@@ -112,7 +113,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             type='number'
                             rules={rules}
                             form={form}
-                            name='bonus'
+                            name={bonusName}
                             label='Amount'
                             placeholder='Enter Amount'
                             startAdornment={
