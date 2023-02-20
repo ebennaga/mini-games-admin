@@ -103,7 +103,7 @@ const ExchangeRatesAdd = () => {
                     form={form}
                     handleSubmit={handleSubmit}
                     rules={{ validate: validateNumber }}
-                    // descriptionName='description'
+                    bonusName='bonus' // descriptionName='description'
                     // effectiveName='effective'
                     // nameName='name'
                 />
