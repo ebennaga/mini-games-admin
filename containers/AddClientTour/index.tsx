@@ -445,7 +445,7 @@ const AddClientTour = () => {
                             isSelectType
                             listSelect={[
                                 { id: '1', name: 'OPEN' },
-                                { id: '2', name: 'CLOSE' }
+                                { id: '2', name: 'CLOSED' }
                             ]}
                             isMultiline={false}
                             rules={rules}
