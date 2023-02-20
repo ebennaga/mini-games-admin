@@ -15,9 +15,10 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem
+    MenuItem,
+    Button
 } from '@mui/material';
-import React from 'react';
+import React, { useRef } from 'react';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import { useForm } from 'react-hook-form';
@@ -34,6 +35,8 @@ import DialogMap from 'components/Dialog/DialogMap';
 import useAPICaller from 'hooks/useAPICaller';
 import convertBase64 from 'helpers/convertBase64';
 import useNotify from 'hooks/useNotify';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import DialogBarcode from 'components/Dialog/DialogBarcode';
 
 const dummyData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
@@ -61,7 +64,8 @@ const AddClientTour = () => {
             address: 'Intermark, Rawa Mekar Jaya, Serpong, Tangerang Selatan, Banten, Indonesia',
             lat: -6.30943345,
             long: 106.6893430616688,
-            company: '0'
+            company: '0',
+            pin: ''
         }
     });
 
@@ -81,6 +85,7 @@ const AddClientTour = () => {
     const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
+    const [openBarcode, setOpenBarcode] = React.useState<boolean>(false);
     const [value, setValue] = React.useState('0');
     const [tableObj, setTableObj] = React.useState<any>({
         max_pos: '',
@@ -89,6 +94,7 @@ const AddClientTour = () => {
     });
 
     const notify = useNotify();
+    const componentRef = useRef();
 
     const getDataCompany = async () => {
         setIsLoading(true);
@@ -231,24 +237,28 @@ const AddClientTour = () => {
         <Box component='section'>
             <TitleCard title='Create Client Tournament' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(handleSubmitData)}>
-                <Box sx={{ my: 3, mx: 2, width: '40%' }}>
-                    <InputWithLabel
-                        label='Tournament Title'
-                        name='title'
-                        type='text'
-                        form={form}
-                        labelField='Title'
-                        placeHolder='Max 100 Character'
-                        isSelectType={false}
-                        isMultiline={false}
-                        rules={rules}
-                        isRequired
-                    />
-                    <InputUpload isRequired label='Tournament Image' name='image' form={form} rules={rules} />
+                <Box sx={{ my: 3, mx: 2, width: '100%' }}>
+                    <Box sx={{ width: '40%' }}>
+                        <InputWithLabel
+                            label='Tournament Title'
+                            name='title'
+                            type='text'
+                            form={form}
+                            labelField='Title'
+                            placeHolder='Max 100 Character'
+                            isSelectType={false}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ width: '40%' }}>
+                        <InputUpload isRequired label='Tournament Image' name='image' form={form} rules={rules} />
+                    </Box>
                     <Box
                         sx={{
                             mt: 2,
-                            width: '100%',
+                            width: '40%',
                             display: 'flex',
                             justifyContent: '',
                             alignItems: 'center'
@@ -304,7 +314,7 @@ const AddClientTour = () => {
                             </FormControl>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center', width: '40%' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Location</Typography>
@@ -361,7 +371,7 @@ const AddClientTour = () => {
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center', width: '40%' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Duration</Typography>
@@ -391,7 +401,7 @@ const AddClientTour = () => {
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ my: '30px' }}>
+                    <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Tournament Type'
                             name='type'
@@ -409,7 +419,7 @@ const AddClientTour = () => {
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px' }}>
+                    <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Games'
                             name='games'
@@ -424,7 +434,7 @@ const AddClientTour = () => {
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px' }}>
+                    <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Tournament Mode'
                             name='mode'
@@ -433,13 +443,40 @@ const AddClientTour = () => {
                             labelField='Mode'
                             placeHolder='Select Mode'
                             isSelectType
-                            listSelect={[{ id: '1', name: 'Mode 1' }]}
+                            listSelect={[
+                                { id: '1', name: 'OPEN' },
+                                { id: '2', name: 'CLOSE' }
+                            ]}
                             isMultiline={false}
                             rules={rules}
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px' }}>
+                    <Box sx={{ my: '30px', position: 'relative', width: '40%' }}>
+                        <InputWithLabel
+                            label='Pin'
+                            name='pin'
+                            type='number'
+                            form={form}
+                            placeHolder='Fee Amount'
+                            labelField='Enter Pin'
+                            isSelectType={false}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
+                        <Button
+                            disabled={!form.watch('pin')}
+                            onClick={() => setOpenBarcode(true)}
+                            color='secondary'
+                            variant='contained'
+                            sx={{ right: -220, top: 0, background: '#A54CE5', color: 'white', position: 'absolute', height: '56px' }}
+                            startIcon={<QrCode2Icon />}
+                        >
+                            Generate QR Code
+                        </Button>
+                    </Box>
+                    <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Tournament Fee'
                             name='fee'
@@ -453,13 +490,13 @@ const AddClientTour = () => {
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ display: 'flex', aligItem: 'center', gap: '25px', ml: 2.5, my: '30px' }}>
+                    <Box sx={{ display: 'flex', aligItem: 'center', gap: '25px', ml: 2.5, my: '30px', width: '50%' }}>
                         <Box
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
-                                width: '25%'
+                                width: '20%'
                             }}
                         >
                             <Box>
@@ -481,7 +518,7 @@ const AddClientTour = () => {
                             </Box>
                             <Typography sx={{ fontWeight: 'bold' }}>:</Typography>
                         </Box>
-                        <Box sx={{ display: 'flex', aligItem: 'center', gap: '10px', width: '75%' }}>
+                        <Box sx={{ display: 'flex', aligItem: 'center', gap: '10px', width: '68%' }}>
                             <FormControl fullWidth>
                                 <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
                                     Copy Table
@@ -536,7 +573,16 @@ const AddClientTour = () => {
                             </ButtonBase>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', padding: '10px', justifyContent: 'end', alignItems: 'flex-end' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            padding: '10px',
+                            justifyContent: 'end',
+                            alignItems: 'flex-end',
+                            width: '40%'
+                        }}
+                    >
                         <Box sx={{ width: '70%' }}>
                             <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
                                 <Table sx={{ width: '100%' }}>
@@ -689,8 +735,7 @@ const AddClientTour = () => {
                             </Box>
                         </Box>
                     </Box>
-
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center', width: '40%' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Total Pool Prize</Typography>
@@ -727,6 +772,7 @@ const AddClientTour = () => {
                     )}
                 </Box>
             </form>
+            <DialogBarcode form={form} open={openBarcode} setOpen={setOpenBarcode} printHandler={() => {}} />
             <DialogMap open={openDialogMap} setOpen={setOpenDialogMap} form={form} nameAddress='address' nameLat='lat' nameLong='long' />
         </Box>
     );
