@@ -558,6 +558,7 @@ const ClientTournament = () => {
                     >
                         <InputSelect form={form} name='games' dataSelect={gamesSelect} title='Games' placeholder='Select Games' />
                     </FormControl>
+
                     <Box sx={{ marginTop: '14px' }}>
                         <InputDate label='Start Date' type='date' form={form} name='startDate' />
                     </Box>
