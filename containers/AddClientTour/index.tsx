@@ -452,30 +452,32 @@ const AddClientTour = () => {
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px', position: 'relative', width: '40%' }}>
-                        <InputWithLabel
-                            label='Pin'
-                            name='pin'
-                            type='number'
-                            form={form}
-                            placeHolder='Fee Amount'
-                            labelField='Enter Pin'
-                            isSelectType={false}
-                            isMultiline={false}
-                            rules={rules}
-                            isRequired
-                        />
-                        <Button
-                            disabled={!form.watch('pin')}
-                            onClick={() => setOpenBarcode(true)}
-                            color='secondary'
-                            variant='contained'
-                            sx={{ right: -220, top: 0, background: '#A54CE5', color: 'white', position: 'absolute', height: '56px' }}
-                            startIcon={<QrCode2Icon />}
-                        >
-                            Generate QR Code
-                        </Button>
-                    </Box>
+                    {form.watch('mode') === '2' && (
+                        <Box sx={{ my: '30px', position: 'relative', width: '40%' }}>
+                            <InputWithLabel
+                                label='Pin'
+                                name='pin'
+                                type='number'
+                                form={form}
+                                placeHolder='Fee Amount'
+                                labelField='Enter Pin'
+                                isSelectType={false}
+                                isMultiline={false}
+                                rules={rules}
+                                isRequired
+                            />
+                            <Button
+                                disabled={!form.watch('pin')}
+                                onClick={() => setOpenBarcode(true)}
+                                color='secondary'
+                                variant='contained'
+                                sx={{ right: -220, top: 0, background: '#A54CE5', color: 'white', position: 'absolute', height: '56px' }}
+                                startIcon={<QrCode2Icon />}
+                            >
+                                Generate QR Code
+                            </Button>
+                        </Box>
+                    )}
                     <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Tournament Fee'
