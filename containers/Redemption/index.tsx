@@ -1,9 +1,13 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, ButtonBase, Divider, Tabs, Tab, SelectChangeEvent, Skeleton } from '@mui/material';
 import InputStartEndDate from 'components/Input/InputStartEndDate';
 import { useForm } from 'react-hook-form';
 import DownloadIcon from '@mui/icons-material/Download';
 import HeaderChildren from 'components/HeaderChildren';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 import TabPanelAll from './TabPanelAll';
 import TabPanelPending from './TabPanelPending';
 import TabPanelComplete from './TabPanelComplete';
@@ -64,6 +68,7 @@ const Redemption = () => {
             endDate: ''
         }
     });
+    const [redempData, setRedempData] = React.useState([]);
     const [value, setValue] = React.useState(0);
     const [data, setData] = React.useState<any>(dummyData);
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -75,6 +80,9 @@ const Redemption = () => {
         setValue(newValue);
     };
 
+    const { fetchAPI, isLoading: loading } = useAPICaller();
+    const notify = useNotify();
+
     const a11yProps = (index: number) => {
         return {
             id: `simple-tab-${index}`,
@@ -82,10 +90,28 @@ const Redemption = () => {
         };
     };
 
+    const getRedemptionsData = async () => {
+        try {
+            const status: any =
+                value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: `/redemptions?search=&status=${status}`
+            });
+            if (response.status === 200) {
+                setRedempData(response.data.data);
+                setData(response.data.data);
+                notify(response.data.message, 'success');
+            }
+        } catch (error: any) {
+            // console.log(error.message);
+            notify(error.message, 'error');
+        }
+    };
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
-        return data.slice(startIndex, endIndex);
+        return redempData.slice(startIndex, endIndex);
     };
 
     const goToNextPage = () => {
@@ -109,30 +135,30 @@ const Redemption = () => {
         let result: Array<any> = [];
 
         if (startDate && !endDate) {
-            const arr = result.length > 0 ? result : dummyData;
+            const arr = result.length > 0 ? result : redempData;
             result = [
                 ...arr.filter((item: any) => {
-                    const valueData: any = new Date(item.redeemTime);
+                    const valueData: any = new Date(item.created_at);
                     const key: any = new Date(startDate);
                     return valueData >= key;
                 })
             ];
         }
         if (endDate && !startDate) {
-            const arr = result.length > 0 ? result : dummyData;
+            const arr = result.length > 0 ? result : redempData;
             result = [
                 ...arr.filter((item: any) => {
-                    const valueData: any = new Date(item.redeemTime);
+                    const valueData: any = new Date(item.created_at);
                     const key: any = new Date(endDate);
                     return valueData <= key;
                 })
             ];
         }
         if (endDate && startDate) {
-            const arr = result.length > 0 ? result : dummyData;
+            const arr = result.length > 0 ? result : redempData;
             result = [
                 ...arr.filter((item: any) => {
-                    const valueData: any = new Date(item.redeemTime);
+                    const valueData: any = new Date(item.created_at);
                     const keyStartDate: any = new Date(startDate);
                     const keyEndDate: any = new Date(endDate);
                     return valueData >= keyStartDate && valueData <= keyEndDate;
@@ -146,11 +172,12 @@ const Redemption = () => {
     };
 
     React.useEffect(() => {
-        setData(dummyData);
-    }, []);
+        // setData(dummyData);
+        getRedemptionsData();
+    }, [value]);
 
     React.useEffect(() => {
-        setPages(Math.round(data.length / Number(row)));
+        setPages(Math.round(redempData.length / Number(row)));
     }, [pages, row]);
 
     React.useEffect(() => {
@@ -175,9 +202,9 @@ const Redemption = () => {
                 break;
         }
         if (key !== 'All') {
-            setData(dummyData.filter((item: any) => item.status === key));
+            setData(redempData.filter((item: any) => item.status === key));
         } else if (key === 'All') {
-            setData(dummyData);
+            setData(redempData);
         }
     }, [value]);
 
@@ -313,7 +340,7 @@ const Redemption = () => {
                             goToNextPage={goToNextPage}
                             goToPrevPage={goToPreviousPage}
                             getPaginatedData={getPaginatedData}
-                            data={data}
+                            data={redempData}
                             row={row}
                             handleViewRow={handleViewRow}
                         />
@@ -323,7 +350,7 @@ const Redemption = () => {
                             goToNextPage={goToNextPage}
                             goToPrevPage={goToPreviousPage}
                             getPaginatedData={getPaginatedData}
-                            data={data}
+                            data={redempData}
                             row={row}
                             handleViewRow={handleViewRow}
                         />
@@ -333,7 +360,7 @@ const Redemption = () => {
                             goToNextPage={goToNextPage}
                             goToPrevPage={goToPreviousPage}
                             getPaginatedData={getPaginatedData}
-                            data={data}
+                            data={redempData}
                             row={row}
                             handleViewRow={handleViewRow}
                         />
@@ -343,7 +370,7 @@ const Redemption = () => {
                             goToNextPage={goToNextPage}
                             goToPrevPage={goToPreviousPage}
                             getPaginatedData={getPaginatedData}
-                            data={data}
+                            data={redempData}
                             row={row}
                             handleViewRow={handleViewRow}
                         />
@@ -353,7 +380,7 @@ const Redemption = () => {
                             goToNextPage={goToNextPage}
                             goToPrevPage={goToPreviousPage}
                             getPaginatedData={getPaginatedData}
-                            data={data}
+                            data={redempData}
                             row={row}
                             handleViewRow={handleViewRow}
                         />

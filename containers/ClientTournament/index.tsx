@@ -265,8 +265,8 @@ const ClientTournament = () => {
         const temp: any[] = [];
         form.setValue('checkedAll', e.target.checked);
         if (e.target.checked) {
-            filteredData.forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            filteredData.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, e.target.checked);
                 temp.push(item);
             });
@@ -275,12 +275,14 @@ const ClientTournament = () => {
         } else if (!e.target.checked) {
             setCheckedObj([]);
             setExistingData([]);
-            filteredData.forEach((item: any, idx: number) => {
-                const datas: any = `checkbox${idx + 1}`;
+            filteredData.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
                 form.setValue(datas, false);
             });
         }
     };
+
+    console.log(form.watch());
 
     const checkTrue: string[] = [];
     const handleSingleCheckBox = (e: any, name: any, id: number) => {

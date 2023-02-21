@@ -24,7 +24,7 @@ const Pagination: React.FC<PaginationProps> = ({ row, data, handleViewRow, goToP
                     labelId='demo-simple-select-label'
                     id='demo-simple-select'
                     value={row}
-                    defaultValue={data.length.toString()}
+                    defaultValue={data.length?.toString()}
                     onChange={handleViewRow}
                 >
                     {[...Array(data.length)].map((item: any, idx: number) => (

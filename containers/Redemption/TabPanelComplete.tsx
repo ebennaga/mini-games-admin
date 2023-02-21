@@ -113,13 +113,13 @@ const TabPanelComplete: React.FC<TabPanelCompleteProps> = ({
                             {getPaginatedData().length > 0 &&
                                 getPaginatedData().map((item: any, idx: number) => {
                                     let styles: any = {};
-                                    if (item.status === 'Pending') {
+                                    if (item.status === 'pending') {
                                         styles = { backgroundColor: '#FF4566', borderRadius: '64px', px: 1 };
-                                    } else if (item.status === 'Process') {
+                                    } else if (item.status === 'processed') {
                                         styles = { backgroundColor: '#0288D1', borderRadius: '64px', px: 1 };
-                                    } else if (item.status === 'Delivered') {
+                                    } else if (item.status === 'delivered') {
                                         styles = { backgroundColor: '#A54CE5', borderRadius: '64px', px: 1 };
-                                    } else if (item.status === 'Completed') {
+                                    } else if (item.status === 'completed') {
                                         styles = { backgroundColor: '#56CF54', borderRadius: '64px', px: 1 };
                                     }
                                     return (
@@ -131,37 +131,37 @@ const TabPanelComplete: React.FC<TabPanelCompleteProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.nickname}
+                                                {item.user.username}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.product}
+                                                {item.redemption_product.name}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.noOrder}
+                                                {item.order_code}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {new Date(item.redeemTime).toLocaleString('id')}
+                                                {new Date(item.created_at).toLocaleString('id')}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.processTime}
+                                                {item.processed_at}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.completedTime}
+                                                {item.completed_at}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -175,13 +175,13 @@ const TabPanelComplete: React.FC<TabPanelCompleteProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.kurir}
+                                                {item.delivery.courier?.name}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.resi}
+                                                {item.delivery.courier?.resi_no}
                                             </TableCell>
                                         </TableRow>
                                     );
