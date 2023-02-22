@@ -168,7 +168,7 @@ const TabPanelAll: React.FC<TabPanelAllProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                <Box sx={{ color: 'white' }}>
+                                                <Box sx={{ color: 'black' }}>
                                                     <Box sx={styles}>{item.status}</Box>
                                                 </Box>
                                             </TableCell>

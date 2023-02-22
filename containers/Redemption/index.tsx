@@ -68,7 +68,7 @@ const Redemption = () => {
             endDate: ''
         }
     });
-    const [redempData, setRedempData] = React.useState([]);
+    const [redempData, setRedempData] = React.useState<any>([]);
     const [value, setValue] = React.useState(0);
     const [data, setData] = React.useState<any>(dummyData);
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -91,6 +91,7 @@ const Redemption = () => {
     };
 
     const getRedemptionsData = async () => {
+        setIsLoading(true);
         try {
             const status: any =
                 value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
@@ -102,12 +103,15 @@ const Redemption = () => {
                 setRedempData(response.data.data);
                 setData(response.data.data);
                 notify(response.data.message, 'success');
+                setIsLoading(false);
             }
         } catch (error: any) {
             // console.log(error.message);
             notify(error.message, 'error');
+            setIsLoading(false);
         }
     };
+
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
@@ -119,6 +123,7 @@ const Redemption = () => {
             setCurrentPage((page) => page + 1);
         }
     };
+
     const goToPreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage((page) => page - 1);
@@ -171,8 +176,42 @@ const Redemption = () => {
         setPages(1);
     };
 
+    // OPTIONS FILTER DATA IF NEED IT
+    // React.useEffect(() => {
+    //     const status: any =
+    //         value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
+    //     if (status === 'pending') {
+    //         const tempData: any = [...redempData];
+    //         const filter = tempData.filter((item: any) => {
+    //             return item.status === 'pending';
+    //         });
+    //         // filtered = [...filtered, filter];
+    //         setRedempData([...redempData, ...filter]);
+    //     }
+    //     if (status === 'proccessed') {
+    //         const tempData = [...data];
+    //         const filter = tempData.filter((item: any) => {
+    //             return item.status === 'proccessed';
+    //         });
+    //         setRedempData([...redempData, ...filter]);
+    //     }
+    //     if (status === 'delivered') {
+    //         const tempData = [...data];
+    //         const filter = tempData.filter((item: any) => {
+    //             return item.status === 'delivered';
+    //         });
+    //         setRedempData([...redempData, ...filter]);
+    //     }
+    //     if (status === 'completed') {
+    //         const tempData = [...data];
+    //         const filter = tempData.filter((item: any) => {
+    //             return item.status === 'completed';
+    //         });
+    //         setRedempData([...redempData, ...filter]);
+    //     }
+    // }, [value, redempData]);
+
     React.useEffect(() => {
-        // setData(dummyData);
         getRedemptionsData();
     }, [value]);
 
