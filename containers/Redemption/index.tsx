@@ -203,9 +203,6 @@ const Redemption = () => {
         let result: Array<any> = [];
         // console.log({ startDate });
         // console.log({ endDate });
-        if (!startDate && !endDate) {
-            result = [...redempData];
-        }
         if (startDate && !endDate) {
             const arr = result.length > 0 ? result : value !== 0 ? filterData : redempData;
             result = [
@@ -332,11 +329,34 @@ const Redemption = () => {
                     <Box display='flex' alignItems='center' gap='20px'>
                         <InputStartEndDate label='Date' nameStartDate='startDate' nameEndDate='endDate' form={form} />
                         <ButtonBase
+                            disabled={!form.watch('startDate') && !form.watch('endDate')}
                             onClick={handleGetData}
-                            sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px', mt: '7px' }}
+                            sx={{
+                                '&:disabled': {
+                                    backgroundColor: '#949494',
+                                    color: 'white',
+                                    border: 'none'
+                                },
+                                background: '#A54CE5',
+                                color: '#fff',
+                                padding: '12px 22px',
+                                borderRadius: '4px',
+                                mt: '7px'
+                            }}
                         >
                             GET DATA
                         </ButtonBase>
+                        {/* <ButtonBase
+                            onClick={() => {
+                                getRedemptionsData();
+                                setRedempData(redempData);
+                                setData(data);
+                                // form.reset();
+                            }}
+                            sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px', mt: '7px' }}
+                        >
+                            RESET DATA
+                        </ButtonBase> */}
                     </Box>
                     <ButtonBase
                         sx={{
