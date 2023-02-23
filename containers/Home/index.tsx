@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Box, ButtonBase, Grid, Tab, Tabs } from '@mui/material';
+import { Box, ButtonBase, Grid, Skeleton, Tab, Tabs } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import React, { useEffect } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -10,9 +10,15 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import getRandomColor from 'helpers/getRandomColor';
 import ChartBar from './ChartBar';
 import ChartDoughnut from './ChartDoughnut';
 import ChartSpline from './ChartSpline';
+
+interface chartLineI {
+    labels: string[];
+    dataChart: any[];
+}
 
 const Home = () => {
     const router = useRouter();
@@ -33,24 +39,51 @@ const Home = () => {
         { id: 5, label: 'Accessories', color: '#F1EDFF', value: 12.5 }
     ];
 
+    /* Format data chart bar
     const dataChartBar = [
         { id: 1, label: 'Tournament Hop Up 1', value: 450, color: '#A54CE5' },
-        { id: 2, label: 'Tournament Rose Dart 1', value: 185, color: '#A54CE5' },
-        { id: 3, label: 'Tournament Tower Stack 1', value: 600, color: '#A54CE5' }
-    ];
+        { id: 2, label: 'Tournament Rose Dart 1', value: 185, color: '#A54CE5' }
+    ]; */
 
+    /* Format data chart doughnut
     const dataChartDoughnut2 = [
         { id: 3, label: 'Hop Up', color: '#664EAB', value: 58 },
-        { id: 1, label: 'Tower Stacks', color: '#8F67FF', value: 22 },
-        { id: 2, label: 'Rose Dart', color: '#BBAAF0', value: 20 }
-    ];
+        { id: 1, label: 'Tower Stacks', color: '#8F67FF', value: 22 }
+    ]; */
+
     const userState = useSelector((state: any) => state.webpage?.user?.user);
 
     const [tabChartSpline, setTabChartSpline] = React.useState<string>('0');
     const [tabChartDoughnut, setTabChartDoughnut] = React.useState<string>('0');
     const [tabChartBar, setTabChartBar] = React.useState<string>('0');
     const [tabChartDoughnut2, setTabChartDoughnut2] = React.useState<string>('0');
-    const [isLoading, setIsLoading] = React.useState(false);
+
+    // state loading fetch data
+    const [loadingChartBar, setLoadingChartBar] = React.useState(true);
+    const [loadingChartLine, setLoadingChartLine] = React.useState<boolean>(false);
+    const [loadingChartDoughnutTop, setLoadingChartDoughnutTop] = React.useState<boolean>(false);
+    const [loadingChartDoughnutBottom, setLoadingChartDoughnutBottom] = React.useState<boolean>(true);
+
+    // state for data chart
+    const [chartLine, setChartLine] = React.useState<chartLineI>({ labels, dataChart });
+    const [chartBar, setChartBar] = React.useState<Array<any>>([]);
+    const [chartDoughnutBottom, setChartDoughtnurBottom] = React.useState<Array<any>>([]);
+
+    const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ];
+
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
 
@@ -62,24 +95,91 @@ const Home = () => {
         }
     });
 
-    const handleFetchData = async () => {
-        setIsLoading(true);
+    // Fetch data chart lines
+    const fetchChartLines = async (endpoint: 'most-redeemed-prizes' | 'expected-game-types' | 'tournament-played') => {
+        setLoadingChartLine(true);
         try {
             const response = await fetchAPI({
                 method: 'GET',
-                endpoint: `dashboard/lines/most-redeemed-prizes`
+                endpoint: `dashboard/lines/${endpoint}`
             });
 
             if (response.status === 200) {
-                notify(response.data.message, 'success');
+                notify(`${response.data.message}oke`, 'success');
+                let resultLabels: string[] = [];
+                const resultData = response.data.data.map((item: any, index: number) => {
+                    const { key, values, datas } = item;
+                    const color = getRandomColor();
+                    const data = { id: index, color, label: key, value: [values] };
+                    const month = months[new Date(datas?.dates).getMonth()];
+                    resultLabels = [...resultLabels, month];
+                    return data;
+                });
+                console.log('response chart line', resultData, resultLabels);
+            }
+        } catch (err: any) {
+            notify(`${err.message} error nih`, 'error');
+        }
+        setLoadingChartLine(false);
+    };
+
+    // Fetch data Chart Bar tournament played
+    const fetchChartBar = async () => {
+        setLoadingChartBar(true);
+        try {
+            const response = await fetchAPI({
+                endpoint: 'dashboard/columns/tournament-played'
+            });
+            if (response.status === 200) {
+                const result = response.data.data.map((item: any, index: number) => {
+                    const {
+                        datas: { values },
+                        key
+                    } = item;
+                    return { id: index, label: key, value: values, color: '#A54CE5' };
+                });
+                setChartBar(result);
             }
         } catch (err: any) {
             notify(err.message, 'error');
-            setIsLoading(false);
         }
+        setLoadingChartBar(false);
     };
+
+    // Fetch data chart doughnut bottom (casual & tournament players)
+    const fetchChartDoughtnutBottom = async (endpoint: 'tournament-players' | 'casual-players') => {
+        setLoadingChartDoughnutBottom(true);
+        try {
+            const response = await fetchAPI({
+                endpoint: `dashboard/doughnuts/${endpoint}`
+            });
+            if (response.status === 200) {
+                const result = response.data.data.map((item: any, index: number) => {
+                    const {
+                        datas: { values },
+                        key
+                    } = item;
+                    const color = `rgba(165, 76, 229, ${10 - index})`;
+                    return { id: index, label: key, color, value: values };
+                });
+                setChartDoughtnurBottom(result);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setLoadingChartDoughnutBottom(false);
+    };
+
+    // Event change tab chart line
     const handleChangeTabSpline = (e: React.SyntheticEvent, newValue: string) => {
         setTabChartSpline(newValue);
+        if (newValue === '0') {
+            fetchChartLines('most-redeemed-prizes');
+        } else if (newValue === '1') {
+            fetchChartLines('expected-game-types');
+        } else {
+            fetchChartLines('tournament-played');
+        }
     };
 
     const handleChangeTabDoughnut = (e: React.SyntheticEvent, newValue: string) => {
@@ -90,13 +190,25 @@ const Home = () => {
         setTabChartBar(newValue);
     };
 
+    // Event change tab chart doughnut bottom
     const handleChangeTabDoughnut2 = (e: React.SyntheticEvent, newValue: string) => {
+        if (newValue === '0') {
+            fetchChartDoughtnutBottom('casual-players');
+        } else {
+            fetchChartDoughtnutBottom('tournament-players');
+        }
         setTabChartDoughnut2(newValue);
     };
 
     React.useEffect(() => {
-        handleFetchData();
+        const getAllData = async () => {
+            await fetchChartLines('tournament-played');
+            await fetchChartBar();
+            await fetchChartDoughtnutBottom('casual-players');
+        };
+        getAllData();
     }, []);
+
     useEffect(() => {
         if (!userState) {
             router.push('/sign-in');
@@ -212,7 +324,15 @@ const Home = () => {
                         >
                             <Tab label='Tournaments Played' value='0' sx={{ fontSize: '14px', fontWeight: 600 }} />
                         </Tabs>
-                        <ChartBar dataChart={dataChartBar} />
+                        {loadingChartBar ? (
+                            <Box sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                                <Skeleton variant='rounded' sx={{ height: '150px', width: '40px' }} />
+                                <Skeleton variant='rounded' sx={{ height: '200px', width: '40px' }} />
+                                <Skeleton variant='rounded' sx={{ height: '100px', width: '40px' }} />
+                            </Box>
+                        ) : (
+                            <ChartBar dataChart={chartBar} />
+                        )}
                     </Box>
                 </Grid>
                 <Grid
@@ -242,7 +362,22 @@ const Home = () => {
                             <Tab label='Tournament Players' value='1' sx={{ fontSize: '14px', fontWeight: 600 }} />
                         </Tabs>
                         <Box width='70%' margin='auto'>
-                            <ChartDoughnut dataChart={dataChartDoughnut2} />
+                            {loadingChartDoughnutBottom ? (
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Skeleton
+                                        variant='rounded'
+                                        sx={{
+                                            width: '200px',
+                                            height: '200px',
+                                            borderRadius: '300px',
+                                            border: '10px solid rgba(0, 0, 0, 0.11)',
+                                            background: 'rgba(0, 0, 0, 0)'
+                                        }}
+                                    />
+                                </Box>
+                            ) : (
+                                <ChartDoughnut dataChart={chartDoughnutBottom} />
+                            )}
                         </Box>
                     </Box>
                 </Grid>
