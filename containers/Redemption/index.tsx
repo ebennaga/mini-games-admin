@@ -16,48 +16,104 @@ import TabPanelProcess from './TabPanelProcess';
 
 const dummyData = [
     {
-        nickname: 'Nopal',
-        product: 'Mousepad Logitech',
-        noOrder: '123113',
-        redeemTime: '2022-12-20T17:01:00.000Z',
-        processTime: '-',
-        completedTime: '-',
-        status: 'Pending',
-        kurir: '-',
-        resi: '-'
+        id: '5',
+        order_code: 'ORD-OJ9WQ4RAVG',
+        user: {
+            id: '229',
+            avatar: 1,
+            username: 'dandiyra'
+        },
+        redemption_product: {
+            id: '1',
+            name: 'Logam Mulia 2 Gram'
+        },
+        delivery: {
+            id: '',
+            resi_no: '',
+            courier: {
+                id: '1',
+                name: 'jnt'
+            }
+        },
+        status: 'pending',
+        processed_at: null,
+        completed_at: null,
+        created_at: '2022-11-09T13:37:02.000Z'
     },
     {
-        nickname: 'Nopal',
-        product: 'Mousepad Logitech',
-        noOrder: '123113',
-        redeemTime: '2023-01-10T14:03:00.000Z',
-        processTime: '-',
-        completedTime: '-',
-        status: 'Completed',
-        kurir: '-',
-        resi: '-'
+        id: '6',
+        order_code: 'ORD--PY48F_09U',
+        user: {
+            id: '1',
+            avatar: 1,
+            username: 'anoc'
+        },
+        redemption_product: {
+            id: '6',
+            name: 'Logam Mulia 2 Gram'
+        },
+        delivery: {
+            id: '3',
+            resi_no: '',
+            courier: {
+                id: '',
+                name: ''
+            }
+        },
+        status: 'processed',
+        processed_at: null,
+        completed_at: null,
+        created_at: '2022-11-09T13:38:43.000Z'
     },
     {
-        nickname: 'Nopal',
-        product: 'Mousepad Logitech',
-        noOrder: '123113',
-        redeemTime: '2022-12-25T17:01:00.000Z',
-        processTime: '-',
-        completedTime: '-',
-        status: 'Delivered',
-        kurir: 'SICEPAT',
-        resi: '-'
+        id: '7',
+        order_code: 'ORD-BOYTUM--9A',
+        user: {
+            id: '1',
+            avatar: 1,
+            username: 'anoc'
+        },
+        redemption_product: {
+            id: '7',
+            name: 'Logam Mulia 1 Gram'
+        },
+        delivery: {
+            id: '7',
+            resi_no: '12341231231231',
+            courier: {
+                id: '1',
+                name: 'sicepat'
+            }
+        },
+        status: 'delivered',
+        processed_at: null,
+        completed_at: null,
+        created_at: '2022-11-09T13:39:38.000Z'
     },
     {
-        nickname: 'Nopal',
-        product: 'Mousepad Logitech',
-        noOrder: '123113',
-        redeemTime: '2023-02-20T01:31:00.000Z',
-        processTime: '-',
-        completedTime: '-',
-        status: 'Process',
-        kurir: 'SICEPAT',
-        resi: '-'
+        id: '4',
+        order_code: 'ORD-FPQFRSWNOB',
+        user: {
+            id: '1',
+            avatar: 1,
+            username: 'anoc'
+        },
+        redemption_product: {
+            id: '',
+            name: ''
+        },
+        delivery: {
+            id: '',
+            resi_no: '',
+            courier: {
+                id: '',
+                name: ''
+            }
+        },
+        status: 'completed',
+        processed_at: null,
+        completed_at: null,
+        created_at: '2022-11-09T13:34:57.000Z'
     }
 ];
 const Redemption = () => {
@@ -69,10 +125,11 @@ const Redemption = () => {
         }
     });
     const [redempData, setRedempData] = React.useState<any>([]);
+    const [filterData, setFilterData] = React.useState<any>([]);
     const [value, setValue] = React.useState(0);
     const [data, setData] = React.useState<any>(dummyData);
     const [currentPage, setCurrentPage] = React.useState(1);
-    const [row, setRow] = React.useState(dummyData.length.toString());
+    const [row, setRow] = React.useState('10');
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     // const [styles, setStyles] = React.useState({});
     const [pages, setPages] = React.useState(1);
@@ -102,6 +159,8 @@ const Redemption = () => {
             if (response.status === 200) {
                 setRedempData(response.data.data);
                 setData(response.data.data);
+                // setRedempData(dummyData);
+                // setData(dummyData);
                 notify(response.data.message, 'success');
                 setIsLoading(false);
             }
@@ -115,6 +174,9 @@ const Redemption = () => {
     const getPaginatedData = () => {
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
+        if (value !== 0) {
+            return filterData.slice(startIndex, endIndex);
+        }
         return redempData.slice(startIndex, endIndex);
     };
 
@@ -137,10 +199,12 @@ const Redemption = () => {
     // Event Get Data filter date
     const handleGetData = () => {
         const { startDate, endDate } = form.watch();
-        let result: Array<any> = [];
 
+        let result: Array<any> = [];
+        // console.log({ startDate });
+        // console.log({ endDate });
         if (startDate && !endDate) {
-            const arr = result.length > 0 ? result : redempData;
+            const arr = result.length > 0 ? result : value !== 0 ? filterData : redempData;
             result = [
                 ...arr.filter((item: any) => {
                     const valueData: any = new Date(item.created_at);
@@ -150,7 +214,7 @@ const Redemption = () => {
             ];
         }
         if (endDate && !startDate) {
-            const arr = result.length > 0 ? result : redempData;
+            const arr = result.length > 0 ? result : value !== 0 ? filterData : redempData;
             result = [
                 ...arr.filter((item: any) => {
                     const valueData: any = new Date(item.created_at);
@@ -160,7 +224,7 @@ const Redemption = () => {
             ];
         }
         if (endDate && startDate) {
-            const arr = result.length > 0 ? result : redempData;
+            const arr = result.length > 0 ? result : value !== 0 ? filterData : redempData;
             result = [
                 ...arr.filter((item: any) => {
                     const valueData: any = new Date(item.created_at);
@@ -170,6 +234,7 @@ const Redemption = () => {
                 })
             ];
         }
+        setRedempData(result);
         setData(result);
         setRow(result.length.toString());
         setCurrentPage(1);
@@ -177,39 +242,42 @@ const Redemption = () => {
     };
 
     // OPTIONS FILTER DATA IF NEED IT
+    // // React.useEffect(() => {
+    // //     const status: any =
+    // //         value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
+    // //     if (status === 'pending') {
+    // //         const tempData: any = [...redempData];
+    // //         const filter = tempData.filter((item: any) => {
+    // //             return item.status === 'pending';
+    // //         });
+    // //         setFilterData(filter);
+    // //     }
+    // //     if (status === 'processed') {
+    // //         const tempData = [...redempData];
+    // //         const filter = tempData.filter((item: any) => {
+    // //             return item.status === 'processed';
+    // //         });
+    // //         setFilterData(filter);
+    // //     }
+    // //     if (status === 'delivered') {
+    // //         const tempData = [...redempData];
+    // //         const filter = tempData.filter((item: any) => {
+    // //             return item.status === 'delivered';
+    // //         });
+    // //         setFilterData(filter);
+    // //     }
+    // //     if (status === 'completed') {
+    // //         const tempData = [...redempData];
+    // //         const filter = tempData.filter((item: any) => {
+    // //             return item.status === 'completed';
+    // //         });
+    // //         setFilterData(filter);
+    // //     }
+    // // }, [value]);
+
     // React.useEffect(() => {
-    //     const status: any =
-    //         value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
-    //     if (status === 'pending') {
-    //         const tempData: any = [...redempData];
-    //         const filter = tempData.filter((item: any) => {
-    //             return item.status === 'pending';
-    //         });
-    //         // filtered = [...filtered, filter];
-    //         setRedempData([...redempData, ...filter]);
-    //     }
-    //     if (status === 'proccessed') {
-    //         const tempData = [...data];
-    //         const filter = tempData.filter((item: any) => {
-    //             return item.status === 'proccessed';
-    //         });
-    //         setRedempData([...redempData, ...filter]);
-    //     }
-    //     if (status === 'delivered') {
-    //         const tempData = [...data];
-    //         const filter = tempData.filter((item: any) => {
-    //             return item.status === 'delivered';
-    //         });
-    //         setRedempData([...redempData, ...filter]);
-    //     }
-    //     if (status === 'completed') {
-    //         const tempData = [...data];
-    //         const filter = tempData.filter((item: any) => {
-    //             return item.status === 'completed';
-    //         });
-    //         setRedempData([...redempData, ...filter]);
-    //     }
-    // }, [value, redempData]);
+    //     getRedemptionsData();
+    // }, []);
 
     React.useEffect(() => {
         getRedemptionsData();
@@ -219,33 +287,33 @@ const Redemption = () => {
         setPages(Math.round(redempData.length / Number(row)));
     }, [pages, row]);
 
-    React.useEffect(() => {
-        let key: string = 'All';
-        switch (value) {
-            case 0:
-                key = 'All';
-                break;
-            case 1:
-                key = 'Pending';
-                break;
-            case 2:
-                key = 'Process';
-                break;
-            case 3:
-                key = 'Delivered';
-                break;
-            case 4:
-                key = 'Completed';
-                break;
-            default:
-                break;
-        }
-        if (key !== 'All') {
-            setData(redempData.filter((item: any) => item.status === key));
-        } else if (key === 'All') {
-            setData(redempData);
-        }
-    }, [value]);
+    // React.useEffect(() => {
+    //     let key: string = 'All';
+    //     switch (value) {
+    //         case 0:
+    //             key = 'All';
+    //             break;
+    //         case 1:
+    //             key = 'Pending';
+    //             break;
+    //         case 2:
+    //             key = 'Process';
+    //             break;
+    //         case 3:
+    //             key = 'Delivered';
+    //             break;
+    //         case 4:
+    //             key = 'Completed';
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    //     if (key !== 'All') {
+    //         setData(redempData.filter((item: any) => item.status === key));
+    //     } else if (key === 'All') {
+    //         setData(redempData);
+    //     }
+    // }, [value]);
 
     React.useEffect(() => {
         setIsLoading(true);
@@ -261,8 +329,20 @@ const Redemption = () => {
                     <Box display='flex' alignItems='center' gap='20px'>
                         <InputStartEndDate label='Date' nameStartDate='startDate' nameEndDate='endDate' form={form} />
                         <ButtonBase
+                            disabled={!form.watch('startDate') && !form.watch('endDate')}
                             onClick={handleGetData}
-                            sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px', mt: '7px' }}
+                            sx={{
+                                '&:disabled': {
+                                    backgroundColor: '#949494',
+                                    color: 'white',
+                                    border: 'none'
+                                },
+                                background: '#A54CE5',
+                                color: '#fff',
+                                padding: '12px 22px',
+                                borderRadius: '4px',
+                                mt: '7px'
+                            }}
                         >
                             GET DATA
                         </ButtonBase>
