@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
     Box,
     Typography,
@@ -25,6 +26,8 @@ import InputDate from 'components/Input/InputDate';
 import { getCurrentDate, getCurrentTime } from 'utils/date';
 import Input from 'components/Input/Input';
 import DialogMap from 'components/Dialog/DialogMap';
+import useAPICaller from 'hooks/useAPICaller';
+import useNotify from 'hooks/useNotify';
 
 const dummyData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
@@ -58,9 +61,22 @@ const DetailClientTour = () => {
 
     const rules = { required: true };
     const router = useRouter();
+    const notify = useNotify();
+    const { fetchAPI } = useAPICaller();
     const [prizeData, setPrizeData] = React.useState<any>(dummyData);
     const [prizePool, setPrizePool] = React.useState(0);
     const [openDialogMap, setOpenDialogMap] = React.useState<boolean>(false);
+
+    const getDetailClientTournament = async () => {
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: ''
+            });
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+    };
 
     React.useEffect(() => {
         let ttl: number = 0;
