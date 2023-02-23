@@ -10,7 +10,13 @@ import {
     TableHead,
     TableRow,
     ButtonBase,
-    TextField
+    TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Input,
+    Button
 } from '@mui/material';
 import React from 'react';
 import TitleCard from 'components/Layout/TitleCard';
@@ -24,10 +30,11 @@ import AddIcon from '@mui/icons-material/Add';
 import PlaceIcon from '@mui/icons-material/Place';
 import InputDate from 'components/Input/InputDate';
 import { getCurrentDate, getCurrentTime } from 'utils/date';
-import Input from 'components/Input/Input';
+import InputCustom from 'components/Input/Input';
 import DialogMap from 'components/Dialog/DialogMap';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import convertBase64 from 'helpers/convertBase64';
 
 const dummyData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
@@ -41,8 +48,8 @@ const DetailClientTour = () => {
         reValidateMode: 'onChange',
         defaultValues: {
             title: '',
-            games: '',
-            mode: '',
+            games: '1',
+            mode: '1',
             img: '',
             fee: '',
             prizeTable: '',
@@ -66,39 +73,185 @@ const DetailClientTour = () => {
     const [prizeData, setPrizeData] = React.useState<any>(dummyData);
     const [prizePool, setPrizePool] = React.useState(0);
     const [openDialogMap, setOpenDialogMap] = React.useState<boolean>(false);
+    const [table, setTable] = React.useState<any>([]);
+    const [value, setValue] = React.useState('0');
+    const [selectTournament, setSelectTournament] = React.useState<any>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
+    const [tableObj, setTableObj] = React.useState<any>({
+        max_pos: 0,
+        point: 0,
+        coin: 0
+    });
+
+    // const [detailData, setDetailData] = React.useState<any>(null);
+
+    const handleTable = (event: any) => {
+        setValue(event.target.value as string);
+    };
+
+    const handleAddRow = () => {
+        if (tableObj.max_pos) {
+            setTable([...table, tableObj]);
+            setTableObj({
+                max_pos: 0,
+                point: 0,
+                coin: 0
+            });
+        }
+    };
+
+    const handleDeleteRow = () => {
+        if (table.length > 0) {
+            const deleting = table.slice(0, table.length - 1);
+            setTable(deleting);
+        }
+    };
+
+    const getTime = (data: any) => {
+        const time = new Date(data);
+        const hour = time.getHours();
+        const minute = time.getMinutes();
+        const result = `${hour < 10 ? `0${hour}` : hour}:${minute < 10 ? `0${minute}` : minute}`;
+        return result;
+    };
 
     const getDetailClientTournament = async () => {
+        setIsLoading(true);
         try {
             const response = await fetchAPI({
                 method: 'GET',
-                endpoint: ''
+                endpoint: `tournaments/${router.query.id}`
             });
+
+            if (response.status === 200) {
+                // console.log(response.data.data);
+                // console.log(form.watch());
+                // setDetailData(response.data.data);
+                const result = response.data.data;
+                const startTime: any = await getTime(result.start_time);
+                const endTime: any = await getTime(result.end_time);
+                form.setValue('address', result.address);
+                form.setValue('endTime', endTime);
+                form.setValue('startTime', startTime);
+                form.setValue('startDate', new Date(result.start_time).toJSON().slice(0, 10));
+                form.setValue('endDate', new Date(result.end_time).toJSON().slice(0, 10));
+                form.setValue('lat', result.latitude);
+                form.setValue('long', result.longitude);
+                form.setValue('games', result.game.id);
+                form.setValue('games', result.game.id);
+                form.setValue('title', result.name);
+                form.setValue('poolPrize', result.total_point);
+                form.setValue('fee', result.entry_coin);
+                setTable([...table, ...result.prize_infos]);
+                // form.setValue('img', result.tournament_image);
+                setIsLoading(false);
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setIsLoading(false);
+        }
+    };
+
+    const fetchPrizesInfos = async () => {
+        try {
+            const result = await fetchAPI({
+                endpoint: '/tournaments/prize-infos',
+                method: 'GET'
+            });
+
+            if (result?.status === 200) {
+                const dataPrize = result?.data.data;
+                const filterPrizesInfo = dataPrize.filter((item: any) => {
+                    return item.prize_infos.length > 0;
+                });
+
+                setSelectTournament(filterPrizesInfo);
+
+                setPrizeData(dataPrize);
+            }
         } catch (error: any) {
             notify(error.message, 'error');
         }
     };
 
-    React.useEffect(() => {
-        let ttl: number = 0;
-        prizeData.forEach((item: any) => {
-            ttl += item.pointPrize;
-        });
-        setPrizePool(ttl);
-    }, [prizeData.length]);
-    const handleAddRow = () => {
-        setPrizeData([...prizeData, { id: 0, showTo: 1, player: 1, pointPrize: 1, prizePlayer: 1 }]);
+    const handleSubmitData = async (data: any) => {
+        setLoadingSubmit(true);
+        try {
+            const imgBase64 = await convertBase64(data.img);
+            const body = {
+                game_id: data.games,
+                name: data.title,
+                tournament_image: imgBase64,
+                start_time: new Date(`${data.startDate} ${data.startTime}`).toISOString(),
+                end_time: new Date(`${data.endDate} ${data.endTime}`).toISOString(),
+                entry_coin: data.fee,
+                prize_infos: table,
+                company_id: data.company
+                // status: 'OPEN'
+            };
+
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: '/tournaments',
+                data: body
+            });
+            if (response?.status === 200) {
+                setIsLoading(false);
+                notify('Create tournament success!');
+                router.push('/tournament/client-tournament');
+                setTable([]);
+                form.reset();
+            } else {
+                notify(response.data.message, 'error');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+        setLoadingSubmit(false);
     };
 
-    const handleDeleteRow = () => {
-        const temp = prizeData;
-        temp.pop();
-        setPrizeData(prizeData.filter((item: any) => temp.includes(item)));
-    };
+    // const handleAddRow = () => {
+    //     setPrizeData([...prizeData, { id: 0, showTo: 1, player: 1, pointPrize: 1, prizePlayer: 1 }]);
+    // };
+
+    // const handleDeleteRow = () => {
+    //     const temp = prizeData;
+    //     temp.pop();
+    //     setPrizeData(prizeData.filter((item: any) => temp.includes(item)));
+    // };
+
+    React.useEffect(() => {
+        getDetailClientTournament();
+        fetchPrizesInfos();
+    }, []);
+
+    // React.useEffect(() => {
+    //     let ttl: number = 0;
+    //     prizeData.forEach((item: any) => {
+    //         ttl += item.pointPrize;
+    //     });
+    //     setPrizePool(ttl);
+    // }, [prizeData.length]);
+
+    React.useEffect(() => {
+        const point = table.map((item: any) => {
+            return item.point;
+        });
+        if (table.length > 0) {
+            const totalPrizes = point?.reduce((total: any, num: any) => {
+                return Number(total) + Number(num);
+            });
+            setPrizePool(totalPrizes);
+        } else {
+            setPrizePool(0);
+        }
+    }, [table]);
 
     return (
         <Box component='section'>
             <TitleCard title='Detail Client Tournament' subtitle='Addtional description if required' isSearchExist={false} />
-            <form onSubmit={form.handleSubmit(() => {})}>
+            <form onSubmit={form.handleSubmit(handleSubmitData)}>
                 <Box sx={{ my: 3, mx: 2, width: '40%' }}>
                     <InputWithLabel
                         label='Tournament Title'
@@ -159,7 +312,7 @@ const DetailClientTour = () => {
                             </Box>
 
                             <Box sx={{ mt: 4 }}>
-                                <Input
+                                <InputCustom
                                     form={form}
                                     name='detailLocation'
                                     label='Detail Location'
@@ -209,7 +362,11 @@ const DetailClientTour = () => {
                             labelField='Games'
                             placeHolder='Select Games'
                             isSelectType
-                            listSelect={[{ value: '1', label: 'Games 1' }]}
+                            listSelect={[
+                                { id: '1', name: 'Hop up' },
+                                { id: '2', name: 'Tower Stack' },
+                                { id: '3', name: 'Rose Dart' }
+                            ]}
                             isMultiline={false}
                             rules={rules}
                             isRequired
@@ -224,7 +381,10 @@ const DetailClientTour = () => {
                             labelField='Mode'
                             placeHolder='Select Mode'
                             isSelectType
-                            listSelect={[{ value: '1', label: 'Mode 1' }]}
+                            listSelect={[
+                                { id: '1', name: 'OPEN' },
+                                { id: '2', name: 'CLOSED' }
+                            ]}
                             isMultiline={false}
                             rules={rules}
                             isRequired
@@ -244,21 +404,89 @@ const DetailClientTour = () => {
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px' }}>
-                        <InputWithLabel
-                            label='Prizing Table'
-                            name='prizeTable'
-                            type='text'
-                            form={form}
-                            labelField='Copy Table'
-                            isSelectType
-                            listSelect={[{ value: '1', label: 'Tourney Hop Up Okt 2022' }]}
-                            isMultiline={false}
-                            rules={rules}
-                            isRequired
-                        />
-                    </Box>
+                    <Box sx={{ display: 'flex', aligItem: 'center', gap: '25px', ml: 2.5, my: '30px', width: '100%' }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: '23%'
+                            }}
+                        >
+                            <Box>
+                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                    Prize Table
+                                </Typography>
 
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', aligItem: 'center', gap: '10px', width: '70%' }}>
+                            <FormControl fullWidth>
+                                <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                    Copy Table
+                                </InputLabel>
+                                <Select
+                                    sx={{
+                                        color: value === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black'
+                                    }}
+                                    placeholder='Games'
+                                    labelId='demo-simple-select-label'
+                                    id='demo-simple-select'
+                                    value={value}
+                                    label='Copy Table'
+                                    onChange={handleTable}
+                                >
+                                    <MenuItem value='0' disabled>
+                                        Select Tournament
+                                    </MenuItem>
+                                    {selectTournament.map((item: any, index: any) => {
+                                        return (
+                                            <MenuItem
+                                                onClick={() => {
+                                                    const res = item.prize_infos.map((i: any) => {
+                                                        return { max_pos: i.max_pos, point: i.point, coin: i.coin };
+                                                    });
+                                                    setTable(res);
+                                                }}
+                                                key={item.id}
+                                                value={item.id}
+                                            >
+                                                {item.name}
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </Select>
+                            </FormControl>
+                            <ButtonBase
+                                onClick={() => {
+                                    setTable([]);
+                                    setValue('0');
+                                }}
+                                sx={{
+                                    width: '20%',
+                                    borderRadius: '5px',
+                                    background: '#A54CE5',
+                                    padding: '10px',
+                                    color: 'white'
+                                    // fontWeight: 600
+                                }}
+                            >
+                                <Typography sx={{ fontSize: '12px' }}>RESET</Typography>
+                            </ButtonBase>
+                        </Box>
+                    </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'column', padding: '10px', justifyContent: 'end', alignItems: 'flex-end' }}>
                         <Box sx={{ width: '70%' }}>
                             <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
@@ -267,26 +495,6 @@ const DetailClientTour = () => {
                                         <TableRow>
                                             <TableCell align='center' sx={{ width: '5%', fontWeight: 'bold' }}>
                                                 No.
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{
-                                                    borderLeft: '1px solid #E0E0E0',
-                                                    borderRight: '1px solid #E0E0E0',
-                                                    fontWeight: 'bold'
-                                                }}
-                                                align='center'
-                                            >
-                                                Show to
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{
-                                                    borderLeft: '1px solid #E0E0E0',
-                                                    borderRight: '1px solid #E0E0E0',
-                                                    fontWeight: 'bold'
-                                                }}
-                                                align='center'
-                                            >
-                                                Count Player
                                             </TableCell>
                                             <TableCell
                                                 sx={{
@@ -299,50 +507,96 @@ const DetailClientTour = () => {
                                             >
                                                 Point Prizes
                                             </TableCell>
-
                                             <TableCell
                                                 sx={{
-                                                    // width: '8%',
                                                     borderLeft: '1px solid #E0E0E0',
                                                     borderRight: '1px solid #E0E0E0',
                                                     fontWeight: 'bold'
                                                 }}
                                                 align='center'
                                             >
-                                                Point Prizes / Player
+                                                Coin Prizes
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {prizeData.map((item: any, idx: number) => {
+                                        <TableRow
+                                            sx={{
+                                                '& .MuiInputBase-input': { textAlign: 'center' },
+                                                '& .MuiTableCell-root': { padding: '8px !important', textAlign: 'center' }
+                                            }}
+                                        >
+                                            <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>
+                                                <Input
+                                                    sx={{ textAlign: 'center' }}
+                                                    placeholder='Input here'
+                                                    onChange={(e: any) => {
+                                                        setTableObj({ ...tableObj, max_pos: Number(e.target.value) });
+                                                    }}
+                                                    disableUnderline
+                                                    type='number'
+                                                    // defaultValue={tableObj.max_pos}
+                                                    value={tableObj.max_pos}
+                                                />
+                                            </TableCell>
+
+                                            <TableCell
+                                                sx={{
+                                                    width: '5%',
+                                                    fontWeight: 'bold',
+                                                    borderLeft: '1px solid #E0E0E0',
+                                                    borderRight: '1px solid #E0E0E0'
+                                                }}
+                                            >
+                                                <Input
+                                                    placeholder='Input here'
+                                                    onChange={(e: any) => {
+                                                        setTableObj({ ...tableObj, point: Number(e.target.value) });
+                                                    }}
+                                                    disableUnderline
+                                                    type='number'
+                                                    // defaultValue={tableObj.point}
+                                                    value={tableObj.point}
+                                                />
+                                            </TableCell>
+
+                                            <TableCell
+                                                sx={{
+                                                    width: '5%',
+                                                    fontWeight: 'bold',
+                                                    borderLeft: '1px solid #E0E0E0',
+                                                    borderRight: '1px solid #E0E0E0'
+                                                }}
+                                            >
+                                                <Input
+                                                    placeholder='Input here'
+                                                    onChange={(e: any) => {
+                                                        setTableObj({ ...tableObj, coin: Number(e.target.value) });
+                                                    }}
+                                                    disableUnderline
+                                                    type='number'
+                                                    // defaultValue={tableObj.coin}
+                                                    value={tableObj.coin}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                        {table.map((item: any, idx: number) => {
                                             return (
                                                 <TableRow key={idx + 1}>
                                                     <TableCell sx={{ width: '5%' }} align='center'>
-                                                        {item.id}
+                                                        {item.max_pos}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.showTo}
+                                                        {item.point}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.player}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.pointPrize}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.prizePlayer}
+                                                        {item.coin}
                                                     </TableCell>
                                                 </TableRow>
                                             );
@@ -413,14 +667,16 @@ const DetailClientTour = () => {
                 </Box>
                 <Divider />
                 <Box sx={{ display: 'flex', my: 3, mx: 5, gap: 3 }}>
-                    <CustomButton type='submit' />
-                    <CustomButton
-                        onClick={() => router.back()}
-                        title='Cancel'
-                        border='1px solid #A54CE5'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                    />
+                    <CustomButton type='submit' isLoading={loadingSubmit} />
+                    {!loadingSubmit && (
+                        <CustomButton
+                            onClick={() => router.back()}
+                            title='Cancel'
+                            border='1px solid #A54CE5'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                        />
+                    )}
                 </Box>
             </form>
             <DialogMap open={openDialogMap} setOpen={setOpenDialogMap} form={form} nameAddress='address' nameLat='lat' nameLong='long' />

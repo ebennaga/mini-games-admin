@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Dialog, Box, Typography, ButtonBase } from '@mui/material';
@@ -56,7 +57,7 @@ const DialogMap: React.FC<DialogMapProps> = ({ nameAddress, nameLat, nameLong, f
                     <Typography component='p' fontSize='14px' sx={{ color: 'rgba(0, 0, 0, 0.6)' }}>
                         {dataMap.label
                             .split(', ')
-                            .slice(1, form.watch(nameAddress).length - 1)
+                            .slice(1, form.watch(nameAddress)?.length - 1)
                             .join(', ')}
                     </Typography>
                 </Box>
