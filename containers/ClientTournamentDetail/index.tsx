@@ -192,13 +192,13 @@ const DetailClientTour = () => {
             };
 
             const response = await fetchAPI({
-                method: 'POST',
-                endpoint: '/tournaments',
+                method: 'PUT',
+                endpoint: `tournaments/${router.query.id}`,
                 data: body
             });
             if (response?.status === 200) {
                 setIsLoading(false);
-                notify('Create tournament success!');
+                notify(response.data.message, 'success');
                 router.push('/tournament/client-tournament');
                 setTable([]);
                 form.reset();
