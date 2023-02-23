@@ -129,7 +129,7 @@ const Redemption = () => {
     const [value, setValue] = React.useState(0);
     const [data, setData] = React.useState<any>(dummyData);
     const [currentPage, setCurrentPage] = React.useState(1);
-    const [row, setRow] = React.useState(10);
+    const [row, setRow] = React.useState('10');
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     // const [styles, setStyles] = React.useState({});
     const [pages, setPages] = React.useState(1);
