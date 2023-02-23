@@ -346,17 +346,6 @@ const Redemption = () => {
                         >
                             GET DATA
                         </ButtonBase>
-                        {/* <ButtonBase
-                            onClick={() => {
-                                getRedemptionsData();
-                                setRedempData(redempData);
-                                setData(data);
-                                // form.reset();
-                            }}
-                            sx={{ background: '#A54CE5', color: '#fff', padding: '12px 22px', borderRadius: '4px', mt: '7px' }}
-                        >
-                            RESET DATA
-                        </ButtonBase> */}
                     </Box>
                     <ButtonBase
                         sx={{
