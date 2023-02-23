@@ -10,9 +10,15 @@ import {
     TableHead,
     TableRow,
     ButtonBase,
-    TextField
+    TextField,
+    Input,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Button
 } from '@mui/material';
-import React from 'react';
+import React, { useRef } from 'react';
 import TitleCard from 'components/Layout/TitleCard';
 import InputWithLabel from 'components/Input/InputWithLabel';
 import { useForm } from 'react-hook-form';
@@ -23,9 +29,14 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import PlaceIcon from '@mui/icons-material/Place';
 import InputDate from 'components/Input/InputDate';
-import { getCurrentDate, getCurrentTime } from 'utils/date';
-import Input from 'components/Input/Input';
+import { getCurrentDate } from 'utils/date';
+import InputLocation from 'components/Input/Input';
 import DialogMap from 'components/Dialog/DialogMap';
+import useAPICaller from 'hooks/useAPICaller';
+import convertBase64 from 'helpers/convertBase64';
+import useNotify from 'hooks/useNotify';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import DialogBarcode from 'components/Dialog/DialogBarcode';
 
 const dummyData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
@@ -35,74 +46,276 @@ const dummyData = [
 ];
 const AddClientTour = () => {
     const form = useForm({
-        mode: 'onSubmit',
-        reValidateMode: 'onChange',
+        mode: 'all',
         defaultValues: {
+            type: '1',
             title: '',
-            games: '',
-            mode: '',
-            img: '',
-            fee: '',
-            prizeTable: '',
-            poolPrize: '',
-            // startDate: new Date().toJSON().slice(0, 10) || '',
+            games: '1',
+            mode: '1',
+            image: '',
+            fee: '0',
+            poolPrize: '0',
             startDate: '',
-            // endDate: new Date().toJSON().slice(0, 10) || '',
             endDate: '',
             maxDate: getCurrentDate(),
-            // startTime: getCurrentTime(),
-            // endTime: getCurrentTime(),
             startTime: '',
             endTime: '',
             detailLocation: '',
             address: 'Intermark, Rawa Mekar Jaya, Serpong, Tangerang Selatan, Banten, Indonesia',
             lat: -6.30943345,
-            long: 106.6893430616688
+            long: 106.6893430616688,
+            company: '0',
+            pin: ''
         }
     });
 
+    const { fetchAPI } = useAPICaller();
     const rules = { required: true };
     const router = useRouter();
     const [prizeData, setPrizeData] = React.useState<any>(dummyData);
-    const [prizePool, setPrizePool] = React.useState(0);
+    const [selectCompanies, setSelectCompanies] = React.useState<any>([]);
+    const [roles, setRoles] = React.useState<any>([]);
+    const [prizePool, setPrizePool] = React.useState<number>(0);
     const [openDialogMap, setOpenDialogMap] = React.useState<boolean>(false);
+    const [isCompFilled, setIsCompFilled] = React.useState<boolean>(false);
+    const [table, setTable] = React.useState<any>([]);
+    const [selectTournament, setSelectTournament] = React.useState<any>([]);
+    const [isError, setIsError] = React.useState<boolean>(false);
+    const [companies, setCompanies] = React.useState<any>([]);
+    const [isRolesFilled, setIsRolesFilled] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [loadingSubmit, setLoadingSubmit] = React.useState<boolean>(false);
+    const [openBarcode, setOpenBarcode] = React.useState<boolean>(false);
+    const [value, setValue] = React.useState('0');
+    const [tableObj, setTableObj] = React.useState<any>({
+        max_pos: 0,
+        point: 0,
+        coin: 0
+    });
 
-    React.useEffect(() => {
-        let ttl: number = 0;
-        prizeData.forEach((item: any) => {
-            ttl += item.pointPrize;
-        });
-        setPrizePool(ttl);
-    }, [prizeData.length]);
+    const notify = useNotify();
+    const componentRef = useRef();
+
+    const getDataCompany = async () => {
+        setIsLoading(true);
+        try {
+            const result = await fetchAPI({
+                method: 'GET',
+                endpoint: `companies/`
+            });
+
+            if (result.status === 200) {
+                const dataCompanies = result.data.data;
+                setSelectCompanies(dataCompanies);
+                setIsLoading(false);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+            setIsLoading(false);
+        }
+        setIsLoading(false);
+    };
+
     const handleAddRow = () => {
-        setPrizeData([...prizeData, { id: 0, showTo: 1, player: 1, pointPrize: 1, prizePlayer: 1 }]);
+        if (tableObj.max_pos) {
+            setTable([...table, tableObj]);
+            setTableObj({
+                max_pos: 0,
+                point: 0,
+                coin: 0
+            });
+        }
     };
 
     const handleDeleteRow = () => {
-        const temp = prizeData;
-        temp.pop();
-        setPrizeData(prizeData.filter((item: any) => temp.includes(item)));
+        if (table.length > 0) {
+            const deleting = table.slice(0, table.length - 1);
+            setTable(deleting);
+        }
     };
+
+    const handleAddCompany = (event: any) => {
+        const isDuplicate: any = companies.includes(event.target.value);
+        form.setValue('company', event.target.value);
+        if (!isDuplicate) {
+            const dataCompanies = selectCompanies.filter((item: any) => event.target.value === item.id);
+            setCompanies([...companies, ...dataCompanies]);
+        }
+    };
+
+    const handleTable = (event: any) => {
+        setValue(event.target.value as string);
+    };
+
+    const fetchPrizesInfos = async () => {
+        try {
+            const result = await fetchAPI({
+                endpoint: '/tournaments/prize-infos',
+                method: 'GET'
+            });
+
+            if (result?.status === 200) {
+                const dataPrize = result?.data.data;
+                const filterPrizesInfo = dataPrize.filter((item: any) => {
+                    return item.prize_infos.length > 0;
+                });
+
+                setSelectTournament(filterPrizesInfo);
+
+                setPrizeData(dataPrize);
+            }
+        } catch (error: any) {
+            console.log(error);
+        }
+    };
+
+    React.useEffect(() => {
+        fetchPrizesInfos();
+        getDataCompany();
+    }, []);
+
+    React.useEffect(() => {
+        const point = table.map((item: any) => {
+            return item.point;
+        });
+        if (table.length > 0) {
+            const totalPrizes = point?.reduce((total: any, num: any) => {
+                return Number(total) + Number(num);
+            });
+            setPrizePool(totalPrizes);
+        } else {
+            setPrizePool(0);
+        }
+    }, [table]);
+
+    const handleSubmitData = async (data: any) => {
+        setLoadingSubmit(true);
+        try {
+            const imgBase64 = await convertBase64(data.image);
+            const body = {
+                game_id: data.games,
+                name: data.title,
+                tournament_image: imgBase64,
+                start_time: new Date(`${data.startDate} ${data.startTime}`).toISOString(),
+                end_time: new Date(`${data.endDate} ${data.endTime}`).toISOString(),
+                entry_coin: data.fee,
+                prize_infos: table,
+                company_id: data.company
+                // status: 'OPEN'
+            };
+
+            const response = await fetchAPI({
+                method: 'POST',
+                endpoint: '/tournaments',
+                data: body
+            });
+            if (response?.status === 200) {
+                setIsLoading(false);
+                notify('Create tournament success!');
+                router.push('/tournament/client-tournament');
+                setTable([]);
+                form.reset();
+            } else {
+                notify(response.data.message, 'error');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+        setLoadingSubmit(false);
+    };
+
+    React.useEffect(() => {
+        if (companies.length <= 0) {
+            form.setValue('company', '0');
+            return setIsCompFilled(false);
+        }
+
+        setIsCompFilled(true);
+        return setIsRolesFilled(true);
+    }, [companies, roles]);
 
     return (
         <Box component='section'>
             <TitleCard title='Create Client Tournament' subtitle='Addtional description if required' isSearchExist={false} />
-            <form onSubmit={form.handleSubmit(() => {})}>
-                <Box sx={{ my: 3, mx: 2, width: '40%' }}>
-                    <InputWithLabel
-                        label='Tournament Title'
-                        name='title'
-                        type='text'
-                        form={form}
-                        labelField='Title'
-                        placeHolder='Max 100 Character'
-                        isSelectType={false}
-                        isMultiline={false}
-                        rules={rules}
-                        isRequired
-                    />
-                    <InputUpload isRequired label='Tournament Image' name='img' form={form} rules={rules} />
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+            <form onSubmit={form.handleSubmit(handleSubmitData)}>
+                <Box sx={{ my: 3, mx: 2, width: '100%' }}>
+                    <Box sx={{ width: '40%' }}>
+                        <InputWithLabel
+                            label='Tournament Title'
+                            name='title'
+                            type='text'
+                            form={form}
+                            labelField='Title'
+                            placeHolder='Max 100 Character'
+                            isSelectType={false}
+                            isMultiline={false}
+                            rules={rules}
+                            isRequired
+                        />
+                    </Box>
+                    <Box sx={{ width: '40%' }}>
+                        <InputUpload isRequired label='Tournament Image' name='image' form={form} rules={rules} />
+                    </Box>
+                    <Box
+                        sx={{
+                            mt: 2,
+                            width: '40%',
+                            display: 'flex',
+                            justifyContent: '',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Company Name</Typography>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ width: '69%' }}>
+                            <FormControl fullWidth>
+                                <InputLabel color='secondary' sx={{ fontWeight: 'bold' }} id='simple-select-company'>
+                                    Company
+                                </InputLabel>
+                                <Select
+                                    sx={{ color: form.watch('company') === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black' }}
+                                    placeholder='Select Company'
+                                    labelId='simple-select-company'
+                                    id='simple-select'
+                                    value={form.watch('company')}
+                                    label='Company'
+                                    onChange={handleAddCompany}
+                                    color='secondary'
+                                    error={isError}
+                                >
+                                    <MenuItem value='0' disabled>
+                                        Select Company
+                                    </MenuItem>
+                                    {/* <MenuItem value='Starduck'>Starduck</MenuItem>
+                                    <MenuItem value='J.OC'>J.OC</MenuItem>
+                                    <MenuItem value='Mc Dono'>Mc Dono</MenuItem> */}
+                                    {selectCompanies.map((item: any, index: any) => {
+                                        return (
+                                            <MenuItem value={item.id} key={index}>
+                                                {item.name}
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center', width: '40%' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Location</Typography>
@@ -148,7 +361,7 @@ const AddClientTour = () => {
                             </Box>
 
                             <Box sx={{ mt: 4 }}>
-                                <Input
+                                <InputLocation
                                     form={form}
                                     name='detailLocation'
                                     label='Detail Location'
@@ -159,7 +372,7 @@ const AddClientTour = () => {
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center', width: '40%' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Duration</Typography>
@@ -189,7 +402,7 @@ const AddClientTour = () => {
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ my: '30px' }}>
+                    <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Tournament Type'
                             name='type'
@@ -199,15 +412,15 @@ const AddClientTour = () => {
                             placeHolder='Select Type'
                             isSelectType
                             listSelect={[
-                                { value: '1', label: 'Accumulatuion' },
-                                { value: '2', label: 'High Score' }
+                                { id: '1', name: 'Accumulatuion' },
+                                { id: '2', name: 'High Score' }
                             ]}
                             isMultiline={false}
                             rules={rules}
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px' }}>
+                    <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Games'
                             name='games'
@@ -216,13 +429,17 @@ const AddClientTour = () => {
                             labelField='Games'
                             placeHolder='Select Games'
                             isSelectType
-                            listSelect={[{ value: '1', label: 'Games 1' }]}
+                            listSelect={[
+                                { id: '1', name: 'Hop up' },
+                                { id: '2', name: 'Tower Stack' },
+                                { id: '3', name: 'Rose Dart' }
+                            ]}
                             isMultiline={false}
                             rules={rules}
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px' }}>
+                    <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Tournament Mode'
                             name='mode'
@@ -231,13 +448,42 @@ const AddClientTour = () => {
                             labelField='Mode'
                             placeHolder='Select Mode'
                             isSelectType
-                            listSelect={[{ value: '1', label: 'Mode 1' }]}
+                            listSelect={[
+                                { id: '1', name: 'OPEN' },
+                                { id: '2', name: 'CLOSED' }
+                            ]}
                             isMultiline={false}
                             rules={rules}
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px' }}>
+                    {form.watch('mode') === '2' && (
+                        <Box sx={{ my: '30px', position: 'relative', width: '40%' }}>
+                            <InputWithLabel
+                                label='Pin'
+                                name='pin'
+                                type='number'
+                                form={form}
+                                placeHolder='Fee Amount'
+                                labelField='Enter Pin'
+                                isSelectType={false}
+                                isMultiline={false}
+                                rules={rules}
+                                isRequired
+                            />
+                            <Button
+                                disabled={!form.watch('pin')}
+                                onClick={() => setOpenBarcode(true)}
+                                color='secondary'
+                                variant='contained'
+                                sx={{ right: -220, top: 0, background: '#A54CE5', color: 'white', position: 'absolute', height: '56px' }}
+                                startIcon={<QrCode2Icon />}
+                            >
+                                Generate QR Code
+                            </Button>
+                        </Box>
+                    )}
+                    <Box sx={{ my: '30px', width: '40%' }}>
                         <InputWithLabel
                             label='Tournament Fee'
                             name='fee'
@@ -251,53 +497,109 @@ const AddClientTour = () => {
                             isRequired
                         />
                     </Box>
-                    <Box sx={{ my: '30px' }}>
-                        <InputWithLabel
-                            label='Prizing Table'
-                            name='prizeTable'
-                            type='text'
-                            form={form}
-                            labelField='Copy Table'
-                            isSelectType
-                            listSelect={[{ value: '1', label: 'Tourney Hop Up Okt 2022' }]}
-                            isMultiline={false}
-                            rules={rules}
-                            isRequired
-                        />
-                    </Box>
+                    <Box sx={{ display: 'flex', aligItem: 'center', gap: '25px', ml: 2.5, my: '30px', width: '50%' }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                width: '20%'
+                            }}
+                        >
+                            <Box>
+                                <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
+                                    Prize Table
+                                </Typography>
 
-                    <Box sx={{ display: 'flex', flexDirection: 'column', padding: '10px', justifyContent: 'end', alignItems: 'flex-end' }}>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '400',
+                                        color: 'rgba(0, 0, 0, 0.6)',
+                                        fontSize: '12px',
+                                        position: 'relative',
+                                        bottom: '-10px'
+                                    }}
+                                >
+                                    *Field Required
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 'bold' }}>:</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', aligItem: 'center', gap: '10px', width: '68%' }}>
+                            <FormControl fullWidth>
+                                <InputLabel sx={{ fontWeight: 'bold' }} id='demo-simple-select-label'>
+                                    Copy Table
+                                </InputLabel>
+                                <Select
+                                    sx={{
+                                        color: value === '0' ? 'rgba(0, 0, 0, 0.38)' : 'black'
+                                    }}
+                                    placeholder='Games'
+                                    labelId='demo-simple-select-label'
+                                    id='demo-simple-select'
+                                    value={value}
+                                    label='Copy Table'
+                                    onChange={handleTable}
+                                >
+                                    <MenuItem value='0' disabled>
+                                        Select Tournament
+                                    </MenuItem>
+                                    {selectTournament.map((item: any, index: any) => {
+                                        return (
+                                            <MenuItem
+                                                onClick={() => {
+                                                    const res = item.prize_infos.map((i: any) => {
+                                                        return { max_pos: i.max_pos, point: i.point, coin: i.coin };
+                                                    });
+                                                    setTable(res);
+                                                }}
+                                                key={item.id}
+                                                value={item.id}
+                                            >
+                                                {item.name}
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </Select>
+                            </FormControl>
+                            <ButtonBase
+                                onClick={() => {
+                                    setTable([]);
+                                    setValue('0');
+                                }}
+                                sx={{
+                                    width: '20%',
+                                    borderRadius: '5px',
+                                    background: '#A54CE5',
+                                    padding: '10px',
+                                    color: 'white'
+                                    // fontWeight: 600
+                                }}
+                            >
+                                <Typography sx={{ fontSize: '12px' }}>RESET</Typography>
+                            </ButtonBase>
+                        </Box>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            padding: '10px',
+                            justifyContent: 'end',
+                            alignItems: 'flex-end',
+                            width: '40%'
+                        }}
+                    >
                         <Box sx={{ width: '70%' }}>
                             <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
                                 <Table sx={{ width: '100%' }}>
                                     <TableHead sx={{ backgroundColor: '#F0F0F0' }}>
                                         <TableRow>
                                             <TableCell align='center' sx={{ width: '5%', fontWeight: 'bold' }}>
-                                                No.
+                                                Position
                                             </TableCell>
                                             <TableCell
                                                 sx={{
-                                                    borderLeft: '1px solid #E0E0E0',
-                                                    borderRight: '1px solid #E0E0E0',
-                                                    fontWeight: 'bold'
-                                                }}
-                                                align='center'
-                                            >
-                                                Show to
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{
-                                                    borderLeft: '1px solid #E0E0E0',
-                                                    borderRight: '1px solid #E0E0E0',
-                                                    fontWeight: 'bold'
-                                                }}
-                                                align='center'
-                                            >
-                                                Count Player
-                                            </TableCell>
-                                            <TableCell
-                                                sx={{
-                                                    // width: '8%',
                                                     borderLeft: '1px solid #E0E0E0',
                                                     borderRight: '1px solid #E0E0E0',
                                                     fontWeight: 'bold'
@@ -306,50 +608,96 @@ const AddClientTour = () => {
                                             >
                                                 Point Prizes
                                             </TableCell>
-
                                             <TableCell
                                                 sx={{
-                                                    // width: '8%',
                                                     borderLeft: '1px solid #E0E0E0',
                                                     borderRight: '1px solid #E0E0E0',
                                                     fontWeight: 'bold'
                                                 }}
                                                 align='center'
                                             >
-                                                Point Prizes / Player
+                                                Coin Prizes
                                             </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {prizeData.map((item: any, idx: number) => {
+                                        <TableRow
+                                            sx={{
+                                                '& .MuiInputBase-input': { textAlign: 'center' },
+                                                '& .MuiTableCell-root': { padding: '8px !important', textAlign: 'center' }
+                                            }}
+                                        >
+                                            <TableCell sx={{ width: '5%', fontWeight: 'bold' }}>
+                                                <Input
+                                                    sx={{ textAlign: 'center' }}
+                                                    placeholder='Input here'
+                                                    onChange={(e: any) => {
+                                                        setTableObj({ ...tableObj, max_pos: Number(e.target.value) });
+                                                    }}
+                                                    disableUnderline
+                                                    type='number'
+                                                    // defaultValue={tableObj.max_pos}
+                                                    value={tableObj.max_pos}
+                                                />
+                                            </TableCell>
+
+                                            <TableCell
+                                                sx={{
+                                                    width: '5%',
+                                                    fontWeight: 'bold',
+                                                    borderLeft: '1px solid #E0E0E0',
+                                                    borderRight: '1px solid #E0E0E0'
+                                                }}
+                                            >
+                                                <Input
+                                                    placeholder='Input here'
+                                                    onChange={(e: any) => {
+                                                        setTableObj({ ...tableObj, point: Number(e.target.value) });
+                                                    }}
+                                                    disableUnderline
+                                                    type='number'
+                                                    // defaultValue={tableObj.point}
+                                                    value={tableObj.point}
+                                                />
+                                            </TableCell>
+
+                                            <TableCell
+                                                sx={{
+                                                    width: '5%',
+                                                    fontWeight: 'bold',
+                                                    borderLeft: '1px solid #E0E0E0',
+                                                    borderRight: '1px solid #E0E0E0'
+                                                }}
+                                            >
+                                                <Input
+                                                    placeholder='Input here'
+                                                    onChange={(e: any) => {
+                                                        setTableObj({ ...tableObj, coin: Number(e.target.value) });
+                                                    }}
+                                                    disableUnderline
+                                                    type='number'
+                                                    // defaultValue={tableObj.coin}
+                                                    value={tableObj.coin}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                        {table.map((item: any, idx: number) => {
                                             return (
-                                                <TableRow key={idx + 1}>
+                                                <TableRow key={idx}>
                                                     <TableCell sx={{ width: '5%' }} align='center'>
-                                                        {item.id}
+                                                        {item.max_pos}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.showTo}
+                                                        {item.point}
                                                     </TableCell>
                                                     <TableCell
                                                         sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                         align='center'
                                                     >
-                                                        {item.player}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.pointPrize}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
-                                                        align='center'
-                                                    >
-                                                        {item.prizePlayer}
+                                                        {item.coin}
                                                     </TableCell>
                                                 </TableRow>
                                             );
@@ -394,8 +742,7 @@ const AddClientTour = () => {
                             </Box>
                         </Box>
                     </Box>
-
-                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', padding: '10px', justifyContent: 'space-between', alignItems: 'center', width: '40%' }}>
                         <Box sx={{ width: '30%', display: 'flex', justifyContent: 'space-between', px: '20px' }}>
                             <Box>
                                 <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Total Pool Prize</Typography>
@@ -420,16 +767,19 @@ const AddClientTour = () => {
                 </Box>
                 <Divider />
                 <Box sx={{ display: 'flex', my: 3, mx: 5, gap: 3 }}>
-                    <CustomButton type='submit' />
-                    <CustomButton
-                        onClick={() => router.back()}
-                        title='Cancel'
-                        border='1px solid #A54CE5'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                    />
+                    <CustomButton type='submit' isLoading={loadingSubmit} />
+                    {!loadingSubmit && (
+                        <CustomButton
+                            onClick={() => router.back()}
+                            title='Cancel'
+                            border='1px solid #A54CE5'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                        />
+                    )}
                 </Box>
             </form>
+            <DialogBarcode form={form} open={openBarcode} setOpen={setOpenBarcode} printHandler={() => {}} />
             <DialogMap open={openDialogMap} setOpen={setOpenDialogMap} form={form} nameAddress='address' nameLat='lat' nameLong='long' />
         </Box>
     );

@@ -3,6 +3,8 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, FormC
 import CheckboxController from 'components/Checkbox';
 import dateFormat from 'helpers/dateFormat';
 import numberFormat from 'helpers/numberFormat';
+import useAPICaller from 'hooks/useAPICaller';
+
 // import CustomButton from 'components/Button';
 
 interface TournamentTableProps {
@@ -11,23 +13,39 @@ interface TournamentTableProps {
     handleChangeCheckboxAll: any;
     remove: any;
     handleChangeChekcbox: any;
-    // setOpenDialogTour: any;
-    // openDialogTour: any;
-    // setLeaderboards: any;
+    setOpenDialogTour: any;
+    openDialogTour: any;
+    setLeaderboards: any;
     currentPage: any;
 }
 
 const TornamentTable: React.FC<TournamentTableProps> = ({
-    // setOpenDialogTour,
+    setOpenDialogTour,
     data,
     form,
     handleChangeCheckboxAll,
     remove,
     handleChangeChekcbox,
-    // openDialogTour,
-    // setLeaderboards,
+    openDialogTour,
+    setLeaderboards,
     currentPage
 }) => {
+    const { fetchAPI } = useAPICaller();
+    const handleLeaderboard = async (id: number) => {
+        setOpenDialogTour(!openDialogTour);
+        try {
+            const response = await fetchAPI({
+                endpoint: `/tournaments/${id}/leaderboard`,
+                method: 'GET'
+            });
+
+            if (response.status === 200) {
+                setLeaderboards(response.data.data);
+            }
+        } catch (err: any) {
+            console.log('err');
+        }
+    };
     return (
         <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
             <Table sx={{ width: '100%' }} aria-label='simple table'>
@@ -144,10 +162,7 @@ const TornamentTable: React.FC<TournamentTableProps> = ({
                                     </TableCell>
                                     <TableCell sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }} align='center'>
                                         <Typography
-                                            // onClick={() => {
-                                            //     setOpenDialogTour(!openDialogTour);
-                                            //     setLeaderboards(item);
-                                            // }}
+                                            onClick={() => handleLeaderboard(item.id)}
                                             sx={{ color: '#A54CE5', textDecoration: 'underline', fontWeight: 'bold', cursor: 'pointer' }}
                                         >
                                             View Leaderboard

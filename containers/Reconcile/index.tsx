@@ -29,50 +29,6 @@ const Reconcile = () => {
         'Transaction Status',
         'Settlement Time'
     ];
-    // const dummyTable = [
-    //     {
-    //         id: 1,
-    //         userId: 18,
-    //         email: 'test@mail.com',
-    //         orderId: 'SAMPEL_20221024_001',
-    //         orderTime: '2022-12-24T17:01:00.000Z',
-    //         orderAmount: '10000',
-    //         transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
-    //         bank: 'BCA',
-    //         transactionTime: '2022-12-20T17:01:00.000Z',
-    //         grossAmount: '10000.00',
-    //         transactionStatus: 'Settlement',
-    //         settlementTime: '2022-12-20T17:01:00.000Z'
-    //     },
-    //     {
-    //         id: 2,
-    //         userId: 19,
-    //         email: 'allright@mail.com',
-    //         orderId: 'SAMPEL_20221024_001',
-    //         orderTime: '2022-12-13T17:00:00.000Z',
-    //         orderAmount: '10000',
-    //         transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
-    //         bank: 'BCA',
-    //         transactionTime: '2022-12-09T17:00:00.000Z',
-    //         grossAmount: '10000.00',
-    //         transactionStatus: 'Settlement',
-    //         settlementTime: '2022-12-20T17:01:00.000Z'
-    //     },
-    //     {
-    //         id: 3,
-    //         userId: 20,
-    //         email: 'test@mail.com',
-    //         orderId: 'SAMPEL_20221024_001',
-    //         orderTime: '2022-12-29T17:00:00.000Z',
-    //         orderAmount: '10000',
-    //         transactionId: '57d5293c-e65f-4a29-95e4-5959c3fa335b',
-    //         bank: 'BCA',
-    //         transactionTime: '2022-12-25T17:00:00.000Z',
-    //         grossAmount: '10000.00',
-    //         transactionStatus: 'Settlement',
-    //         settlementTime: '2022-12-20T17:01:00.000Z'
-    //     }
-    // ];
 
     const [dataTable, setDataTable] = React.useState<any>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -136,18 +92,14 @@ const Reconcile = () => {
             const {
                 id,
                 user: { id: userId, email },
-                orderId,
-                orderTime,
-                orderAmount,
-                transactionId,
-                bank,
-                transactionTime,
-                grossAmount,
-                transactionStatus,
-                settlementTime
+                code,
+                coin,
+                type,
+                description,
+                status
             } = element;
 
-            csvStr += `${id},${userId},${email},${orderId},${orderTime},${orderAmount},${transactionId},${bank},${transactionTime},${grossAmount},${transactionStatus},${settlementTime}\n`;
+            csvStr += `${id},${userId},${email},${code},${coin},${type},${description},${status}\n`;
         });
 
         const hiddenElement = document.createElement('a');

@@ -219,7 +219,7 @@ const AddGame = () => {
                         pt='30px'
                         borderTop='1px solid rgba(0,0,0,0.5)'
                     >
-                        <Grid item container xs={6}>
+                        <Grid item container xs={12} md={6} lg={4}>
                             {isLoading ? (
                                 <CircularProgress />
                             ) : (

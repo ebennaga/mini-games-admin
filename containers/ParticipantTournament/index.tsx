@@ -33,6 +33,7 @@ const ParticipantTournament = () => {
     const [openDialogConfirm, setOpenDialogConfirm] = React.useState<boolean>(false);
     const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [loadingDelete, setLoadingDelete] = React.useState<boolean>(false);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [dataComing, setDataComing] = React.useState<any>([]);
     const [listGameTournament, setListGameTournament] = React.useState<any>([]);
@@ -122,26 +123,41 @@ const ParticipantTournament = () => {
 
     // Remove item
     const handleRemoveParticipant = async () => {
+        setLoadingDelete(true);
         try {
             const table = form.watch('dataTable');
 
-            table.map(async (item: any) => {
+            const idFailedDelete: any = [];
+            const deleteParticipant = table.map(async (item: any) => {
                 if (item.isAction) {
                     const response = await fetchAPI({
-                        endpoint: `tournament-participants/remove/${item.id}`,
-                        method: 'DELETE'
+                        endpoint: `tournament-participants/remove/`,
+                        method: 'POST',
+                        data: {
+                            tournament_id: item.tornament.id,
+                            participant_ids: item.user.id
+                        }
                     });
-                    if (response?.status === 200) {
-                        notify(response.data.message, 'success');
-                        await handleFetchData();
-                        setOpenDialogConfirm(false);
-                        setOpenDialogSuccess(true);
+                    if (response?.status !== 200) {
+                        idFailedDelete.push(item.id);
                     }
                 }
             });
+
+            await Promise.all(deleteParticipant);
+
+            if (idFailedDelete.length > 0) {
+                notify(`id participants: ${idFailedDelete.join()} fails to deleted`, 'error');
+            } else {
+                notify('Remove Participant Tournament Successfully!');
+                await handleFetchData();
+                setOpenDialogSuccess(true);
+            }
+            setOpenDialogConfirm(false);
         } catch (err: any) {
             notify(err.message, 'error');
         }
+        setLoadingDelete(false);
     };
 
     // Event Next page
@@ -161,7 +177,10 @@ const ParticipantTournament = () => {
         }
     };
 
-    const dateFormat = (date: string) => new Date(date).toLocaleString('id-id').slice(0, 10);
+    const dateFormat = (date: string) => {
+        const dateString = new Date(date).toLocaleString('id-id').split(' ')[0];
+        return dateString;
+    };
     // Event Filter
     const handleFilter = (data: any) => {
         const { titleFilter, gamesFilter, startDateFilter } = data;
@@ -239,17 +258,17 @@ const ParticipantTournament = () => {
 
         const tab = form.watch('tabFilter');
 
-        if (tab === 'latest') {
+        if (tab === 'oldest') {
             const sorting = resFilter.sort((a: any, b: any) => {
-                const first: any = new Date(a.start_register);
-                const second: any = new Date(b.start_register);
+                const first: any = new Date(a.created_at);
+                const second: any = new Date(b.created_at);
                 return first - second;
             });
             form.setValue('dataTable', sorting);
-        } else if (tab === 'oldest') {
+        } else if (tab === 'latest') {
             const sorting = resFilter.sort((a: any, b: any) => {
-                const first: any = new Date(a.start_register);
-                const second: any = new Date(b.start_register);
+                const first: any = new Date(a.created_at);
+                const second: any = new Date(b.created_at);
                 return second - first;
             });
             form.setValue('dataTable', sorting);
@@ -396,8 +415,9 @@ const ParticipantTournament = () => {
                 setOpen={setOpenDialogConfirm}
                 textConfirmButton='REMOVE'
                 textCancelButton='CANCEL'
+                loading={loadingDelete}
             />
-            <DialogSuccess title='Sucess Remove Games' open={openDialogSuccess} setOpen={setOpenDialogSuccess} />
+            <DialogSuccess title='Sucess Remove Participant Tournament' open={openDialogSuccess} setOpen={setOpenDialogSuccess} />
         </Box>
     );
 };

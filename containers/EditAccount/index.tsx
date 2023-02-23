@@ -164,6 +164,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         setRoles([]);
                         setIsFilled(false);
                         setIsRequired(false);
+                        router.push('/account');
                     }
                 } else {
                     notify(`data doesn't changed`);
@@ -300,7 +301,6 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                             {roles?.length > 0 &&
                                 roles?.map((item: any, idx: number) => {
                                     const filter = selectRoles.length > 0 && selectRoles.filter((itm: any) => itm.id === item)[0];
-
                                     return (
                                         <Box
                                             key={idx}
@@ -392,19 +392,21 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                         title='UPDATE'
                         backgroundColor='#A54CE5'
                     />
-                    <CustomButton
-                        onClick={() => {
-                            // setCreateAcc(!createAcc);
-                            router.push('/account');
-                        }}
-                        padding='10px'
-                        width='193px'
-                        height='59px'
-                        title='cancel'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                        border='1px solid #A54CE5'
-                    />
+                    {!isLoading1 && (
+                        <CustomButton
+                            onClick={() => {
+                                // setCreateAcc(!createAcc);
+                                router.push('/account');
+                            }}
+                            padding='10px'
+                            width='193px'
+                            height='59px'
+                            title='cancel'
+                            backgroundColor='white'
+                            color='#A54CE5'
+                            border='1px solid #A54CE5'
+                        />
+                    )}
                 </Box>
             </Box>
         </form>

@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 import React from 'react';
-import { Container, Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import InputExchangeRates from 'components/Input/InputExchangeRates';
 import { useForm } from 'react-hook-form';
 import useNotify from 'hooks/useNotify';
@@ -23,6 +24,7 @@ const ExchangeRatesAdd = () => {
             effective: '',
             coins: 0,
             idr: 0,
+            bonus: 0,
             name: '',
             activeRole: true,
             description: ''
@@ -39,13 +41,14 @@ const ExchangeRatesAdd = () => {
             });
 
             if (response.status === 200) {
-                const { coin, description, effective_at, name, price } = response.data.data;
+                const { coin, description, effective_at, name, price, bonus } = response.data.data;
                 setDataDetail(response.data.data);
 
                 form.setValue('effective', new Date(effective_at).toJSON().slice(0, 10));
                 form.setValue('coins', coin);
                 form.setValue('idr', price);
                 form.setValue('name', name);
+                form.setValue('bonus', bonus);
                 form.setValue('description', description);
             } else {
                 notify(response.message, 'error');
@@ -60,8 +63,8 @@ const ExchangeRatesAdd = () => {
     const handleSubmit = async (data: any) => {
         setLoadingSubmit(true);
         try {
-            const { coin, description, effective_at, name, price } = dataDetail;
-            const { coins, description: descriptionInput, effective, name: nameInput, idr } = data;
+            const { coin, description, effective_at, name, price, bonus } = dataDetail;
+            const { coins, description: descriptionInput, effective, name: nameInput, idr, bonus: bonusInput } = data;
 
             let resData = {};
 
@@ -70,6 +73,7 @@ const ExchangeRatesAdd = () => {
             resData = description !== descriptionInput ? { ...resData, description, descriptionInput } : resData;
             resData = new Date(effective_at).toJSON().slice(0, 10) !== effective ? { ...resData, effective_at: effective } : resData;
             resData = name !== nameInput ? { ...resData, name: nameInput } : resData;
+            resData = bonus !== bonusInput ? { ...resData, bonus: bonusInput } : resData;
             resData = price !== idr ? { ...resData, price: idr } : resData;
 
             // Conditional if resData is filled
@@ -87,6 +91,9 @@ const ExchangeRatesAdd = () => {
                 } else {
                     notify(response.data.message, 'error');
                 }
+            } else {
+                notify(`the data doesn't change`, 'success');
+                router.push('/exchange-rates');
             }
         } catch (err: any) {
             notify(err.message);
@@ -110,8 +117,8 @@ const ExchangeRatesAdd = () => {
     }, []);
 
     return (
-        <Container sx={{ mt: 5 }}>
-            <Box sx={{ ml: -25, height: 80 }} component={Paper}>
+        <Box sx={{ mt: 5 }}>
+            <Box sx={{ height: 80 }} component={Paper}>
                 <Box>
                     <Box sx={{ ml: 2 }}>
                         <Typography sx={{ fontSize: '24px' }}>Exchange Rates Detail</Typography>
@@ -119,7 +126,7 @@ const ExchangeRatesAdd = () => {
                     </Box>
                 </Box>
             </Box>
-            <Box sx={{ ml: -25, mt: 4 }}>
+            <Box sx={{ mt: 4 }}>
                 <InputExchangeRates
                     handleAddSetActive={handleAddSetActive}
                     handleAddSetNotActive={handleAddSetNotActive}
@@ -130,11 +137,12 @@ const ExchangeRatesAdd = () => {
                     idrName='idr'
                     form={form}
                     handleSubmit={handleSubmit}
-                    // nameName='name'
+                    nameName='name'
+                    bonusName='bonus'
                     // descriptionName='description'
                 />
             </Box>
-        </Container>
+        </Box>
     );
 };
 

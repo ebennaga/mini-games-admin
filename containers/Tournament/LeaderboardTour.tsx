@@ -24,7 +24,8 @@ interface LeaderboardDialogProps {
 }
 
 const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setOpenDialog, item }) => {
-    const data: any[] = item?.leaderboard;
+    const data: any[] = item;
+
     const [row, setRow] = useState('7');
     const [currentPage, setCurrentPage] = useState(1);
     const [pages, setPages] = useState<any>(1);
@@ -105,11 +106,11 @@ const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setO
                         </TableHead>
                         <TableBody>
                             {getPaginatedData()?.length > 0 &&
-                                getPaginatedData().map((i: any) => {
+                                getPaginatedData().map((i: any, index: any) => {
                                     return (
                                         <TableRow key={i.rank}>
                                             <TableCell align='center' sx={{ width: '5%' }}>
-                                                {i.rank}
+                                                {currentPage === 1 ? index + 1 : index + 1 + row}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -121,13 +122,13 @@ const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setO
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='left'
                                             >
-                                                {i.username}
+                                                {i.user?.username}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='left'
                                             >
-                                                {numberFormat(i.scores)}
+                                                {numberFormat(i.score)}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}

@@ -9,11 +9,22 @@ interface DialogMenuAccessProps {
     listAccess: any;
     form: any;
     name: string;
+    setDataChanges: any;
+    dataChanges: any;
 }
 
-const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({ onUpdate, open, setOpen, currentRoles, listAccess, form, name }) => {
+const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
+    setDataChanges,
+    dataChanges,
+    onUpdate,
+    open,
+    setOpen,
+    currentRoles,
+    listAccess,
+    form,
+    name
+}) => {
     const [dataAccesss, setDataAccess] = React.useState<Array<any>>([...listAccess]);
-    const [dataChanges, setDataChanges] = React.useState<Array<any>>([]);
 
     const filterArray = async (array: any, obj: any) => {
         let filterData = array.filter((item: any) => item.id !== obj.id);
@@ -21,7 +32,6 @@ const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({ onUpdate, open, set
         filterData.sort((a: any, b: any) => a.id - b.id);
         return filterData;
     };
-
     const handleChange = async (data: any) => {
         let stateData = { ...data };
         if (stateData.isChecked) {

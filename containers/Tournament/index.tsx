@@ -54,7 +54,7 @@ const TournamentContainer = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogTour, setOpenDialogTour] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
-    const [row, setRow] = useState('7');
+    const [row, setRow] = useState('5');
     const [game, setGame] = useState('0');
     const [createTournament, setCreateTournament] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -72,6 +72,7 @@ const TournamentContainer = () => {
     const [isSearch, setIsSearch] = useState(false);
     const [isGame, setIsGame] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
     const [isFilter, setIsFilter] = useState(false);
     const [openDialogSuccess, setOpenDialogSuccess] = React.useState<boolean>(false);
     const [routeId, setRouteId] = useState<any>(null);
@@ -92,7 +93,7 @@ const TournamentContainer = () => {
             if (response.status === 200) {
                 const tournaments = response.data.data;
                 setRemove(tournaments);
-                setRow(tournaments.length.toString());
+                // setRow(tournaments.length.toString());
                 setIsLoading(false);
                 // notify(response?.data.message, 'success');
             }
@@ -101,26 +102,47 @@ const TournamentContainer = () => {
             setIsLoading(false);
         }
     };
+
     const handleRemoveData = async () => {
+        setLoadingDelete(true);
         try {
-            const response = await fetchAPI({
-                endpoint: `/tournaments/${routeId}`,
-                method: 'DELETE'
+            const idFailedDelete: any = []; // data container that failed to delete
+
+            // delete tournament which is in deleted state
+            const deleteCheckedTournament = deleted.map(async (tournament: any) => {
+                const response = await fetchAPI({
+                    endpoint: `/tournaments/${tournament.id}`,
+                    method: 'DELETE'
+                });
+                // condition if tournament fail to deleted
+                if (response.status !== 200) {
+                    idFailedDelete.push(tournament.id);
+                }
             });
-            if (response.status === 200) {
-                notify(response.data.message, 'success');
-                const res = remove.filter((item: any) => !deleted.includes(item));
-                // setDeleted([]);
-                // setCheckedObj([]);
-                // setRow(res.length);
-                await handleFetchData();
-                setOpenDialog(false);
-                setOpenDialogSuccess(true);
-                // form.setValue('checkAll', false);
+
+            // promise to waiting looping delete
+            await Promise.all(deleteCheckedTournament);
+
+            // conditional notify if there is tournament fails to deleted
+            if (idFailedDelete.length === 0) {
+                notify('Deleted tournaments success', 'success');
+            } else {
+                notify(`Id tournaments: ${idFailedDelete.join()} failed to delete`, 'error');
             }
+
+            await handleFetchData();
+            setOpenDialog(false);
+            setOpenDialogSuccess(true);
+            setCheckedObj([]);
+            setDeleted([]);
+            remove.forEach((_item: any, idx: number) => {
+                const datas: any = `checkbox${idx + 1}`;
+                form.setValue(datas, false);
+            });
         } catch (error: any) {
             notify(error.message, 'error');
         }
+        setLoadingDelete(false);
     };
 
     const getPaginatedData = () => {
@@ -375,9 +397,17 @@ const TournamentContainer = () => {
     // };
 
     useEffect(() => {
-        handleFetchData();
+        if (!createTournament) {
+            handleFetchData();
+            setCheckedObj([]);
+            setDeleted([]);
+            remove.forEach((item: any, idx: number) => {
+                const datas: any = `checkbox${idx + 1}`;
+                form.setValue(datas, false);
+            });
+        }
         // setRemove(dummy);
-    }, []);
+    }, [createTournament]);
 
     useEffect(() => {
         setPages(Math.ceil(remove.length / Number(row)));
@@ -421,7 +451,7 @@ const TournamentContainer = () => {
         if (form.watch('search') === '') {
             setIsSearch(false);
         }
-    }, [remove, input, search, currentPage]);
+    }, [input]);
     // console.log(getPaginatedData());
     // console.log('routeid', routeId);
 
@@ -547,9 +577,9 @@ const TournamentContainer = () => {
                         ) : (
                             <Tables
                                 currentPage={currentPage}
-                                // setLeaderboards={setLeaderboards}
-                                // openDialogTour={openDialogTour}
-                                // setOpenDialogTour={setOpenDialogTour}
+                                setLeaderboards={setLeaderboards}
+                                openDialogTour={openDialogTour}
+                                setOpenDialogTour={setOpenDialogTour}
                                 data={getPaginatedData()}
                                 form={form}
                                 handleChangeCheckboxAll={handleChangeCheckboxAll}
@@ -623,6 +653,7 @@ const TournamentContainer = () => {
                 setOpen={setOpenDialog}
                 qty={checkedObj.length}
                 titleDialog='Are you sure remove this tour?'
+                isLoading={loadingDelete}
             />
             {openDialogTour && (
                 <LeaderboardDialog

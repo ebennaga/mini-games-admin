@@ -7,9 +7,10 @@ import RadioButton from 'components/Radio/RadioV2';
 import Input from './Input';
 
 interface InputExchangeRatesProps {
-    // nameName?: string;
+    nameName?: string;
     // effectiveName?: string;
     coinsName: string;
+    bonusName: string;
     idrName: string;
     // descriptionName?: string;
     form: any;
@@ -22,7 +23,7 @@ interface InputExchangeRatesProps {
 }
 
 const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
-    // nameName,
+    nameName,
     // effectiveName,
     handleAddSetActive,
     handleAddSetNotActive,
@@ -33,8 +34,8 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
     handleSubmit,
     loadingSubmit,
     loading,
-    rules
-    // bonusName
+    rules,
+    bonusName
 }) => {
     const router = useRouter();
 
@@ -59,7 +60,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         />
                     </Box>
                 </Stack> */}
-                {/* <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
+                <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <Typography component='h3' fontSize='16px' fontWeight={600}>
                             Name
@@ -77,7 +78,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             isLoading={loading}
                         />
                     </Box>
-                </Stack> */}
+                </Stack>
                 <Stack direction='row' spacing={30} sx={{ mt: 4 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <Typography sx={{ color: 'rgba(0, 0, 0, 0.6)' }} component='h3' fontSize='16px' fontWeight={600}>
@@ -112,7 +113,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                             type='number'
                             rules={rules}
                             form={form}
-                            name='bonus'
+                            name={bonusName}
                             label='Amount'
                             placeholder='Enter Amount'
                             startAdornment={
@@ -175,7 +176,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                         alignItems: 'center'
                     }}
                 >
-                    <Box sx={{ width: '35%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ width: { lg: '40%', xl: '35%' }, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box>
                             <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>Is Active</Typography>
                             <Typography
@@ -190,7 +191,7 @@ const InputExchangeRates: React.FC<InputExchangeRatesProps> = ({
                                 *Field Required
                             </Typography>
                         </Box>
-                        <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography>
+                        {/* <Typography sx={{ fontWeight: 'bold', color: 'rgba(0, 0, 0, 0.6)' }}>:</Typography> */}
                     </Box>
                     <Box sx={{ width: '15%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <RadioButton

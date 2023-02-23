@@ -96,16 +96,9 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
             fee: '',
             tableData: [
                 {
-                    // positionStart: '',
-                    // positionEnd: '',
-                    // countPlayer: '',
-                    // pointPrizes: '',
-                    // playerPointPrizes: '',
-                    // cointPrizes: '',
-                    // playerCointPrizes: ''
-                    max_pos: '',
-                    point: '',
-                    coin: ''
+                    max_pos: 0,
+                    point: 0,
+                    coin: 0
                 }
             ]
         }
@@ -139,7 +132,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
         setValue(event.target.value as string);
         setTable([]);
     };
-    // console.log(fieldArray);
+
     const fetchPrizesInfos = async () => {
         try {
             const result = await fetchAPI({
@@ -158,7 +151,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 setPrizeData(dataPrize);
             }
         } catch (error: any) {
-            console.log(error);
+            notify(error.message, 'error');
         }
     };
 
@@ -206,21 +199,25 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                 endpoint: '/tournaments',
                 data: body
             });
-
             if (response?.status === 200) {
                 setIsLoading(false);
                 notify('Create tournament success!');
-                router.push('/tournament');
                 setTable([]);
                 formTable.reset();
+                form.reset();
+                setCreateTour(!createTour);
             } else {
                 notify(response.data.message, 'error');
             }
         } catch (error: any) {
             notify(error.message, 'error');
             setIsLoading(false);
+            // console.log(error);
         }
+        setIsLoading(false);
     };
+
+    // console.log(form.watch());
 
     // const MenuProps = {
     //     PaperProps: {
@@ -772,20 +769,22 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                             width: '100%'
                         }}
                     >
-                        <CustomButton type='submit' />
+                        <CustomButton type='submit' isLoading={isLoading} />
                         {/* <CustomButton type='submit' padding='10px' width='193px' height='59px' title='Submit' backgroundColor='#A54CE5' /> */}
-                        <CustomButton
-                            onClick={() => {
-                                setCreateTour(!createTour);
-                            }}
-                            padding='10px'
-                            width='193px'
-                            height='59px'
-                            title='cancel'
-                            backgroundColor='white'
-                            color='#A54CE5'
-                            border='1px solid #A54CE5'
-                        />
+                        {!isLoading && (
+                            <CustomButton
+                                onClick={() => {
+                                    setCreateTour(!createTour);
+                                }}
+                                padding='10px'
+                                width='193px'
+                                height='59px'
+                                title='cancel'
+                                backgroundColor='white'
+                                color='#A54CE5'
+                                border='1px solid #A54CE5'
+                            />
+                        )}
                     </Box>
                 </form>
             </Box>
