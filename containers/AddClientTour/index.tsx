@@ -88,9 +88,9 @@ const AddClientTour = () => {
     const [openBarcode, setOpenBarcode] = React.useState<boolean>(false);
     const [value, setValue] = React.useState('0');
     const [tableObj, setTableObj] = React.useState<any>({
-        max_pos: '',
-        point: '',
-        coin: ''
+        max_pos: 0,
+        point: 0,
+        coin: 0
     });
 
     const notify = useNotify();
@@ -120,9 +120,9 @@ const AddClientTour = () => {
         if (tableObj.max_pos) {
             setTable([...table, tableObj]);
             setTableObj({
-                max_pos: '',
-                point: '',
-                coin: ''
+                max_pos: 0,
+                point: 0,
+                coin: 0
             });
         }
     };
@@ -201,6 +201,7 @@ const AddClientTour = () => {
                 entry_coin: data.fee,
                 prize_infos: table,
                 company_id: data.company
+                // status: 'OPEN'
             };
 
             const response = await fetchAPI({
@@ -428,7 +429,11 @@ const AddClientTour = () => {
                             labelField='Games'
                             placeHolder='Select Games'
                             isSelectType
-                            listSelect={[{ id: '1', name: 'Games 1' }]}
+                            listSelect={[
+                                { id: '1', name: 'Hop up' },
+                                { id: '2', name: 'Tower Stack' },
+                                { id: '3', name: 'Rose Dart' }
+                            ]}
                             isMultiline={false}
                             rules={rules}
                             isRequired

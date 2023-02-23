@@ -161,6 +161,7 @@ const ClientTournament = () => {
 
     // Fetch data client Tournament
     const fetchData = async () => {
+        setIsLoading(true);
         try {
             // fetch data companies
             const getCompanies = await fetchAPI({
@@ -174,6 +175,7 @@ const ClientTournament = () => {
 
                 // Looping through companies to fetch data client tournaments with the company id
                 const getClientTournaments = companies.map(async (item: any) => {
+                    setIsLoading(true);
                     const response = await fetchAPI({
                         method: 'GET',
                         endpoint: `tournaments?company_id=${item.id}`
@@ -191,8 +193,10 @@ const ClientTournament = () => {
                 setFilteredData(result);
                 setDefaultData(result);
                 setRow(result.length.toString());
+                setIsLoading(false);
             } else {
                 notify(getCompanies?.data?.message);
+                setIsLoading(false);
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -281,8 +285,6 @@ const ClientTournament = () => {
             });
         }
     };
-
-    console.log(form.watch());
 
     const checkTrue: string[] = [];
     const handleSingleCheckBox = (e: any, name: any, id: number) => {
