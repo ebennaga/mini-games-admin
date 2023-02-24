@@ -140,7 +140,7 @@ const DetailClientTour = () => {
                     lat: result.latitude
                 };
                 const address: any = await reverseCoordinate(latLong);
-                form.setValue('address', address.address.Match_addr);
+                form.setValue('address', address.address?.Match_addr);
                 form.setValue('endTime', endTime);
                 form.setValue('startTime', startTime);
                 form.setValue('startDate', new Date(result.start_time).toJSON().slice(0, 10));
@@ -196,7 +196,10 @@ const DetailClientTour = () => {
                 end_time: new Date(`${data.endDate} ${data.endTime}`).toISOString(),
                 entry_coin: data.fee,
                 prize_infos: table,
-                company_id: data.company
+                company_id: data.company,
+                longitude: data.long,
+                latitude: data.lat,
+                address: data.detailLocation
                 // status: 'OPEN'
             };
 
