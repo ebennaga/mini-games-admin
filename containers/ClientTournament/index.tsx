@@ -145,6 +145,7 @@ const ClientTournament = () => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [row, setRow] = React.useState('');
     const [filteredData, setFilteredData] = React.useState<any>([]);
+    const [searchData, setSearchData] = React.useState<any>([]);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [pages, setPages] = React.useState(1);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -195,6 +196,7 @@ const ClientTournament = () => {
 
                 setFilteredData(result);
                 setDefaultData(result);
+                setSearchData(result);
                 setRow(result.length.toString());
                 setIsLoading(false);
             } else {
@@ -294,7 +296,6 @@ const ClientTournament = () => {
         // console.log('name : ', name);
         form.setValue(name, e.target.checked);
         const checkBox: any = { ...form.watch() };
-        console.log(checkBox);
         checkBoxKeys.forEach((item: any) => {
             if (checkBox[item] === true) {
                 checkTrue.push(item);
@@ -363,9 +364,9 @@ const ClientTournament = () => {
         //     form.setValue(datas, false);
         // });
     };
-    console.log(checkedObj);
-    // console.log(existingData);
-    console.log(form.watch());
+    // console.log(checkedObj);
+    // // console.log(existingData);
+    // console.log(form.watch());
 
     const handleEdit = () => {
         // const { id } = filteredData[existingData];
@@ -375,9 +376,10 @@ const ClientTournament = () => {
     // Component Update for Search Event
     const keySearch = form.watch('keySearch');
     React.useEffect(() => {
-        const result = filteredData.filter((item: any) => {
+        const tempData = [...searchData];
+        const result = tempData.filter((item: any) => {
             if (keySearch) {
-                return item?.title?.toLowerCase()?.includes(keySearch.toLowerCase());
+                return item?.name?.toLowerCase()?.includes(keySearch.toLowerCase());
             }
             return item;
         });
