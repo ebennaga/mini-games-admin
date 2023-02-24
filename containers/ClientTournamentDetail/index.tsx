@@ -86,6 +86,13 @@ const DetailClientTour = () => {
 
     // const [detailData, setDetailData] = React.useState<any>(null);
 
+    const GEOCODE_URL = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&langCode=EN&location=';
+
+    const reverseCoordinate = async (latlang: any) => {
+        const data = await (await fetch(`${GEOCODE_URL}${latlang.long},${latlang.lat}`)).json();
+        return data;
+    };
+
     const handleTable = (event: any) => {
         setValue(event.target.value as string);
     };
@@ -125,13 +132,15 @@ const DetailClientTour = () => {
             });
 
             if (response.status === 200) {
-                // console.log(response.data.data);
-                // console.log(form.watch());
-                // setDetailData(response.data.data);
                 const result = response.data.data;
                 const startTime: any = await getTime(result.start_time);
                 const endTime: any = await getTime(result.end_time);
-                form.setValue('address', result.address);
+                const latLong: any = {
+                    long: result.longitude,
+                    lat: result.latitude
+                };
+                const address: any = await reverseCoordinate(latLong);
+                form.setValue('address', address.address.Match_addr);
                 form.setValue('endTime', endTime);
                 form.setValue('startTime', startTime);
                 form.setValue('startDate', new Date(result.start_time).toJSON().slice(0, 10));
@@ -143,8 +152,8 @@ const DetailClientTour = () => {
                 form.setValue('title', result.name);
                 form.setValue('poolPrize', result.total_point);
                 form.setValue('fee', result.entry_coin);
+                form.setValue('detailLocation', result.address);
                 setTable([...table, ...result.prize_infos]);
-                // form.setValue('img', result.tournament_image);
                 setIsLoading(false);
             }
         } catch (error: any) {

@@ -200,7 +200,10 @@ const AddClientTour = () => {
                 end_time: new Date(`${data.endDate} ${data.endTime}`).toISOString(),
                 entry_coin: data.fee,
                 prize_infos: table,
-                company_id: data.company
+                company_id: data.company,
+                longitude: data.long,
+                latitude: data.lat,
+                address: data.detailLocation
                 // status: 'OPEN'
             };
 
@@ -233,6 +236,8 @@ const AddClientTour = () => {
         setIsCompFilled(true);
         return setIsRolesFilled(true);
     }, [companies, roles]);
+
+    console.log(form.watch());
 
     return (
         <Box component='section'>
