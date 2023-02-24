@@ -35,6 +35,7 @@ import DialogMap from 'components/Dialog/DialogMap';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import convertBase64 from 'helpers/convertBase64';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 
 const dummyData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
@@ -62,7 +63,8 @@ const DetailClientTour = () => {
             detailLocation: '',
             address: 'Intermark, Rawa Mekar Jaya, Serpong, Tangerang Selatan, Banten, Indonesia',
             lat: -6.30943345,
-            long: 106.6893430616688
+            long: 106.6893430616688,
+            pin: ''
         }
     });
 
@@ -71,6 +73,7 @@ const DetailClientTour = () => {
     const notify = useNotify();
     const { fetchAPI } = useAPICaller();
     const [prizeData, setPrizeData] = React.useState<any>(dummyData);
+    const [openBarcode, setOpenBarcode] = React.useState<boolean>(false);
     const [prizePool, setPrizePool] = React.useState(0);
     const [openDialogMap, setOpenDialogMap] = React.useState<boolean>(false);
     const [table, setTable] = React.useState<any>([]);
@@ -153,6 +156,7 @@ const DetailClientTour = () => {
                 form.setValue('poolPrize', result.total_point);
                 form.setValue('fee', result.entry_coin);
                 form.setValue('detailLocation', result.address);
+                // form.setValue('pin', result.pin)
                 setTable([...table, ...result.prize_infos]);
                 setIsLoading(false);
             }
@@ -200,6 +204,7 @@ const DetailClientTour = () => {
                 longitude: data.long,
                 latitude: data.lat,
                 address: data.detailLocation
+                // pin: data.pin
                 // status: 'OPEN'
             };
 
@@ -402,6 +407,32 @@ const DetailClientTour = () => {
                             isRequired
                         />
                     </Box>
+                    {form.watch('mode') === '2' && (
+                        <Box sx={{ my: '30px', position: 'relative', width: '40%' }}>
+                            <InputWithLabel
+                                label='Pin'
+                                name='pin'
+                                type='number'
+                                form={form}
+                                placeHolder='Fee Amount'
+                                labelField='Enter Pin'
+                                isSelectType={false}
+                                isMultiline={false}
+                                rules={rules}
+                                isRequired
+                            />
+                            <Button
+                                disabled={!form.watch('pin')}
+                                onClick={() => setOpenBarcode(true)}
+                                color='secondary'
+                                variant='contained'
+                                sx={{ right: -220, top: 0, background: '#A54CE5', color: 'white', position: 'absolute', height: '56px' }}
+                                startIcon={<QrCode2Icon />}
+                            >
+                                Generate QR Code
+                            </Button>
+                        </Box>
+                    )}
                     <Box sx={{ my: '30px' }}>
                         <InputWithLabel
                             label='Tournament Fee'

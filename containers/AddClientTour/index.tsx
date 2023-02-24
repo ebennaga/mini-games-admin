@@ -204,6 +204,7 @@ const AddClientTour = () => {
                 longitude: data.long,
                 latitude: data.lat,
                 address: data.detailLocation
+                // pin: data.pin
                 // status: 'OPEN'
             };
 
@@ -236,8 +237,6 @@ const AddClientTour = () => {
         setIsCompFilled(true);
         return setIsRolesFilled(true);
     }, [companies, roles]);
-
-    console.log(form.watch());
 
     return (
         <Box component='section'>
