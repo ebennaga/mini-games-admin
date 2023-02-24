@@ -42,6 +42,7 @@ import InputDate from 'components/Input/InputDate';
 import { getCurrentDate } from 'utils/date';
 import Input from 'components/Input/Input';
 import InputSelect from 'components/Input/InputSelect';
+import { CheckCircle } from '@mui/icons-material';
 
 const valueList = [
     {
@@ -154,6 +155,8 @@ const ClientTournament = () => {
     const [val, setVal] = React.useState<string>('All');
     const [existingData, setExistingData] = React.useState<any>([]);
     const [defaultData, setDefaultData] = React.useState<Array<any>>([]);
+    const [loadingDelete, setLoadingDelete] = React.useState<boolean>(false);
+    const [onDelete, setOnDelete] = React.useState(false);
 
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
@@ -291,7 +294,7 @@ const ClientTournament = () => {
         // console.log('name : ', name);
         form.setValue(name, e.target.checked);
         const checkBox: any = { ...form.watch() };
-        // console.log(checkBoxKeys);
+        console.log(checkBox);
         checkBoxKeys.forEach((item: any) => {
             if (checkBox[item] === true) {
                 checkTrue.push(item);
@@ -306,6 +309,7 @@ const ClientTournament = () => {
                 const filter = existingData.filter((item: any) => {
                     return id !== item;
                 });
+                console.log(filter);
                 setExistingData(filter);
             } else {
                 setExistingData([]);
@@ -313,18 +317,55 @@ const ClientTournament = () => {
         }
     };
 
-    const handleexistingData = () => {
-        const res = filteredData.filter((item: any) => !existingData.includes(item));
-        setCheckedObj([]);
-        setFilteredData(res);
-        setExistingData([]);
-        setOpenRemove(false);
-        setRow(res.length);
-        filteredData.forEach((item: any, idx: number) => {
-            const datas: any = `checkbox${idx + 1}`;
-            form.setValue(datas, false);
-        });
+    // console.log(existingData);
+
+    const handleRemoveData = async () => {
+        setLoadingDelete(true);
+        try {
+            const idFailedDelete: any = []; // data
+            const deleteCheckedClientTournament = existingData.map(async (id: any) => {
+                const response = await fetchAPI({
+                    endpoint: `/tournaments/${id}`,
+                    method: 'DELETE'
+                });
+                if (response.status !== 200) {
+                    idFailedDelete.push(id);
+                }
+            });
+            await Promise.all(deleteCheckedClientTournament);
+            if (idFailedDelete.length === 0) {
+                notify('Deleted tournaments success', 'success');
+            } else {
+                notify(`Id tournaments: ${idFailedDelete.join()} failed to delete`, 'error');
+            }
+
+            await fetchData();
+            setOnDelete(true);
+            setCheckedObj([]);
+            existingData.forEach((_item: any) => {
+                const datas: any = `checkbox${_item}`;
+                form.setValue(datas, false);
+            });
+        } catch (error: any) {
+            notify(error.message, 'error');
+            setLoadingDelete(false);
+            setOpenRemove(false);
+        }
+        setLoadingDelete(false);
+        // const res = filteredData.filter((item: any) => !existingData.includes(item));
+        // setCheckedObj([]);
+        // setFilteredData(res);
+        // setExistingData([]);
+        // setOpenRemove(false);
+        // setRow(res.length);
+        // filteredData.forEach((item: any, idx: number) => {
+        //     const datas: any = `checkbox${idx + 1}`;
+        //     form.setValue(datas, false);
+        // });
     };
+    console.log(checkedObj);
+    // console.log(existingData);
+    console.log(form.watch());
 
     const handleEdit = () => {
         // const { id } = filteredData[existingData];
@@ -618,21 +659,43 @@ const ClientTournament = () => {
                 aria-describedby='alert-dialog-description'
             >
                 <DialogTitle sx={{ m: 1, display: 'flex', justifyContent: 'center' }} id='alert-dialog-title'>
-                    Are you sure remove this prizes ?
+                    {onDelete ? 'Success Remove Account' : 'Are you sure remove this prizes ?'}
                 </DialogTitle>
                 <DialogContent sx={{ m: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <DialogContentText id='alert-dialog-description'>{checkedObj.length} items selected</DialogContentText>
+                    {onDelete ? (
+                        <CheckCircle sx={{ width: '80px', height: '80px', color: '#A54CE5', my: '20px' }} />
+                    ) : (
+                        <DialogContentText id='alert-dialog-description'>{checkedObj.length} items selected</DialogContentText>
+                    )}
                 </DialogContent>
                 <DialogActions sx={{ m: 1 }}>
-                    <CustomButton title='REMOVE' height='47px' onClick={handleexistingData} />
-                    <CustomButton
-                        title='CANCEL'
-                        backgroundColor='white'
-                        color='#A54CE5'
-                        border='1px solid #A54CE5'
-                        height='47px'
-                        onClick={() => setOpenRemove(false)}
-                    />
+                    {onDelete ? (
+                        <CustomButton
+                            onClick={() => {
+                                setOpenRemove(false);
+                                // setIsChecked(false);
+                                // form.setValue('checkedAll', false);
+                                setTimeout(() => {
+                                    setOnDelete(!onDelete);
+                                }, 2000);
+                            }}
+                            title='Back'
+                            width='100%'
+                        />
+                    ) : (
+                        <>
+                            {' '}
+                            <CustomButton title='REMOVE' isDisable={loadingDelete} height='47px' onClick={handleRemoveData} />
+                            <CustomButton
+                                title='CANCEL'
+                                backgroundColor='white'
+                                color='#A54CE5'
+                                border='1px solid #A54CE5'
+                                height='47px'
+                                onClick={() => setOpenRemove(false)}
+                            />
+                        </>
+                    )}
                 </DialogActions>
             </Dialog>
             <Box component='section'>
