@@ -673,8 +673,6 @@ const ClientTournament = () => {
                         <CustomButton
                             onClick={() => {
                                 setOpenRemove(false);
-                                // setIsChecked(false);
-                                // form.setValue('checkedAll', false);
                                 setTimeout(() => {
                                     setOnDelete(!onDelete);
                                 }, 2000);
