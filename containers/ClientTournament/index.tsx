@@ -412,7 +412,7 @@ const ClientTournament = () => {
             const arr = result.length > 0 ? result : data;
             result = [
                 ...arr.filter((item: any) => {
-                    const value: any = new Date(item.start.slice(0, 10));
+                    const value: any = new Date(item.start_time.slice(0, 10));
                     const filter: any = new Date(startDate);
                     return value >= filter;
                 })
@@ -422,7 +422,7 @@ const ClientTournament = () => {
             const arr = result.length > 0 ? result : data;
             result = [
                 ...arr.filter((item: any) => {
-                    const value: any = new Date(item.end.slice(0, 10));
+                    const value: any = new Date(item.end_time.slice(0, 10));
                     const filter: any = new Date(endDate);
                     return value <= filter;
                 })
@@ -432,7 +432,7 @@ const ClientTournament = () => {
             const arr = result.length > 0 ? result : data;
             result = [
                 ...arr.filter((item: any) => {
-                    const itemStart = new Date(item.start).toLocaleString('ca', timeOption);
+                    const itemStart = new Date(item?.start_time).toLocaleString('ca', timeOption);
                     return itemStart === startTime;
                 })
             ];
@@ -441,17 +441,18 @@ const ClientTournament = () => {
             const arr = result.length > 0 ? result : data;
             result = [
                 ...arr.filter((item: any) => {
-                    const itemEnd = new Date(item?.end)?.toLocaleString('ca', timeOption);
+                    const itemEnd = new Date(item?.end_time)?.toLocaleString('ca', timeOption);
                     return itemEnd === endTime;
                 })
             ];
         }
         if (endTime && startTime) {
             const arr = result.length > 0 ? result : data;
+
             result = [
                 ...arr.filter((item: any) => {
-                    const itemStart = new Date(item.start).toLocaleString('ca', timeOption);
-                    const itemEnd = new Date(item.end).toLocaleString('ca', timeOption);
+                    const itemStart = new Date(item.start_time).toLocaleString('ca', timeOption);
+                    const itemEnd = new Date(item.end_time).toLocaleString('ca', timeOption);
                     return itemStart >= startTime && itemEnd <= endTime;
                 })
             ];
@@ -463,8 +464,8 @@ const ClientTournament = () => {
         if (val === 'Latest') {
             result = [
                 ...result.sort((a: any, b: any) => {
-                    const first: any = new Date(a.start);
-                    const second: any = new Date(b.start);
+                    const first: any = new Date(a.start_time);
+                    const second: any = new Date(b.start_time);
                     return first - second;
                 })
             ];
@@ -472,8 +473,8 @@ const ClientTournament = () => {
         if (val === 'Oldest') {
             result = [
                 ...result.sort((a: any, b: any) => {
-                    const first: any = new Date(a.start);
-                    const second: any = new Date(b.start);
+                    const first: any = new Date(a.start_time);
+                    const second: any = new Date(b.start_time);
                     return second - first;
                 })
             ];
