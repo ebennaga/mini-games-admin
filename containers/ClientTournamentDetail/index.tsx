@@ -408,7 +408,7 @@ const DetailClientTour = () => {
                         />
                     </Box>
                     {form.watch('mode') === '2' && (
-                        <Box sx={{ my: '30px', position: 'relative', width: '40%' }}>
+                        <Box sx={{ my: '30px', position: 'relative', width: '100%' }}>
                             <InputWithLabel
                                 label='Pin'
                                 name='pin'
