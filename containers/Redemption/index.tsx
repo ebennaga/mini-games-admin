@@ -8,6 +8,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import HeaderChildren from 'components/HeaderChildren';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
+import { useRouter } from 'next/router';
 import TabPanelAll from './TabPanelAll';
 import TabPanelPending from './TabPanelPending';
 import TabPanelComplete from './TabPanelComplete';
@@ -82,7 +83,7 @@ const dummyData = [
             resi_no: '12341231231231',
             courier: {
                 id: '1',
-                name: 'sicepat'
+                name: 'sicepat1'
             }
         },
         status: 'delivered',
@@ -96,7 +97,7 @@ const dummyData = [
         user: {
             id: '1',
             avatar: 1,
-            username: 'anoc'
+            username: 'anoc1'
         },
         redemption_product: {
             id: '',
@@ -125,6 +126,7 @@ const Redemption = () => {
         }
     });
     const [redempData, setRedempData] = React.useState<any>([]);
+    const [redeemIdData, setRedeemIdData] = React.useState<any>(null);
     const [filterData, setFilterData] = React.useState<any>([]);
     const [value, setValue] = React.useState(0);
     const [data, setData] = React.useState<any>(dummyData);
@@ -133,6 +135,7 @@ const Redemption = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     // const [styles, setStyles] = React.useState({});
     const [pages, setPages] = React.useState(1);
+    const router = useRouter();
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -157,7 +160,11 @@ const Redemption = () => {
                 endpoint: `/redemptions?search=&status=${status}`
             });
             if (response.status === 200) {
+                const resData = response.data.data;
                 setRedempData(response.data.data);
+                console.log('resdata', resData);
+                const filterID = resData.filter((o: any) => o.id);
+                console.log('filterid', filterID);
                 setData(response.data.data);
                 // setRedempData(dummyData);
                 // setData(dummyData);
@@ -241,39 +248,39 @@ const Redemption = () => {
         setPages(1);
     };
 
-    // OPTIONS FILTER DATA IF NEED IT
-    // // React.useEffect(() => {
-    // //     const status: any =
-    // //         value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
-    // //     if (status === 'pending') {
-    // //         const tempData: any = [...redempData];
-    // //         const filter = tempData.filter((item: any) => {
-    // //             return item.status === 'pending';
-    // //         });
-    // //         setFilterData(filter);
-    // //     }
-    // //     if (status === 'processed') {
-    // //         const tempData = [...redempData];
-    // //         const filter = tempData.filter((item: any) => {
-    // //             return item.status === 'processed';
-    // //         });
-    // //         setFilterData(filter);
-    // //     }
-    // //     if (status === 'delivered') {
-    // //         const tempData = [...redempData];
-    // //         const filter = tempData.filter((item: any) => {
-    // //             return item.status === 'delivered';
-    // //         });
-    // //         setFilterData(filter);
-    // //     }
-    // //     if (status === 'completed') {
-    // //         const tempData = [...redempData];
-    // //         const filter = tempData.filter((item: any) => {
-    // //             return item.status === 'completed';
-    // //         });
-    // //         setFilterData(filter);
-    // //     }
-    // // }, [value]);
+    // // OPTIONS FILTER DATA IF NEED IT
+    // React.useEffect(() => {
+    //     const status: any =
+    //         value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
+    //     if (status === 'pending') {
+    //         const tempData: any = [...redempData];
+    //         const filter = tempData.filter((item: any) => {
+    //             return item.status === 'pending';
+    //         });
+    //         setFilterData(filter);
+    //     }
+    //     if (status === 'processed') {
+    //         const tempData = [...redempData];
+    //         const filter = tempData.filter((item: any) => {
+    //             return item.status === 'processed';
+    //         });
+    //         setFilterData(filter);
+    //     }
+    //     if (status === 'delivered') {
+    //         const tempData = [...redempData];
+    //         const filter = tempData.filter((item: any) => {
+    //             return item.status === 'delivered';
+    //         });
+    //         setFilterData(filter);
+    //     }
+    //     if (status === 'completed') {
+    //         const tempData = [...redempData];
+    //         const filter = tempData.filter((item: any) => {
+    //             return item.status === 'completed';
+    //         });
+    //         setFilterData(filter);
+    //     }
+    // }, [value]);
 
     // React.useEffect(() => {
     //     getRedemptionsData();
@@ -287,6 +294,17 @@ const Redemption = () => {
         setPages(Math.round(redempData.length / Number(row)));
     }, [pages, row]);
 
+    const handleApprove = async () => {
+        try {
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `redemptions/${router.query.id}`,
+                data: {}
+            });
+        } catch (err: any) {
+            console.log(err);
+        }
+    };
     // React.useEffect(() => {
     //     let key: string = 'All';
     //     switch (value) {
@@ -321,6 +339,8 @@ const Redemption = () => {
             setIsLoading(false);
         }, 2000);
     }, []);
+    console.log('id', redeemIdData);
+    console.log('value', value);
 
     return (
         <Box>
@@ -472,6 +492,7 @@ const Redemption = () => {
                             data={redempData}
                             row={row}
                             handleViewRow={handleViewRow}
+                            onClick={handleApprove}
                         />
                         <TabPanelProcess
                             value={value}

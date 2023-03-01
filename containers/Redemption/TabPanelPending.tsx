@@ -13,6 +13,7 @@ interface TabPanelPendingProps {
     data: any;
     row: any;
     handleViewRow: any;
+    onClick?: any;
 }
 
 const TabPanelPending: React.FC<TabPanelPendingProps> = ({
@@ -23,8 +24,10 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
     getPaginatedData,
     data,
     row,
-    handleViewRow
+    handleViewRow,
+    onClick
 }) => {
+    console.log({ data: getPaginatedData() });
     return (
         <TabPanel value={value} index={index}>
             <Box sx={{ mt: '20px' }}>
@@ -81,8 +84,8 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {getPaginatedData().length > 0 &&
-                                getPaginatedData().map((item: any, idx: number) => {
+                            {data.length > 0 &&
+                                data.map((item: any, idx: number) => {
                                     let styles: any = {};
                                     if (item.status === 'pending') {
                                         styles = { backgroundColor: '#FF4566', borderRadius: '64px', px: 1 };
@@ -136,7 +139,13 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                <CustomButton title='APPROVE' height='42px' width='114px' fontSize='15px' />
+                                                <CustomButton
+                                                    title='APPROVE'
+                                                    height='42px'
+                                                    width='114px'
+                                                    fontSize='15px'
+                                                    onClick={onClick}
+                                                />
                                             </TableCell>
                                         </TableRow>
                                     );
