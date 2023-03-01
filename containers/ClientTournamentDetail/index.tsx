@@ -35,6 +35,7 @@ import DialogMap from 'components/Dialog/DialogMap';
 import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import convertBase64 from 'helpers/convertBase64';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 
 const dummyData = [
     { id: 1, showTo: 1, player: 2, pointPrize: 10000, prizePlayer: 10000 },
@@ -62,7 +63,8 @@ const DetailClientTour = () => {
             detailLocation: '',
             address: 'Intermark, Rawa Mekar Jaya, Serpong, Tangerang Selatan, Banten, Indonesia',
             lat: -6.30943345,
-            long: 106.6893430616688
+            long: 106.6893430616688,
+            pin: ''
         }
     });
 
@@ -71,6 +73,7 @@ const DetailClientTour = () => {
     const notify = useNotify();
     const { fetchAPI } = useAPICaller();
     const [prizeData, setPrizeData] = React.useState<any>(dummyData);
+    const [openBarcode, setOpenBarcode] = React.useState<boolean>(false);
     const [prizePool, setPrizePool] = React.useState(0);
     const [openDialogMap, setOpenDialogMap] = React.useState<boolean>(false);
     const [table, setTable] = React.useState<any>([]);
@@ -85,6 +88,13 @@ const DetailClientTour = () => {
     });
 
     // const [detailData, setDetailData] = React.useState<any>(null);
+
+    const GEOCODE_URL = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?f=pjson&langCode=EN&location=';
+
+    const reverseCoordinate = async (latlang: any) => {
+        const data = await (await fetch(`${GEOCODE_URL}${latlang.long},${latlang.lat}`)).json();
+        return data;
+    };
 
     const handleTable = (event: any) => {
         setValue(event.target.value as string);
@@ -125,13 +135,15 @@ const DetailClientTour = () => {
             });
 
             if (response.status === 200) {
-                // console.log(response.data.data);
-                // console.log(form.watch());
-                // setDetailData(response.data.data);
                 const result = response.data.data;
                 const startTime: any = await getTime(result.start_time);
                 const endTime: any = await getTime(result.end_time);
-                form.setValue('address', result.address);
+                const latLong: any = {
+                    long: result.longitude,
+                    lat: result.latitude
+                };
+                const address: any = await reverseCoordinate(latLong);
+                form.setValue('address', address.address?.Match_addr);
                 form.setValue('endTime', endTime);
                 form.setValue('startTime', startTime);
                 form.setValue('startDate', new Date(result.start_time).toJSON().slice(0, 10));
@@ -143,8 +155,9 @@ const DetailClientTour = () => {
                 form.setValue('title', result.name);
                 form.setValue('poolPrize', result.total_point);
                 form.setValue('fee', result.entry_coin);
+                form.setValue('detailLocation', result.address);
+                // form.setValue('pin', result.pin)
                 setTable([...table, ...result.prize_infos]);
-                // form.setValue('img', result.tournament_image);
                 setIsLoading(false);
             }
         } catch (error: any) {
@@ -187,7 +200,11 @@ const DetailClientTour = () => {
                 end_time: new Date(`${data.endDate} ${data.endTime}`).toISOString(),
                 entry_coin: data.fee,
                 prize_infos: table,
-                company_id: data.company
+                company_id: data.company,
+                longitude: data.long,
+                latitude: data.lat,
+                address: data.detailLocation
+                // pin: data.pin
                 // status: 'OPEN'
             };
 
@@ -390,6 +407,32 @@ const DetailClientTour = () => {
                             isRequired
                         />
                     </Box>
+                    {form.watch('mode') === '2' && (
+                        <Box sx={{ my: '30px', position: 'relative', width: '100%' }}>
+                            <InputWithLabel
+                                label='Pin'
+                                name='pin'
+                                type='number'
+                                form={form}
+                                placeHolder='Fee Amount'
+                                labelField='Enter Pin'
+                                isSelectType={false}
+                                isMultiline={false}
+                                rules={rules}
+                                isRequired
+                            />
+                            <Button
+                                disabled={!form.watch('pin')}
+                                onClick={() => setOpenBarcode(true)}
+                                color='secondary'
+                                variant='contained'
+                                sx={{ right: -220, top: 0, background: '#A54CE5', color: 'white', position: 'absolute', height: '56px' }}
+                                startIcon={<QrCode2Icon />}
+                            >
+                                Generate QR Code
+                            </Button>
+                        </Box>
+                    )}
                     <Box sx={{ my: '30px' }}>
                         <InputWithLabel
                             label='Tournament Fee'
