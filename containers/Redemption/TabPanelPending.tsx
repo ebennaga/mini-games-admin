@@ -27,7 +27,7 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
     handleViewRow,
     onClick
 }) => {
-    console.log({ data: getPaginatedData() });
+    // console.log({ data: getPaginatedData() });
     return (
         <TabPanel value={value} index={index}>
             <Box sx={{ mt: '20px' }}>
@@ -84,8 +84,8 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {data.length > 0 &&
-                                data.map((item: any, idx: number) => {
+                            {getPaginatedData().length > 0 &&
+                                getPaginatedData().map((item: any, idx: number) => {
                                     let styles: any = {};
                                     if (item.status === 'pending') {
                                         styles = { backgroundColor: '#FF4566', borderRadius: '64px', px: 1 };
@@ -144,7 +144,7 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
                                                     height='42px'
                                                     width='114px'
                                                     fontSize='15px'
-                                                    onClick={onClick}
+                                                    onClick={() => onClick(item)}
                                                 />
                                             </TableCell>
                                         </TableRow>

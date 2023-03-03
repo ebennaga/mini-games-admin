@@ -162,9 +162,9 @@ const Redemption = () => {
             if (response.status === 200) {
                 const resData = response.data.data;
                 setRedempData(response.data.data);
-                console.log('resdata', resData);
-                const filterID = resData.filter((o: any) => o.id);
-                console.log('filterid', filterID);
+
+                // const filterID = resData.filter((o: any) => o.id);
+                // console.log('filterid', filterID);
                 setData(response.data.data);
                 // setRedempData(dummyData);
                 // setData(dummyData);
@@ -248,59 +248,67 @@ const Redemption = () => {
         setPages(1);
     };
 
-    // // OPTIONS FILTER DATA IF NEED IT
-    // React.useEffect(() => {
-    //     const status: any =
-    //         value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
-    //     if (status === 'pending') {
-    //         const tempData: any = [...redempData];
-    //         const filter = tempData.filter((item: any) => {
-    //             return item.status === 'pending';
-    //         });
-    //         setFilterData(filter);
-    //     }
-    //     if (status === 'processed') {
-    //         const tempData = [...redempData];
-    //         const filter = tempData.filter((item: any) => {
-    //             return item.status === 'processed';
-    //         });
-    //         setFilterData(filter);
-    //     }
-    //     if (status === 'delivered') {
-    //         const tempData = [...redempData];
-    //         const filter = tempData.filter((item: any) => {
-    //             return item.status === 'delivered';
-    //         });
-    //         setFilterData(filter);
-    //     }
-    //     if (status === 'completed') {
-    //         const tempData = [...redempData];
-    //         const filter = tempData.filter((item: any) => {
-    //             return item.status === 'completed';
-    //         });
-    //         setFilterData(filter);
-    //     }
-    // }, [value]);
-
-    // React.useEffect(() => {
-    //     getRedemptionsData();
-    // }, []);
+    // OPTIONS FILTER DATA IF NEED IT
+    React.useEffect(() => {
+        const status: any =
+            value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
+        if (status === 'pending') {
+            const tempData: any = [...redempData];
+            const filter = tempData.filter((item: any) => {
+                return item.status === 'pending';
+            });
+            setFilterData(filter);
+        }
+        if (status === 'processed') {
+            const tempData = [...redempData];
+            const filter = tempData.filter((item: any) => {
+                return item.status === 'processed';
+            });
+            setFilterData(filter);
+        }
+        if (status === 'delivered') {
+            const tempData = [...redempData];
+            const filter = tempData.filter((item: any) => {
+                return item.status === 'delivered';
+            });
+            setFilterData(filter);
+        }
+        if (status === 'completed') {
+            const tempData = [...redempData];
+            const filter = tempData.filter((item: any) => {
+                return item.status === 'completed';
+            });
+            setFilterData(filter);
+        }
+    }, [value]);
 
     React.useEffect(() => {
         getRedemptionsData();
-    }, [value]);
+    }, []);
+
+    // React.useEffect(() => {
+    //     getRedemptionsData();
+    // }, [value]);
 
     React.useEffect(() => {
         setPages(Math.round(redempData.length / Number(row)));
     }, [pages, row]);
 
-    const handleApprove = async () => {
+    const handleApprove = async (item: any) => {
         try {
             const response = await fetchAPI({
                 method: 'PUT',
-                endpoint: `redemptions/${router.query.id}`,
-                data: {}
+                endpoint: `redemptions/${item.id}`,
+                data: {
+                    status: 'processed'
+                    // resi_no: item.delivery.resi_no,
+                    // courier_id: item.delivery.courier.id
+                }
             });
+            if (response.status === 200) {
+                const resStatus = response.data.data;
+                await getRedemptionsData();
+            }
         } catch (err: any) {
             console.log(err);
         }
@@ -339,8 +347,8 @@ const Redemption = () => {
             setIsLoading(false);
         }, 2000);
     }, []);
-    console.log('id', redeemIdData);
-    console.log('value', value);
+    // console.log('id', redeemIdData);
+    // console.log('value', value);
 
     return (
         <Box>

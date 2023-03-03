@@ -106,16 +106,16 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
                         <TableBody>
                             {getPaginatedData().length > 0 &&
                                 getPaginatedData().map((item: any, idx: number) => {
-                                    let styles: any = {};
-                                    if (item.status === 'pending') {
-                                        styles = { backgroundColor: '#FF4566', borderRadius: '64px', px: 1 };
-                                    } else if (item.status === 'processed') {
-                                        styles = { backgroundColor: '#0288D1', borderRadius: '64px', px: 1 };
-                                    } else if (item.status === 'delivered') {
-                                        styles = { backgroundColor: '#A54CE5', borderRadius: '64px', px: 1 };
-                                    } else if (item.status === 'completed') {
-                                        styles = { backgroundColor: '#56CF54', borderRadius: '64px', px: 1 };
-                                    }
+                                    const styles: any = { backgroundColor: '#0288D1', borderRadius: '64px', px: 1 };
+                                    // if (item.status === 'pending') {
+                                    //     styles = { backgroundColor: '#FF4566', borderRadius: '64px', px: 1 };
+                                    // } else if (item.status === 'processed') {
+                                    //     styles = { backgroundColor: '#0288D1', borderRadius: '64px', px: 1 };
+                                    // } else if (item.status === 'delivered') {
+                                    //     styles = { backgroundColor: '#A54CE5', borderRadius: '64px', px: 1 };
+                                    // } else if (item.status === 'completed') {
+                                    //     styles = { backgroundColor: '#56CF54', borderRadius: '64px', px: 1 };
+                                    // }
                                     return (
                                         <TableRow key={idx + 1}>
                                             <TableCell align='center' sx={{ width: '5%' }}>
