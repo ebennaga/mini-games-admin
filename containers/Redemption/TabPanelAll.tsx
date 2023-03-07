@@ -24,6 +24,8 @@ const TabPanelAll: React.FC<TabPanelAllProps> = ({
     row,
     handleViewRow
 }) => {
+    const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+    // const options: any = { hour: '2-digit', minute: '2-digit', hour12: false };
     // console.log('data2', getPaginatedData());
     return (
         <TabPanel value={value} index={index}>
@@ -150,7 +152,7 @@ const TabPanelAll: React.FC<TabPanelAllProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {new Date(item.created_at).toLocaleString('id')}
+                                                {new Date(item.created_at).toLocaleString('id-ID', dateOption).replace('.', ':')}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
