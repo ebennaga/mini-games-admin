@@ -26,6 +26,7 @@ const MENUBAR = [
             { title: 'Client Tournament', href: '/tournament/client-tournament' }
         ]
     },
+    { active: '/icons/active/lucky-raffle.png', icon: '/icons/navbar/lucky-raffle.png', title: 'Lucky Raffle', href: '/lucky-raffle' },
     { active: '/icons/active/redemption-active.png', icon: '/icons/navbar/redemption.png', title: 'Redemption', href: '/redemption' },
     {
         active: '/icons/active/content.png',
