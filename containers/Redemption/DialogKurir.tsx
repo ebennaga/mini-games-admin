@@ -1,19 +1,24 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box, TextField, MenuItem } from '@mui/material';
 import CustomButton from 'components/Button';
 
 interface DialogKurirProps {
     open: boolean;
+    data: any;
     // eslint-disable-next-line no-unused-vars
     handleOpenDialog: (status: boolean) => void;
+
+    nameCourier: string;
+    form: any;
 }
-const listKurir = [
-    { value: 1, label: 'J&T' },
-    { value: 2, label: 'SICEPAT' },
-    { value: 3, label: 'ANTERAJA' },
-    { value: 4, label: 'JNE' }
-];
-const DialogKurir: React.FC<DialogKurirProps> = ({ open, handleOpenDialog }) => {
+// const listKurir = [
+//     { value: 1, label: 'J&T' },
+//     { value: 2, label: 'SICEPAT' },
+//     { value: 3, label: 'ANTERAJA' },
+//     { value: 4, label: 'JNE' }
+// ];
+const DialogKurir: React.FC<DialogKurirProps> = ({ open, handleOpenDialog, data, nameCourier, form }) => {
     return (
         <Dialog
             open={open}
@@ -29,15 +34,15 @@ const DialogKurir: React.FC<DialogKurirProps> = ({ open, handleOpenDialog }) => 
             </DialogTitle>
             <DialogContent sx={{ m: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', p: 0 }}>
                 <TextField required fullWidth label='Kurir' sx={{ my: 1 }} select>
-                    {listKurir.map((option: any) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
+                    {data?.map((option: any) => (
+                        <MenuItem onClick={() => form.setValue(nameCourier, option.id)} key={option.id} value={option.id}>
+                            {option.name}
                         </MenuItem>
                     ))}
                 </TextField>
             </DialogContent>
             <DialogActions sx={{ m: 2, p: 0 }}>
-                <CustomButton title='CONFIRM' height='47px' type='submit' />
+                <CustomButton title='CONFIRM' height='47px' type='submit' onClick={() => handleOpenDialog(false)} />
                 <CustomButton
                     title='CANCEL'
                     backgroundColor='white'
