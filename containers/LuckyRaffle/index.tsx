@@ -8,6 +8,7 @@ import BadgeSelected from 'components/BadgeSelected';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import PaginationCard from 'components/PaginationCard';
 import TableLuckyRaffle from './TableLuckyRaffle';
+import DialogSetPrize from './DialogSetPrize';
 
 const LuckyRaffle = () => {
     const dummies = [
@@ -24,7 +25,15 @@ const LuckyRaffle = () => {
             dataTable: dummies,
             row: 5,
             page: 1,
-            idxAppears: { startIndex: 0, endIndex: 5 }
+            idxAppears: { startIndex: 0, endIndex: 5 },
+            prize1: '',
+            prize2: '',
+            prize3: '',
+            prize4: '',
+            qty1: '',
+            qty2: '',
+            qty3: '',
+            qty4: ''
         }
     });
     const { dataTable, page, row } = form.watch();
@@ -67,6 +76,17 @@ const LuckyRaffle = () => {
                 setOpen={(val: boolean) => setDialogRemove(val)}
                 textConfirmButton='REMOVE'
                 textCancelButton='CANCEL'
+            />
+            <DialogSetPrize
+                form={form}
+                prize1='prize1'
+                prize2='prize2'
+                prize3='prize3'
+                prize4='prize4'
+                qty1='qty1'
+                qty2='qty2'
+                qty3='qty3'
+                qty4='qty4'
             />
             <HeaderChildren title='Lucky Raffle' subTitle='Additional description if required'>
                 <Box sx={{ mt: '27px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
