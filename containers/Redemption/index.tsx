@@ -122,10 +122,13 @@ const Redemption = () => {
         mode: 'all',
         defaultValues: {
             startDate: '',
-            endDate: ''
+            endDate: '',
+            courierId: '',
+            resiNo: ''
         }
     });
     const [redempData, setRedempData] = React.useState<any>([]);
+    const [courier, setCourier] = React.useState<any>([]);
     const [redeemIdData, setRedeemIdData] = React.useState<any>(null);
     const [filterData, setFilterData] = React.useState<any>([]);
     const [value, setValue] = React.useState(0);
@@ -157,7 +160,7 @@ const Redemption = () => {
                 value === 1 ? 'pending' : value === 2 ? 'processed' : value === 3 ? 'delivered' : value === 4 ? 'completed' : '';
             const response = await fetchAPI({
                 method: 'GET',
-                endpoint: `/redemptions?search=&status=${status}`
+                endpoint: `/redemptions`
             });
             if (response.status === 200) {
                 const resData = response.data.data;
@@ -178,7 +181,23 @@ const Redemption = () => {
         }
     };
 
+    // get courier
+    const getCourier = async () => {
+        try {
+            const response = await fetchAPI({
+                endpoint: 'couriers',
+                method: 'GET'
+            });
+            if (response.status === 200) {
+                setCourier(response.data.data);
+            }
+        } catch (err: any) {
+            console.log(err);
+        }
+    };
+
     const getPaginatedData = () => {
+        // const mixData = [...courier, redempData];
         const startIndex = currentPage * Number(row) - Number(row);
         const endIndex = startIndex + Number(row);
         if (value !== 0) {
@@ -280,11 +299,12 @@ const Redemption = () => {
             });
             setFilterData(filter);
         }
-    }, [value]);
+    }, [value, redempData]);
 
-    React.useEffect(() => {
-        getRedemptionsData();
-    }, []);
+    // React.useEffect(() => {
+    //     getRedemptionsData();
+    //     getCourier();
+    // }, []);
 
     // React.useEffect(() => {
     //     getRedemptionsData();
@@ -313,6 +333,52 @@ const Redemption = () => {
             console.log(err);
         }
     };
+
+    const handleDelivered = async (item: any) => {
+        console.log('item', item);
+        // const { resiNo, courierId } = d;
+
+        try {
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `redemptions/${item.delivery.order_id}`,
+                data: {
+                    status: 'delivered',
+                    resi_no: form.watch('resiNo'),
+                    courier_id: form.watch('courierId')
+                }
+            });
+            console.log('response', response);
+            if (response.status === 200) {
+                await getRedemptionsData();
+            }
+        } catch (err: any) {
+            console.log(err);
+        }
+    };
+    const handleCompleted = async (item: any) => {
+        setIsLoading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'PUT',
+                endpoint: `redemptions/${item.delivery.order_id}`,
+                data: {
+                    status: 'completed',
+                    resi_no: item.delivery.resi_no,
+                    courier_id: item.delivery.courier.id
+                }
+            });
+
+            if (response.status === 200) {
+                await getRedemptionsData();
+                setIsLoading(false);
+            }
+        } catch (err: any) {
+            console.log(err);
+            setIsLoading(false);
+        }
+    };
+    console.log('rdempdata', redempData);
     // React.useEffect(() => {
     //     let key: string = 'All';
     //     switch (value) {
@@ -347,8 +413,10 @@ const Redemption = () => {
             setIsLoading(false);
         }, 2000);
     }, []);
-    // console.log('id', redeemIdData);
-    // console.log('value', value);
+    React.useEffect(() => {
+        getRedemptionsData();
+        getCourier();
+    }, [value]);
 
     return (
         <Box>
@@ -511,6 +579,11 @@ const Redemption = () => {
                             data={redempData}
                             row={row}
                             handleViewRow={handleViewRow}
+                            onClick={handleDelivered}
+                            dataCourier={courier}
+                            nameCourier='courierId'
+                            form={form}
+                            resiNo='resiNo'
                         />
                         <TabPanelDelivered
                             value={value}
@@ -521,6 +594,7 @@ const Redemption = () => {
                             data={redempData}
                             row={row}
                             handleViewRow={handleViewRow}
+                            onClick={handleCompleted}
                         />
                         <TabPanelComplete
                             value={value}

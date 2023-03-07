@@ -24,7 +24,7 @@ const TabPanelAll: React.FC<TabPanelAllProps> = ({
     row,
     handleViewRow
 }) => {
-    // console.log({ data: getPaginatedData() });
+    // console.log('data2', getPaginatedData());
     return (
         <TabPanel value={value} index={index}>
             <Box sx={{ mt: '20px' }}>
