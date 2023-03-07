@@ -335,7 +335,6 @@ const Redemption = () => {
     };
 
     const handleDelivered = async (item: any) => {
-        console.log('item', item);
         // const { resiNo, courierId } = d;
 
         try {
@@ -348,7 +347,7 @@ const Redemption = () => {
                     courier_id: form.watch('courierId')
                 }
             });
-            console.log('response', response);
+
             if (response.status === 200) {
                 await getRedemptionsData();
             }
@@ -378,7 +377,7 @@ const Redemption = () => {
             setIsLoading(false);
         }
     };
-    console.log('rdempdata', redempData);
+
     // React.useEffect(() => {
     //     let key: string = 'All';
     //     switch (value) {
