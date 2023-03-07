@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Container, Box, Typography, ButtonBase, Paper, Skeleton } from '@mui/material';
 import Search from 'components/Search';
@@ -10,16 +11,19 @@ import useNotify from 'hooks/useNotify';
 import BadgeSelected from 'components/BadgeSelected';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 // import dataTable from 'containers/AddTournament/dataSelect';
+import DialogSuccess from 'components/Dialog/DialogSuccess';
 import TableExchange from './TableExchange';
 // import LoadingExchangeRates from './LoadingExchangeRates';
 
 const ExchangeRates = () => {
     const [isLoading, setIsloading] = React.useState<boolean>(true);
     const [data, setData] = React.useState<Array<any>>([]);
+    const [filteredData, setFilteredData] = React.useState<any>([]);
     const [dataSearch, setDataSearch] = React.useState<any>(null);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
     const [openDialogConfirm, setOpenDialogConfirm] = React.useState<boolean>(false);
-
+    const [loadingRemove, setLoadingRemove] = React.useState<boolean>(false);
+    const [openDialogSucces, setOpenDialogSuccess] = React.useState(false);
     const router = useRouter();
     const { fetchAPI } = useAPICaller();
     const notify = useNotify();
@@ -64,12 +68,71 @@ const ExchangeRates = () => {
         if (input.page > 1) {
             form.setValue('page', input.page - 1);
         }
+    }; // Get Data
+    const getData = async () => {
+        setIsloading(true);
+        try {
+            const response = await fetchAPI({
+                method: 'GET',
+                endpoint: 'exchange-rates'
+            });
+
+            if (response.status === 200) {
+                const resData = response.data.data.sort((a: any, b: any) => a.coin - b.coin);
+                setData(resData);
+                setFilteredData(resData);
+                form.setValue('dataTable', resData);
+            }
+        } catch (err: any) {
+            notify(err.message, 'error');
+        }
+        setIsloading(false);
     };
 
     // Event Remove Rate
-    const handleRemove = () => {
-        notify('Remove Rate Successfull!');
-        setOpenDialogConfirm(false);
+    const handleRemove = async () => {
+        // notify('Remove Rate Successfull!');
+        // setOpenDialogConfirm(false);
+
+        setLoadingRemove(true);
+        try {
+            let idsError: any = [];
+            const deleteDatas = form.watch('dataTable').map(async (item: any) => {
+                if (item.isAction) {
+                    const response = await fetchAPI({
+                        endpoint: `exchange-rates/${item.id}`,
+                        method: 'DELETE'
+                    });
+
+                    if (response.status !== 200) {
+                        idsError = [...idsError, item.id];
+                    } else if (response.status === 200) {
+                        notify(response.data.message, 'success');
+                    }
+                }
+            });
+
+            await Promise.all(deleteDatas);
+            if (idsError.length > 0) {
+                setLoadingRemove(false);
+                return notify(`Exchange rates with id :${idsError.join()} failed`, 'error');
+            }
+
+            setData([]);
+            await getData();
+            setOpenDialogConfirm(false);
+            setOpenDialogSuccess(true);
+
+            filteredData.forEach((item: any) => {
+                const datas: any = `checkbox${item.id}`;
+                form.setValue(datas, false);
+            });
+            setLoadingRemove(false);
+            return notify('successfully delete exchanges');
+        } catch (err: any) {
+            setLoadingRemove(false);
+            return notify(err.message, 'error');
+        }
     };
 
     // Event edit item
@@ -91,26 +154,6 @@ const ExchangeRates = () => {
         form.setValue('idxAppears', result);
     }, [form.watch('row'), form.watch('page')]);
 
-    // Get Data
-    const getData = async () => {
-        setIsloading(true);
-        try {
-            const response = await fetchAPI({
-                method: 'GET',
-                endpoint: 'exchange-rates'
-            });
-
-            if (response.status === 200) {
-                const resData = response.data.data.sort((a: any, b: any) => a.coin - b.coin);
-                setData(resData);
-                form.setValue('dataTable', resData);
-            }
-        } catch (err: any) {
-            notify(err.message, 'error');
-        }
-        setIsloading(false);
-    };
-
     // component did mount get data
     React.useEffect(() => {
         getData();
@@ -126,7 +169,7 @@ const ExchangeRates = () => {
     // if (isLoading) {
     //     return <LoadingExchangeRates />;
     // }
-
+    // console.log('table', form.watch('dataTable'));
     return (
         <Container sx={{ mt: 12 }}>
             <Box sx={{ ml: -15, height: 120 }} component={Paper}>
@@ -199,6 +242,7 @@ const ExchangeRates = () => {
                 textConfirmButton='REMOVE'
                 textCancelButton='CANCEL'
             />
+            <DialogSuccess title='Successfully Delete Exchange Rates' open={openDialogSucces} setOpen={setOpenDialogSuccess} />
         </Container>
     );
 };
