@@ -134,7 +134,7 @@ const LeaderboardDialog: React.FC<LeaderboardDialogProps> = ({ open = true, setO
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='left'
                                             >
-                                                {numberFormat(i.points)}
+                                                {numberFormat(i.point)}
                                             </TableCell>
                                         </TableRow>
                                     );
