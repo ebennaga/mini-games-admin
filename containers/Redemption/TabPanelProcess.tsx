@@ -39,7 +39,7 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
     form
 }) => {
     const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
-    console.log({ data: getPaginatedData() });
+    // console.log({ data: getPaginatedData() });
     const [openDialogKurir, setOpenDialogKurir] = React.useState(false);
     const [openDialogResi, setOpenDialogResi] = React.useState(false);
 

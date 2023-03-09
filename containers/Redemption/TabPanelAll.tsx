@@ -152,7 +152,7 @@ const TabPanelAll: React.FC<TabPanelAllProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {new Date(item.created_at).toLocaleString('id-ID', dateOption).replace('.', ':')}
+                                                {new Date(item.created_at).toLocaleString('id', dateOption).replace('.', ':')}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
