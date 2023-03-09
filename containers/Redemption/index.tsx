@@ -141,6 +141,9 @@ const Redemption = () => {
     const router = useRouter();
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
+        setRedempData(data);
+        setCurrentPage(1);
+        setRow('10');
     };
 
     const { fetchAPI, isLoading: loading } = useAPICaller();

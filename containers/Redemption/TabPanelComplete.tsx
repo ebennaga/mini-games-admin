@@ -182,7 +182,7 @@ const TabPanelComplete: React.FC<TabPanelCompleteProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.delivery.courier?.resi_no}
+                                                {item.delivery.resi_no}
                                             </TableCell>
                                         </TableRow>
                                     );
