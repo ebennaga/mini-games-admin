@@ -28,7 +28,7 @@ const TabPanelDelivered: React.FC<TabPanelDeliveredProps> = ({
     onClick
 }) => {
     const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
-    console.log('data3', getPaginatedData());
+    // console.log('data3', getPaginatedData());
     return (
         <TabPanel value={value} index={index}>
             <Box sx={{ mt: '20px' }}>
