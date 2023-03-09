@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { Box, Table, TableBody, TableContainer, TableCell, TableRow, TableHead, Link, ButtonBase } from '@mui/material';
 import TabPanel from 'components/TabPanel';
+import CustomButton from 'components/Button';
 import Pagination from './Pagination';
 import DialogResi from './DialogResi';
 import DialogKurir from './DialogKurir';
@@ -14,6 +16,11 @@ interface TabPanelProcessProps {
     data: any;
     row: any;
     handleViewRow: any;
+    onClick?: any;
+    dataCourier?: any;
+    nameCourier: string;
+    resiNo: string;
+    form: any;
 }
 
 const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
@@ -24,8 +31,15 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
     getPaginatedData,
     data,
     row,
-    handleViewRow
+    handleViewRow,
+    onClick,
+    dataCourier,
+    nameCourier,
+    resiNo,
+    form
 }) => {
+    const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+    // console.log({ data: getPaginatedData() });
     const [openDialogKurir, setOpenDialogKurir] = React.useState(false);
     const [openDialogResi, setOpenDialogResi] = React.useState(false);
 
@@ -35,10 +49,22 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
     const handleDialogResi = (status: boolean) => {
         setOpenDialogResi(status);
     };
+
     return (
         <TabPanel value={value} index={index}>
-            <DialogKurir open={openDialogKurir} handleOpenDialog={(status: boolean) => handleDialogKurir(status)} />
-            <DialogResi open={openDialogResi} handleOpenDialog={(status: boolean) => handleDialogResi(status)} />
+            <DialogKurir
+                open={openDialogKurir}
+                handleOpenDialog={(status: boolean) => handleDialogKurir(status)}
+                data={dataCourier}
+                nameCourier={nameCourier}
+                form={form}
+            />
+            <DialogResi
+                open={openDialogResi}
+                handleOpenDialog={(status: boolean) => handleDialogResi(status)}
+                resiNo={resiNo}
+                form={form}
+            />
             <Box sx={{ mt: '20px' }}>
                 <TableContainer sx={{ border: '1px solid #F0F0F0' }}>
                     <Table sx={{ width: '100%' }}>
@@ -101,6 +127,16 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
                                 >
                                     No. Resi
                                 </TableCell>
+                                <TableCell
+                                    sx={{
+                                        borderLeft: '1px solid #E0E0E0',
+                                        borderRight: '1px solid #E0E0E0',
+                                        fontWeight: 'bold'
+                                    }}
+                                    align='center'
+                                >
+                                    Action
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -143,7 +179,7 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {new Date(item.created_at).toLocaleString('id')}
+                                                {new Date(item.created_at).toLocaleString('id', dateOption).replace('.', ':')}
                                             </TableCell>
 
                                             <TableCell
@@ -169,6 +205,18 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
                                                 <ButtonBase onClick={() => handleDialogResi(true)}>
                                                     <Link sx={{ color: '#A54CE5', cursor: 'pointer' }}>Input Resi</Link>
                                                 </ButtonBase>
+                                            </TableCell>
+                                            <TableCell
+                                                sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
+                                                align='center'
+                                            >
+                                                <CustomButton
+                                                    title='DELIVERED'
+                                                    height='42px'
+                                                    width='114px'
+                                                    fontSize='15px'
+                                                    onClick={() => onClick(item)}
+                                                />
                                             </TableCell>
                                         </TableRow>
                                     );

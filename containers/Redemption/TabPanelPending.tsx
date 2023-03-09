@@ -27,6 +27,7 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
     handleViewRow,
     onClick
 }) => {
+    const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
     // console.log({ data: getPaginatedData() });
     return (
         <TabPanel value={value} index={index}>
@@ -123,7 +124,7 @@ const TabPanelPending: React.FC<TabPanelPendingProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {new Date(item.created_at).toLocaleString('id')}
+                                                {new Date(item.created_at).toLocaleString('id', dateOption).replace('.', ':')}
                                             </TableCell>
 
                                             <TableCell

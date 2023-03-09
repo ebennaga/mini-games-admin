@@ -4,10 +4,12 @@ import CustomButton from 'components/Button';
 
 interface DialogResiProps {
     open: boolean;
+    resiNo: string;
+    form: any;
     // eslint-disable-next-line no-unused-vars
     handleOpenDialog: (status: boolean) => void;
 }
-const DialogResi: React.FC<DialogResiProps> = ({ open, handleOpenDialog }) => {
+const DialogResi: React.FC<DialogResiProps> = ({ open, handleOpenDialog, resiNo, form }) => {
     return (
         <Dialog
             open={open}
@@ -22,10 +24,18 @@ const DialogResi: React.FC<DialogResiProps> = ({ open, handleOpenDialog }) => {
                 </Box>
             </DialogTitle>
             <DialogContent sx={{ m: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', p: 0 }}>
-                <TextField required fullWidth label='No. Resi' placeholder='Nomor Resi' type='text' sx={{ my: 1 }} />
+                <TextField
+                    onChange={(e) => form.setValue(resiNo, e.target.value)}
+                    required
+                    fullWidth
+                    label='No. Resi'
+                    placeholder='Nomor Resi'
+                    type='text'
+                    sx={{ my: 1 }}
+                />
             </DialogContent>
             <DialogActions sx={{ m: 2, p: 0 }}>
-                <CustomButton title='CONFIRM' height='47px' type='submit' />
+                <CustomButton title='CONFIRM' height='47px' type='submit' onClick={() => handleOpenDialog(false)} />
                 <CustomButton
                     title='CANCEL'
                     backgroundColor='white'

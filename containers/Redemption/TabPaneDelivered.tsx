@@ -13,6 +13,7 @@ interface TabPanelDeliveredProps {
     data: any;
     row: any;
     handleViewRow: any;
+    onClick?: any;
 }
 
 const TabPanelDelivered: React.FC<TabPanelDeliveredProps> = ({
@@ -23,8 +24,11 @@ const TabPanelDelivered: React.FC<TabPanelDeliveredProps> = ({
     getPaginatedData,
     data,
     row,
-    handleViewRow
+    handleViewRow,
+    onClick
 }) => {
+    const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+    // console.log('data3', getPaginatedData());
     return (
         <TabPanel value={value} index={index}>
             <Box sx={{ mt: '20px' }}>
@@ -151,7 +155,7 @@ const TabPanelDelivered: React.FC<TabPanelDeliveredProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {new Date(item.created_at).toLocaleString('id')}
+                                                {new Date(item.created_at).toLocaleString('id', dateOption).replace('.', ':')}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -178,7 +182,7 @@ const TabPanelDelivered: React.FC<TabPanelDeliveredProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.delivery.courier?.resi_no}
+                                                {item.delivery.resi_no}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -190,6 +194,7 @@ const TabPanelDelivered: React.FC<TabPanelDeliveredProps> = ({
                                                     height='42px'
                                                     width='114px'
                                                     fontSize='15px'
+                                                    onClick={() => onClick(item)}
                                                 />
                                             </TableCell>
                                         </TableRow>

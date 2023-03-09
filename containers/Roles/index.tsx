@@ -28,7 +28,7 @@ const Roles = () => {
         { isChecked: false, name: 'Dashboard', id: 1 },
         { isChecked: false, name: 'Blogs', id: 2 },
         { isChecked: false, name: 'Account', id: 3 },
-        { isChecked: false, name: 'Ecxchanges Rates', id: 4 },
+        { isChecked: false, name: 'Exchanges Rates', id: 4 },
         { isChecked: false, name: 'Tournament', id: 5 },
         { isChecked: false, name: 'Location', id: 6 },
         { isChecked: false, name: 'Participant Tournaments', id: 7 },

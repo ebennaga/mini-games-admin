@@ -15,20 +15,20 @@ import convertBase64 from 'helpers/convertBase64';
 import InputImage from 'components/Input/InputImage';
 
 const unitList = [
-    { value: 'Pcs', label: 'Pcs' },
-    { value: 'Unit', label: 'Unit' },
-    { value: 'Bal', label: 'Bal' },
-    { value: 'Dus', label: 'Dus' },
-    { value: 'Meter', label: 'Meter' },
-    { value: 'Galon', label: 'Galon' },
-    { value: 'Pack', label: 'Pack' }
+    { id: 'Pcs', label: 'Pcs' },
+    { id: 'Unit', label: 'Unit' },
+    { id: 'Bal', label: 'Bal' },
+    { id: 'Dus', label: 'Dus' },
+    { id: 'Meter', label: 'Meter' },
+    { id: 'Galon', label: 'Galon' },
+    { id: 'Pack', label: 'Pack' }
 ];
 
 const categoryList = [
-    { value: 'Gold', label: 'Gold' },
-    { value: 'Game Console', label: 'Game Console' },
-    { value: 'Accessories', label: 'Accessories' },
-    { value: 'Voucher', label: 'Voucher' }
+    { id: 'Gold', label: 'Gold' },
+    { id: 'Game Console', label: 'Game Console' },
+    { id: 'Accessories', label: 'Accessories' },
+    { id: 'Voucher', label: 'Voucher' }
 ];
 interface AddPrizeProps {
     statusEdit?: boolean;
@@ -213,16 +213,27 @@ const AddPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
                     </Box>
                     <Box sx={{ my: '30px' }}>
                         <InputWithLabel
+                            // label='Product Category'
+                            // labelField='Category'
+                            // placeHolder='Select Category'
+                            // form={form}
+                            // name='category'
+                            // type='text'
+                            // isSelectType
+                            // rules={rules}
+                            // listSelect={categoryList}
+                            // isMultiline={false}
+                            // isRequired
                             label='Product Category'
-                            labelField='Category'
-                            placeHolder='Select Category'
-                            form={form}
                             name='category'
                             type='text'
+                            form={form}
+                            labelField='Mode'
+                            placeHolder='Select Category'
                             isSelectType
-                            rules={rules}
                             listSelect={categoryList}
                             isMultiline={false}
+                            rules={rules}
                             isRequired
                         />
                     </Box>

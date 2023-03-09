@@ -105,7 +105,7 @@ const Home = () => {
             });
 
             if (response.status === 200) {
-                notify(`${response.data.message}oke`, 'success');
+                notify(`${response.data.message}`, 'success');
                 let resultLabels: string[] = [];
                 const resultData = response.data.data.map((item: any, index: number) => {
                     const { key, values, datas } = item;
