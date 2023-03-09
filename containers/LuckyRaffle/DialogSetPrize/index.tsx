@@ -1,5 +1,5 @@
-import { Box, Dialog, IconButton, Typography } from '@mui/material';
-import React from 'react';
+import { Box, ButtonBase, Dialog, IconButton, Typography } from '@mui/material';
+import React, { memo } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import InputGroup from './InputGroup';
 
@@ -13,10 +13,11 @@ interface DialogSetPrizeProps {
     qty2: string;
     qty3: string;
     qty4: string;
+    open: boolean;
+    onClose: () => void;
 }
 
-// eslint-disable-next-line no-unused-vars
-const DialogSetPrize: React.FC<DialogSetPrizeProps> = ({ form, prize1, prize2, prize3, prize4, qty1, qty2, qty3, qty4 }) => {
+const DialogSetPrize: React.FC<DialogSetPrizeProps> = ({ form, prize1, prize2, prize3, prize4, qty1, qty2, qty3, qty4, open, onClose }) => {
     const dataSelect = [
         { id: 1, title: 'emas 2 gram' },
         { id: 2, title: 'emas 1 gram' },
@@ -25,7 +26,8 @@ const DialogSetPrize: React.FC<DialogSetPrizeProps> = ({ form, prize1, prize2, p
     ];
     return (
         <Dialog
-            open
+            open={open}
+            onClose={onClose}
             maxWidth='lg'
             sx={{
                 '.MuiPaper-root': {
@@ -51,7 +53,7 @@ const DialogSetPrize: React.FC<DialogSetPrizeProps> = ({ form, prize1, prize2, p
                         Set Prize Pool
                     </Typography>
                 </Box>
-                <IconButton>
+                <IconButton onClick={onClose}>
                     <CloseIcon />
                 </IconButton>
             </Box>
@@ -65,9 +67,63 @@ const DialogSetPrize: React.FC<DialogSetPrizeProps> = ({ form, prize1, prize2, p
                     title='Set Prize 1'
                     subTitle='Lorem ipsum'
                 />
+                <InputGroup
+                    form={form}
+                    namePrize={prize2}
+                    nameQty={qty2}
+                    dataPrize={dataSelect}
+                    dataQty={dataSelect}
+                    title='Set Prize 2'
+                    subTitle='Lorem ipsum'
+                />
+                <InputGroup
+                    form={form}
+                    namePrize={prize3}
+                    nameQty={qty3}
+                    dataPrize={dataSelect}
+                    dataQty={dataSelect}
+                    title='Set Prize 3'
+                    subTitle='Lorem ipsum'
+                />
+                <InputGroup
+                    form={form}
+                    namePrize={prize4}
+                    nameQty={qty4}
+                    dataPrize={dataSelect}
+                    dataQty={dataSelect}
+                    title='Set Prize 4'
+                    subTitle='Lorem ipsum'
+                />
+                <ButtonBase
+                    sx={{
+                        borderRadius: '4px',
+                        border: '1px solid #A54CE5',
+                        color: '#A54CE5',
+                        padding: '15px',
+                        fontSize: '14px',
+                        mt: '40px',
+                        width: '100%'
+                    }}
+                >
+                    + ADD MORE PRIZES
+                </ButtonBase>
+                <Box sx={{ borderBottom: '0.5px solid rgba(0, 0, 0, 0.35)', width: '100%', my: '40px' }} />
+                <ButtonBase
+                    sx={{
+                        color: '#fff',
+                        background: '#A54CE5',
+                        padding: '15px',
+                        fontSize: '14px',
+                        borderRadius: '4px',
+                        width: '100%',
+                        mb: '35px'
+                    }}
+                >
+                    CONFIRM
+                </ButtonBase>
             </form>
         </Dialog>
     );
 };
 
-export default DialogSetPrize;
+export default memo(DialogSetPrize);

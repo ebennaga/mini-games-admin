@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
     Box,
     ButtonBase,
@@ -14,16 +13,20 @@ import {
     TableRow
 } from '@mui/material';
 import BadgeCard from 'components/BadgeCard';
-import React from 'react';
+import React, { memo } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface TableLuckyRaffleProps {
     form: any;
     name: string;
     nameIdxAppears: string;
+    onSetPrize: () => void;
+    // eslint-disable-next-line no-unused-vars
+    onViewParticipant: (itemId: string | number) => void;
+    onViewResult: () => void;
 }
 
-const TableLuckyRaffle: React.FC<TableLuckyRaffleProps> = ({ form, name, nameIdxAppears }) => {
+const TableLuckyRaffle: React.FC<TableLuckyRaffleProps> = ({ form, name, nameIdxAppears, onSetPrize, onViewParticipant, onViewResult }) => {
     const [isAllChecked, setIsAllChecked] = React.useState<boolean>(false);
     const [dataTable, setDataTable] = React.useState<Array<any>>(form.watch(name));
     const [indexMore, setIndexMore] = React.useState<number>(0);
@@ -179,6 +182,7 @@ const TableLuckyRaffle: React.FC<TableLuckyRaffleProps> = ({ form, name, nameIdx
                                                     }}
                                                 >
                                                     <ButtonBase
+                                                        onClick={onSetPrize}
                                                         sx={{
                                                             background: '#A54CE5',
                                                             fontSize: '14px',
@@ -191,6 +195,7 @@ const TableLuckyRaffle: React.FC<TableLuckyRaffleProps> = ({ form, name, nameIdx
                                                         SET PRIZES
                                                     </ButtonBase>
                                                     <ButtonBase
+                                                        onClick={() => onViewParticipant(item.id)}
                                                         sx={{
                                                             background: '#A54CE5',
                                                             fontSize: '14px',
@@ -203,6 +208,7 @@ const TableLuckyRaffle: React.FC<TableLuckyRaffleProps> = ({ form, name, nameIdx
                                                         VIEW PARTICIPANT
                                                     </ButtonBase>
                                                     <ButtonBase
+                                                        onClick={onViewResult}
                                                         sx={{
                                                             background: '#A54CE5',
                                                             fontSize: '14px',
@@ -228,4 +234,4 @@ const TableLuckyRaffle: React.FC<TableLuckyRaffleProps> = ({ form, name, nameIdx
     );
 };
 
-export default TableLuckyRaffle;
+export default memo(TableLuckyRaffle);

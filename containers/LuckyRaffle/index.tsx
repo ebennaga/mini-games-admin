@@ -1,28 +1,36 @@
 import { Box, ButtonBase, IconButton } from '@mui/material';
 import HeaderChildren from 'components/HeaderChildren';
 import InputSearch from 'components/Input/InputSearch';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import BadgeSelected from 'components/BadgeSelected';
 import DialogConfirmation from 'components/Dialog/DialogConfirmation';
 import PaginationCard from 'components/PaginationCard';
+import { useRouter } from 'next/router';
 import TableLuckyRaffle from './TableLuckyRaffle';
 import DialogSetPrize from './DialogSetPrize';
+import DialogViewResult from './DialogViewResult';
 
 const LuckyRaffle = () => {
-    const dummies = [
+    const dummiesTable = [
         { id: 1, name: 'Lucky Raffle 2022', totalPool: 30000, ticket: 100, isActive: false },
         { id: 2, name: 'Holee 2022', totalPool: 30000, ticket: 300, isActive: true },
         { id: 13, name: 'Ari Lucky 2022', totalPool: 30000, ticket: 10, isActive: false },
         { id: 14, name: 'Lucky Raffle', totalPool: 30000, ticket: 1230, isActive: false }
+    ];
+    const dummyResult = [
+        { id: 1, rank: 1, username: 'Siapa nih', prize: 'Yuppie Strawberry', ticket: '12343.23' },
+        { id: 2, rank: 2, username: 'Leo Sadiwo', prize: 'Yoosan', ticket: '12343.23' },
+        { id: 3, rank: 3, username: 'Keluarga Cemara', prize: '2000 Siantar top', ticket: '12343.23' },
+        { id: 4, rank: 4, username: 'Ingus tuh', prize: 'Komo', ticket: '12343.23' }
     ];
 
     const form = useForm({
         mode: 'all',
         defaultValues: {
             search: '',
-            dataTable: dummies,
+            dataTable: dummiesTable,
             row: 5,
             page: 1,
             idxAppears: { startIndex: 0, endIndex: 5 },
@@ -38,7 +46,13 @@ const LuckyRaffle = () => {
     });
     const { dataTable, page, row } = form.watch();
 
-    const [dialogRemove, setDialogRemove] = React.useState<boolean>(false);
+    const router = useRouter();
+
+    const [isDialogRemove, setIsDialogRemove] = React.useState<boolean>(false);
+    const [isDialogSetPrize, setIsDialogSetPrize] = React.useState<boolean>(false);
+    const [isDialogViewResult, setIsDialogViewResult] = React.useState<boolean>(false);
+
+    const [dataChecked, setDataChecked] = React.useState<Array<number>>([]);
 
     // Event Next page
     const handleNext = () => {
@@ -66,14 +80,36 @@ const LuckyRaffle = () => {
         form.setValue('idxAppears', result);
     }, [row, page]);
 
+    // Update data that has been checked in table field action
+    React.useEffect(() => {
+        const fillDataChecked = async () => {
+            let idChecked: number[] = [];
+            const fillIdChecked = dataTable.map(async (item: any) => {
+                if (item.isAction) idChecked = [...idChecked, item.id];
+            });
+            await Promise.all(fillIdChecked);
+
+            setDataChecked(idChecked);
+        };
+        fillDataChecked();
+    }, [dataTable]);
+
+    // Event for remove item
+    const handleRemove = async () => {
+        const loopRemove = dataChecked.map(async (item: any) => {
+            console.log(`id of item that will be deleted: ${item}`);
+        });
+        await Promise.all(loopRemove);
+    };
+
     return (
         <Box sx={{ width: '100%' }}>
             <DialogConfirmation
                 title='Are you sure remove this Raffle ?'
-                subTitle='2 Selected'
-                handleConfirm={() => alert('Remove')}
-                open={dialogRemove}
-                setOpen={(val: boolean) => setDialogRemove(val)}
+                subTitle={`${dataChecked.length} Selected`}
+                handleConfirm={handleRemove}
+                open={isDialogRemove}
+                setOpen={(val: boolean) => setIsDialogRemove(val)}
                 textConfirmButton='REMOVE'
                 textCancelButton='CANCEL'
             />
@@ -87,6 +123,13 @@ const LuckyRaffle = () => {
                 qty2='qty2'
                 qty3='qty3'
                 qty4='qty4'
+                open={isDialogSetPrize}
+                onClose={() => setIsDialogSetPrize(false)}
+            />
+            <DialogViewResult
+                open={isDialogViewResult}
+                onClose={useCallback(() => setIsDialogViewResult(false), [isDialogViewResult])}
+                data={dummyResult}
             />
             <HeaderChildren title='Lucky Raffle' subTitle='Additional description if required'>
                 <Box sx={{ mt: '27px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -97,6 +140,7 @@ const LuckyRaffle = () => {
                         </IconButton>
                     </Box>
                     <ButtonBase
+                        onClick={() => router.push('/lucky-raffle/add-lucky-raffle')}
                         sx={{
                             background: '#A54CE5',
                             fontSize: '14px',
@@ -110,11 +154,24 @@ const LuckyRaffle = () => {
                     </ButtonBase>
                 </Box>
             </HeaderChildren>
-            <Box mt={5}>
-                <BadgeSelected total={1} onEdit={() => alert('edit')} handleOpenDeleteDialog={() => setDialogRemove(true)} />
-            </Box>
-            <Box>
-                <TableLuckyRaffle form={form} name='dataTable' nameIdxAppears='idxAppears' />
+            {dataChecked.length > 0 && (
+                <Box mt={5}>
+                    <BadgeSelected
+                        total={dataChecked.length}
+                        onEdit={() => alert('edit')}
+                        handleOpenDeleteDialog={() => setIsDialogRemove(true)}
+                    />
+                </Box>
+            )}
+            <Box sx={{ mt: '24px' }}>
+                <TableLuckyRaffle
+                    form={form}
+                    name='dataTable'
+                    nameIdxAppears='idxAppears'
+                    onSetPrize={useCallback(() => setIsDialogSetPrize(true), [isDialogSetPrize])}
+                    onViewParticipant={(itemId: any) => router.push(`lucky-raffle/${itemId}/participants`)}
+                    onViewResult={useCallback(() => setIsDialogViewResult(true), [isDialogViewResult])}
+                />
                 <PaginationCard
                     totalItem={dataTable.length}
                     handlePrev={handlePrev}
