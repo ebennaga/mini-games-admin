@@ -226,7 +226,6 @@ const Redemption = () => {
     const handleGetData = () => {
         const { startDate, endDate } = form.watch();
 
-        console.log('startdate', startDate, endDate);
         let result: Array<any> = [];
         // console.log({ startDate });
         // console.log({ endDate });
@@ -253,7 +252,7 @@ const Redemption = () => {
         }
         if (endDate && startDate) {
             const arr = result.length > 0 ? result : value !== 0 ? filterData : data;
-            console.log('arr', arr);
+
             result = [
                 ...arr.filter((item: any) => {
                     const valueData: any = new Date(item.created_at);
@@ -265,7 +264,7 @@ const Redemption = () => {
                 })
             ];
         }
-        console.log('results', result);
+
         setRedempData(result);
         // setData(result);
         setRow(result.length.toString());
