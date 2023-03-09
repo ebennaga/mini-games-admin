@@ -226,6 +226,7 @@ const Redemption = () => {
     const handleGetData = () => {
         const { startDate, endDate } = form.watch();
 
+        console.log('startdate', startDate, endDate);
         let result: Array<any> = [];
         // console.log({ startDate });
         // console.log({ endDate });
@@ -235,6 +236,7 @@ const Redemption = () => {
                 ...arr.filter((item: any) => {
                     const valueData: any = new Date(item.created_at);
                     const key: any = new Date(startDate);
+
                     return valueData >= key;
                 })
             ];
@@ -250,23 +252,26 @@ const Redemption = () => {
             ];
         }
         if (endDate && startDate) {
-            const arr = result.length > 0 ? result : value !== 0 ? filterData : redempData;
+            const arr = result.length > 0 ? result : value !== 0 ? filterData : data;
+            console.log('arr', arr);
             result = [
                 ...arr.filter((item: any) => {
                     const valueData: any = new Date(item.created_at);
+
                     const keyStartDate: any = new Date(startDate);
                     const keyEndDate: any = new Date(endDate);
-                    return valueData >= keyStartDate && valueData <= keyEndDate;
+
+                    return Date.parse(valueData) >= Date.parse(keyStartDate) && Date.parse(valueData) <= Date.parse(keyEndDate);
                 })
             ];
         }
+        console.log('results', result);
         setRedempData(result);
-        setData(result);
+        // setData(result);
         setRow(result.length.toString());
         setCurrentPage(1);
         setPages(1);
     };
-
     // OPTIONS FILTER DATA IF NEED IT
     React.useEffect(() => {
         const status: any =
