@@ -212,6 +212,7 @@ const PlayerAccount = () => {
             form.setValue('dataTable', listTable);
         }
     }, [form.watch('search')]);
+
     return (
         <Box>
             <HeaderChildren title='Player Account' subTitle='Additional description if required'>
