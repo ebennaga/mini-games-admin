@@ -310,7 +310,7 @@ const ClientTournament = () => {
                 const filter = existingData.filter((item: any) => {
                     return id !== item;
                 });
-                console.log(filter);
+                // console.log(filter);
                 setExistingData(filter);
             } else {
                 setExistingData([]);
