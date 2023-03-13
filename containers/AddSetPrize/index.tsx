@@ -76,7 +76,7 @@ const AddSetPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
 
             if (response.status === 200) {
                 setDataDetail(response.data.data);
-                console.log('resData', response.data.data);
+
                 form.setValue('name', response.data.data.name);
                 form.setValue('code', response.data.data.code);
                 form.setValue('unit', response.data.data.uom);
@@ -165,9 +165,8 @@ const AddSetPrize: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
             if (response?.status === 200) {
                 notify(response.data.message);
                 form.reset();
-                router.push('/settings/product-prizes');
+                router.push(`/tournament/client-tournament/${router.query.id}/set-prizes`);
             } else {
-                console.log(4);
                 notify(response?.data?.message, 'error');
             }
         } catch (error: any) {
