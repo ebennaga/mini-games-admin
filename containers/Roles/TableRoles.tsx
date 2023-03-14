@@ -68,8 +68,8 @@ const TableRoles: React.FC<TableRolesProps> = ({ setIdRole, form, name, nameIdxA
         form.setValue(nameMenuAccess, data);
     };
 
-    const handleMenuAccess = () => {
-        setOpenMenuAccess(true);
+    const handleMenuAccess = (id: number) => {
+        setOpenMenuAccess(id, true);
     };
 
     React.useEffect(() => {
@@ -215,7 +215,7 @@ const TableRoles: React.FC<TableRolesProps> = ({ setIdRole, form, name, nameIdxA
                                                 boxShadow='0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px rgba(0, 0, 0, 0.14), 0px 1px 18px rgba(0, 0, 0, 0.12)'
                                             >
                                                 <ButtonBase
-                                                    onClick={handleMenuAccess}
+                                                    onClick={() => handleMenuAccess(item.id)}
                                                     sx={{ padding: '6px 14px', borderRadius: '4px', bgcolor: '#A54CE5', color: '#fff' }}
                                                 >
                                                     MENU ACCESS

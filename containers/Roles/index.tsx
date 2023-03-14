@@ -24,22 +24,22 @@ const Roles = () => {
     //     { id: 'super admin', title: 'Super Admin' }
     // ];
 
-    const dataAccesss = [
-        { isChecked: false, name: 'Dashboard', id: 1 },
-        { isChecked: false, name: 'Blogs', id: 2 },
-        { isChecked: false, name: 'Account', id: 3 },
-        { isChecked: false, name: 'Exchanges Rates', id: 4 },
-        { isChecked: false, name: 'Tournament', id: 5 },
-        { isChecked: false, name: 'Location', id: 6 },
-        { isChecked: false, name: 'Participant Tournaments', id: 7 },
-        { isChecked: false, name: 'Product Prizes', id: 8 },
-        { isChecked: false, name: 'Banner', id: 9 },
-        { isChecked: false, name: 'Roles', id: 10 },
-        { isChecked: false, name: 'Reconcile', id: 11 },
-        { isChecked: false, name: 'Games', id: 12 },
-        { isChecked: false, name: 'Client Tournaments', id: 13 },
-        { isChecked: false, name: 'Client Account', id: 14 }
-    ];
+    // const dataAccesss = [
+    //     { isChecked: false, name: 'Dashboard', id: 1 },
+    //     { isChecked: false, name: 'Blogs', id: 2 },
+    //     { isChecked: false, name: 'Account', id: 3 },
+    //     { isChecked: false, name: 'Exchanges Rates', id: 4 },
+    //     { isChecked: false, name: 'Tournament', id: 5 },
+    //     { isChecked: false, name: 'Location', id: 6 },
+    //     { isChecked: false, name: 'Participant Tournaments', id: 7 },
+    //     { isChecked: false, name: 'Product Prizes', id: 8 },
+    //     { isChecked: false, name: 'Banner', id: 9 },
+    //     { isChecked: false, name: 'Roles', id: 10 },
+    //     { isChecked: false, name: 'Reconcile', id: 11 },
+    //     { isChecked: false, name: 'Games', id: 12 },
+    //     { isChecked: false, name: 'Client Tournaments', id: 13 },
+    //     { isChecked: false, name: 'Client Account', id: 14 }
+    // ];
 
     const [isDialogFilter, setIsDialogFilter] = React.useState<boolean>(false);
     const [totalChecked, setTotalChecked] = React.useState<number>(0);
@@ -48,6 +48,7 @@ const Roles = () => {
     const [openDialogFailed, setOpenDialogFailed] = React.useState<boolean>(false);
     const [dataRoles, setDataRoles] = React.useState<Array<any>>([]);
     const [dataSelect, setDataSelect] = React.useState<Array<any>>([]);
+    const [dataAccesss, setDataAccesss] = React.useState<Array<any>>([]);
     const [isLoading, setIsloading] = React.useState<boolean>(true);
     const [dataChanges, setDataChanges] = React.useState<Array<any>>([]);
     const [idRole, setIdRole] = React.useState<any>(null);
@@ -117,6 +118,30 @@ const Roles = () => {
         }
     };
 
+    // Get access Data
+    const getMenuAccess = async (id: number) => {
+        try {
+            const response = await fetchAPI({
+                endpoint: `roles/${id}/menu-accesses`,
+                method: 'GET'
+            });
+
+            if (response.status === 200) {
+                const resData = response.data.data;
+                console.log('resdata', resData);
+                setDataAccesss(resData);
+            } else {
+                notify(response.data.message, 'error');
+            }
+        } catch (error: any) {
+            notify(error.message, 'error');
+        }
+    };
+
+    const handleMenuAccess = (id: number, isOpen: boolean) => {
+        setOpenMenuAccess(isOpen);
+        getMenuAccess(id);
+    };
     // Event Remove Item
     const handleRemove = async () => {
         try {
@@ -161,12 +186,15 @@ const Roles = () => {
 
             idRole.menus = id.join(',');
             const body = idRole;
+
             const response = await fetchAPI({
                 method: 'PUT',
                 endpoint: `roles/${idRole.id}`,
                 data: body
             });
             if (response.data.status === 200) {
+                const resData = response.data.data;
+
                 notify(response.data.message, 'success');
                 setOpenMenuAccess(false);
                 setDataChanges([]);
@@ -258,7 +286,7 @@ const Roles = () => {
     // if (isLoading) {
     //     return <LoadingExchangeRates />;
     // }
-
+    console.log('indexdataakses', dataAccesss);
     return (
         <Box>
             <TitleCard
@@ -307,7 +335,7 @@ const Roles = () => {
                         name='dataTable'
                         nameIdxAppears='idxAppears'
                         nameMenuAccess='menuAccess'
-                        setOpenMenuAccess={setOpenMenuAccess}
+                        setOpenMenuAccess={handleMenuAccess}
                     />
                 )}
 
