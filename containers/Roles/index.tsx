@@ -52,7 +52,7 @@ const Roles = () => {
     const [isLoading, setIsloading] = React.useState<boolean>(true);
     const [dataChanges, setDataChanges] = React.useState<Array<any>>([]);
     const [idRole, setIdRole] = React.useState<any>(null);
-
+    const [loading, setLoading] = React.useState<boolean>(false);
     const { fetchAPI } = useAPICaller();
     const [query, setQuery] = React.useState('');
     const router = useRouter();
@@ -120,6 +120,7 @@ const Roles = () => {
 
     // Get access Data
     const getMenuAccess = async (id: number) => {
+        setLoading(true);
         try {
             const response = await fetchAPI({
                 endpoint: `roles/${id}/menu-accesses`,
@@ -130,8 +131,10 @@ const Roles = () => {
                 const resData = response.data.data;
 
                 setDataAccesss(resData);
+                setLoading(false);
             } else {
                 notify(response.data.message, 'error');
+                setLoading(false);
             }
         } catch (error: any) {
             notify(error.message, 'error');
@@ -367,6 +370,7 @@ const Roles = () => {
                 listAccess={dataAccesss}
                 form={form}
                 name='accessUpdated'
+                isLoading={loading}
             />
             <DialogFailed
                 open={openDialogFailed}
