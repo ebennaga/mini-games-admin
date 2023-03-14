@@ -128,7 +128,7 @@ const Roles = () => {
 
             if (response.status === 200) {
                 const resData = response.data.data;
-                console.log('resdata', resData);
+
                 setDataAccesss(resData);
             } else {
                 notify(response.data.message, 'error');
@@ -286,7 +286,7 @@ const Roles = () => {
     // if (isLoading) {
     //     return <LoadingExchangeRates />;
     // }
-    console.log('indexdataakses', dataAccesss);
+
     return (
         <Box>
             <TitleCard

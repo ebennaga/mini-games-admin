@@ -65,7 +65,7 @@ const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
     React.useEffect(() => {
         setDataAccess(listAccess);
     }, [listAccess]);
-    console.log('dataakses', dataAccesss);
+
     return (
         <Dialog open={open} sx={{ '& .MuiPaper-root': { padding: '31px 33px', width: '551px' } }}>
             <form onSubmit={form.handleSubmit(onUpdate)}>
