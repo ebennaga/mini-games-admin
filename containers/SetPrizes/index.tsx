@@ -522,7 +522,7 @@ const SetPrizes = () => {
                 subtitle='Addtional description if required'
                 isSearchExist
                 placeholderSeacrhText='Search by name, category, etc'
-                href=''
+                href={`/tournament/client-tournament/${router.query.id}/set-prizes/add-set-prizes`}
             />
             {checked && (
                 <Box sx={{ mx: 1, my: 3, padding: 2, background: '#F4F1FF' }}>

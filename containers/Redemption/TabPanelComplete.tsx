@@ -24,6 +24,7 @@ const TabPanelComplete: React.FC<TabPanelCompleteProps> = ({
     row,
     handleViewRow
 }) => {
+    const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
     return (
         <TabPanel value={value} index={index}>
             <Box sx={{ mt: '20px' }}>
@@ -149,7 +150,7 @@ const TabPanelComplete: React.FC<TabPanelCompleteProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {new Date(item.created_at).toLocaleString('id')}
+                                                {new Date(item.created_at).toLocaleString('id', dateOption).replace('.', ':')}
                                             </TableCell>
                                             <TableCell
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
@@ -181,7 +182,7 @@ const TabPanelComplete: React.FC<TabPanelCompleteProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {item.delivery.courier?.resi_no}
+                                                {item.delivery.resi_no}
                                             </TableCell>
                                         </TableRow>
                                     );

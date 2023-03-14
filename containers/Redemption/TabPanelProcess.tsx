@@ -38,7 +38,8 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
     resiNo,
     form
 }) => {
-    console.log({ data: getPaginatedData() });
+    const dateOption: any = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+    // console.log({ data: getPaginatedData() });
     const [openDialogKurir, setOpenDialogKurir] = React.useState(false);
     const [openDialogResi, setOpenDialogResi] = React.useState(false);
 
@@ -178,7 +179,7 @@ const TabPanelProcess: React.FC<TabPanelProcessProps> = ({
                                                 sx={{ borderLeft: '1px solid #E0E0E0', borderRight: '1px solid #E0E0E0' }}
                                                 align='center'
                                             >
-                                                {new Date(item.created_at).toLocaleString('id')}
+                                                {new Date(item.created_at).toLocaleString('id', dateOption).replace('.', ':')}
                                             </TableCell>
 
                                             <TableCell

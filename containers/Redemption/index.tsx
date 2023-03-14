@@ -141,6 +141,9 @@ const Redemption = () => {
     const router = useRouter();
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
+        setRedempData(data);
+        setCurrentPage(1);
+        setRow('10');
     };
 
     const { fetchAPI, isLoading: loading } = useAPICaller();
@@ -235,6 +238,7 @@ const Redemption = () => {
                 ...arr.filter((item: any) => {
                     const valueData: any = new Date(item.created_at);
                     const key: any = new Date(startDate);
+
                     return valueData >= key;
                 })
             ];
@@ -250,23 +254,26 @@ const Redemption = () => {
             ];
         }
         if (endDate && startDate) {
-            const arr = result.length > 0 ? result : value !== 0 ? filterData : redempData;
+            const arr = result.length > 0 ? result : value !== 0 ? filterData : data;
+
             result = [
                 ...arr.filter((item: any) => {
                     const valueData: any = new Date(item.created_at);
+
                     const keyStartDate: any = new Date(startDate);
                     const keyEndDate: any = new Date(endDate);
-                    return valueData >= keyStartDate && valueData <= keyEndDate;
+
+                    return Date.parse(valueData) >= Date.parse(keyStartDate) && Date.parse(valueData) <= Date.parse(keyEndDate);
                 })
             ];
         }
+
         setRedempData(result);
-        setData(result);
+        // setData(result);
         setRow(result.length.toString());
         setCurrentPage(1);
         setPages(1);
     };
-
     // OPTIONS FILTER DATA IF NEED IT
     React.useEffect(() => {
         const status: any =

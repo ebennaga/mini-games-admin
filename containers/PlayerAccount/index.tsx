@@ -170,9 +170,9 @@ const PlayerAccount = () => {
 
         const table = form.watch('dataTable');
         table.forEach((item: any, index: number) => {
-            const { id, username, name, email, google_id: googleId, coin, point, is_active: isActive } = item;
+            const { id, username, name, email, google_id: googleId, coins, point, is_active: isActive } = item;
 
-            csvStr += `${index + 1},${id},${username},${name},${email},${googleId},${coin},${point},${isActive}\n`;
+            csvStr += `${index + 1},${id},${username},${name},${email},${googleId},${coins},${point},${isActive}\n`;
         });
 
         const hiddenElement = document.createElement('a');
@@ -212,6 +212,7 @@ const PlayerAccount = () => {
             form.setValue('dataTable', listTable);
         }
     }, [form.watch('search')]);
+
     return (
         <Box>
             <HeaderChildren title='Player Account' subTitle='Additional description if required'>

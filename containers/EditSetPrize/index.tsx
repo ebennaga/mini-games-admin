@@ -35,7 +35,7 @@ const categoryList = [
 interface AddPrizeProps {
     statusEdit?: boolean;
 }
-const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = false }) => {
+const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = true }) => {
     const rules = { required: true };
     const { fetchAPI } = useAPICaller();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -72,7 +72,6 @@ const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = false }) 
                 method: 'GET',
                 endpoint: `tournament-gifts/${router.query.id}`
             });
-            console.log('response', response);
 
             if (response.status === 200) {
                 form.setValue('name', response.data.data.name);
@@ -88,7 +87,6 @@ const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = false }) 
         } catch (error: any) {
             notify(error.message, 'error');
             setIsLoading(false);
-            console.log(2);
         }
     };
 
@@ -150,11 +148,11 @@ const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = false }) 
         }
     }, []);
 
-    console.log('getdataprizes', statusEdit);
+    // console.log('getdataprizes', statusEdit);
 
     return (
         <Box component='section'>
-            <TitleCard title='Edit Set Prize' subtitle='Addtional description if required' isSearchExist={false} />
+            <TitleCard title='Edit Set Prize ' subtitle='Addtional description if required' isSearchExist={false} />
             <form onSubmit={form.handleSubmit(statusEdit ? handlePUTSubmit : handlePOSTSubmit)}>
                 <Box sx={{ my: 3, mx: 2, width: '40%' }}>
                     <Box sx={{ my: '30px' }}>

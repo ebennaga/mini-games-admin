@@ -132,7 +132,7 @@ const TablePlayerAccount: React.FC<TablePlayerAccountProps> = ({ form, name, nam
                                     <TableCell sx={{ width: '15%' }}>{item.name}</TableCell>
                                     <TableCell sx={{ width: '15%' }}>{item.email}</TableCell>
                                     <TableCell sx={{ width: '13%' }}>{item.google_id}</TableCell>
-                                    <TableCell sx={{ width: '9%' }}>{item.coin}</TableCell>
+                                    <TableCell sx={{ width: '9%' }}>{item.coins}</TableCell>
                                     <TableCell sx={{ width: '9%' }}>{item.point}</TableCell>
                                     <TableCell sx={{ width: '7%' }}>
                                         {item.is_active ? (
