@@ -72,7 +72,6 @@ const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = true }) =
                 method: 'GET',
                 endpoint: `tournament-gifts/${router.query.id}`
             });
-            console.log('response', response);
 
             if (response.status === 200) {
                 form.setValue('name', response.data.data.name);
@@ -88,7 +87,6 @@ const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = true }) =
         } catch (error: any) {
             notify(error.message, 'error');
             setIsLoading(false);
-            console.log(2);
         }
     };
 
@@ -150,7 +148,7 @@ const EditSetPrizeContainer: React.FC<AddPrizeProps> = ({ statusEdit = true }) =
         }
     }, []);
 
-    console.log('getdataprizes', statusEdit);
+    // console.log('getdataprizes', statusEdit);
 
     return (
         <Box component='section'>
