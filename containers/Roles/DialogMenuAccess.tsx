@@ -62,6 +62,9 @@ const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
             form.setValue(name, filter);
         }
     };
+    React.useEffect(() => {
+        setDataAccess(listAccess);
+    }, [listAccess]);
 
     return (
         <Dialog open={open} sx={{ '& .MuiPaper-root': { padding: '31px 33px', width: '551px' } }}>
@@ -92,6 +95,7 @@ const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
                         );
                     })}
                 </FormGroup>
+                {dataAccesss.length === 0 && <Typography>you dont have</Typography>}
                 <Box display='flex' gap='28px' mt='25px'>
                     <ButtonBase
                         type='submit'
