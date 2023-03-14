@@ -42,7 +42,7 @@ const FilterRoles: React.FC<FilterRolesProps> = ({ form, nameSelect, nameActive,
             </Box>
             <form>
                 <Box>
-                    <InputSelect form={form} name={nameSelect} dataSelect={dataSelect} title='Role Code' placeholder='Select Category' />
+                    <InputSelect form={form} name={nameSelect} dataSelect={dataSelect} title='Role Name' placeholder='Select Category' />
                 </Box>
                 <Box display='flex' alignItems='center' my='15px'>
                     <Typography component='h3' fontSize='16px' fontWeight={600}>
