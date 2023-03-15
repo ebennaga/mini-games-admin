@@ -78,7 +78,9 @@ const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
                     {currentRoles}
                 </Typography>
                 {isLoading ? (
-                    <CircularProgress />
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <CircularProgress />
+                    </Box>
                 ) : (
                     <FormGroup
                         sx={{
@@ -99,7 +101,7 @@ const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
                                 />
                             );
                         })}
-                        {dataAccesss.length === 0 && <Typography>you dont have menu access</Typography>}
+                        {dataAccesss.length === 0 && <Typography>it doesnt have menu access</Typography>}
                     </FormGroup>
                 )}
 

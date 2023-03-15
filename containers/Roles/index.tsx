@@ -129,8 +129,13 @@ const Roles = () => {
 
             if (response.status === 200) {
                 const resData = response.data.data;
+                const jsonObject: any = resData.map(JSON.stringify);
 
-                setDataAccesss(resData);
+                const uniqueSet: any = new Set(jsonObject);
+                const parsing: any = JSON.parse;
+                const uniqueArray: any = Array.from(uniqueSet).map(parsing);
+
+                setDataAccesss(uniqueArray);
                 setLoading(false);
             } else {
                 notify(response.data.message, 'error');
