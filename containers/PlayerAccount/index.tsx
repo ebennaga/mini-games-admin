@@ -195,7 +195,7 @@ const PlayerAccount = () => {
     // Update form dataTable for event search
     React.useEffect(() => {
         const { search, dataTable } = form.watch();
-        console.log('search', form.watch('search'));
+
         if (search) {
             const searchResult = dataTable.filter(
                 (item: any) =>
