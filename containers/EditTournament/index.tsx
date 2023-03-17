@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase, CircularProgress } from '@mui/material';
 import InputDate from 'components/Input/InputDate';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -16,6 +16,7 @@ import useAPICaller from 'hooks/useAPICaller';
 import useNotify from 'hooks/useNotify';
 import InputSelect from 'components/Input/InputSelect';
 import convertBase64 from 'helpers/convertBase64';
+import PrizingTable from './PrizingTable';
 
 interface EditTournamentProps {}
 
@@ -39,13 +40,6 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
             pool: 0,
             tableData: [
                 {
-                    // positionStart: '',
-                    // positionEnd: '',
-                    // countPlayer: '',
-                    // pointPrizes: '',
-                    // playerPointPrizes: '',
-                    // cointPrizes: '',
-                    // playerCointPrizes: ''
                     max_pos: '',
                     point: '',
                     coin: ''
@@ -425,14 +419,16 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                         </Grid>
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between' />
-                            <Grid item xs={3}>
+                            <Grid item xs={5}>
+                                <PrizingTable
+                                    valueTable={value}
+                                    data={prizeData}
+                                    table={table}
+                                    setTable={useCallback((val: any) => setTable(val), [table])}
+                                />
+                            </Grid>
+                            {/* <Grid item xs={3}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    {/* <TableAddTournament
-                                        valueTable={table}
-                                        data={dataTable}
-                                        formTable={useForm({})}
-                                        fieldArray={useFieldArray({ name: 'tableData', control: useForm().control })}
-                                    /> */}
                                     <TableAddTournament
                                         table={table}
                                         setTable={setTable}
@@ -484,8 +480,9 @@ const EditTournament: React.FC<EditTournamentProps> = () => {
                                         </ButtonBase>
                                     </Box>
                                 </Box>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
+
                         <Grid container item xs={12} display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={2} display='flex' alignItems='center' justifyContent='space-between'>
                                 <Typography component='h3' fontSize='15px' fontWeight='bold' color='rgba(0, 0, 0, 0.6)'>
