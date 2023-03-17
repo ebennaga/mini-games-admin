@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Box, Typography, Paper, FormControl, InputLabel, Select, MenuItem, Grid, ButtonBase, TextField } from '@mui/material';
 import InputDate from 'components/Input/InputDate';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -15,6 +15,7 @@ import InputSelect from 'components/Input/InputSelect';
 import convertBase64 from 'helpers/convertBase64';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import PrizingTable from 'containers/EditTournament/PrizingTable';
 import dataTable from './dataSelect';
 import TableAddTournament from './Table';
 
@@ -682,7 +683,15 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                         </Grid>
                         <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                             <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between' />
-                            <Grid item xs={3}>
+                            <Grid item xs={5} mb='40px'>
+                                <PrizingTable
+                                    valueTable={value}
+                                    data={prizeData}
+                                    table={table}
+                                    setTable={useCallback((val: any) => setTable(val), [table])}
+                                />
+                            </Grid>
+                            {/* <Grid item xs={3}>
                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                     <TableAddTournament
                                         table={table}
@@ -738,7 +747,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ setCreateTour, crea
                                         </ButtonBase>
                                     </Box>
                                 </Box>
-                            </Grid>
+                            </Grid> */}
 
                             <Grid container display='flex' alignItems='center' spacing={3} mb='37px'>
                                 <Grid item xs={3} display='flex' alignItems='center' justifyContent='space-between'>
