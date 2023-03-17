@@ -48,7 +48,7 @@ const AccountContainer = () => {
     const notify = useNotify();
     const [openDialog, setOpenDialog] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
-    const [row, setRow] = useState('7');
+    const [row, setRow] = useState('5');
     const [role, setRole] = useState('0');
     const [isActive] = useState('active');
     const [currentPage, setCurrentPage] = useState(1);
@@ -332,9 +332,10 @@ const AccountContainer = () => {
                                             return item;
                                         }
                                     });
-                                    if (pages === 1) {
-                                        setCurrentPage(1);
-                                    }
+                                    // if (pages === 1) {
+                                    //     setCurrentPage(1);
+                                    // }
+                                    setCurrentPage(1);
                                     setSearch(searched);
                                 })}
                             >
@@ -544,8 +545,8 @@ const AccountContainer = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {remove.length > 0 &&
-                                        remove.map((item: any, idx: number) => {
+                                    {getPaginatedData().length > 0 &&
+                                        getPaginatedData().map((item: any, idx: number) => {
                                             const check: any = `checkbox${item.id}`;
                                             return (
                                                 <TableRow key={item.id}>
