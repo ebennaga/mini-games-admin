@@ -296,9 +296,10 @@ const AccountContainer = () => {
                                             return item;
                                         }
                                     });
-                                    if (pages === 1) {
-                                        setCurrentPage(1);
-                                    }
+                                    // if (pages === 1) {
+                                    //     setCurrentPage(1);
+                                    // }
+                                    setCurrentPage(1);
                                     setSearch(searched);
                                 })}
                             >
