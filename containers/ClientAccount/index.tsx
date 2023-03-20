@@ -282,18 +282,20 @@ const AccountContainer = () => {
     }, [checkBoxKeys, form.watch('checkAll')]);
 
     useEffect(() => {
-        if (form.watch('search') === '') {
-            setIsSearch(false);
-            setSearch(remove);
-        } else {
-            const keywords = form.watch('search');
-            const filter = remove.filter(
-                (item: any) =>
-                    item?.name?.toLowerCase()?.includes(keywords.toLowerCase()) ||
-                    item?.email?.toLowerCase()?.includes(keywords.toLowerCase())
-            );
+        if (isSearch) {
+            if (form.watch('search') === '') {
+                setIsSearch(false);
+                setSearch(remove);
+            } else {
+                const keywords = form.watch('search');
+                const filter = remove.filter(
+                    (item: any) =>
+                        item?.name?.toLowerCase()?.includes(keywords.toLowerCase()) ||
+                        item?.email?.toLowerCase()?.includes(keywords.toLowerCase())
+                );
 
-            setRemove(filter);
+                setRemove(filter);
+            }
         }
     }, [search, form.watch()]);
 
