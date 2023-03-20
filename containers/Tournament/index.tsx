@@ -446,10 +446,12 @@ const TournamentContainer = () => {
                     }
                 }
             });
+            setCurrentPage(1);
             setSearch(searched);
         }
         if (form.watch('search') === '') {
             setIsSearch(false);
+            setSearch(remove);
         }
     }, [input]);
     // console.log(getPaginatedData());
