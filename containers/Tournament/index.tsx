@@ -446,10 +446,12 @@ const TournamentContainer = () => {
                     }
                 }
             });
+            setCurrentPage(1);
             setSearch(searched);
         }
         if (form.watch('search') === '') {
             setIsSearch(false);
+            setSearch(remove);
         }
     }, [input]);
     // console.log(getPaginatedData());
@@ -631,7 +633,7 @@ const TournamentContainer = () => {
 
                                 <Box sx={{ display: 'flex' }}>
                                     <Typography>
-                                        1-{row} of {remove.length}
+                                        {currentPage}-{row} of {remove.length}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', width: '15%', justifyContent: 'space-between' }}>

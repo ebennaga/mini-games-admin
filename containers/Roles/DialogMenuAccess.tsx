@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, Typography, FormGroup, FormControlLabel, Checkbox, Box, ButtonBase } from '@mui/material';
+import { Dialog, Typography, FormGroup, FormControlLabel, Checkbox, Box, ButtonBase, CircularProgress } from '@mui/material';
 
 interface DialogMenuAccessProps {
     onUpdate: any;
@@ -11,6 +11,7 @@ interface DialogMenuAccessProps {
     name: string;
     setDataChanges: any;
     dataChanges: any;
+    isLoading?: boolean;
 }
 
 const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
@@ -22,7 +23,8 @@ const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
     currentRoles,
     listAccess,
     form,
-    name
+    name,
+    isLoading
 }) => {
     const [dataAccesss, setDataAccess] = React.useState<Array<any>>([...listAccess]);
 
@@ -75,27 +77,34 @@ const DialogMenuAccess: React.FC<DialogMenuAccessProps> = ({
                 <Typography component='p' fontWeight={400} fontSize='14px' sx={{ color: '#949494' }}>
                     {currentRoles}
                 </Typography>
-                <FormGroup
-                    sx={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(2, 1fr)',
-                        gridTemplateRows: 'repeat(4, 1fr)',
-                        gridColumnGap: '30px',
-                        gridRowGap: '5px',
-                        mt: '35px'
-                    }}
-                >
-                    {dataAccesss.map((item: any) => {
-                        return (
-                            <FormControlLabel
-                                key={item.id}
-                                control={<Checkbox checked={item.isChecked} onChange={() => handleChange(item)} />}
-                                label={item.name}
-                            />
-                        );
-                    })}
-                </FormGroup>
-                {dataAccesss.length === 0 && <Typography>you dont have</Typography>}
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    <FormGroup
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                            gridTemplateRows: 'repeat(4, 1fr)',
+                            gridColumnGap: '30px',
+                            gridRowGap: '5px',
+                            mt: '35px'
+                        }}
+                    >
+                        {dataAccesss.map((item: any) => {
+                            return (
+                                <FormControlLabel
+                                    key={item.id}
+                                    control={<Checkbox checked={item.isChecked} onChange={() => handleChange(item)} />}
+                                    label={item.name}
+                                />
+                            );
+                        })}
+                        {dataAccesss.length === 0 && <Typography>it doesnt have menu access</Typography>}
+                    </FormGroup>
+                )}
+
                 <Box display='flex' gap='28px' mt='25px'>
                     <ButtonBase
                         type='submit'

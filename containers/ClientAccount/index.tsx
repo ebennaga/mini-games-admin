@@ -48,7 +48,7 @@ const AccountContainer = () => {
     const notify = useNotify();
     const [openDialog, setOpenDialog] = useState(false);
     const [openFilter, setOpenFilter] = useState(false);
-    const [row, setRow] = useState('7');
+    const [row, setRow] = useState('5');
     const [role, setRole] = useState('0');
     const [isActive] = useState('active');
     const [currentPage, setCurrentPage] = useState(1);
@@ -282,18 +282,20 @@ const AccountContainer = () => {
     }, [checkBoxKeys, form.watch('checkAll')]);
 
     useEffect(() => {
-        if (form.watch('search') === '') {
-            setIsSearch(false);
-            setSearch(remove);
-        } else {
-            const keywords = form.watch('search');
-            const filter = remove.filter(
-                (item: any) =>
-                    item?.name?.toLowerCase()?.includes(keywords.toLowerCase()) ||
-                    item?.email?.toLowerCase()?.includes(keywords.toLowerCase())
-            );
+        if (isSearch) {
+            if (form.watch('search') === '') {
+                setIsSearch(false);
+                setSearch(remove);
+            } else {
+                const keywords = form.watch('search');
+                const filter = remove.filter(
+                    (item: any) =>
+                        item?.name?.toLowerCase()?.includes(keywords.toLowerCase()) ||
+                        item?.email?.toLowerCase()?.includes(keywords.toLowerCase())
+                );
 
-            setRemove(filter);
+                setRemove(filter);
+            }
         }
     }, [search, form.watch()]);
 
@@ -332,9 +334,10 @@ const AccountContainer = () => {
                                             return item;
                                         }
                                     });
-                                    if (pages === 1) {
-                                        setCurrentPage(1);
-                                    }
+                                    // if (pages === 1) {
+                                    //     setCurrentPage(1);
+                                    // }
+                                    setCurrentPage(1);
                                     setSearch(searched);
                                 })}
                             >
@@ -544,8 +547,8 @@ const AccountContainer = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {remove.length > 0 &&
-                                        remove.map((item: any, idx: number) => {
+                                    {getPaginatedData().length > 0 &&
+                                        getPaginatedData().map((item: any, idx: number) => {
                                             const check: any = `checkbox${item.id}`;
                                             return (
                                                 <TableRow key={item.id}>
@@ -651,7 +654,7 @@ const AccountContainer = () => {
                             </Box>
                             <Box sx={{ display: 'flex' }}>
                                 <Typography>
-                                    1-{row} of {remove.length}
+                                    {currentPage}-{row} of {remove.length}
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', width: '15%', justifyContent: 'space-between' }}>

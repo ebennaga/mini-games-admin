@@ -208,6 +208,7 @@ const PlayerAccount = () => {
             );
 
             form.setValue('dataTable', searchResult);
+            form.setValue('page', 1);
         } else {
             form.setValue('dataTable', listTable);
         }
