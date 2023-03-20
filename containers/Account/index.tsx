@@ -82,8 +82,8 @@ const AccountContainer = () => {
 
             if (result.status === 200) {
                 const totalFilter = result.data.data;
-                const filter = totalFilter.filter((item: any) => item.name !== null);
-                const filterAccount = filter.filter((item: any) => {
+                // const filter = totalFilter.filter((item: any) => item.name !== null);
+                const filterAccount = totalFilter.filter((item: any) => {
                     return Object.keys(item.company).length === 0;
                 });
                 setRemove(filterAccount);
