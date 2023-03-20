@@ -654,7 +654,7 @@ const AccountContainer = () => {
                             </Box>
                             <Box sx={{ display: 'flex' }}>
                                 <Typography>
-                                    1-{row} of {remove.length}
+                                    {currentPage}-{row} of {remove.length}
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', width: '15%', justifyContent: 'space-between' }}>
